@@ -1,0 +1,26 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+PROJECT(GENETIC)
+
+ADD_DEFINITIONS(-Wall -pedantic)
+
+#### SET SOURCE FILES.
+SET(SRC main.cpp)
+ADD_EXECUTABLE(main ${SRC})
+
+############ ADD  OPENGL STUFF.
+
+FIND_PACKAGE(GLUT)
+FIND_PACKAGE(OpenGL)
+
+
+if(GLFW_FOUND)
+    message(STATUS "Found GLFW")
+endif(GLFW_FOUND)
+
+
+SET(GL_LIBS ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
+
+
+include_directories("deps/include")
+LINK_DIRECTORIES("deps/libs")
+TARGET_LINK_LIBRARIES(main glfw3.3.1)
