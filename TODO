@@ -1,4 +1,5 @@
 * Setup OpenGL error reporting.
+* make sure you can build on linux and windows.
 * setup precompiled headers
 * make application class, make screen blue
 * draw some pretty triangles using shaders!
