@@ -10,7 +10,17 @@ void Application::Start() {
 }
 
 void Application::DoMainLoop() {
+    running = true;
+    while(running) {
 
+	this->Update_internal();
+	this->Render();
+
+	// update frame buffer
+	glfwSwapBuffers(window);
+	// update input.
+	glfwPollEvents();
+    }
 }
 
 void Application::Cleanup() {
@@ -31,6 +41,7 @@ void Application::SetupOpenGL() {
     glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+
     window = glfwCreateWindow (640, 480, "Tuhu", NULL, NULL);
     if (!window) {
 	fprintf (stderr, "ERROR: could not open window with GLFW3\n");
@@ -39,12 +50,35 @@ void Application::SetupOpenGL() {
     }
     glfwMakeContextCurrent (window);
 
+
     // start GLEW extension handler
     glewExperimental = GL_TRUE;
-    glewInit ();
+//    glewInit ();
 
+
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+	/* Problem: glewInit failed, something is seriously wrong. */
+	LOG_E( "glewInit failed: %s", glewGetErrorString(err));
+    }
+    ClearOpenGLError();
 
     LOG_I( "GL  VENDOR: %s", glGetString( GL_VENDOR ) );
     LOG_I( "   VERSION: %s\n", glGetString( GL_VERSION ) );
     LOG_I( "  RENDERER: %s\n", glGetString( GL_RENDERER ) );
+}
+
+void Application::SetViewport() {
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    GL_C(glViewport(0, 0, width, height));
+}
+
+void Application::Update_internal() {
+
+    running = glfwGetKey( window , GLFW_KEY_ESCAPE ) != GLFW_PRESS ;
+
+    this->Update();
+
 }

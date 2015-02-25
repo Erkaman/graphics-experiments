@@ -6,7 +6,7 @@
 			      __LINE__, __func__, (x)); } while (0)
 
 #define LOG_E(fmt, x)							\
-    do { fprintf(stderr, "DEBUGE: %s:%d:%s:%s\n", __FILE__,	\
+    do { fprintf(stderr, "ERROR: %s:%d:%s:%s\n", __FILE__,	\
 			      __LINE__, __func__, (x)); } while (0)
 
 

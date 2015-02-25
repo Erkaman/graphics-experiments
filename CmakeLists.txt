@@ -1,4 +1,6 @@
+######################################
 #### PROJECT SETTINGS.
+######################################
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 PROJECT(game)
@@ -7,13 +9,26 @@ PROJECT(game)
 ADD_DEFINITIONS(-Wall -pedantic -Wno-deprecated)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ")
 
+######################################
 #### SET SOURCE FILES.
+######################################
+
+include(cmake/PrecompiledHeader.cmake)
+
+if(MSVC)
+  set(pch_source test-pch.cpp)
+endif()
+
 #SET(SRC main.cpp)
 file(GLOB SRC src/*.cpp deps/src/glew/*.c)
 
-ADD_EXECUTABLE(game ${SRC})
+ADD_EXECUTABLE(game ${SRC} ${pch_source} src/precomp.h)
 
+add_precompiled_header(game src/precomp.h)
+
+######################################
 ############ ADD  LIBRARIES
+######################################
 
 FIND_PACKAGE(OpenGL)
 

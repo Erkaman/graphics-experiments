@@ -15,6 +15,10 @@ inline void CheckOpenGLError(const char* stmt, const char* fname, int line)
     }
 }
 
+inline void ClearOpenGLError() {
+    while(glGetError() != GL_NO_ERROR) {}
+}
+
 // GL Check.
 #ifdef _DEBUG
     #define GL_C(stmt) do { \
