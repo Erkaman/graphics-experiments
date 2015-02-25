@@ -1,26 +1,25 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
-PROJECT(GENETIC)
+#### PROJECT SETTINGS.
 
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
+PROJECT(game)
+
+# COMPILER SETTINGS.
 ADD_DEFINITIONS(-Wall -pedantic)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 #### SET SOURCE FILES.
-SET(SRC main.cpp)
-ADD_EXECUTABLE(main ${SRC})
+#SET(SRC main.cpp)
+file(GLOB SRC src/*.cpp deps/src/glew/*.c)
 
-############ ADD  OPENGL STUFF.
+ADD_EXECUTABLE(game ${SRC})
 
-FIND_PACKAGE(GLUT)
+############ ADD  LIBRARIES
+
 FIND_PACKAGE(OpenGL)
-
-
-if(GLFW_FOUND)
-    message(STATUS "Found GLFW")
-endif(GLFW_FOUND)
-
 
 SET(GL_LIBS ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
 
 
 include_directories("deps/include")
 LINK_DIRECTORIES("deps/libs")
-TARGET_LINK_LIBRARIES(main glfw3.3.1)
+TARGET_LINK_LIBRARIES(game glfw3.3.1 ${GL_LIBS})
