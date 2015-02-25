@@ -1,3 +1,4 @@
 * Setup OpenGL error reporting.
+* setup precompiled headers
 * make application class, make screen blue
-* draw some pretty triangles.
+* draw some pretty triangles using shaders!
