@@ -15,8 +15,14 @@
 #include <cstdio>
 #include <cstdlib>
 
+//  STL.
+
+#include <string>
+
+
 /*
   Common utility functions:
  */
 #include "glutil.h"
 #include "log.h"
+#include "str.h"

@@ -1,5 +1,6 @@
 #include "application.h"
 
+using namespace std;
 
 void Application::Start() {
 
@@ -51,6 +52,7 @@ void Application::SetupOpenGL() {
     glfwMakeContextCurrent (window);
 
 
+
     // start GLEW extension handler
     glewExperimental = GL_TRUE;
 //    glewInit ();
@@ -60,13 +62,24 @@ void Application::SetupOpenGL() {
     if (GLEW_OK != err)
     {
 	/* Problem: glewInit failed, something is seriously wrong. */
-	LOG_E( "glewInit failed: %s", glewGetErrorString(err));
+
+	//	const string s = std::string(reinterpret_cast<const char*> (glewGetErrorString(err)));
+
+	LOG_E("glewInit failed:" +tos(glewGetErrorString(err)));
+
+	LOG_E("hello world");
+
     }
     ClearOpenGLError();
 
-    LOG_I( "GL  VENDOR: %s", glGetString( GL_VENDOR ) );
-    LOG_I( "   VERSION: %s\n", glGetString( GL_VERSION ) );
-    LOG_I( "  RENDERER: %s\n", glGetString( GL_RENDERER ) );
+
+    setupGLDebugMessages();
+
+//    string se = "GL  VENDOR:" + tos(glGetString( GL_VENDOR) );
+
+    LOG_I( "GL  VENDOR:" + tos(glGetString( GL_VENDOR) ) );
+    LOG_I( "   VERSION:" + tos(glGetString( GL_VERSION) ) );
+    LOG_I( "  RENDERER:" + tos(glGetString( GL_RENDERER) ) );
 }
 
 void Application::SetViewport() {

@@ -28,3 +28,5 @@ inline void ClearOpenGLError() {
 #else
     #define GL_C(stmt) stmt
 #endif
+
+void setupGLDebugMessages();
