@@ -19,8 +19,5 @@ public:
     long GetFileSize();
     std::string GetFileContents();
 
-    static std::string GetFileContents(const std::string& filename);
-
-
 
 };

@@ -43,20 +43,13 @@ long File::GetFileSize() {
 }
 
 string File::GetFileContents() {
+
     long fileSize = this->GetFileSize();
 
     char* buffer = (char *)malloc(fileSize * sizeof(char));
     fread(buffer, sizeof(char), (size_t)fileSize, fp);
-    string str(buffer);
+    string str(buffer, fileSize);
     free(buffer);
 
     return str;
-}
-
-string File::GetFileContents(const std::string& filename) {
-    File f;
-    f.Open(filename, "r");
-    string contents = f.GetFileContents();
-    f.Close();
-    return contents;
 }
