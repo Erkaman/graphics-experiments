@@ -13,6 +13,7 @@ private:
 public:
     File() {}
 
+
     int Open(const std::string& filename, const std::string& mode);
     int Close();
 
