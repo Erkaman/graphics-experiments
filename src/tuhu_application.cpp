@@ -1,30 +1,30 @@
 #include "tuhu_application.h"
 #include "gl/shader/shader_program.h"
 #include "gl/vbo.h"
+#include "gl/vao.h"
 
 #include "fileutil.h"
 
 using namespace std;
 
+
+TuhuApplication::TuhuApplication() {
+    shader = nullptr;
+}
+
+TuhuApplication::~TuhuApplication() {
+}
+
 void TuhuApplication::Init() {
 
-/*    string s = GetFileContents("hello");
+    VAO().Bind();
 
-    LOG_I("LEN:" + tos(s.length()));
-    LOG_I("size:" + tos(s.length()));
+    shader = make_unique<ShaderProgram>("shader/simple");
 
-    LOG_I("file content:" + s);
-    exit(1);
-*/
-
-
-
-    ShaderProgram shader("shader/font_render");
-
-//    UniformLocationStore uls(0);
-
+//    positionsBuffer = createPositionVBO(3);
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
+    GL_C(glDisable(GL_CULL_FACE));
 }
 
 void TuhuApplication::Render() {
@@ -35,4 +35,9 @@ void TuhuApplication::Render() {
 }
 
 void TuhuApplication::Update() {
+}
+
+void ShaderProgramDeleter::operator()(ShaderProgram *p)
+{
+    delete p;
 }
