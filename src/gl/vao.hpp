@@ -1,6 +1,6 @@
 #pragma once
 
-#include "precomp.h"
+#include "precomp.hpp"
 
 class VAO {
 

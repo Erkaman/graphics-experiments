@@ -1,6 +1,6 @@
 #pragma once
 
-#include "file.h"
+#include "file.hpp"
 
 std::string GetFileContents(const std::string& filename);
 

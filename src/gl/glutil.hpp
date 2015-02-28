@@ -1,6 +1,6 @@
 #pragma once
 
-#include "precomp.h"
+#include "precomp.hpp"
 
 
 inline void CheckOpenGLError(const char* stmt, const char* fname, int line)

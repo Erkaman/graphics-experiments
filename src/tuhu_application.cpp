@@ -1,9 +1,9 @@
-#include "tuhu_application.h"
-#include "gl/shader/shader_program.h"
-#include "gl/vbo.h"
-#include "gl/vao.h"
+#include "tuhu_application.hpp"
+#include "gl/shader/shader_program.hpp"
+#include "gl/vbo.hpp"
+#include "gl/vao.hpp"
 
-#include "fileutil.h"
+#include "fileutil.hpp"
 
 using namespace std;
 

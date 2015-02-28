@@ -1,6 +1,6 @@
 #pragma once
 
-#include "precomp.h"
+#include "precomp.hpp"
 
 /**
  * Creates a store that stores all locations of all uniforms in a shader program.

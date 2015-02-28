@@ -25,7 +25,7 @@ endif()
 #SET(SRC main.cpp)
 file(GLOB SRC src/*.cpp src/gl/shader/*.cpp src/gl/*.cpp deps/src/glew/*.c )
 
-ADD_EXECUTABLE(game ${SRC} ${pch_source} src/precomp.h)
+ADD_EXECUTABLE(game ${SRC} ${pch_source} src/precomp.hpp)
 
 add_precompiled_header(game src/precomp.h)
 

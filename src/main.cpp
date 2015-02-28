@@ -1,6 +1,6 @@
-#include "precomp.h"
+#include "precomp.hpp"
 
-#include "tuhu_application.h"
+#include "tuhu_application.hpp"
 
 int main () {
 

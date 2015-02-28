@@ -1,7 +1,7 @@
 #pragma once
 
-#include "application.h"
-#include "gl/vbo.h"
+#include "application.hpp"
+#include "gl/vbo.hpp"
 
 class ShaderProgram;
 struct ShaderProgramDeleter

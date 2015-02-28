@@ -1,6 +1,6 @@
 #pragma once
 
-#include "precomp.h"
+#include "precomp.hpp"
 
 // this file contains string utility functions.
 

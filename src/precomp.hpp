@@ -33,6 +33,6 @@ std::unique_ptr<T> make_unique(Args&&... args)
 /*
   Common utility functions:
  */
-#include "gl/glutil.h"
-#include "log.h"
-#include "str.h"
+#include "gl/glutil.hpp"
+#include "log.hpp"
+#include "str.hpp"

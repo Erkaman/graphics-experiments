@@ -1,7 +1,7 @@
-#include "shader_program.h"
+#include "shader_program.hpp"
 
-#include "uniform_location_store.h"
-#include "shader_program_builder.h"
+#include "uniform_location_store.hpp"
+#include "shader_program_builder.hpp"
 
 using namespace std;
 

@@ -1,4 +1,4 @@
-#include "vbo.h"
+#include "vbo.hpp"
 
 VBO createPositionVBO(GLint numComponents) {
     VBO positionBuffer;

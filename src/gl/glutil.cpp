@@ -1,4 +1,4 @@
-#include "glutil.h"
+#include "glutil.hpp"
 
 using namespace std;
 
