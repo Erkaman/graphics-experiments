@@ -13,12 +13,13 @@ private:
     GLint numberOfVertexAttribComponents;
     GLenum usage;
 
+public:
     VBO() {
-	glGenBuffers(1, &buffer);
+	GL_C(glGenBuffers(1, &buffer));
     }
 
     void Dispose() {
-	glDeleteBuffers(1, &buffer);
+	GL_C(glDeleteBuffers(1, &buffer));
     }
 
     void SetVertexAttribIndex(GLuint vertexAttribIndex) {
@@ -34,26 +35,25 @@ private:
     }
 
     void SetBufferData(GLsizeiptr size, const GLvoid* data) {
-        glBufferData(target,size, data, usage);
+        GL_C(glBufferData(target,size, data, usage));
     }
 
     void EnableVertexAttrib() {
-        glEnableVertexAttribArray(vertexAttribIndex);
-        glVertexAttribPointer(vertexAttribIndex, this->numberOfVertexAttribComponents, this->type, false, 0, 0);
+        GL_C(glEnableVertexAttribArray(vertexAttribIndex));
+        GL_C(glVertexAttribPointer(vertexAttribIndex, this->numberOfVertexAttribComponents, this->type, false, 0, 0));
     }
 
     void disableVertexAttrib() {
-        glDisableVertexAttribArray(vertexAttribIndex);
+        GL_C(glDisableVertexAttribArray(vertexAttribIndex));
     }
 
     void Bind() {
-        glBindBuffer(this->target, this->buffer);
+        GL_C(glBindBuffer(this->target, this->buffer));
     }
 
     void Unbind() {
-        glBindBuffer(target, 0);
+        GL_C(glBindBuffer(target, 0));
     }
-
 
     void SetType(GLenum type) {
         this->type = type;
@@ -63,3 +63,8 @@ private:
         this->usage = usage;
     }
 };
+
+VBO createPositionVBO(GLint numComponents);
+VBO createIndexVBO();
+VBO createTexCoordVBO(GLint numberOfComponents);
+VBO createNormalVBO();
