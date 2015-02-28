@@ -2,8 +2,11 @@
 
 using namespace std;
 
-void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSeverity, GLsizei /*aLength*/, GLchar const* aMessage, GLvoid* )
+void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSeverity, GLsizei /*aLength*/, const GLchar* aMessage, void* )
 {
+
+
+
     // source string
     string srcStr = nullptr;
     switch (aSource) {
@@ -65,7 +68,6 @@ void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSe
 
 void setupGLDebugMessages()
 {
-
     /* Make sure that we support this extension before attempting to do any-
      * thing with it...
      */
@@ -79,8 +81,9 @@ void setupGLDebugMessages()
      * messages to begin with.
      */
     //glDebugMessageCallbackARB( &handle_debug_message_, 0 );
-    glDebugMessageCallback((GLDEBUGPROC)handle_debug_message_, 0);
-    glDebugMessageControlARB( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 0, true );
+    GL_C(glDebugMessageCallbackARB((GLDEBUGPROC)&handle_debug_message_, nullptr));
+
+    GL_C(glDebugMessageControlARB( GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 0, true ));
 
     /* Enable synchronous debug output; this causes the callback to be called
      * immediately on error, usually in the actual gl-function where the error

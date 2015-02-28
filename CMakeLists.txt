@@ -9,7 +9,7 @@ PROJECT(game)
 if(MSVC)
 else()
 ADD_DEFINITIONS(-Wall -pedantic -Wno-deprecated -fno-exceptions -fno-rtti)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11  ")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
 endif()
 
 ######################################
@@ -48,6 +48,10 @@ IF(APPLE)
     "${COCOA_FRAMEWORK}"
     "${CORE_VIDEO_FRAMEWORK}"
     "${IOKIT_FRAMEWORK}")
+ELSEIF(UNIX)
+  LINK_DIRECTORIES("deps/libs/linux")
+  find_package(X11 REQUIRED)
+  list(APPEND game_libs "${X11_X11_LIB}" "${RT_LIBRARY}" "${X11_Xrandr_LIB}" "${X11_Xinput_LIB}" "${X11_Xcursor_LIB}" "${X11_Xinerama_LIB}")
 
 ENDIF()
 

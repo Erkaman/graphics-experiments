@@ -30,3 +30,5 @@ inline void ClearOpenGLError() {
 #endif
 
 void setupGLDebugMessages();
+
+
