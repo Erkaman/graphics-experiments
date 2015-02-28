@@ -3,7 +3,7 @@
 ######################################
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
-PROJECT(game CXX)
+PROJECT(game)
 
 # COMPILER SETTINGS.
 if(MSVC)
