@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../precomp.h"
+#include "precomp.h"
 
 //#include "uniform_location_store.h"
 

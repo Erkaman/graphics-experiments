@@ -1,5 +1,5 @@
 #include "shader_program_builder.h"
-#include "../fileutil.h"
+#include "fileutil.h"
 
 using namespace std;
 
