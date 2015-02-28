@@ -64,7 +64,7 @@ public:
     }
 };
 
-VBO createPositionVBO(GLint numComponents);
-VBO createIndexVBO();
-VBO createTexCoordVBO(GLint numberOfComponents);
-VBO createNormalVBO();
+VBO* createPositionVBO(GLint numComponents);
+VBO* createIndexVBO();
+VBO* createTexCoordVBO(GLint numberOfComponents);
+VBO* createNormalVBO();

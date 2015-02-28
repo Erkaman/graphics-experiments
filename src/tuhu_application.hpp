@@ -1,20 +1,19 @@
 #pragma once
 
 #include "application.hpp"
-#include "gl/vbo.hpp"
 
 class ShaderProgram;
-struct ShaderProgramDeleter
-{
-    void operator()(ShaderProgram *p);
-    };
+struct ShaderProgramDeleter{void operator()(ShaderProgram *p);};
+
+class VBO;
+struct VBODeleter{void operator()(VBO *p);};
 
 class TuhuApplication : public Application{
 
 private:
 
     std::unique_ptr<ShaderProgram> shader;
-//    VBO positionsBuffer;
+    std::unique_ptr<VBO> positionsBuffer;
 
 public:
 
