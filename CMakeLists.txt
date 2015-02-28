@@ -3,7 +3,7 @@
 ######################################
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
-PROJECT(game)
+PROJECT(game CXX)
 
 # COMPILER SETTINGS.
 if(MSVC)
@@ -16,18 +16,18 @@ endif()
 #### SET SOURCE FILES.
 ######################################
 
-include(cmake/PrecompiledHeader.cmake)
+#include(cmake/PrecompiledHeader.cmake)
 
-if(MSVC)
-  set(pch_source test-pch.cpp)
-endif()
+#if(MSVC)
+#  set(pch_source test-pch.cpp)
+#endif()
 
 #SET(SRC main.cpp)
 file(GLOB SRC src/*.cpp src/gl/shader/*.cpp src/gl/*.cpp deps/src/glew/*.c )
 
-ADD_EXECUTABLE(game ${SRC} ${pch_source} src/precomp.hpp)
+ADD_EXECUTABLE(game ${SRC} ${pch_source})
 
-add_precompiled_header(game src/precomp.hpp)
+#add_precompiled_header(game src/precomp.hpp)
 
 ######################################
 ############ ADD  LIBRARIES
