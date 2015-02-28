@@ -34,10 +34,14 @@ ADD_EXECUTABLE(game ${SRC} ${pch_source})
 ######################################
 
 FIND_PACKAGE(OpenGL)
-
 SET(GL_LIBS ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
 
 
 include_directories("deps/include" "src" "src/gl" "src/gl/shader")
-LINK_DIRECTORIES("deps/libs")
-TARGET_LINK_LIBRARIES(game glfw3.3.1 ${GL_LIBS})
+
+IF(APPLE)
+  LINK_DIRECTORIES("deps/libs/mac")
+ENDIF()
+
+
+TARGET_LINK_LIBRARIES(game glfw3 ${GL_LIBS})
