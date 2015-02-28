@@ -1,5 +1,6 @@
 #include "tuhu_application.h"
 #include "gl/shader/shader_program.h"
+#include "gl/vbo.h"
 
 #include "fileutil.h"
 
