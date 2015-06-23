@@ -14,7 +14,7 @@ std::unique_ptr<T> make_unique(Args&&... args)
 // TOString
 std::string tos(const char* cstr);
 std::string tos(const unsigned char* cstr);
-std::string tos(int i);
+std::string tos(const int i);
 
 #include "log.hpp"
 

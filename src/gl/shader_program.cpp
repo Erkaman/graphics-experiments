@@ -29,7 +29,7 @@ void ShaderProgram::CompileShaderProgram(const string& vertexShaderPath, const s
 }
 
 
-inline void ShaderProgram::Bind() {
+void ShaderProgram::Bind() {
     if(alreadyBoundProgram)
 	return;
 
@@ -38,7 +38,7 @@ inline void ShaderProgram::Bind() {
     alreadyBoundProgram = true;
 }
 
-inline void ShaderProgram::Unbind() {
+void ShaderProgram::Unbind() {
     if(!shaderProgram) {
 	return;
     }
@@ -47,7 +47,7 @@ inline void ShaderProgram::Unbind() {
     alreadyBoundProgram = false;
 }
 
-inline void ShaderProgram::Dispose() {
+void ShaderProgram::Dispose() {
     glDeleteProgram(alreadyBoundProgram);
 }
 

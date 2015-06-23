@@ -36,11 +36,11 @@ public:
     ShaderProgram(const std::string& shaderName);
     ~ShaderProgram();
 
-    inline void Bind();
+    void Bind();
 
-    inline void Unbind();
+    void Unbind();
 
-    inline void Dispose();
+    void Dispose();
 
 
 };

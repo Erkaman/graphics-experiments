@@ -26,7 +26,6 @@ UniformLocationStore::UniformLocationStore(GLuint shaderProgram) {
     // the type of the returned uniform.
     GLenum type;
 
-
     for(int i = 0; i < numActiveUniforms; ++i) {
 	GL_C(glGetActiveUniform(shaderProgram, i, 256, &nameLength,
 			   &uniformSize,

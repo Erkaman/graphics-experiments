@@ -6,6 +6,7 @@
 
 #include "file.hpp"
 
+#include "math/vector3f.hpp"
 
 
 using namespace std;
@@ -27,15 +28,44 @@ void TuhuApplication::Init() {
 
     positionsBuffer = unique_ptr<VBO>(createPositionVBO(3));
 
+    vector<Vector3f> vertices;
+
+    vertices.push_back(Vector3f(0.0f,0.5f,0.0f));
+    vertices.push_back(Vector3f(-0.5f,-0.5f,0.0f));
+    vertices.push_back(Vector3f(0.5f,-0.5f,0.0f));
+
+    positionsBuffer->Bind();
+    positionsBuffer->SetBufferData(vertices.size()*4*3, &vertices[0]);
+    positionsBuffer->Unbind();
+
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
     GL_C(glDisable(GL_CULL_FACE));
+
+    Vector3f a(1,2,3);
+    Vector3f b(4);
+
+    LOG_I(tos("vector") + std::string(a+b) );
 }
 
 void TuhuApplication::Render() {
-
     SetViewport();
     GL_C(glClearColor(0.0f, 0.0f, 1.0f, 1.0f));
     GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+
+    shader->Bind();
+
+    positionsBuffer->Bind();
+    positionsBuffer->EnableVertexAttrib();
+    positionsBuffer->Unbind();
+
+    GL_C(glDrawArrays( GL_TRIANGLES, 0, 3 ));
+
+    positionsBuffer->Bind();
+    positionsBuffer->DisableVertexAttrib();
+    positionsBuffer->Unbind();
+
+    shader->Unbind();
 }
 
 void TuhuApplication::Update() {}

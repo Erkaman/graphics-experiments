@@ -34,10 +34,10 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const
 
     attach();
 
-    bindAttribLocation(0, "positionIn"); // vertex attribute "position" will have index 0
-    bindAttribLocation(2, "texCoordIn"); //vertex attribute "texCoord" will have index 2
-    bindAttribLocation(1, "normalIn");//vertex attribute "normal" will have index 1
-    bindAttribLocation(3, "colorIn");
+    bindAttribLocation(VBO_POSITION_ATTRIB_INDEX, "positionIn"); // vertex attribute "position" will have index 0
+    bindAttribLocation(VBO_TEX_COORD_ATTRIB_INDEX, "texCoordIn"); //vertex attribute "texCoord" will have index 2
+    bindAttribLocation(VBO_NORMAL_ATTRIB_INDEX, "normalIn");//vertex attribute "normal" will have index 1
+    bindAttribLocation(VBO_COLOR_ATTRIB_INDEX, "colorIn");
 
     link();
 

@@ -24,6 +24,4 @@ public:
     void Init() override;
     void Render() override;
     void Update() override;
-
-
 };

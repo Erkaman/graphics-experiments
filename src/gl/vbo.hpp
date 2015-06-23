@@ -2,6 +2,7 @@
 
 #include "gl_common.hpp"
 
+
 class VBO {
 
 private:
@@ -26,26 +27,17 @@ public:
         this->vertexAttribIndex = vertexAttribIndex;
     }
 
-    void SetNumberOfVertexAttribComponents(GLint numberOfVertexAttribComponents) {
-        this->numberOfVertexAttribComponents = numberOfVertexAttribComponents;
-    }
+    void SetNumberOfVertexAttribComponents(GLint numberOfVertexAttribComponents);
 
     void SetTarget(GLenum target) {
         this->target = target;
     }
 
-    void SetBufferData(GLsizeiptr size, const GLvoid* data) {
-        GL_C(glBufferData(target,size, data, usage));
-    }
+    void SetBufferData(GLsizeiptr size, const GLvoid* data);
 
-    void EnableVertexAttrib() {
-        GL_C(glEnableVertexAttribArray(vertexAttribIndex));
-        GL_C(glVertexAttribPointer(vertexAttribIndex, this->numberOfVertexAttribComponents, this->type, false, 0, 0));
-    }
+    void EnableVertexAttrib();
 
-    void disableVertexAttrib() {
-        GL_C(glDisableVertexAttribArray(vertexAttribIndex));
-    }
+    void DisableVertexAttrib();
 
     void Bind() {
         GL_C(glBindBuffer(this->target, this->buffer));
