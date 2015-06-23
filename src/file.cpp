@@ -2,6 +2,7 @@
 
 #include <errno.h>
 #include "log.hpp"
+#include "common.hpp"
 
 using namespace std;
 
@@ -9,38 +10,29 @@ const char * getError() {
     return strerror(errno);
 }
 
-int File::Open(const std::string& filename, const std::string& mode) {
+File::File(const std::string& filename, const std::string& mode):m_fp(fopen(filename.c_str(), mode.c_str())), m_filename(filename) {
 
-    this->filename = filename;
-
-    fp = fopen(filename.c_str(), mode.c_str());
-    if(!fp) {
-	LOG_E("could not open file " + filename + ":" + getError());
-	return -1;
+    if(!m_fp) {
+	Error("could not open file " + m_filename + ":" + getError());
     }
-
-    return 0;
 }
 
-int File::Close() {
-    if(fp) {
-	if(fclose(fp) == EOF) {
-	    LOG_E("could not close file " + this->filename + ":" + getError());
-	    return -1;
+File::~File() {
+    if(m_fp) {
+	if(fclose(m_fp) == EOF) {
+	    Error("could not close file " + m_filename + ":" + getError());
 	}
     }
-    return 0;
-
 }
 
 long File::GetFileSize() {
 
     // seek to end of file.
-    fseek(fp, 0L, SEEK_END);
-    long size = ftell(fp);
+    fseek(m_fp, 0L, SEEK_END);
+    long size = ftell(m_fp);
 
     // reset file pointer
-    fseek(fp, 0L, SEEK_SET);
+    fseek(m_fp, 0L, SEEK_SET);
 
     return size;
 }
@@ -50,9 +42,27 @@ string File::GetFileContents() {
     long fileSize = this->GetFileSize();
 
     char* buffer = (char *)malloc(fileSize * sizeof(char));
-    fread(buffer, sizeof(char), (size_t)fileSize, fp);
+    fread(buffer, sizeof(char), (size_t)fileSize, m_fp);
     string str(buffer, fileSize);
     free(buffer);
 
     return str;
+}
+
+
+string File::GetFileContents(const string& filename) {
+    File f(filename, "r");
+    string contents = f.GetFileContents();
+    return contents;
+}
+
+bool File::Exists(const std::string& filename) {
+    FILE* fp = fopen(filename.c_str(), "r");
+    if (fp != NULL)
+    {
+	fclose(fp);
+	return true;
+    } else {
+	return false;
+    }
 }

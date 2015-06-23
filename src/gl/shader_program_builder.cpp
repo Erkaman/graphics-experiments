@@ -1,5 +1,5 @@
 #include "shader_program_builder.hpp"
-#include "fileutil.hpp"
+#include "file.hpp"
 
 #include "common.hpp"
 #include <vector>
@@ -45,7 +45,7 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const
 
 GLuint ShaderProgramBuilder::buildAndCompileShader(const string& shaderPath, GLenum shaderType){
 
-    string shaderContents = "#version 150\n"  +GetFileContents(shaderPath) + "\0";
+    string shaderContents = "#version 150\n"  + File::GetFileContents(shaderPath) + "\0";
 
     return createShaderFromString(shaderContents, shaderType, shaderPath);
 }

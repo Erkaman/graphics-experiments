@@ -2,24 +2,23 @@
 
 #include <string>
 #include <stdio.h>
+#include <string>
 
 class File {
 
 private:
 
     // file pointer.
-    FILE* fp;
-    std::string filename;
+    FILE* m_fp;
+    std::string m_filename;
 
 public:
-    File() {}
-
-
-    int Open(const std::string& filename, const std::string& mode);
-    int Close();
+    File(const std::string& filename, const std::string& mode);
+    ~File();
 
     long GetFileSize();
     std::string GetFileContents();
 
-
+    static std::string GetFileContents(const std::string& filename);
+    static bool Exists(const std::string& filename);
 };

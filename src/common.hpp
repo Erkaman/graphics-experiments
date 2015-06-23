@@ -16,6 +16,6 @@ std::string tos(const char* cstr);
 std::string tos(const unsigned char* cstr);
 std::string tos(int i);
 
-
-
 #include "log.hpp"
+
+void Error(const std::string& errorStr);

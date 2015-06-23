@@ -11,3 +11,8 @@ std::string tos(const unsigned char* cstr) {
 std::string tos(int i) {
     return std::to_string(i);
 }
+
+void Error(const std::string& errorStr) {
+    LOG_E(errorStr);
+    exit(1);
+}
