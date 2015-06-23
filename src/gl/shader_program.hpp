@@ -1,8 +1,8 @@
 #pragma once
 
-#include "precomp.hpp"
-
-//#include "uniform_location_store.h"
+#include <vector>
+#include <string>
+#include "gl_common.hpp"
 
 class UniformLocationStore;
 struct UniformLocationStoreDeleter

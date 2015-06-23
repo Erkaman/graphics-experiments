@@ -1,6 +1,7 @@
 #pragma once
 
-#include "precomp.hpp"
+#include <map>
+#include "gl_common.hpp"
 
 /**
  * Creates a store that stores all locations of all uniforms in a shader program.

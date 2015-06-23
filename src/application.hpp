@@ -1,6 +1,6 @@
 #pragma once
 
-#include "precomp.hpp"
+struct GLFWwindow;
 
 class Application {
 

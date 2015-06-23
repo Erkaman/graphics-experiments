@@ -5,6 +5,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 PROJECT(game)
 
+SET(CMAKE_BUILD_TYPE "Debug")
+
 # COMPILER SETTINGS.
 if(MSVC)
 else()
@@ -15,12 +17,6 @@ endif()
 ######################################
 #### SET SOURCE FILES.
 ######################################
-
-#include(cmake/PrecompiledHeader.cmake)
-
-#if(MSVC)
-#  set(pch_source test-pch.cpp)
-#endif()
 
 #SET(SRC main.cpp)
 file(GLOB SRC src/*.cpp src/gl/shader/*.cpp src/gl/*.cpp deps/src/glew/*.c )
@@ -55,12 +51,7 @@ ELSEIF(UNIX)
 
 ENDIF()
 
-ADD_EXECUTABLE(game ${SRC} ${pch_source})
-
-#add_precompiled_header(game src/precomp.hpp)
-
-
-
+ADD_EXECUTABLE(game ${SRC})
 
 include_directories("deps/include" "src" "src/gl" "src/gl/shader")
 

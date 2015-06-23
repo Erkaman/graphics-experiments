@@ -1,5 +1,8 @@
 #include "file.hpp"
 
+#include <errno.h>
+#include "log.hpp"
+
 using namespace std;
 
 const char * getError() {

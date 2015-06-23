@@ -1,5 +1,13 @@
 #include "application.hpp"
 
+#include "common.hpp"
+
+#include "gl/gl_common.hpp"
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
 using namespace std;
 
 void Application::Start() {

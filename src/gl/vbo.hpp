@@ -1,6 +1,6 @@
 #pragma once
 
-#include "precomp.hpp"
+#include "gl_common.hpp"
 
 class VBO {
 

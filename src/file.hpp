@@ -1,6 +1,7 @@
 #pragma once
 
-#include "precomp.hpp"
+#include <string>
+#include <stdio.h>
 
 class File {
 

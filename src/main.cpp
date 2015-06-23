@@ -1,5 +1,3 @@
-#include "precomp.hpp"
-
 #include "tuhu_application.hpp"
 
 int main () {

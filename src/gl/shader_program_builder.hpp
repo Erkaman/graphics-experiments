@@ -1,6 +1,7 @@
 #pragma once
 
-#include "precomp.hpp"
+#include "gl_common.hpp"
+#include <string>
 
 class ShaderProgramBuilder {
 

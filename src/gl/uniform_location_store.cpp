@@ -1,4 +1,5 @@
 #include "uniform_location_store.hpp"
+#include "common.hpp"
 
 using namespace std;
 

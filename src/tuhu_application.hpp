@@ -1,6 +1,7 @@
 #pragma once
 
 #include "application.hpp"
+#include "common.hpp"
 
 class ShaderProgram;
 struct ShaderProgramDeleter{void operator()(ShaderProgram *p);};

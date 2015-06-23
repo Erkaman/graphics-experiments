@@ -1,6 +1,10 @@
 #include "shader_program_builder.hpp"
 #include "fileutil.hpp"
 
+#include "common.hpp"
+#include <vector>
+#include "str.hpp"
+
 using namespace std;
 
 GLuint createShaderFromString(const string& str, GLenum shaderType, const string& shaderPath);

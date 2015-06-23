@@ -1,10 +1,12 @@
 #include "tuhu_application.hpp"
-#include "gl/shader/shader_program.hpp"
+#include "gl/shader_program.hpp"
 #include "gl/vbo.hpp"
 #include "gl/vao.hpp"
 #include "gl/vbo.hpp"
 
 #include "fileutil.hpp"
+
+
 
 using namespace std;
 

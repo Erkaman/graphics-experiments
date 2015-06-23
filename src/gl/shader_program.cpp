@@ -3,6 +3,8 @@
 #include "uniform_location_store.hpp"
 #include "shader_program_builder.hpp"
 
+#include "common.hpp"
+
 using namespace std;
 
 ShaderProgram::~ShaderProgram() {}

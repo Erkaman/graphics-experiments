@@ -1,4 +1,7 @@
-#include "glutil.hpp"
+#include "gl_util.hpp"
+
+#include "common.hpp"
+#include "gl_common.hpp"
 
 using namespace std;
 
@@ -102,4 +105,21 @@ void setupGLDebugMessages()
     glDebugMessageControlARB( GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW_ARB, 0, 0, false );
 
     ClearOpenGLError();
+}
+
+
+void CheckOpenGLError(const char* stmt, const char* fname, int line)
+{
+    GLenum err = glGetError();
+    const GLubyte* sError = gluErrorString(err);
+
+    if (err != GL_NO_ERROR)
+    {
+        printf("OpenGL error %08x, at %s:%i - for %s. Error Message:%s\n", err, fname, line, stmt, sError);
+	exit(1);
+    }
+}
+
+void ClearOpenGLError() {
+    while(glGetError() != GL_NO_ERROR) {}
 }
