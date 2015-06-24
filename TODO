@@ -1,3 +1,4 @@
 * draw some pretty triangles using shaders!
-* make sure we use data types of same sizes on all operating systems. 
+* make sure we use data types of same sizes on all operating systems.
+* maxmimum warnings on visual studio.
 * make sure you can build on linux and windows.

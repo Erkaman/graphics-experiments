@@ -15,7 +15,29 @@ MESSAGE(hi)
 ADD_DEFINITIONS(/GR- /MTd)
 
 else()
-ADD_DEFINITIONS(-Wall -pedantic -Wno-deprecated -fno-exceptions -fno-rtti)
+ADD_DEFINITIONS( -pedantic -Wno-deprecated -fno-exceptions -fno-rtti -Waddress
+-Warray-bounds
+-Wc++11-compat
+-Wchar-subscripts
+-Wcomment
+-Wformat
+-Wnonnull
+-Wparentheses
+-Wpointer-sign
+-Wreorder
+-Wreturn-type
+-Wsequence-point
+-Wsign-compare
+-Wstrict-aliasing
+-Wstrict-overflow=1
+-Wswitch
+-Wtrigraphs
+-Wuninitialized
+-Wunused-function
+-Wunused-label
+-Wunused-value
+-Wunused-variable
+-Wvolatile-register-var)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
 endif()
 
@@ -54,7 +76,7 @@ ELSEIF(UNIX)
   list(APPEND game_libs "${X11_X11_LIB}" "${RT_LIBRARY}" "${X11_Xrandr_LIB}" "${X11_Xinput_LIB}" "${X11_Xcursor_LIB}" "${X11_Xinerama_LIB}")
 ELSEIF(WIN32)
   MESSAGE(linking)
-  LINK_DIRECTORIES("deps/libs/win32")  
+  LINK_DIRECTORIES("deps/libs/win32")
 ENDIF()
 
 ADD_EXECUTABLE(game ${SRC})
