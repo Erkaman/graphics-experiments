@@ -40,11 +40,6 @@ void TuhuApplication::Init() {
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
     GL_C(glDisable(GL_CULL_FACE));
-
-    Vector3f a(1,2,3);
-    Vector3f b(4);
-
-    LOG_I(tos("vector") + std::string(a+b) );
 }
 
 void TuhuApplication::Render() {
