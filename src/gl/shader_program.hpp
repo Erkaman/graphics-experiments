@@ -5,6 +5,7 @@
 #include <memory>
 #include "gl_common.hpp"
 #include "math/color.hpp"
+#include "math/matrix4f.hpp"
 
 class UniformLocationStore;
 struct UniformLocationStoreDeleter
@@ -47,5 +48,6 @@ public:
     void Dispose();
 
     void SetUniform(const std::string& uniformName, const Color& color);
+    void SetUniform(const std::string& uniformName, const Matrix4f& matrix);
 
 };

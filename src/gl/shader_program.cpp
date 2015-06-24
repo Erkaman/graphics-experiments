@@ -57,14 +57,12 @@ void UniformLocationStoreDeleter::operator()(UniformLocationStore *p)
 
 
 void ShaderProgram::SetUniform(const std::string& uniformName, const Color& color) {
-
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	glUniform4f(location, color.r, color.g, color.b, color.a);
     } else {
 	SetUniformWarn(uniformName);
     }
-
 }
 
 void ShaderProgram::SetUniformWarn(const std::string& uniformName) {
@@ -77,4 +75,14 @@ void ShaderProgram::SetUniformWarn(const std::string& uniformName) {
 
     LOG_W("Uniform %s could not be found(the GLSL compiler may have optimized it away)", uniformName.c_str() );
     m_warnedUniforms.push_back(uniformName);
+}
+
+void ShaderProgram::SetUniform(const std::string& uniformName, const Matrix4f& matrix) {
+    if (m_uniformLocationStore->UniformExists(uniformName)) {
+	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
+	const GLfloat* arr = reinterpret_cast<const GLfloat*>(&matrix);
+	glUniformMatrix4fv(location, 1, true, arr);
+    } else {
+	SetUniformWarn(uniformName);
+    }
 }

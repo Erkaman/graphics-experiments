@@ -8,6 +8,7 @@
 
 #include "math/vector3f.hpp"
 #include "math/color.hpp"
+#include "math/matrix4f.hpp"
 
 
 using namespace std;
@@ -42,14 +43,13 @@ void TuhuApplication::Init() {
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
     GL_C(glDisable(GL_CULL_FACE));
 
-    float f = 2.0f;
-    int i = 4;
 
-    LOG_I("eric");
-    LOG_I("f:%f", f);
-    LOG_I("i:%d", i);
+    /*
+    Matrix4f m;
+    m.setIdentity();
 
-
+    */
+//    LOG_I("mat:\n%s", string(m).c_str());
 }
 
 void TuhuApplication::Render() {
@@ -66,6 +66,10 @@ void TuhuApplication::Render() {
 
     Color c(1.0f, 0.0f, 0.0f);
     shader->SetUniform("color", c);
+
+    Matrix4f m;
+    m.SetTranslation(0.0f,-0.4,0);
+    shader->SetUniform("m", m);
 
     GL_C(glDrawArrays( GL_TRIANGLES, 0, 3 ));
 
