@@ -21,11 +21,29 @@ public:
     Vector3f(const Vector3f& that): x(that.x), y(that.y), z(that.z){ }
 
     friend Vector3f operator+(const Vector3f& v1, const Vector3f& v2);
+    friend Vector3f operator-(const Vector3f& v1, const Vector3f& v2);
     friend bool operator==(const Vector3f& v1, const Vector3f& v2);
     friend bool operator!=(const Vector3f& v1, const Vector3f& v2);
 
+    Vector3f operator-() const {
+	Vector3f v(-x,-y,-z);
+	return v;
+    }
+
     operator std::string() const {
 	return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
+    }
+
+    float length() {
+	return sqrt(x*x + y*y + z*z);
+    }
+
+    void normalize() {
+	const float len = length();
+
+	x /= len;
+	y /= len;
+	z /= len;
     }
 
 
@@ -282,6 +300,10 @@ Vector3f operator+(const Vector3f& v1, const Vector3f& v2) {
 	v1.x+v2.x,
 	v1.y+v2.y,
 	v1.z+v2.z);
+}
+
+Vector3f operator-(const Vector3f& v1, const Vector3f& v2) {
+    return v1 + (-v2);
 }
 
 bool operator==(const Vector3f& v1, const Vector3f& v2) {
