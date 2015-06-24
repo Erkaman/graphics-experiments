@@ -9,7 +9,7 @@
 
 #include "gl_util.hpp"
 
-constexpr int VBO_POSITION_ATTRIB_INDEX = 0;
-constexpr int VBO_TEX_COORD_ATTRIB_INDEX = 2;
-constexpr int VBO_NORMAL_ATTRIB_INDEX = 1;
-constexpr int VBO_COLOR_ATTRIB_INDEX = 3;
+constexpr GLuint VBO_POSITION_ATTRIB_INDEX = 0;
+constexpr GLuint VBO_TEX_COORD_ATTRIB_INDEX = 2;
+constexpr GLuint VBO_NORMAL_ATTRIB_INDEX = 1;
+constexpr GLuint VBO_COLOR_ATTRIB_INDEX = 3;
