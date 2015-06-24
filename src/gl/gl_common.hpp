@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma warning( disable : 4127 )
+
 #ifndef GLEW_STATIC
 #define GLEW_STATIC
 #endif

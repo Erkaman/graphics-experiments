@@ -7,30 +7,30 @@ class VBO {
 
 private:
 
-    GLuint buffer;
-    GLuint vertexAttribIndex;
-    GLenum target;
-    GLenum type;
-    GLint numberOfVertexAttribComponents;
-    GLenum usage;
+    GLuint m_buffer;
+    GLuint m_vertexAttribIndex;
+    GLenum m_target;
+    GLenum m_type;
+    GLint m_numberOfVertexAttribComponents;
+    GLenum m_usage;
 
 public:
     VBO() {
-	GL_C(glGenBuffers(1, &buffer));
+	GL_C(glGenBuffers(1, &m_buffer));
     }
 
     void Dispose() {
-	GL_C(glDeleteBuffers(1, &buffer));
+	GL_C(glDeleteBuffers(1, &m_buffer));
     }
 
     void SetVertexAttribIndex(GLuint vertexAttribIndex) {
-        this->vertexAttribIndex = vertexAttribIndex;
+        m_vertexAttribIndex = vertexAttribIndex;
     }
 
     void SetNumberOfVertexAttribComponents(GLint numberOfVertexAttribComponents);
 
     void SetTarget(GLenum target) {
-        this->target = target;
+        m_target = target;
     }
 
     void SetBufferData(GLsizeiptr size, const GLvoid* data);
@@ -40,19 +40,19 @@ public:
     void DisableVertexAttrib();
 
     void Bind() {
-        GL_C(glBindBuffer(this->target, this->buffer));
+        GL_C(glBindBuffer(m_target, m_buffer));
     }
 
     void Unbind() {
-        GL_C(glBindBuffer(target, 0));
+        GL_C(glBindBuffer(m_target, 0));
     }
 
     void SetType(GLenum type) {
-        this->type = type;
+        m_type = type;
     }
 
     void SetUsage(GLenum usage) {
-        this->usage = usage;
+        m_usage = usage;
     }
 };
 

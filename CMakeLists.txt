@@ -12,7 +12,7 @@ add_definitions(-DGLEW_STATIC)
 # COMPILER SETTINGS.
 if(MSVC)
 MESSAGE(hi)
-ADD_DEFINITIONS(/GR- /MTd)
+ADD_DEFINITIONS(/GR- /MTd /W4)
 
 else()
 ADD_DEFINITIONS( -pedantic -Wno-deprecated -fno-exceptions -fno-rtti -Waddress

@@ -78,8 +78,6 @@ void Application::SetupOpenGL() {
 
 	LOG_E("glewInit failed:%s", glewGetErrorString(err));
 
-	LOG_E("hello world");
-
     }
     ClearOpenGLError();
 

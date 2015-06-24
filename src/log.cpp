@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-char* buffer;
+char* logBuffer;
 
 void Log(const char* logLevel, const char* file, int line, const char* func, const char* logStr ) {
     fprintf(stderr, "%s: %s:%d:%s:%s\n", logLevel, file,
@@ -10,9 +10,9 @@ void Log(const char* logLevel, const char* file, int line, const char* func, con
 }
 
 void LogInit() {
-    buffer = new char[200];
+    logBuffer = new char[200];
 }
 
 void LogDispose() {
-    delete [] buffer;
+    delete [] logBuffer;
 }

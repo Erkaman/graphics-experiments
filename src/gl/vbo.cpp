@@ -55,18 +55,18 @@ VBO* createNormalVBO() {
 }
 
 void VBO::EnableVertexAttrib() {
-    GL_C(glEnableVertexAttribArray(vertexAttribIndex));
-    GL_C(glVertexAttribPointer(vertexAttribIndex, this->numberOfVertexAttribComponents, this->type, false, 0, 0));
+    GL_C(glEnableVertexAttribArray(m_vertexAttribIndex));
+    GL_C(glVertexAttribPointer(m_vertexAttribIndex, m_numberOfVertexAttribComponents, m_type, false, 0, 0));
 }
 
 void VBO::DisableVertexAttrib() {
-    GL_C(glDisableVertexAttribArray(vertexAttribIndex));
+    GL_C(glDisableVertexAttribArray(m_vertexAttribIndex));
 }
 
 void VBO::SetNumberOfVertexAttribComponents(GLint numberOfVertexAttribComponents) {
-    this->numberOfVertexAttribComponents = numberOfVertexAttribComponents;
+    m_numberOfVertexAttribComponents = numberOfVertexAttribComponents;
 }
 
 void VBO::SetBufferData(GLsizeiptr size, const GLvoid* data) {
-    GL_C(glBufferData(target,size, data, usage));
+    GL_C(glBufferData(m_target,size, data, m_usage));
 }
