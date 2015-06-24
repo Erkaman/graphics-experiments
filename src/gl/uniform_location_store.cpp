@@ -9,7 +9,7 @@ UniformLocationStore::~UniformLocationStore() {
 
 }
 
-UniformLocationStore::UniformLocationStore(GLuint shaderProgram) {
+UniformLocationStore::UniformLocationStore(const GLuint shaderProgram) {
     int numActiveUniforms = getActiveUniforms(shaderProgram);
 
     // length of the returned uniform name.
@@ -37,6 +37,7 @@ UniformLocationStore::UniformLocationStore(GLuint shaderProgram) {
 
 	// If the uniform is located in a uniform block, then uniformLocation will be -1.
 	if(uniformLocation != -1) {
+
 	    this->uniformLocationStore[string(nameBuffer)] = uniformLocation;
 	}
     }
@@ -46,16 +47,16 @@ UniformLocationStore::UniformLocationStore(GLuint shaderProgram) {
  *
  * Returns the number of uniforms in a shader program
  */
-int getActiveUniforms(GLuint shaderProgram) {
-
+int getActiveUniforms(const GLuint shaderProgram) {
     GLint result;
     GL_C(glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &result));
     return result;
 }
 
 GLuint UniformLocationStore::GetUniformLocation(const string& uniformName) {
-    if(uniformLocationStore.count(uniformName) == 1) {
-	return uniformLocationStore[uniformName];
-    } else
-	return GL_NONE;
+    return uniformLocationStore[uniformName];
+}
+
+bool UniformLocationStore::UniformExists(const std::string& uniformName) const{
+    return uniformLocationStore.count(uniformName) > 0;
 }

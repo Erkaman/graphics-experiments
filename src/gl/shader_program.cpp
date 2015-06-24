@@ -9,13 +9,13 @@ using namespace std;
 
 ShaderProgram::~ShaderProgram() {}
 
-ShaderProgram::ShaderProgram() {
-    uniformLocationStore = nullptr;
+ShaderProgram::ShaderProgram():m_uniformLocationStore(nullptr) {
+
 }
 
 ShaderProgram::ShaderProgram(const std::string& shaderName){
 
-    this->alreadyBoundProgram = false;
+    m_alreadyBoundProgram = false;
 
     CompileShaderProgram(shaderName + "_vs.glsl", shaderName + "_fs.glsl");
 }
@@ -23,35 +23,58 @@ ShaderProgram::ShaderProgram(const std::string& shaderName){
 void ShaderProgram::CompileShaderProgram(const string& vertexShaderPath, const string& fragmentShaderPath) {
     // link shader program.
     ShaderProgramBuilder shaderBuilder(vertexShaderPath, fragmentShaderPath);
-    shaderProgram = shaderBuilder.getLinkedShaderProgram();
+    m_shaderProgram = shaderBuilder.getLinkedShaderProgram();
 
-    uniformLocationStore = make_unique<UniformLocationStore>(shaderProgram);
+    m_uniformLocationStore = make_unique<UniformLocationStore>(m_shaderProgram);
 }
 
-
 void ShaderProgram::Bind() {
-    if(alreadyBoundProgram)
+    if(m_alreadyBoundProgram)
 	return;
 
-    glUseProgram(shaderProgram);
+    glUseProgram(m_shaderProgram);
 
-    alreadyBoundProgram = true;
+    m_alreadyBoundProgram = true;
 }
 
 void ShaderProgram::Unbind() {
-    if(!shaderProgram) {
+    if(!m_shaderProgram) {
 	return;
     }
 
     glUseProgram(0);
-    alreadyBoundProgram = false;
+    m_alreadyBoundProgram = false;
 }
 
 void ShaderProgram::Dispose() {
-    glDeleteProgram(alreadyBoundProgram);
+    glDeleteProgram(m_alreadyBoundProgram);
 }
 
 void UniformLocationStoreDeleter::operator()(UniformLocationStore *p)
 {
     delete p;
+}
+
+
+void ShaderProgram::SetUniform(const std::string& uniformName, const Color& color) {
+
+    if (m_uniformLocationStore->UniformExists(uniformName)) {
+	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
+	glUniform4f(location, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+    } else {
+	SetUniformWarn(uniformName);
+    }
+
+}
+
+void ShaderProgram::SetUniformWarn(const std::string& uniformName) {
+    // we will only issue the warning once for every uniform. Otherwise it will completely spam the log.
+    for(const std::string& warned : m_warnedUniforms) {
+	if(warned == uniformName) {
+	    return;
+	}
+    }
+
+    LOG_W("Uniform %s could not be found(the GLSL compiler may have optimized it away)", uniformName.c_str() );
+    m_warnedUniforms.push_back(uniformName);
 }

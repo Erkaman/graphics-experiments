@@ -20,9 +20,10 @@ private:
 
 public:
 
-    UniformLocationStore(GLuint shaderProgram);
+    UniformLocationStore(const GLuint shaderProgram);
     ~UniformLocationStore();
 
     GLuint GetUniformLocation(const std::string& uniformName);
+    bool UniformExists(const std::string& uniformName)const;
 
 };

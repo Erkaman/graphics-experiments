@@ -7,6 +7,7 @@
 #include "file.hpp"
 
 #include "math/vector3f.hpp"
+#include "math/color.hpp"
 
 
 using namespace std;
@@ -62,6 +63,9 @@ void TuhuApplication::Render() {
     positionsBuffer->Bind();
     positionsBuffer->EnableVertexAttrib();
     positionsBuffer->Unbind();
+
+    Color c(1.0f, 0.0f, 0.0f);
+    shader->SetUniform("color", c);
 
     GL_C(glDrawArrays( GL_TRIANGLES, 0, 3 ));
 
