@@ -5,24 +5,24 @@
 
 class Vector3f {
 
-private:
+public:
 
-    float m_x,m_y,m_z;
+    float x,y,z;
 
 public:
 
-    Vector3f():m_x(0.0f),m_y(0.0f),m_z(0.0f) {  }
+    Vector3f():x(0.0f),y(0.0f),z(0.0f) {  }
 
-    Vector3f(const float value): m_x(value), m_y(value),m_z(value){  }
+    Vector3f(const float value_): x(value_), y(value_),z(value_){  }
 
-    Vector3f(const float x, const float y, const float z): m_x(x),m_y(y),m_z(z){ }
+    Vector3f(const float x_, const float y_, const float z_): x(x_),y(y_),z(z_){ }
 
-    Vector3f(const Vector3f& that): m_x(that.m_x), m_y(that.m_y), m_z(that.m_z){ }
+    Vector3f(const Vector3f& that): x(that.x), y(that.y), z(that.z){ }
 
     friend Vector3f operator+(const Vector3f& v1, const Vector3f& v2);
 
     operator std::string() const {
-	return "(" + std::to_string(m_x) + ", " + std::to_string(m_y) + ", " + std::to_string(m_z) + ")";
+	return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
     }
 
 
@@ -278,7 +278,7 @@ public:
 
 Vector3f operator+(const Vector3f& v1, const Vector3f& v2) {
     return Vector3f(
-	v1.m_x+v2.m_x,
-	v1.m_y+v2.m_y,
-	v1.m_z+v2.m_z);
+	v1.x+v2.x,
+	v1.y+v2.y,
+	v1.z+v2.z);
 }

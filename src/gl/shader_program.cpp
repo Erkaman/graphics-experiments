@@ -60,7 +60,7 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Color& colo
 
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
-	glUniform4f(location, color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+	glUniform4f(location, color.r, color.g, color.b, color.a);
     } else {
 	SetUniformWarn(uniformName);
     }
