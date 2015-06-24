@@ -2,6 +2,7 @@
 
 #include <string>
 #include "common.hpp"
+#include "math_common.hpp"
 
 class Vector3f {
 
@@ -20,6 +21,8 @@ public:
     Vector3f(const Vector3f& that): x(that.x), y(that.y), z(that.z){ }
 
     friend Vector3f operator+(const Vector3f& v1, const Vector3f& v2);
+    friend bool operator==(const Vector3f& v1, const Vector3f& v2);
+    friend bool operator!=(const Vector3f& v1, const Vector3f& v2);
 
     operator std::string() const {
 	return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
@@ -272,13 +275,20 @@ public:
   }
 */
 
-
 };
-
 
 Vector3f operator+(const Vector3f& v1, const Vector3f& v2) {
     return Vector3f(
 	v1.x+v2.x,
 	v1.y+v2.y,
 	v1.z+v2.z);
+}
+
+bool operator==(const Vector3f& v1, const Vector3f& v2) {
+    constexpr static float EPSILON = 0.0001f;
+    return fabs(v1.x - v2.x) <= EPSILON && fabs(v1.y - v2.y) <= EPSILON && fabs(v1.z - v2.z) <= EPSILON;
+}
+
+bool operator!=(const Vector3f& v1, const Vector3f& v2) {
+    return !(v1 == v2);
 }
