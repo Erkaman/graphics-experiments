@@ -46,7 +46,7 @@ endif()
 ######################################
 
 #SET(SRC main.cpp)
-file(GLOB SRC src/*.cpp src/gl/shader/*.cpp src/gl/*.cpp deps/src/glew/*.c )
+file(GLOB SRC src/*.cpp src/gl/shader/*.cpp src/gl/*.cpp src/math/*.cpp deps/src/glew/*.c )
 
 
 ######################################
@@ -80,7 +80,5 @@ ELSEIF(WIN32)
 ENDIF()
 
 ADD_EXECUTABLE(game ${SRC})
-
 include_directories("deps/include" "src" "src/gl" "src/gl/shader")
-
 TARGET_LINK_LIBRARIES(game ${game_libs})
