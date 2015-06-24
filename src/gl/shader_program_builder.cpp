@@ -58,7 +58,7 @@ GLuint createShaderFromString(const string& str, GLenum shaderType, const string
     GL_C(shader =    glCreateShader(shaderType));
 
     if(shader == 0) {
-	LOG_W("Could not create shader of type: " + tos(shaderType));
+	LOG_W("Could not create shader of type %d", shaderType);
 	return -1;
     }
 
@@ -70,7 +70,7 @@ GLuint createShaderFromString(const string& str, GLenum shaderType, const string
 
     if (!getCompileStatus(shader)) {
 	// compilation failed
-	LOG_W("Could not compile shader " + shaderPath + "\n" + formatCompilerErrorOutput(str, shader));
+	LOG_W("Could not compile shader %s\n%s", shaderPath.c_str(), formatCompilerErrorOutput(str, shader).c_str());
 	exit(1);
 
     }
@@ -123,7 +123,7 @@ void ShaderProgramBuilder::link() {
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linkOk);
 
     if (linkOk == GL_FALSE) {
-	LOG_E("Error linking program: " + getLogInfo(shaderProgram));
+	LOG_E("Error linking program: %s", getLogInfo(shaderProgram).c_str());
 	exit(1);
     }
 }

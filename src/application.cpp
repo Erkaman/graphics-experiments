@@ -12,6 +12,8 @@ using namespace std;
 
 void Application::Start() {
 
+    LogInit();
+
     this->SetupOpenGL();
     this->Init();
     this->DoMainLoop();
@@ -34,6 +36,7 @@ void Application::DoMainLoop() {
 
 void Application::Cleanup() {
     glfwTerminate();
+    LogDispose();
 }
 
 
@@ -73,7 +76,7 @@ void Application::SetupOpenGL() {
 
 	//	const string s = std::string(reinterpret_cast<const char*> (glewGetErrorString(err)));
 
-	LOG_E("glewInit failed:" +tos(glewGetErrorString(err)));
+	LOG_E("glewInit failed:%s", glewGetErrorString(err));
 
 	LOG_E("hello world");
 
@@ -84,9 +87,9 @@ void Application::SetupOpenGL() {
 
 //    string se = "GL  VENDOR:" + tos(glGetString( GL_VENDOR) );
 
-    LOG_I( "GL  VENDOR:" + tos(glGetString( GL_VENDOR) ) );
-    LOG_I( "   VERSION:" + tos(glGetString( GL_VERSION) ) );
-    LOG_I( "  RENDERER:" + tos(glGetString( GL_RENDERER) ) );
+    LOG_I( "GL  VENDOR:%s", glGetString( GL_VENDOR) );
+    LOG_I( "   VERSION:%s", glGetString( GL_VERSION ));
+    LOG_I( "  RENDERER:%s", glGetString( GL_RENDERER ) );
 }
 
 void Application::SetViewport() {

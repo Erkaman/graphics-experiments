@@ -40,6 +40,15 @@ void TuhuApplication::Init() {
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
     GL_C(glDisable(GL_CULL_FACE));
+
+    float f = 2.0f;
+    int i = 4;
+
+    LOG_I("eric");
+    LOG_I("f:%f", f);
+    LOG_I("i:%d", i);
+
+
 }
 
 void TuhuApplication::Render() {

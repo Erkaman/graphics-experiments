@@ -1,15 +1,17 @@
 #pragma once
 
-inline void log(const char* logLevel, const char* file, int line, const char* func, const std::string& logStr ) {
-    fprintf(stderr, "%s: %s:%d:%s:%s\n", logLevel, file,
-		 line, func, (logStr.c_str()));
-}
+void Log(const char* logLevel, const char* file, int line, const char* func, const char* logStr );
 
-#define LOG_I(x)							\
-    do {  log("INFO", __FILE__, __LINE__, __func__, (x));  } while (0)
+void LogInit();
+void LogDispose();
 
-#define LOG_E(x)							\
-    do {  log("ERROR", __FILE__, __LINE__, __func__, (x));  } while (0)
+extern char* buffer;
 
-#define LOG_W(x)							\
-    do {  log("INFO", __FILE__, __LINE__, __func__, (x));  } while (0)
+#define LOG_I(...)							\
+    do { sprintf(buffer, __VA_ARGS__) ; Log("INFO", __FILE__, __LINE__, __func__, (buffer));  } while (0)
+
+#define LOG_E(...)							\
+    do { sprintf(buffer, __VA_ARGS__); Log("ERROR", __FILE__, __LINE__, __func__, (buffer)); exit(1); } while (0)
+
+#define LOG_W(...)							\
+    do { sprintf(buffer, __VA_ARGS__); ; Log("WARNING", __FILE__, __LINE__, __func__, (buffer));  } while (0)

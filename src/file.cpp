@@ -16,14 +16,14 @@ const char * getError() {
 File::File(const std::string& filename, const std::string& mode):m_fp(fopen(filename.c_str(), mode.c_str())), m_filename(filename) {
 
     if(!m_fp) {
-	Error("could not open file " + m_filename + ":" + getError());
+	LOG_E("could not open file %s:%s", m_filename.c_str(), getError());
     }
 }
 
 File::~File() {
     if(m_fp) {
 	if(fclose(m_fp) == EOF) {
-	    Error("could not close file " + m_filename + ":" + getError());
+	    LOG_E("could not close file %s:%s", m_filename.c_str(),getError());
 	}
     }
 }

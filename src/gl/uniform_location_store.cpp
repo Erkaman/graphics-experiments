@@ -12,8 +12,6 @@ UniformLocationStore::~UniformLocationStore() {
 UniformLocationStore::UniformLocationStore(GLuint shaderProgram) {
     int numActiveUniforms = getActiveUniforms(shaderProgram);
 
-    LOG_I("num: "  +tos(numActiveUniforms));
-
     // length of the returned uniform name.
     GLsizei nameLength;
 
