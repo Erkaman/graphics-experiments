@@ -56,9 +56,9 @@ void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSe
 	s+= "--   severity = '" +sevStr + "'\n";
 	s+= "--   type     = '" + typeStr + "'\n";
 	s+=  "--   source   = '" + srcStr + "'\n";
-	s+=  "--   id       = " + tos(aId) + "\n";
+	s+=  "--   id       = " + std::to_string(aId) + "\n";
 	s+= "-- message:\n";
-	s+= tos(aMessage) + "\n";
+	s+= std::string(aMessage) + "\n";
 	s+= "--\n";
 	s+= "\n";
 

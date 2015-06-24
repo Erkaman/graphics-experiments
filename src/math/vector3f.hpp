@@ -22,7 +22,7 @@ public:
     friend Vector3f operator+(const Vector3f& v1, const Vector3f& v2);
 
     operator std::string() const {
-	return "(" + tos(m_x) + ", " + tos(m_y) + ", " + tos(m_z) + ")";
+	return "(" + std::to_string(m_x) + ", " + std::to_string(m_y) + ", " + std::to_string(m_z) + ")";
     }
 
 

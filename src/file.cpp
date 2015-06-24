@@ -52,7 +52,6 @@ string File::GetFileContents() {
     return str;
 }
 
-
 string File::GetFileContents(const string& filename) {
     File f(filename, "r");
     string contents = f.GetFileContents();
