@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "gl_common.hpp"
 
 class UniformLocationStore;

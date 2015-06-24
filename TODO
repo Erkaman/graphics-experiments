@@ -1,2 +1,3 @@
 * draw some pretty triangles using shaders!
+* make sure we use data types of same sizes on all operating systems. 
 * make sure you can build on linux and windows.

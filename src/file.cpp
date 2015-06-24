@@ -6,6 +6,9 @@
 
 using namespace std;
 
+// https://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
+#pragma warning( disable : 4996 )
+
 const char * getError() {
     return strerror(errno);
 }

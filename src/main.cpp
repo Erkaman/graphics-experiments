@@ -7,7 +7,6 @@ int main () {
 
   /* OTHER STUFF GOES HERE NEXT */
 
-
   // close GL context and any other GLFW resources
 
   return 0;

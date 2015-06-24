@@ -7,8 +7,13 @@ PROJECT(game)
 
 SET(CMAKE_BUILD_TYPE "Debug")
 
+add_definitions(-DGLEW_STATIC)
+
 # COMPILER SETTINGS.
 if(MSVC)
+MESSAGE(hi)
+ADD_DEFINITIONS(/GR- /MTd)
+
 else()
 ADD_DEFINITIONS(-Wall -pedantic -Wno-deprecated -fno-exceptions -fno-rtti)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
@@ -33,7 +38,6 @@ LIST(APPEND game_libs ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
 LIST(APPEND game_libs glfw3)
 
 IF(APPLE)
-  MESSAGE(hi)
   LINK_DIRECTORIES("deps/libs/mac")
   find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
   find_library(COCOA_FRAMEWORK Cocoa)
@@ -48,7 +52,9 @@ ELSEIF(UNIX)
   LINK_DIRECTORIES("deps/libs/linux")
   find_package(X11 REQUIRED)
   list(APPEND game_libs "${X11_X11_LIB}" "${RT_LIBRARY}" "${X11_Xrandr_LIB}" "${X11_Xinput_LIB}" "${X11_Xcursor_LIB}" "${X11_Xinerama_LIB}")
-
+ELSEIF(WIN32)
+  MESSAGE(linking)
+  LINK_DIRECTORIES("deps/libs/win32")  
 ENDIF()
 
 ADD_EXECUTABLE(game ${SRC})
