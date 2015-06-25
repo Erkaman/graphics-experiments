@@ -32,17 +32,17 @@ static void TestNegation() {
 static void TestLength() {
     Vector3f v(-2, 5, 9);
 
-    AssertEquals(v.length(),10.48808);
+    AssertEquals(v.Length(),10.48808);
 }
 
 static void TestNormalize() {
     Vector3f v(2.5,0,0);
-    v.normalize();
+    v.Normalize();
 
     AssertEquals(v,Vector3f(1,0,0));
 
     v = Vector3f(3,1,2);
-    v.normalize();
+    v.Normalize();
     AssertEquals(v,Vector3f(.80178,.26726,.53452));
 }
 
@@ -63,7 +63,7 @@ static void TestCross() {
     Vector3f a(2,3,4);
     Vector3f b(5,6,7);
 
-    AssertEquals(Vector3f::cross(a,b),Vector3f(-3,6,-3));
+    AssertEquals(Vector3f::Cross(a,b),Vector3f(-3,6,-3));
 }
 
 void Vector3fTestSuite() {

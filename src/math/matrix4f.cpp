@@ -29,6 +29,30 @@ Matrix4f Matrix4f::CreatePerspective( const float fov, const float aspectRatio, 
 
 }
 
+
+Matrix4f Matrix4f::CreateLookAt(const Vector3f& eye, const Vector3f& center, const Vector3f& up) {
+    Vector3f zaxis = eye - center; zaxis.Normalize(); // forward vector.
+    Vector3f xaxis = Vector3f::Cross(up, zaxis); xaxis.Normalize(); // right vector.
+    Vector3f yaxis = Vector3f::Cross(zaxis, xaxis); yaxis.Normalize(); // right vector.
+
+    Matrix4f orientation(
+	xaxis.x, yaxis.x, zaxis.x, 0,
+       xaxis.y, yaxis.y, zaxis.y, 0 ,
+       xaxis.z, yaxis.z, zaxis.z, 0 ,
+       0,       0,       0,     1
+	);
+
+    Vector3f eyeNeg = -eye;
+    Matrix4f translation = Matrix4f::CreateTranslation(eyeNeg);
+    translation.Transpose();
+
+    Matrix4f m = orientation * translation;
+    m.Transpose();
+    return m;
+
+}
+
+
 bool operator==(const Matrix4f& m1, const Matrix4f& m2) {
     return
 	FloatEquals(m1.m00, m2.m00) && FloatEquals(m1.m01 , m2.m01) && FloatEquals(m1.m02 , m2.m02) && FloatEquals(m1.m03 , m2.m03) &&

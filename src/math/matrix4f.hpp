@@ -2,6 +2,7 @@
 
 #include <string>
 #include "common.hpp"
+#include "vector3f.hpp"
 
 class Matrix4f {
 
@@ -29,6 +30,40 @@ public:
     friend bool operator==(const Matrix4f& m1, const Matrix4f& m2);
     friend Matrix4f operator*(const Matrix4f& a, const Matrix4f& b);
 
+    void Transpose() {
+	float new_m01 = m10;
+	float new_m02 = m20;
+	float new_m03 = m30;
+
+	float new_m10 = m01;
+	float new_m12 = m21;
+	float new_m13 = m31;
+
+	float new_m20 = m02;
+	float new_m21 = m12;
+	float new_m23 = m32;
+
+	float new_m30 = m03;
+	float new_m31 = m13;
+	float new_m32 = m23;
+
+	m01 = new_m01;
+	m02 = new_m02;
+	m03 = new_m03;
+
+	m10 = new_m10;
+	m12 = new_m12;
+	m13 = new_m13;
+
+	m20 = new_m20;
+	m21 = new_m21;
+	m23 = new_m23;
+
+	m30 = new_m30;
+	m31 = new_m31;
+	m32 = new_m32;
+    }
+
     static Matrix4f CreateIdentity(){
 	return Matrix4f(
 	    1.0f, 0.0, 0.0f, 0.0f,
@@ -48,7 +83,16 @@ public:
 	return t;
     }
 
+
+    static Matrix4f CreateTranslation(const Vector3f trans){
+	return CreateTranslation(trans.x,trans.y,trans.z);
+    }
+
+
     static Matrix4f CreatePerspective( const float fov, const float aspectRatio, const float near, const float far);
+
+    static Matrix4f CreateLookAt(const Vector3f& eye, const Vector3f& center, const Vector3f& up);
+
 
     operator std::string() const {
 

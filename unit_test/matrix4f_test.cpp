@@ -13,6 +13,17 @@ static void TestCreateTranslation() {
 	);
 
     AssertEquals(trans, expected);
+
+    // now test the Vector3f version.
+    trans = Matrix4f::CreateTranslation(Vector3f(1,2,3));
+    expected = Matrix4f(
+	1,0,0,1,
+	0,1,0,2,
+	0,0,1,3,
+	0,0,0,1
+	);
+
+    AssertEquals(trans, expected);
 }
 
 static void TestEquals() {
@@ -71,6 +82,28 @@ static void TestCreatePerspective() {
 
     AssertEquals(pers, expected);
 }
+
+static void TestTranspose() {
+    Matrix4f a(
+	1,2,3,4,
+	5,6,7,8,
+	9,10,11,12,
+	13,14,15,16
+	);
+
+    Matrix4f expected(
+	1,5,9,13,
+	2,6,10,14,
+	3,7,11,15,
+	4,8,12,16
+	);
+
+    a.Transpose();
+    AssertEquals(a, expected);
+
+}
+
+
 void Matrix4fTestSuite() {
 
     TestSuite suite;
@@ -79,6 +112,37 @@ void Matrix4fTestSuite() {
     suite.emplace_back(TestCreateTranslation, "TestCreateTranslation");
     suite.emplace_back(TestMult, "TestMult");
     suite.emplace_back(TestCreatePerspective, "TestCreatePerspective");
+    suite.emplace_back(TestTranspose, "TestTranspose");
 
     RunSuite(suite, "Matrix4f");
+
+    Matrix4f m = Matrix4f::CreateLookAt(
+	Vector3f(-1,2,-3),
+	Vector3f(4.2,5.3,6.9),
+	Vector3f(7,8,9));
+
+    printf("M: %s\n", std::string(m).c_str());
+
+    /*
+      matrix:
+mat: -0.861847639
+mat: 0.241469175
+mat: -0.445994705
+mat: 0.000000000
+
+mat: 0.391748935
+mat: 0.875456393
+mat: -0.283035100
+mat: 0.000000000
+
+mat: 0.322104663
+mat: -0.418651104
+mat: -0.849105299
+mat: 0.000000000
+
+mat: -0.679031491
+mat: -2.765397072
+mat: -2.427240372
+mat: 1.000000000
+*/
 }
