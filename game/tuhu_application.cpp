@@ -67,6 +67,14 @@ void TuhuApplication::Init() {
 
 
     texture = unique_ptr<Texture>(new Texture2D ("img/red.png"));
+
+    texture->Bind();
+     texture->SetTextureClamping();
+     texture->SetMinFilter(GL_LINEAR);
+     texture->SetMagFilter(GL_NEAREST);
+    texture->Unbind();
+
+
 }
 
 void TuhuApplication::Render() {

@@ -37,7 +37,7 @@ TextureInfo TextureLoader::Load(const std::string& texturePath) {
 	LOG_E("unsupported png format");
     }*/
 
-    vector<unsigned char>& imageData = textureInfo.imageData;
+/*    vector<unsigned char>& imageData = textureInfo.imageData;
 
     for(int i = 0; i < imageData.size(); i += 4) {
 	unsigned char r = imageData[i+0];
@@ -50,12 +50,12 @@ TextureInfo TextureLoader::Load(const std::string& texturePath) {
 	imageData[i+2] = 255;
 	imageData[i+3] = 255;
 
-    }
+    }*/
 
     textureInfo.width = width;
     textureInfo.height = height;
     textureInfo.format =  GL_RGBA; //GL_BGRA;
-    textureInfo.internalFormat = GL_RGBA; //GL_RGBA8;
+    textureInfo.internalFormat = GL_RGBA8; //GL_RGBA8;
     textureInfo.type =  GL_UNSIGNED_BYTE; //GL_UNSIGNED_INT_8_8_8_8_REV;
 
     LOG_I("internal format: %d", textureInfo.internalFormat);
