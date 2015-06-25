@@ -8,7 +8,7 @@
 using namespace std;
 
 GLuint createShaderFromString(const string& str, GLenum shaderType, const string& shaderPath);
-string formatCompilerErrorOutput(const string& shaderSourceCode, GLuint shader);
+string formatCompilerErrorOutput(GLuint shader);
 
 string getLogInfo(GLuint shaderProgram) {
     GLint len;
@@ -70,7 +70,7 @@ GLuint createShaderFromString(const string& str, GLenum shaderType, const string
 
     if (!getCompileStatus(shader)) {
 	// compilation failed
-	LOG_W("Could not compile shader %s\n%s", shaderPath.c_str(), formatCompilerErrorOutput(str, shader).c_str());
+	LOG_W("Could not compile shader %s\n%s", shaderPath.c_str(), formatCompilerErrorOutput(shader).c_str());
 	exit(1);
 
     }
@@ -79,7 +79,7 @@ GLuint createShaderFromString(const string& str, GLenum shaderType, const string
 }
 
 
-string formatCompilerErrorOutput(const string& shaderSourceCode, GLuint shader)  {
+string formatCompilerErrorOutput(GLuint shader)  {
     string result = "";
 
     vector<string> errors =  SplitString(getLogInfo(shader), "\n");
@@ -124,6 +124,5 @@ void ShaderProgramBuilder::link() {
 
     if (linkOk == GL_FALSE) {
 	LOG_E("Error linking program: %s", getLogInfo(shaderProgram).c_str());
-	exit(1);
     }
 }
