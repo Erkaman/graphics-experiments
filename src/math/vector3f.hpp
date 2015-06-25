@@ -46,6 +46,14 @@ public:
 	z /= len;
     }
 
+    static Vector3f cross(const Vector3f& v1, const Vector3f& v2) {
+	return Vector3f(
+	    v1.y * v2.z - v1.z * v2.y,
+	    v1.z * v2.x - v1.x * v2.z,
+	    v1.x * v2.y - v1.y * v2.x
+	    );
+    }
+
 
 /*
   public Vector3f add(final Vector3f that){
@@ -295,22 +303,22 @@ public:
 
 };
 
-Vector3f operator+(const Vector3f& v1, const Vector3f& v2) {
+inline Vector3f operator+(const Vector3f& v1, const Vector3f& v2) {
     return Vector3f(
 	v1.x+v2.x,
 	v1.y+v2.y,
 	v1.z+v2.z);
 }
 
-Vector3f operator-(const Vector3f& v1, const Vector3f& v2) {
+inline Vector3f operator-(const Vector3f& v1, const Vector3f& v2) {
     return v1 + (-v2);
 }
 
-bool operator==(const Vector3f& v1, const Vector3f& v2) {
+inline bool operator==(const Vector3f& v1, const Vector3f& v2) {
     constexpr static float EPSILON = 0.0001f;
     return fabs(v1.x - v2.x) <= EPSILON && fabs(v1.y - v2.y) <= EPSILON && fabs(v1.z - v2.z) <= EPSILON;
 }
 
-bool operator!=(const Vector3f& v1, const Vector3f& v2) {
+inline bool operator!=(const Vector3f& v1, const Vector3f& v2) {
     return !(v1 == v2);
 }

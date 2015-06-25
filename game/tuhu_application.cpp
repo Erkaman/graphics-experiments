@@ -70,8 +70,7 @@ void TuhuApplication::Render() {
     Matrix4f m = Matrix4f::CreateTranslation(0.0f,-0.4,0);
     shader->SetUniform("m", m);
 
-    Matrix4f pers = Matrix4f::CreatePerspective(0,0,0,0);
-
+//    Matrix4f pers = Matrix4f::CreatePerspective(0,0,0,0);
 
     GL_C(glDrawArrays( GL_TRIANGLES, 0, 3 ));
 
