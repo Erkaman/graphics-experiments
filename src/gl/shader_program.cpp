@@ -5,6 +5,10 @@
 
 #include "common.hpp"
 
+#include "math/color.hpp"
+#include "math/matrix4f.hpp"
+
+
 using namespace std;
 
 ShaderProgram::~ShaderProgram() {}

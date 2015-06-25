@@ -4,8 +4,9 @@
 #include <string>
 #include <memory>
 #include "gl_common.hpp"
-#include "math/color.hpp"
-#include "math/matrix4f.hpp"
+
+class Color;
+class Matrix4f;
 
 class UniformLocationStore;
 struct UniformLocationStoreDeleter
