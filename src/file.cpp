@@ -3,6 +3,7 @@
 #include <errno.h>
 #include "log.hpp"
 #include "common.hpp"
+#include <string.h>
 
 using namespace std;
 

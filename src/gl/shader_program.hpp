@@ -17,9 +17,6 @@ class ShaderProgram {
 
 private:
 
-
-
-
     std::unique_ptr<UniformLocationStore> m_uniformLocationStore;
 
     std::vector<std::string> m_warnedUniforms;
