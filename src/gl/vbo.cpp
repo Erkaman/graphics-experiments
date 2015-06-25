@@ -70,3 +70,12 @@ void VBO::SetNumberOfVertexAttribComponents(GLint numberOfVertexAttribComponents
 void VBO::SetBufferData(GLsizeiptr size, const GLvoid* data) {
     GL_C(glBufferData(m_target,size, data, m_usage));
 }
+
+
+void VBO::SetBufferData(const std::vector<Vector3f> data) {
+    SetBufferData(data.size()*sizeof(float)*3, &data[0]);
+}
+
+void VBO::SetBufferData(const std::vector<Vector2f> data) {
+    SetBufferData(data.size()*sizeof(float)*2, &data[0]);
+}

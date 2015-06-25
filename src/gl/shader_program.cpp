@@ -32,7 +32,7 @@ void ShaderProgram::Bind() {
     if(m_alreadyBoundProgram)
 	return;
 
-    glUseProgram(m_shaderProgram);
+    GL_C(glUseProgram(m_shaderProgram));
 
     m_alreadyBoundProgram = true;
 }
@@ -42,7 +42,7 @@ void ShaderProgram::Unbind() {
 	return;
     }
 
-    glUseProgram(0);
+    GL_C(glUseProgram(0));
     m_alreadyBoundProgram = false;
 }
 
@@ -59,7 +59,7 @@ void UniformLocationStoreDeleter::operator()(UniformLocationStore *p)
 void ShaderProgram::SetUniform(const std::string& uniformName, const Color& color) {
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
-	glUniform4f(location, color.r, color.g, color.b, color.a);
+	GL_C(glUniform4f(location, color.r, color.g, color.b, color.a));
     } else {
 	SetUniformWarn(uniformName);
     }
@@ -81,7 +81,18 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Matrix4f& m
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	const GLfloat* arr = reinterpret_cast<const GLfloat*>(&matrix);
-	glUniformMatrix4fv(location, 1, true, arr);
+	GL_C(glUniformMatrix4fv(location, 1, true, arr));
+    } else {
+	SetUniformWarn(uniformName);
+    }
+}
+
+
+void ShaderProgram::SetUniform(const std::string& uniformName, const int val) {
+    if (m_uniformLocationStore->UniformExists(uniformName)) {
+	LOG_I("setting int uniform!");
+	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
+	GL_C(glUniform1i(location, val));
     } else {
 	SetUniformWarn(uniformName);
     }

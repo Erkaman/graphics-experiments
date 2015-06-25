@@ -2,6 +2,9 @@
 
 #include "gl_common.hpp"
 
+#include <vector>
+#include "math/vector3f.hpp"
+#include "math/vector2f.hpp"
 
 class VBO {
 
@@ -34,6 +37,10 @@ public:
     }
 
     void SetBufferData(GLsizeiptr size, const GLvoid* data);
+
+    void SetBufferData(const std::vector<Vector3f> data);
+
+    void SetBufferData(const std::vector<Vector2f> data);
 
     void EnableVertexAttrib();
 

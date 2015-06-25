@@ -2,7 +2,13 @@ out vec4 fragmentColor;
 
 uniform vec4 color;
 
+in vec2 texCoord;
+
+uniform sampler2D tex;
+
 void main()
 {
-    fragmentColor = color;//vec4(1,0,1,1);
+    vec4 col = texture(tex, texCoord.xy);
+
+    fragmentColor = col; //vec4(vec3(col.a),1.0);//vec4(texCoord.x, texCoord.y,1,0);
 }

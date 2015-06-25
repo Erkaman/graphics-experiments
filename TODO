@@ -1,4 +1,5 @@
-* fix tos
-* use uniforms in shaders.
-
-* maxmimum warnings on visual studio.
+* textures.
+* indexed vbo, and interleaved VBO stuff.
+* movable camera.
+* fps.
+* text?

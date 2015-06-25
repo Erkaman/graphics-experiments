@@ -7,8 +7,11 @@
 #include "file.hpp"
 
 #include "math/vector3f.hpp"
+#include "math/vector2f.hpp"
 #include "math/color.hpp"
 #include "math/matrix4f.hpp"
+
+#include "gl/texture2d.hpp"
 
 
 using namespace std;
@@ -29,27 +32,41 @@ void TuhuApplication::Init() {
     shader = make_unique<ShaderProgram>("shader/simple");
 
     positionsBuffer = unique_ptr<VBO>(createPositionVBO(3));
+    texCoordsBuffer = unique_ptr<VBO>(createTexCoordVBO(2));
 
     vector<Vector3f> vertices;
 
-    vertices.push_back(Vector3f(0.0f,0.5f,0.0f));
-    vertices.push_back(Vector3f(-0.5f,-0.5f,0.0f));
-    vertices.push_back(Vector3f(0.5f,-0.5f,0.0f));
+    vertices.emplace_back(-0.5f,0.5f,0.0f); // top left
+    vertices.emplace_back(-0.5f,-0.5f,0.0f); // bottom left
+    vertices.emplace_back(0.5f,-0.5f,0.0f); // bottom right
+
+    vertices.emplace_back(0.5f,-0.5f,0.0f); // bottom right
+    vertices.emplace_back(0.5f,0.5f,0.0f); // top right
+    vertices.emplace_back(-0.5f,0.5f,0.0f); // top left
+
+    vector<Vector2f> texCoords;
+
+    texCoords.emplace_back(0,0);
+    texCoords.emplace_back(0,1);
+    texCoords.emplace_back(1,1);
+
+    texCoords.emplace_back(1,1);
+    texCoords.emplace_back(1,0);
+    texCoords.emplace_back(0,0);
 
     positionsBuffer->Bind();
-    positionsBuffer->SetBufferData(vertices.size()*4*3, &vertices[0]);
+    positionsBuffer->SetBufferData(vertices);
     positionsBuffer->Unbind();
 
+    texCoordsBuffer->Bind();
+    texCoordsBuffer->SetBufferData(texCoords);
+    texCoordsBuffer->Unbind();
+
+
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
-    GL_C(glDisable(GL_CULL_FACE));
 
 
-    /*
-    Matrix4f m;
-    m.setIdentity();
-
-    */
-//    LOG_I("mat:\n%s", string(m).c_str());
+    texture = unique_ptr<Texture>(new Texture2D ("img/red.png"));
 }
 
 void TuhuApplication::Render() {
@@ -57,22 +74,22 @@ void TuhuApplication::Render() {
     GL_C(glClearColor(0.0f, 0.0f, 1.0f, 1.0f));
     GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-
     shader->Bind();
+
 
     positionsBuffer->Bind();
     positionsBuffer->EnableVertexAttrib();
     positionsBuffer->Unbind();
 
-    Color c(1.0f, 0.0f, 0.0f);
-    shader->SetUniform("color", c);
+    texCoordsBuffer->Bind();
+    texCoordsBuffer->EnableVertexAttrib();
+    texCoordsBuffer->Unbind();
 
     Matrix4f view = Matrix4f::CreateLookAt(
 	Vector3f(0,0,1), // eye
 	Vector3f(0,0,0), // center
 	Vector3f(0,1,0) // up
 	);
-//    view.Transpose();
     shader->SetUniform("view", view);
 
     Matrix4f proj = Matrix4f::CreatePerspective(90.0f, (float)GetWindowWidth()/(float)GetWindowHeight(), 0.01f,100.0f);
@@ -80,11 +97,23 @@ void TuhuApplication::Render() {
 
 //    Matrix4f pers = Matrix4f::CreatePerspective(0,0,0,0);
 
-    GL_C(glDrawArrays( GL_TRIANGLES, 0, 3 ));
+    texture->Bind();
+    GL_C(glActiveTexture( GL_TEXTURE0));
+    shader->SetUniform("tex", 0);
+
+    GL_C(glDrawArrays( GL_TRIANGLES, 0, 6));
+
+    texture->Unbind();
+
+
+    texCoordsBuffer->Bind();
+    texCoordsBuffer->DisableVertexAttrib();
+    texCoordsBuffer->Unbind();
 
     positionsBuffer->Bind();
     positionsBuffer->DisableVertexAttrib();
     positionsBuffer->Unbind();
+
 
     shader->Unbind();
 }
@@ -94,3 +123,5 @@ void TuhuApplication::Update() {}
 void ShaderProgramDeleter::operator()(ShaderProgram *p){ delete p;}
 
 void VBODeleter::operator()(VBO *p){ delete p;}
+
+void TextureDeleter::operator()(Texture *p){ delete p;}
