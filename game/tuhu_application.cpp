@@ -67,8 +67,16 @@ void TuhuApplication::Render() {
     Color c(1.0f, 0.0f, 0.0f);
     shader->SetUniform("color", c);
 
-    Matrix4f m = Matrix4f::CreateTranslation(0.0f,-0.4,0);
-    shader->SetUniform("m", m);
+    Matrix4f view = Matrix4f::CreateLookAt(
+	Vector3f(0,0,1), // eye
+	Vector3f(0,0,0), // center
+	Vector3f(0,1,0) // up
+	);
+//    view.Transpose();
+    shader->SetUniform("view", view);
+
+    Matrix4f proj = Matrix4f::CreatePerspective(90.0f, (float)GetWindowWidth()/(float)GetWindowHeight(), 0.01f,100.0f);
+    shader->SetUniform("proj", proj);
 
 //    Matrix4f pers = Matrix4f::CreatePerspective(0,0,0,0);
 

@@ -20,6 +20,9 @@ public:
     Application() {}
     void Start();
 
+    int GetWindowWidth();
+    int GetWindowHeight();
+
 
 protected:
     virtual void Render() = 0;

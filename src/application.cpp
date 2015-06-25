@@ -104,3 +104,15 @@ void Application::Update_internal() {
     this->Update();
 
 }
+
+int Application::GetWindowWidth() {
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    return width;
+}
+
+int Application::GetWindowHeight() {
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    return width;
+}
