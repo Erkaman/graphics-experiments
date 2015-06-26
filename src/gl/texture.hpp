@@ -25,12 +25,7 @@ protected:
 public:
 
     Texture(const GLenum target):m_alreadyBound(false), m_target(target)  {
-
 	GL_C(glGenTextures(1, &m_textureHandle));
-
-
-	LOG_I("handle: %d", m_textureHandle);
-
     }
 
     GLsizei GetWidth() const{
