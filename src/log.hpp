@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdio.h>
 
 void Log(const char* logLevel, const char* file, int line, const char* func, const char* logStr );
 

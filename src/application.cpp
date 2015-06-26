@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #include "fps_manager.hpp"
+#include "mouse.hpp"
 
 using namespace std;
 
@@ -74,7 +75,7 @@ void Application::SetupOpenGL() {
     }
     glfwMakeContextCurrent (window);
 
-
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // start GLEW extension handler
     glewExperimental = GL_TRUE;
@@ -112,6 +113,8 @@ void Application::SetViewport() {
 void Application::Update_internal(const double delta) {
 
     running = GetKey(GLFW_KEY_ESCAPE) != GLFW_PRESS ;
+
+    Mouse::getInstance().Update(window);
 
     this->Update(delta);
 
