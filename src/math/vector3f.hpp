@@ -25,6 +25,13 @@ public:
     friend bool operator==(const Vector3f& v1, const Vector3f& v2);
     friend bool operator!=(const Vector3f& v1, const Vector3f& v2);
 
+    friend Vector3f operator*(const double scale, const Vector3f& v);
+
+    Vector3f& operator += (const Vector3f& that){
+	*this = (*this) + that;
+	return (*this);
+    }
+
     Vector3f operator-() const {
 	Vector3f v(-x,-y,-z);
 	return v;
@@ -76,4 +83,12 @@ inline bool operator==(const Vector3f& v1, const Vector3f& v2) {
 
 inline bool operator!=(const Vector3f& v1, const Vector3f& v2) {
     return !(v1 == v2);
+}
+
+
+inline Vector3f operator*(const double scale, const Vector3f& v) {
+    return Vector3f(
+	scale * v.x,
+	scale * v.y,
+	scale * v.z);
 }

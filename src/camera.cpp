@@ -9,13 +9,28 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
 
     m_projectionMatrix = std::unique_ptr<Matrix4f>(new Matrix4f(Matrix4f::CreatePerspective(90.0f, (float)windowWidth/(float)windowHeight, 0.01f,10000.0f)));
 
-    m_viewMatrix = std::unique_ptr<Matrix4f>(new Matrix4f(
-						 Matrix4f::CreateLookAt(
-						     position,
-						     position + m_viewDir,
-						     m_up)));
+
+    ComputeViewMatrix();
 }
 
 Matrix4f Camera::GetMvp() const {
     return (*m_projectionMatrix) * (*m_viewMatrix);
+}
+
+void Camera::ComputeViewMatrix() {
+    m_viewMatrix = std::unique_ptr<Matrix4f>(new Matrix4f(
+						 Matrix4f::CreateLookAt(
+						     m_position,
+						     m_position + m_viewDir,
+						     m_up)));
+}
+
+void Camera::Walk(const double amount) {
+    m_position += amount * m_viewDir;
+    ComputeViewMatrix();
+}
+
+void Camera::Stride(const double amount) {
+    m_position += amount * m_right;
+    ComputeViewMatrix();
 }

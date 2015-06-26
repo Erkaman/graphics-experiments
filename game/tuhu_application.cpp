@@ -116,14 +116,15 @@ void TuhuApplication::Render() {
     shader->Unbind();
 }
 
-void TuhuApplication::Update() {
-
-    if(GetKey( GLFW_KEY_E ) == GLFW_PRESS) {
-	LOG_I("press E");
-    }
-
-    if(GetKey( GLFW_KEY_I ) == GLFW_PRESS) {
-	LOG_I("press I");
+void TuhuApplication::Update(const double delta) {
+    if(GetKey( GLFW_KEY_W ) == GLFW_PRESS) {
+	camera->Walk(delta);
+    }  else if(GetKey( GLFW_KEY_S ) == GLFW_PRESS) {
+	camera->Walk(-delta);
+    } else if(GetKey( GLFW_KEY_A ) == GLFW_PRESS) {
+	camera->Stride(-delta);
+    }else if(GetKey( GLFW_KEY_D ) == GLFW_PRESS) {
+	camera->Stride(+delta);
     }
 }
 

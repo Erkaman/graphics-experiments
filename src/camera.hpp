@@ -17,13 +17,15 @@ private:
     std::unique_ptr<Matrix4f> m_projectionMatrix;
     std::unique_ptr<Matrix4f> m_viewMatrix;
 
+    void ComputeViewMatrix();
 
 public:
-
-
 
     Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir);
 
     Matrix4f GetMvp() const;
+
+    void Walk(const double amount);
+    void Stride(const double amount);
 
 };

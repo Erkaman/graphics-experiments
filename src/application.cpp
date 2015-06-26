@@ -29,9 +29,10 @@ void Application::DoMainLoop() {
 
     fps.Start();
 
+    double delta = 0;
     while(running) {
 
-	this->Update_internal();
+	this->Update_internal(delta);
 	this->Render();
 
 	// update frame buffer
@@ -39,7 +40,7 @@ void Application::DoMainLoop() {
 	// update input.
 	glfwPollEvents();
 
-	fps.ManageFPS();
+	delta = fps.ManageFPS();
 
 	glfwSetWindowTitle(window, fps.GetFpsString().c_str());
     }
@@ -108,11 +109,11 @@ void Application::SetViewport() {
     GL_C(glViewport(0, 0, width, height));
 }
 
-void Application::Update_internal() {
+void Application::Update_internal(const double delta) {
 
     running = GetKey(GLFW_KEY_ESCAPE) != GLFW_PRESS ;
 
-    this->Update();
+    this->Update(delta);
 
 }
 

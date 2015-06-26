@@ -66,6 +66,20 @@ static void TestCross() {
     AssertEquals(Vector3f::Cross(a,b),Vector3f(-3,6,-3));
 }
 
+static void TestScale() {
+    Vector3f a(2,3,4);
+
+    AssertEquals(3*a,Vector3f(6,9,12));
+}
+
+static void TestPlusEquals() {
+    Vector3f a(2,3,4);
+
+    a += Vector3f(4,5,6);
+
+    AssertEquals(a,Vector3f(6,8,10));
+}
+
 void Vector3fTestSuite() {
 
     TestSuite suite;
@@ -77,6 +91,8 @@ void Vector3fTestSuite() {
     suite.emplace_back(TestLength, "TestLength");
     suite.emplace_back(TestNormalize, "TestNormalize");
     suite.emplace_back(TestCross, "TestCross");
+    suite.emplace_back(TestScale, "TestScale");
+    suite.emplace_back(TestPlusEquals, "TestPlusEquals");
 
     RunSuite(suite, "Vector3f");
 }

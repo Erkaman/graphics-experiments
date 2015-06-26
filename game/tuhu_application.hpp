@@ -36,5 +36,5 @@ public:
 
     void Init() override;
     void Render() override;
-    void Update() override;
+    void Update(const double delta) override;
 };
