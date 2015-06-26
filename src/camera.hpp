@@ -27,5 +27,6 @@ public:
 
     void Walk(const double amount);
     void Stride(const double amount);
+    void HandleInput();
 
 };

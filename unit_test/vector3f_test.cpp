@@ -80,6 +80,16 @@ static void TestPlusEquals() {
     AssertEquals(a,Vector3f(6,8,10));
 }
 
+static void TestRotate() {
+
+    Vector3f v(1,2,3);
+    Vector3f axis(4,5,6.5f);
+
+    v.Rotate(30.0, axis);
+
+    AssertEquals(v,Vector3f(0.5874642, 0.4271195, 0.6873536));
+}
+
 void Vector3fTestSuite() {
 
     TestSuite suite;
@@ -93,6 +103,7 @@ void Vector3fTestSuite() {
     suite.emplace_back(TestCross, "TestCross");
     suite.emplace_back(TestScale, "TestScale");
     suite.emplace_back(TestPlusEquals, "TestPlusEquals");
+    suite.emplace_back(TestRotate, "TestRotate");
 
     RunSuite(suite, "Vector3f");
 }

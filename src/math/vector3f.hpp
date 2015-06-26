@@ -3,6 +3,7 @@
 #include <string>
 #include "common.hpp"
 #include "math_common.hpp"
+#include "math/quat4f.hpp"
 
 class Vector3f {
 
@@ -55,6 +56,8 @@ public:
 	return *this;
     }
 
+    Vector3f& Rotate(const float angle, const Vector3f& axis);
+
     static Vector3f Cross(const Vector3f& v1, const Vector3f& v2) {
 	return Vector3f(
 	    v1.y * v2.z - v1.z * v2.y,
@@ -62,6 +65,8 @@ public:
 	    v1.x * v2.y - v1.y * v2.x
 	    );
     }
+
+
 
 };
 

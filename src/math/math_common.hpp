@@ -8,3 +8,7 @@ inline bool FloatEquals(const float a, const float b) {
     constexpr static float EPSILON = 0.00001f;
     return fabs(a-b) < EPSILON;
 }
+
+inline float toRadians(const float degrees) {
+    return (degrees * PI) / 180.0f;
+}

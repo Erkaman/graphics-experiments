@@ -126,6 +126,8 @@ void TuhuApplication::Update(const double delta) {
     }else if(GetKey( GLFW_KEY_D ) == GLFW_PRESS) {
 	camera->Stride(+delta);
     }
+
+    camera->HandleInput();
 }
 
 void ShaderProgramDeleter::operator()(ShaderProgram *p){ delete p;}
