@@ -19,6 +19,8 @@ private:
     std::unique_ptr<ShaderProgram> shader;
     std::unique_ptr<VBO> positionsBuffer;
     std::unique_ptr<VBO> texCoordsBuffer;
+    std::unique_ptr<VBO> indexBuffer;
+
     std::unique_ptr<Texture> texture;
 
 public:

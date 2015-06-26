@@ -2,7 +2,7 @@
 
 #include "common.hpp"
 
-VBO* createPositionVBO(GLint numComponents) {
+VBO* VBO::createPosition(const GLint numComponents) {
     VBO* positionBuffer = new VBO();
 
     // configure VBO.
@@ -15,20 +15,20 @@ VBO* createPositionVBO(GLint numComponents) {
     return positionBuffer;
 }
 
-VBO* createIndexVBO() {
+VBO* VBO::createIndex(const GLenum type) {
     VBO* indexBuffer = new VBO();
 
     /**
      * Configure buffer.
      */
     indexBuffer->SetTarget(GL_ELEMENT_ARRAY_BUFFER);
-    indexBuffer->SetType(GL_INT);
+    indexBuffer->SetType(type);
     indexBuffer->SetUsage(GL_STATIC_DRAW);
 
     return indexBuffer;
 }
 
-VBO* createTexCoordVBO(GLint numberOfComponents) {
+VBO* VBO::createTexCoord(const GLint numberOfComponents) {
     VBO* texcoordBuffer = new VBO();
 
     // configure buffer
@@ -41,7 +41,7 @@ VBO* createTexCoordVBO(GLint numberOfComponents) {
     return texcoordBuffer;
 }
 
-VBO* createNormalVBO() {
+VBO* VBO::createNormal() {
 
     VBO* positionBuffer = new VBO();
 
@@ -72,10 +72,18 @@ void VBO::SetBufferData(GLsizeiptr size, const GLvoid* data) {
 }
 
 
-void VBO::SetBufferData(const std::vector<Vector3f> data) {
+void VBO::SetBufferData(const std::vector<Vector3f>& data) {
     SetBufferData(data.size()*sizeof(float)*3, &data[0]);
 }
 
-void VBO::SetBufferData(const std::vector<Vector2f> data) {
+void VBO::SetBufferData(const std::vector<Vector2f>& data) {
     SetBufferData(data.size()*sizeof(float)*2, &data[0]);
+}
+
+void VBO::SetBufferData(const std::vector<GLushort>& data) {
+    SetBufferData(data.size()*sizeof(GL_UNSIGNED_SHORT), &data[0]);
+}
+
+void VBO::DrawIndices(const GLenum mode, const GLsizei count) {
+    GL_C(glDrawElements(mode, count, m_type, 0));
 }

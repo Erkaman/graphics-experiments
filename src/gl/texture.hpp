@@ -50,18 +50,17 @@ public:
     }
 
     void Bind() {
-/*        if(m_alreadyBound)
+        if(m_alreadyBound)
             return;
-*/
-	LOG_I("bind: %d, %d", m_target, m_textureHandle);
+
         GL_C(glBindTexture(m_target, m_textureHandle));
         m_alreadyBound = true;
     }
 
     void Unbind() {
-/*        if(!m_alreadyBound)
+        if(!m_alreadyBound)
             return;
-*/
+
         GL_C(glBindTexture(m_target, 0));
         m_alreadyBound = false;
     }

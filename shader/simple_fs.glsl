@@ -10,5 +10,5 @@ void main()
 {
     vec4 col = texture(tex, texCoord.xy);
 
-    fragmentColor = texture(tex, vec2(0.0,0.0)); //vec4(texCoord.x, texCoord.y,1,0);
+    fragmentColor = col; //texture(tex, vec2(0.0,0.0)); //vec4(texCoord.x, texCoord.y,1,0);
 }

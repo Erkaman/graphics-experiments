@@ -38,9 +38,11 @@ public:
 
     void SetBufferData(GLsizeiptr size, const GLvoid* data);
 
-    void SetBufferData(const std::vector<Vector3f> data);
+    void SetBufferData(const std::vector<Vector3f>& data);
 
-    void SetBufferData(const std::vector<Vector2f> data);
+    void SetBufferData(const std::vector<Vector2f>& data);
+
+    void SetBufferData(const std::vector<GLushort>& data);
 
     void EnableVertexAttrib();
 
@@ -61,9 +63,13 @@ public:
     void SetUsage(GLenum usage) {
         m_usage = usage;
     }
-};
 
-VBO* createPositionVBO(GLint numComponents);
-VBO* createIndexVBO();
-VBO* createTexCoordVBO(GLint numberOfComponents);
-VBO* createNormalVBO();
+    void DrawIndices(const GLenum mode, const GLsizei count);
+
+    static VBO* createPosition(const GLint numComponents);
+    static VBO* createIndex(const GLenum type = GL_UNSIGNED_SHORT);
+    static VBO* createTexCoord(const GLint numberOfComponents);
+    static VBO* createNormal();
+
+
+};

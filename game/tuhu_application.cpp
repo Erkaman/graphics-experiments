@@ -31,8 +31,9 @@ void TuhuApplication::Init() {
 
     shader = make_unique<ShaderProgram>("shader/simple");
 
-    positionsBuffer = unique_ptr<VBO>(createPositionVBO(3));
-    texCoordsBuffer = unique_ptr<VBO>(createTexCoordVBO(2));
+    positionsBuffer = unique_ptr<VBO>(VBO::createPosition(3));
+    texCoordsBuffer = unique_ptr<VBO>(VBO::createTexCoord(2));
+    indexBuffer = unique_ptr<VBO>(VBO::createIndex());
 
     vector<Vector3f> vertices;
 
@@ -40,41 +41,46 @@ void TuhuApplication::Init() {
     vertices.emplace_back(-0.5f,-0.5f,0.0f); // bottom left
     vertices.emplace_back(0.5f,-0.5f,0.0f); // bottom right
 
-    vertices.emplace_back(0.5f,-0.5f,0.0f); // bottom right
     vertices.emplace_back(0.5f,0.5f,0.0f); // top right
-    vertices.emplace_back(-0.5f,0.5f,0.0f); // top left
+
+    positionsBuffer->Bind();
+    positionsBuffer->SetBufferData(vertices);
+    positionsBuffer->Unbind();
 
     vector<Vector2f> texCoords;
 
     texCoords.emplace_back(0,0);
     texCoords.emplace_back(0,1);
     texCoords.emplace_back(1,1);
-
-    texCoords.emplace_back(1,1);
     texCoords.emplace_back(1,0);
-    texCoords.emplace_back(0,0);
-
-    positionsBuffer->Bind();
-    positionsBuffer->SetBufferData(vertices);
-    positionsBuffer->Unbind();
 
     texCoordsBuffer->Bind();
     texCoordsBuffer->SetBufferData(texCoords);
     texCoordsBuffer->Unbind();
 
+    vector<GLushort> indices;
+    indices.emplace_back(0);
+    indices.emplace_back(1);
+    indices.emplace_back(2);
+
+    indices.emplace_back(2);
+    indices.emplace_back(3);
+    indices.emplace_back(0);
+
+    indexBuffer->Bind();
+    indexBuffer->SetBufferData(indices);
+    indexBuffer->Unbind();
+
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
 
-
-    texture = unique_ptr<Texture>(new Texture2D ("img/red.png"));
+    texture = unique_ptr<Texture>(new Texture2D ("img/floor.png"));
 
     texture->Bind();
-     texture->SetTextureClamping();
-     texture->SetMinFilter(GL_LINEAR);
-     texture->SetMagFilter(GL_NEAREST);
+    texture->SetTextureClamping();
+    texture->SetMinFilter(GL_LINEAR);
+    texture->SetMagFilter(GL_NEAREST);
     texture->Unbind();
-
-
 }
 
 void TuhuApplication::Render() {
@@ -83,15 +89,6 @@ void TuhuApplication::Render() {
     GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
     shader->Bind();
-
-
-    positionsBuffer->Bind();
-    positionsBuffer->EnableVertexAttrib();
-    positionsBuffer->Unbind();
-
-    texCoordsBuffer->Bind();
-    texCoordsBuffer->EnableVertexAttrib();
-    texCoordsBuffer->Unbind();
 
     Matrix4f view = Matrix4f::CreateLookAt(
 	Vector3f(0,0,1), // eye
@@ -103,13 +100,27 @@ void TuhuApplication::Render() {
     Matrix4f proj = Matrix4f::CreatePerspective(90.0f, (float)GetWindowWidth()/(float)GetWindowHeight(), 0.01f,100.0f);
     shader->SetUniform("proj", proj);
 
-//    Matrix4f pers = Matrix4f::CreatePerspective(0,0,0,0);
+
+    positionsBuffer->Bind();
+    positionsBuffer->EnableVertexAttrib();
+    positionsBuffer->Unbind();
+
+    texCoordsBuffer->Bind();
+    texCoordsBuffer->EnableVertexAttrib();
+    texCoordsBuffer->Unbind();
+
+
 
     texture->Bind();
     GL_C(glActiveTexture( GL_TEXTURE0));
     shader->SetUniform("tex", 0);
 
-    GL_C(glDrawArrays( GL_TRIANGLES, 0, 6));
+    indexBuffer->Bind();
+
+    indexBuffer->DrawIndices(GL_TRIANGLES, 6);
+
+    indexBuffer->Unbind();
+
 
     texture->Unbind();
 
