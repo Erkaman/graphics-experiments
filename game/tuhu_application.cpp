@@ -121,7 +121,16 @@ void TuhuApplication::Render() {
     shader->Unbind();
 }
 
-void TuhuApplication::Update() {}
+void TuhuApplication::Update() {
+
+    if(GetKey( GLFW_KEY_E ) == GLFW_PRESS) {
+	LOG_I("press E");
+    }
+
+    if(GetKey( GLFW_KEY_I ) == GLFW_PRESS) {
+	LOG_I("press I");
+    }
+}
 
 void ShaderProgramDeleter::operator()(ShaderProgram *p){ delete p;}
 

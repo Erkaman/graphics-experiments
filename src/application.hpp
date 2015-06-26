@@ -31,4 +31,7 @@ protected:
 
     void SetViewport();
 
+    int GetKey(int key);
+
+
 };

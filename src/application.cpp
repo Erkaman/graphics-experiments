@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "fps_manager.hpp"
+
 using namespace std;
 
 void Application::Start() {
@@ -22,6 +24,11 @@ void Application::Start() {
 
 void Application::DoMainLoop() {
     running = true;
+
+    FPSManager fps;
+
+    fps.Start();
+
     while(running) {
 
 	this->Update_internal();
@@ -31,6 +38,10 @@ void Application::DoMainLoop() {
 	glfwSwapBuffers(window);
 	// update input.
 	glfwPollEvents();
+
+	fps.ManageFPS();
+
+	glfwSetWindowTitle(window, fps.GetFpsString().c_str());
     }
 }
 
@@ -99,11 +110,17 @@ void Application::SetViewport() {
 
 void Application::Update_internal() {
 
-    running = glfwGetKey( window , GLFW_KEY_ESCAPE ) != GLFW_PRESS ;
+    running = GetKey(GLFW_KEY_ESCAPE) != GLFW_PRESS ;
 
     this->Update();
 
 }
+
+
+int Application::GetKey(int key) {
+    return glfwGetKey( window , key );
+}
+
 
 int Application::GetWindowWidth() {
     int width, height;
