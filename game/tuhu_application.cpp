@@ -42,17 +42,17 @@ void TuhuApplication::Init() {
 
     vector<GLfloat> vertices;
 
-    vertices.push_back(-0.5f); vertices.push_back(0.5f); vertices.push_back(0.0f);
-    vertices.push_back(0); vertices.push_back(0);
+    vertices.push_back(-0.5f); vertices.push_back(+10.5f); vertices.push_back(0.0f);
+    vertices.push_back(0); vertices.push_back(-10);
 
     vertices.push_back(-0.5f); vertices.push_back(-0.5f); vertices.push_back(0.0f);
     vertices.push_back(0); vertices.push_back(1);
 
-    vertices.push_back(0.5f); vertices.push_back(-0.5f); vertices.push_back(0.0f);
-    vertices.push_back(1); vertices.push_back(1);
+    vertices.push_back(+2.5f); vertices.push_back(-0.5f); vertices.push_back(0.0f);
+    vertices.push_back(3); vertices.push_back(1);
 
-    vertices.push_back(0.5f); vertices.push_back(0.5f); vertices.push_back(0.0f);
-    vertices.push_back(1); vertices.push_back(0);
+    vertices.push_back(+2.5f); vertices.push_back(+10.5f); vertices.push_back(0.0f);
+    vertices.push_back(3); vertices.push_back(-10);
 
     vertexBuffer->Bind();
     vertexBuffer->SetBufferData(vertices);
@@ -77,7 +77,7 @@ void TuhuApplication::Init() {
     texture = unique_ptr<Texture>(new Texture2D ("img/floor.png"));
 
     texture->Bind();
-    texture->SetTextureClamping();
+    texture->SetTextureTiling();
     texture->SetMinFilter(GL_LINEAR);
     texture->SetMagFilter(GL_NEAREST);
     texture->Unbind();
@@ -91,8 +91,8 @@ void TuhuApplication::Render() {
     shader->Bind();
 
     Matrix4f view = Matrix4f::CreateLookAt(
-	Vector3f(0,0,1), // eye
-	Vector3f(0,0,0), // center
+	Vector3f(0,-0.4,2.9), // eye
+	Vector3f(0,1.9,0), // center
 	Vector3f(0,1,0) // up
 	);
     shader->SetUniform("view", view);
