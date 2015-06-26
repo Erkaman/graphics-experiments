@@ -12,6 +12,8 @@ struct VBODeleter{void operator()(VBO *p);};
 class Texture;
 struct TextureDeleter{void operator()(Texture *p);};
 
+class Camera;
+
 class TuhuApplication : public Application{
 
 private:
@@ -23,6 +25,9 @@ private:
     std::unique_ptr<VBO> vertexBuffer;
 
     std::unique_ptr<Texture> texture;
+
+    std::unique_ptr<Camera> camera;
+
 
 public:
 

@@ -13,6 +13,7 @@
 
 #include "gl/texture2d.hpp"
 
+#include "camera.hpp"
 
 using namespace std;
 
@@ -81,6 +82,8 @@ void TuhuApplication::Init() {
     texture->SetMinFilter(GL_LINEAR);
     texture->SetMagFilter(GL_NEAREST);
     texture->Unbind();
+
+    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,-0.4,2.9), Vector3f(0,2.3,-2.9));
 }
 
 void TuhuApplication::Render() {
@@ -90,15 +93,7 @@ void TuhuApplication::Render() {
 
     shader->Bind();
 
-    Matrix4f view = Matrix4f::CreateLookAt(
-	Vector3f(0,-0.4,2.9), // eye
-	Vector3f(0,1.9,0), // center
-	Vector3f(0,1,0) // up
-	);
-    shader->SetUniform("view", view);
-
-    Matrix4f proj = Matrix4f::CreatePerspective(90.0f, (float)GetWindowWidth()/(float)GetWindowHeight(), 0.01f,100.0f);
-    shader->SetUniform("proj", proj);
+    shader->SetUniform("mvp", camera->GetMvp());
 
     vertexBuffer->EnableVertexAttribInterleaved();
 

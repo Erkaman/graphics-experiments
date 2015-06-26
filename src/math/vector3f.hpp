@@ -38,12 +38,14 @@ public:
 	return sqrt(x*x + y*y + z*z);
     }
 
-    void Normalize() {
+    const Vector3f& Normalize() {
 	const float len = Length();
 
 	x /= len;
 	y /= len;
 	z /= len;
+
+	return *this;
     }
 
     static Vector3f Cross(const Vector3f& v1, const Vector3f& v2) {
