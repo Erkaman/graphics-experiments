@@ -105,7 +105,11 @@ void VBO::SetBufferData(const std::vector<Vector2f>& data) {
 }
 
 void VBO::SetBufferData(const std::vector<GLushort>& data) {
-    SetBufferData(data.size()*sizeof(GL_UNSIGNED_SHORT), &data[0]);
+    SetBufferData(data.size()*sizeof(GLushort), &data[0]);
+}
+
+void VBO::SetBufferData(const std::vector<GLfloat>& data) {
+    SetBufferData(data.size()*sizeof(GLfloat), reinterpret_cast<const GLvoid*>(&data[0]));
 }
 
 void VBO::DrawIndices(const GLenum mode, const GLsizei count) {

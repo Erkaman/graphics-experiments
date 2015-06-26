@@ -20,6 +20,7 @@ private:
     std::unique_ptr<VBO> positionsBuffer;
     std::unique_ptr<VBO> texCoordsBuffer;
     std::unique_ptr<VBO> indexBuffer;
+    std::unique_ptr<VBO> vertexBuffer;
 
     std::unique_ptr<Texture> texture;
 

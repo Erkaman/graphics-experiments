@@ -35,27 +35,28 @@ void TuhuApplication::Init() {
     texCoordsBuffer = unique_ptr<VBO>(VBO::CreateTexCoord(2));
     indexBuffer = unique_ptr<VBO>(VBO::CreateIndex());
 
-    vector<Vector3f> vertices;
+    vertexBuffer = unique_ptr<VBO>(VBO::CreateInterleaved(
+				       vector<GLuint>{VBO_POSITION_ATTRIB_INDEX, VBO_TEX_COORD_ATTRIB_INDEX},
+				       vector<GLuint>{3,2}
+				       ));
 
-    vertices.emplace_back(-0.5f,0.5f,0.0f); // top left
-    vertices.emplace_back(-0.5f,-0.5f,0.0f); // bottom left
-    vertices.emplace_back(0.5f,-0.5f,0.0f); // bottom right
-    vertices.emplace_back(0.5f,0.5f,0.0f); // top right
+    vector<GLfloat> vertices;
 
-    positionsBuffer->Bind();
-    positionsBuffer->SetBufferData(vertices);
-    positionsBuffer->Unbind();
+    vertices.push_back(-0.5f); vertices.push_back(0.5f); vertices.push_back(0.0f);
+    vertices.push_back(0); vertices.push_back(0);
 
-    vector<Vector2f> texCoords;
+    vertices.push_back(-0.5f); vertices.push_back(-0.5f); vertices.push_back(0.0f);
+    vertices.push_back(0); vertices.push_back(1);
 
-    texCoords.emplace_back(0,0);
-    texCoords.emplace_back(0,1);
-    texCoords.emplace_back(1,1);
-    texCoords.emplace_back(1,0);
+    vertices.push_back(0.5f); vertices.push_back(-0.5f); vertices.push_back(0.0f);
+    vertices.push_back(1); vertices.push_back(1);
 
-    texCoordsBuffer->Bind();
-    texCoordsBuffer->SetBufferData(texCoords);
-    texCoordsBuffer->Unbind();
+    vertices.push_back(0.5f); vertices.push_back(0.5f); vertices.push_back(0.0f);
+    vertices.push_back(1); vertices.push_back(0);
+
+    vertexBuffer->Bind();
+    vertexBuffer->SetBufferData(vertices);
+    vertexBuffer->Unbind();
 
     vector<GLushort> indices;
     indices.emplace_back(0);
@@ -99,16 +100,7 @@ void TuhuApplication::Render() {
     Matrix4f proj = Matrix4f::CreatePerspective(90.0f, (float)GetWindowWidth()/(float)GetWindowHeight(), 0.01f,100.0f);
     shader->SetUniform("proj", proj);
 
-
-    positionsBuffer->Bind();
-    positionsBuffer->EnableVertexAttrib();
-    positionsBuffer->Unbind();
-
-    texCoordsBuffer->Bind();
-    texCoordsBuffer->EnableVertexAttrib();
-    texCoordsBuffer->Unbind();
-
-
+    vertexBuffer->EnableVertexAttribInterleaved();
 
     texture->Bind();
     GL_C(glActiveTexture( GL_TEXTURE0));
@@ -123,14 +115,7 @@ void TuhuApplication::Render() {
 
     texture->Unbind();
 
-
-    texCoordsBuffer->Bind();
-    texCoordsBuffer->DisableVertexAttrib();
-    texCoordsBuffer->Unbind();
-
-    positionsBuffer->Bind();
-    positionsBuffer->DisableVertexAttrib();
-    positionsBuffer->Unbind();
+    vertexBuffer->DisableVertexAttribInterleaved();
 
 
     shader->Unbind();
