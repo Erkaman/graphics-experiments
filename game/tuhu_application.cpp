@@ -31,16 +31,15 @@ void TuhuApplication::Init() {
 
     shader = make_unique<ShaderProgram>("shader/simple");
 
-    positionsBuffer = unique_ptr<VBO>(VBO::createPosition(3));
-    texCoordsBuffer = unique_ptr<VBO>(VBO::createTexCoord(2));
-    indexBuffer = unique_ptr<VBO>(VBO::createIndex());
+    positionsBuffer = unique_ptr<VBO>(VBO::CreatePosition(3));
+    texCoordsBuffer = unique_ptr<VBO>(VBO::CreateTexCoord(2));
+    indexBuffer = unique_ptr<VBO>(VBO::CreateIndex());
 
     vector<Vector3f> vertices;
 
     vertices.emplace_back(-0.5f,0.5f,0.0f); // top left
     vertices.emplace_back(-0.5f,-0.5f,0.0f); // bottom left
     vertices.emplace_back(0.5f,-0.5f,0.0f); // bottom right
-
     vertices.emplace_back(0.5f,0.5f,0.0f); // top right
 
     positionsBuffer->Bind();

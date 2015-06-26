@@ -2,7 +2,7 @@
 
 #include "common.hpp"
 
-VBO* VBO::createPosition(const GLint numComponents) {
+VBO* VBO::CreatePosition(const GLint numComponents) {
     VBO* positionBuffer = new VBO();
 
     // configure VBO.
@@ -15,7 +15,7 @@ VBO* VBO::createPosition(const GLint numComponents) {
     return positionBuffer;
 }
 
-VBO* VBO::createIndex(const GLenum type) {
+VBO* VBO::CreateIndex(const GLenum type) {
     VBO* indexBuffer = new VBO();
 
     /**
@@ -28,7 +28,7 @@ VBO* VBO::createIndex(const GLenum type) {
     return indexBuffer;
 }
 
-VBO* VBO::createTexCoord(const GLint numberOfComponents) {
+VBO* VBO::CreateTexCoord(const GLint numberOfComponents) {
     VBO* texcoordBuffer = new VBO();
 
     // configure buffer
@@ -41,17 +41,41 @@ VBO* VBO::createTexCoord(const GLint numberOfComponents) {
     return texcoordBuffer;
 }
 
-VBO* VBO::createNormal() {
+VBO* VBO::CreateNormal() {
 
     VBO* positionBuffer = new VBO();
 
-    positionBuffer->SetVertexAttribIndex(VBO_NORMAL_ATTRIB_INDEX);
     positionBuffer->SetTarget(GL_ARRAY_BUFFER);
     positionBuffer->SetType(GL_FLOAT);
     positionBuffer->SetUsage(GL_STATIC_DRAW);
-    positionBuffer->SetNumberOfVertexAttribComponents(3);
 
     return positionBuffer;
+}
+
+VBO* VBO::CreateInterleaved(std::vector<GLuint>&& vertexAttribs, std::vector<GLuint>&& sizes){
+
+    assert(vertexAttribs.size() == sizes.size());
+
+    VBO* buffer = new VBO();
+
+    buffer->SetVertexAttribIndex(VBO_NORMAL_ATTRIB_INDEX);
+    buffer->SetTarget(GL_ARRAY_BUFFER);
+    buffer->SetType(GL_FLOAT);
+    buffer->SetUsage(GL_STATIC_DRAW);
+
+    buffer->m_vertexAttribs = std::move(vertexAttribs);
+    buffer->m_sizes = std::move(sizes);
+
+    buffer->m_offsets.reserve(sizes.size());
+
+    GLuint totalOffset = 0;
+    for(size_t i = 0; i <buffer->m_sizes.size(); ++i) {
+	buffer->m_offsets.push_back(totalOffset);
+        totalOffset += buffer->m_sizes[i] * sizeof(GLfloat);
+    }
+    buffer->STRIDE = totalOffset;
+
+    return buffer;
 }
 
 void VBO::EnableVertexAttrib() {
@@ -86,4 +110,33 @@ void VBO::SetBufferData(const std::vector<GLushort>& data) {
 
 void VBO::DrawIndices(const GLenum mode, const GLsizei count) {
     GL_C(glDrawElements(mode, count, m_type, 0));
+}
+
+void VBO::EnableVertexAttribInterleaved() {
+
+    Bind();
+
+    for(size_t i = 0; i < m_sizes.size(); ++i) {
+
+	const GLuint vertexAttrib = m_vertexAttribs[i];
+	const GLuint size = m_sizes[i];
+	const GLuint offset = m_offsets[i];
+
+	GL_C(glEnableVertexAttribArray(vertexAttrib));
+	GL_C(glVertexAttribPointer(vertexAttrib, size, GL_FLOAT, false, STRIDE, reinterpret_cast<const GLvoid*>(offset)));
+    }
+
+    Unbind();
+}
+
+void VBO::DisableVertexAttribInterleaved() {
+    Bind();
+
+    for(size_t i = 0; i < m_sizes.size(); ++i) {
+	const GLuint vertexAttrib = m_vertexAttribs[i];
+
+	GL_C(glDisableVertexAttribArray(vertexAttrib));
+    }
+
+    Unbind();
 }

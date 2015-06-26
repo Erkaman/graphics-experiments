@@ -17,6 +17,12 @@ private:
     GLint m_numberOfVertexAttribComponents;
     GLenum m_usage;
 
+    // only valid for interleaved VBOs:
+    std::vector<GLuint> m_vertexAttribs;
+    std::vector<GLuint> m_sizes;
+    std::vector<GLuint> m_offsets;
+    GLsizei STRIDE;
+
 public:
     VBO() {
 	GL_C(glGenBuffers(1, &m_buffer));
@@ -45,8 +51,11 @@ public:
     void SetBufferData(const std::vector<GLushort>& data);
 
     void EnableVertexAttrib();
-
     void DisableVertexAttrib();
+
+    void EnableVertexAttribInterleaved();
+    void DisableVertexAttribInterleaved();
+
 
     void Bind() {
         GL_C(glBindBuffer(m_target, m_buffer));
@@ -66,10 +75,16 @@ public:
 
     void DrawIndices(const GLenum mode, const GLsizei count);
 
-    static VBO* createPosition(const GLint numComponents);
-    static VBO* createIndex(const GLenum type = GL_UNSIGNED_SHORT);
-    static VBO* createTexCoord(const GLint numberOfComponents);
-    static VBO* createNormal();
+    static VBO* CreatePosition(const GLint numComponents);
+    static VBO* CreateIndex(const GLenum type = GL_UNSIGNED_SHORT);
+    static VBO* CreateTexCoord(const GLint numberOfComponents);
+    static VBO* CreateNormal();
+
+    static VBO* CreateInterleaved(std::vector<GLuint>&& vertexAttribs, std::vector<GLuint>&& sizes);
 
 
 };
+
+// the data needed,
+// the vertex attribs(vector of GLuint)
+// and the sizes.
