@@ -43,17 +43,17 @@ void TuhuApplication::Init() {
 
     vector<GLfloat> vertices;
 
-    vertices.push_back(-0.5f); vertices.push_back(+10.5f); vertices.push_back(0.0f);
-    vertices.push_back(0); vertices.push_back(-10);
+    vertices.push_back(-100.5f); vertices.push_back(0.0f); vertices.push_back(+10.5f );
+    vertices.push_back(100); vertices.push_back(-10);
 
-    vertices.push_back(-0.5f); vertices.push_back(-0.5f); vertices.push_back(0.0f);
-    vertices.push_back(0); vertices.push_back(1);
+    vertices.push_back(-100.5f); vertices.push_back(0.0f); vertices.push_back(-10.5f);
+    vertices.push_back(100); vertices.push_back(10);
 
-    vertices.push_back(+2.5f); vertices.push_back(-0.5f); vertices.push_back(0.0f);
-    vertices.push_back(3); vertices.push_back(1);
+    vertices.push_back(+10.5f); vertices.push_back(0.0f); vertices.push_back(-10.5f);
+    vertices.push_back(-7); vertices.push_back(10);
 
-    vertices.push_back(+2.5f); vertices.push_back(+10.5f); vertices.push_back(0.0f);
-    vertices.push_back(3); vertices.push_back(-10);
+    vertices.push_back(+10.5f); vertices.push_back(0.0f); vertices.push_back(+10.5f);
+    vertices.push_back(-7); vertices.push_back(-10);
 
     vertexBuffer->Bind();
     vertexBuffer->SetBufferData(vertices);
@@ -74,6 +74,7 @@ void TuhuApplication::Init() {
 
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
+//    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
     texture = unique_ptr<Texture>(new Texture2D ("img/floor.png"));
 
@@ -83,7 +84,10 @@ void TuhuApplication::Init() {
     texture->SetMagFilter(GL_NEAREST);
     texture->Unbind();
 
-    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,-0.4,2.9), Vector3f(0,2.3,-2.9));
+//    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,+0.3,.9), Vector3f(0,2.3,+2.9));
+
+    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(10,1,0), Vector3f(-1,0,0));
+
 }
 
 void TuhuApplication::Render() {
@@ -92,6 +96,7 @@ void TuhuApplication::Render() {
     GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
     shader->Bind();
+
 
     shader->SetUniform("mvp", camera->GetMvp());
 
@@ -135,3 +140,12 @@ void ShaderProgramDeleter::operator()(ShaderProgram *p){ delete p;}
 void VBODeleter::operator()(VBO *p){ delete p;}
 
 void TextureDeleter::operator()(Texture *p){ delete p;}
+
+/*
+according to voxelspel, the matrix should look like this:
+
+Info: mat: 0.0, 0.0, -1.0000199, -1.0
+0.0, 2.4142134, 0.0, 0.0
+-1.81066, 0.0, 0.0, 0.0
+0.724264, -6.0355334, 0.20000598, 0.4
+*/

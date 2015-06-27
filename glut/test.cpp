@@ -58,20 +58,19 @@ GLvoid ReSizeGLScene(int width, int height)
 
  gluLookAt(
      // eye
-     -1,
-     2,
-     -3,
-
+     10.0f,
+     1.0f,
+     0.0f,
 
      // center
-     4.2,
-     5.3,
-     6.9,
+     9.0f,
+     1.0f,
+     0.0f,
 
      // up
-     7,
-     8,
-     9
+     0.0f,
+     1.0f,
+     0.0f
      );
 
    GLfloat matrix[16];

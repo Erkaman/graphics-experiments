@@ -67,7 +67,7 @@ void Application::SetupOpenGL() {
     glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
-    window = glfwCreateWindow (640, 480, "Tuhu", NULL, NULL);
+    window = glfwCreateWindow (800, 600, "Tuhu", NULL, NULL);
     if (!window) {
 	fprintf (stderr, "ERROR: could not open window with GLFW3\n");
 	glfwTerminate();
@@ -128,12 +128,12 @@ int Application::GetKey(int key) {
 
 int Application::GetWindowWidth() {
     int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
+    glfwGetWindowSize(window, &width, &height);
     return width;
 }
 
 int Application::GetWindowHeight() {
     int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    return width;
+    glfwGetWindowSize(window, &width, &height);
+    return height;
 }

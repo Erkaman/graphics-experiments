@@ -117,9 +117,9 @@ void Matrix4fTestSuite() {
     RunSuite(suite, "Matrix4f");
 
     Matrix4f m = Matrix4f::CreateLookAt(
-	Vector3f(-1,2,-3),
-	Vector3f(4.2,5.3,6.9),
-	Vector3f(7,8,9));
+	Vector3f(0,1,0),
+	Vector3f(-1,1,0),
+	Vector3f(0,1,0));
 
     printf("M: %s\n", std::string(m).c_str());
 
@@ -146,3 +146,25 @@ mat: -2.427240372
 mat: 1.000000000
 */
 }
+/*
+
+mat: 0.000000000
+mat: 0.000000000
+mat: 1.000000000
+mat: 0.000000000
+
+mat: 0.000000000
+mat: 1.000000000
+mat: 0.000000000
+mat: 0.000000000
+
+mat: -1.000000000
+mat: 0.000000000
+mat: 0.000000000
+mat: 0.000000000
+
+mat: 0.000000000
+mat: -1.000000000
+mat: 0.000000000
+mat: 1.000000000
+*/
