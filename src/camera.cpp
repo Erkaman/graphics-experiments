@@ -46,14 +46,22 @@ void Camera::Stride(const double amount) {
 void Camera::HandleInput() {
     const Mouse& mouse = Mouse::getInstance();
 
+    bool rotated = false;
+
     if(!FloatEquals(mouse.GetDeltaX(), 0)) {
 	m_viewDir.Rotate(mouse.GetDeltaX()*-0.1, m_up).Normalize();
-	ComputeViewMatrix();
+	rotated = true;
     }
 
     if(!FloatEquals(mouse.GetDeltaY(), 0)) {
-
 	m_viewDir.Rotate(mouse.GetDeltaY()*-0.1, m_right).Normalize();
+	rotated = true;
+    }
+
+    if(rotated) {
+	m_right = Vector3f::Cross(m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
+	m_up = Vector3f(0,1.0f,0);//Vector3f::Cross(m_right, m_viewDir).Normalize();
 	ComputeViewMatrix();
     }
+
 }
