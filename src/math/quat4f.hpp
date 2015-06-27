@@ -10,20 +10,12 @@ public:
         Normalize();
     }
 
-   Quat4f& operator *=(const Quat4f& that){
-
-        float w_temp = this->w*that.w - this->x*that.x - this->y*that.y - this->z*that.z;
-        float x_temp = this->w*that.x + that.w*this->x + this->y*that.z - this->z*that.y;
-        float y_temp = this->w*that.y + that.w*this->y - this->x*that.z + this->z*that.x;
-        float z_temp = this->w*that.z + that.w*this->z + this->x*that.y - this->y*that.x;
-
-	x = x_temp;
-	y = y_temp;
-	z = z_temp;
-	w = w_temp;
-
-        return (*this);
+    Quat4f& operator *=(const Quat4f& that){
+	*this = (*this) * that;
+	return (*this);
     }
+
+    friend Quat4f operator *(const Quat4f& q1, const Quat4f& q2);
 
     Quat4f& Conjugate(){
         x = -x;
@@ -56,3 +48,13 @@ public:
     }
 
 };
+
+inline Quat4f operator *(const Quat4f& q1, const Quat4f& q2){
+
+    return Quat4f(
+		  q1.w*q2.x + q2.w*q1.x + q1.y*q2.z - q1.z*q2.y,
+		  q1.w*q2.y + q2.w*q1.y - q1.x*q2.z + q1.z*q2.x,
+		  q1.w*q2.z + q2.w*q1.z + q1.x*q2.y - q1.y*q2.x,
+		  q1.w*q2.w - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z
+	);
+}
