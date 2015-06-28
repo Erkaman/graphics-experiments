@@ -1,7 +1,7 @@
 #include "matrix4f.hpp"
 
 #include "math_common.hpp"
-
+#include "vector3f.hpp"
 using std::string;
 
 Matrix4f Matrix4f::CreatePerspective( const float fov, const float aspectRatio, const float near, const float far) {
@@ -61,4 +61,8 @@ bool operator==(const Matrix4f& m1, const Matrix4f& m2) {
 	FloatEquals(m1.m10 , m2.m10) && FloatEquals(m1.m11 , m2.m11) && FloatEquals(m1.m12 , m2.m12) && FloatEquals(m1.m13 , m2.m13) &&
 	FloatEquals(m1.m20 , m2.m20) && FloatEquals(m1.m21 , m2.m21) && FloatEquals(m1.m22 , m2.m22) && FloatEquals(m1.m23 , m2.m23) &&
 	FloatEquals(m1.m30 , m2.m30) && FloatEquals(m1.m31 , m2.m31) && FloatEquals(m1.m32 , m2.m32) && FloatEquals(m1.m33 , m2.m33);
+}
+
+Matrix4f Matrix4f::CreateTranslation(const Vector3f& trans){
+    return CreateTranslation(trans.x,trans.y,trans.z);
 }

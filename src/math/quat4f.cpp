@@ -1,6 +1,8 @@
 #include "quat4f.hpp"
 #include <math.h>
 
+
+
 Quat4f::Quat4f(float x_, float y_, float z_, float w_): x(x_), y(y_),z(z_),w(w_){
     Normalize();
 }

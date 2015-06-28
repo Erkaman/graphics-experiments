@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include "common.hpp"
-#include "vector3f.hpp"
+
+class Vector3f;
 
 class Matrix4f {
 
@@ -83,11 +83,7 @@ public:
 	return t;
     }
 
-
-    static Matrix4f CreateTranslation(const Vector3f trans){
-	return CreateTranslation(trans.x,trans.y,trans.z);
-    }
-
+    static Matrix4f CreateTranslation(const Vector3f& trans);
 
     static Matrix4f CreatePerspective( const float fov, const float aspectRatio, const float near, const float far);
 

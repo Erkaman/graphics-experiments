@@ -2,6 +2,7 @@
 
 #include "math/matrix4f.hpp"
 #include "framework.hpp"
+#include "math/vector3f.hpp"
 
 static void TestCreateTranslation() {
     Matrix4f trans = Matrix4f::CreateTranslation(1,2,3);

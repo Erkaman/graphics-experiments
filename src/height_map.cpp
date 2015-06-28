@@ -8,6 +8,7 @@
 #include "gl/vbo.hpp"
 #include "gl/shader_program.hpp"
 #include "math/matrix4f.hpp"
+#include "common.hpp"
 
 using std::unique_ptr;
 using std::vector;
