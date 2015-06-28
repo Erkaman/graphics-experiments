@@ -15,6 +15,8 @@ private:
     std::unique_ptr<VBO> vertexBuffer;
     std::unique_ptr<VBO> indexBuffer;
 
+    const float ComputeY(const unsigned char heightMapData );
+
 public:
 
     HeightMap(const std::string& path);

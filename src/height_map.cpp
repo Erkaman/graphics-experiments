@@ -46,9 +46,9 @@ HeightMap::HeightMap(const std::string& path) {
 	    xpos = 0;
 	}
 
-//	LOG_I("%d %d: %d", xpos, zpos, );
+	LOG_I("%ld: %d, %d", i/4, xpos, zpos);
 
-	float ypos = (float)imageData[i] / (float)255;
+	float ypos = ComputeY(imageData[i]);
 
 	vertices.push_back(xpos);
 	vertices.push_back(ypos);
@@ -105,4 +105,9 @@ void HeightMap::Draw() {
     vertexBuffer->DisableVertexAttrib();
     vertexBuffer->Bind();
 
+}
+
+
+const float HeightMap::ComputeY(const unsigned char heightMapData ) {
+    return (float)heightMapData  / 255.0f;
 }

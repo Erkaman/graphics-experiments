@@ -44,7 +44,7 @@ void TuhuApplication::Init() {
     texture->SetMagFilter(GL_NEAREST);
     texture->Unbind();
 */
-    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,1,0), Vector3f(-1,0,0));
+    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,0.6,0), Vector3f(-1,0,0));
 
     heightMap = make_unique<HeightMap>("img/height.png");
 
