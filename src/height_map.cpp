@@ -8,6 +8,7 @@
 #include "gl/vbo.hpp"
 #include "gl/shader_program.hpp"
 #include "math/matrix4f.hpp"
+#include "math/vector3f.hpp"
 #include "common.hpp"
 
 using std::unique_ptr;
@@ -43,7 +44,11 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
     unsigned int xpos = 0;
     unsigned int zpos = 0;
 
-    vertexBuffer = unique_ptr<VBO>(VBO::CreatePosition(3));
+    vertexBuffer = unique_ptr<VBO>(VBO::CreateInterleaved(
+				       vector<GLuint>{VBO_POSITION_ATTRIB_INDEX, VBO_NORMAL_ATTRIB_INDEX},
+				       vector<GLuint>{3,3}
+				       ));
+
 
     FloatVector vertices;
     UshortVector indices;
@@ -66,45 +71,27 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 
 //	LOG_I("%ld: %d, %d", i/4, xpos, zpos);
 
-	const float xpos1 = xpos;
-	const float ypos1 = ComputeY(imageData[i]);
-	const float zpos1 = zpos;
+	const Vector3f v1(xpos, ComputeY(imageData[i]), zpos);
 
-	const float xpos2 = xpos+1;
-	const float ypos2 = ComputeY(imageData[i+4]);
-	const float zpos2 = zpos;
+	const Vector3f v2(xpos+1, ComputeY(imageData[i+4]), zpos);
 
-	const float xpos3 = xpos;
-	const float ypos3 = ComputeY(imageData[i+m_width*4]);
-	const float zpos3 = zpos+1;
+	const Vector3f v3(xpos, ComputeY(imageData[i+m_width*4]), zpos+1);
 
-	const float xpos4 = xpos+1;
-	const float ypos4 = ComputeY(imageData[i+m_width*4+4]);
-	const float zpos4 = zpos+1;
+	const Vector3f v4(xpos+1, ComputeY(imageData[i+m_width*4+4]), zpos+1);
 
+	const Vector3f normal = Vector3f::Cross(v3 - v1, v2 - v1);
 
+	v1.Add(vertices);
+	normal.Add(vertices);
 
-/*	LOG_I("%f", ypos1*255.0f);
-	LOG_I("%f", ypos2*255.0f);
-	LOG_I("%f", ypos3*255.0f);
-	LOG_I("%f\n", ypos4*255.0f);
-*/
+	v2.Add(vertices);
+	normal.Add(vertices);
 
-	vertices.push_back(xpos1);
-	vertices.push_back(ypos1);
-	vertices.push_back(zpos1);
+	v3.Add(vertices);
+	normal.Add(vertices);
 
-	vertices.push_back(xpos2);
-	vertices.push_back(ypos2);
-	vertices.push_back(zpos2);
-
-	vertices.push_back(xpos3);
-	vertices.push_back(ypos3);
-	vertices.push_back(zpos3);
-
-	vertices.push_back(xpos4);
-	vertices.push_back(ypos4);
-	vertices.push_back(zpos4);
+	v4.Add(vertices);
+	normal.Add(vertices);
 
 	indices.push_back(2+baseIndex);
 	indices.push_back(1+baseIndex);
@@ -146,18 +133,17 @@ void HeightMap::Draw(const Matrix4f& mvp) {
 
 
     vertexBuffer->Bind();
-    vertexBuffer->EnableVertexAttrib();
+    vertexBuffer->EnableVertexAttribInterleaved();
     vertexBuffer->Bind();
 
     indexBuffer->Bind();
 
     indexBuffer->DrawIndices(GL_TRIANGLES, m_numTriangles*3);
 
-
     indexBuffer->Unbind();
 
     vertexBuffer->Bind();
-    vertexBuffer->DisableVertexAttrib();
+    vertexBuffer->DisableVertexAttribInterleaved();
     vertexBuffer->Bind();
 
     if(m_isWireframe)

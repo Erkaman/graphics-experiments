@@ -52,7 +52,7 @@ void TuhuApplication::Render() {
 //    GL_C(glActiveTexture( GL_TEXTURE0));
 //    shader->SetUniform("tex", 0);
 
-    heightMap->SetWireframe(true);
+    heightMap->SetWireframe(false);
 
     heightMap->Draw(camera->GetMvp());
 }

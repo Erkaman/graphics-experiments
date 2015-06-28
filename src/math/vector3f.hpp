@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 class Vector3f {
 
@@ -53,6 +54,11 @@ public:
       Rotate this vector around the axis.
      */
     Vector3f& Rotate(const float angle, const Vector3f& axis);
+
+    /*
+      Add this vector to an array of floats.
+     */
+    void Add(std::vector<float>& v) const;
 
     /*
       STATIC METHODS

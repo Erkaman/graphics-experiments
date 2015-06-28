@@ -61,3 +61,10 @@ bool operator==(const Vector3f& v1, const Vector3f& v2) {
     return fabs(v1.x - v2.x) <= EPSILON && fabs(v1.y - v2.y) <= EPSILON && fabs(v1.z - v2.z) <= EPSILON;
 
 }
+
+
+void Vector3f::Add(std::vector<float>& v)const {
+    v.push_back(x);
+    v.push_back(y);
+    v.push_back(z);
+}

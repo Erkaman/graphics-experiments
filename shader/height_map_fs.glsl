@@ -9,5 +9,5 @@ out vec4 fragmentColor;
 void main()
 {
 //    vec4 col = texture(tex, texCoord.xy);
-    fragmentColor = vec4(1.0, 0.0, 0.0, 1.0);//col;
+    fragmentColor = vec4(0.33, 0.33, 0.33, 1.0);//col;
 }
