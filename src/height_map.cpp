@@ -128,7 +128,14 @@ void HeightMap::Draw(const Camera& camera)  {
 
     shader->Bind();
     shader->SetUniform("mvp", camera.GetMvp());
-    shader->SetUniform("modelView", camera.GetViewMatrix());
+    Matrix4f viewMatrix = camera.GetViewMatrix();
+    shader->SetUniform("modelViewMatrix", viewMatrix);
+    Matrix4f normalMatrix(viewMatrix);
+    viewMatrix.Transpose().Inverse();
+    shader->SetUniform("normalMatrix", normalMatrix);
+
+//    Vector3f lightPosition(0,10,0);
+//    shader->SetUniform("viewSpaceLightPosition", viewMatrix * lightPosition);
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );

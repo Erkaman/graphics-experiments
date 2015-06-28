@@ -3,6 +3,7 @@
 #include "math/matrix4f.hpp"
 #include "framework.hpp"
 #include "math/vector3f.hpp"
+#include "math/vector4f.hpp"
 #include "common.hpp"
 
 static void TestCreateTranslation() {
@@ -240,7 +241,21 @@ static void TestInverse() {
     expected = expected / 144.0f;
 
     AssertEquals(a.Inverse(), expected);
+}
 
+
+static void MultVector() {
+
+    Matrix4f a(
+	1,2,3,4,
+	5,6,7,8,
+	9,10,11,12,
+	13,14,15,16);
+
+    Vector4f b(21,22,23,24);
+    Vector4f expected(230,590,950,1310);
+
+    AssertEquals(a*b, expected);
 }
 
 void Matrix4fTestSuite() {
@@ -259,14 +274,8 @@ void Matrix4fTestSuite() {
     suite.emplace_back(TestAdd, "TestAdd");
     suite.emplace_back(TestSub, "TestSub");
     suite.emplace_back(TestInverse, "TestInverse");
+    suite.emplace_back(MultVector, "MultVector");
 
     RunSuite(suite, "Matrix4f");
-
-    Matrix4f m = Matrix4f::CreateLookAt(
-	Vector3f(0,1,0),
-	Vector3f(-1,1,0),
-	Vector3f(0,1,0));
-
-    printf("M: %s\n", std::string(m).c_str());
 
 }

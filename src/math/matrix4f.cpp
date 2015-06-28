@@ -2,6 +2,7 @@
 
 #include "math_common.hpp"
 #include "vector3f.hpp"
+#include "vector4f.hpp"
 #include "log.hpp"
 
 using std::string;
@@ -405,4 +406,12 @@ Matrix4f operator-(const Matrix4f& a, const Matrix4f& b) {
 	a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23,
 	a.m30 - b.m30, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33
 	);
+}
+
+Vector4f operator*(const Matrix4f& a, const Vector4f& b) {
+    return Vector4f(
+	a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03 * b.w,
+	a.m10 * b.x + a.m11 * b.y + a.m12 * b.z + a.m13 * b.w,
+	a.m20 * b.x + a.m21 * b.y + a.m22 * b.z + a.m23 * b.w,
+	a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33 * b.w);
 }
