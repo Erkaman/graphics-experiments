@@ -89,17 +89,20 @@ HeightMap::HeightMap(const std::string& path) {
 }
 
 void HeightMap::Draw() {
+
+    vertexBuffer->Bind();
+    vertexBuffer->EnableVertexAttrib();
+    vertexBuffer->Bind();
+
     indexBuffer->Bind();
+
     indexBuffer->DrawIndices(GL_TRIANGLES, 3);
+
+
     indexBuffer->Unbind();
+
+    vertexBuffer->Bind();
+    vertexBuffer->DisableVertexAttrib();
+    vertexBuffer->Bind();
+
 }
-
-
-/*
-
-0  1  2  3
-4  5  6  7
-8  9  10 11
-12 13 14 15
-
- */

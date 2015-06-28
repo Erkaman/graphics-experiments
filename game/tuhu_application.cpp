@@ -27,58 +27,23 @@ void TuhuApplication::Init() {
 
     shader = make_unique<ShaderProgram>("shader/simple");
 
-    indexBuffer = unique_ptr<VBO>(VBO::CreateIndex());
-
+    /*
     vertexBuffer = unique_ptr<VBO>(VBO::CreateInterleaved(
 				       vector<GLuint>{VBO_POSITION_ATTRIB_INDEX, VBO_TEX_COORD_ATTRIB_INDEX},
 				       vector<GLuint>{3,2}
 				       ));
-
-    vector<GLfloat> vertices;
-
-    vertices.push_back(-100.5f); vertices.push_back(0.0f); vertices.push_back(+10.5f );
-    vertices.push_back(100); vertices.push_back(-10);
-
-    vertices.push_back(-100.5f); vertices.push_back(0.0f); vertices.push_back(-10.5f);
-    vertices.push_back(100); vertices.push_back(10);
-
-    vertices.push_back(+10.5f); vertices.push_back(0.0f); vertices.push_back(-10.5f);
-    vertices.push_back(-7); vertices.push_back(10);
-
-    vertices.push_back(+10.5f); vertices.push_back(0.0f); vertices.push_back(+10.5f);
-    vertices.push_back(-7); vertices.push_back(-10);
-
-    vertexBuffer->Bind();
-    vertexBuffer->SetBufferData(vertices);
-    vertexBuffer->Unbind();
-
-    vector<GLushort> indices;
-    indices.emplace_back(0);
-    indices.emplace_back(1);
-    indices.emplace_back(2);
-
-    indices.emplace_back(2);
-    indices.emplace_back(3);
-    indices.emplace_back(0);
-
-    indexBuffer->Bind();
-    indexBuffer->SetBufferData(indices);
-    indexBuffer->Unbind();
+*/
 
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
 //    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
-    texture = unique_ptr<Texture>(new Texture2D ("img/floor.png"));
-
-    texture->Bind();
+/*    texture->Bind();
     texture->SetTextureTiling();
     texture->SetMinFilter(GL_LINEAR);
     texture->SetMagFilter(GL_NEAREST);
     texture->Unbind();
-
-//    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,+0.3,.9), Vector3f(0,2.3,+2.9));
-
+*/
     camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,1,0), Vector3f(-1,0,0));
 
     heightMap = make_unique<HeightMap>("img/height.png");
@@ -92,30 +57,13 @@ void TuhuApplication::Render() {
 
     shader->Bind();
 
-
     shader->SetUniform("mvp", camera->GetMvp());
 
-    GL_C(glActiveTexture( GL_TEXTURE0));
-    shader->SetUniform("tex", 0);
+//    GL_C(glActiveTexture( GL_TEXTURE0));
+//    shader->SetUniform("tex", 0);
 
-
-    texture->Bind();
-
-
-    vertexBuffer->EnableVertexAttribInterleaved();
-    indexBuffer->Bind();
-//    indexBuffer->DrawIndices(GL_TRIANGLES, 6);
-    indexBuffer->Unbind();
 
     heightMap->Draw();
-
-    texture->Unbind();
-    vertexBuffer->DisableVertexAttribInterleaved();
-
-
-
-
-
 
     shader->Unbind();
 }

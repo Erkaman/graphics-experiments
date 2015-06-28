@@ -20,10 +20,6 @@ class TuhuApplication : public Application{
 private:
 
     std::unique_ptr<ShaderProgram> shader;
-    std::unique_ptr<VBO> indexBuffer;
-    std::unique_ptr<VBO> vertexBuffer;
-
-    std::unique_ptr<Texture> texture;
 
     std::unique_ptr<Camera> camera;
     std::unique_ptr<HeightMap> heightMap;
