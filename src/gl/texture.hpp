@@ -3,9 +3,6 @@
 #include "gl_common.hpp"
 #include <string>
 
-#include "math/math_common.hpp"
-#include "log.hpp"
-
 class Texture {
 
 private:
@@ -84,12 +81,7 @@ public:
         GL_C(glTexParameterf(m_target,GL_TEXTURE_MAX_ANISOTROPY_EXT, GetMaxAnisotropic()));
     }
 
-    static float GetMaxAnisotropic() {
-        if(FloatEquals(cachedMaxAnisotropic, 0)) {
-	    GL_C(glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &cachedMaxAnisotropic));
-        }
-        return cachedMaxAnisotropic;
-    }
+    static float GetMaxAnisotropic();
 
     void SetBestMagMinFilters(const bool generateMipmap) {
         if(generateMipmap)

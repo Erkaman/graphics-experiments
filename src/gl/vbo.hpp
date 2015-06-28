@@ -3,8 +3,9 @@
 #include "gl_common.hpp"
 
 #include <vector>
-#include "math/vector3f.hpp"
-#include "math/vector2f.hpp"
+
+class Vector3f;
+class Vector2f;
 
 class VBO {
 
