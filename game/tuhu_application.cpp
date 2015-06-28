@@ -2,18 +2,13 @@
 #include "gl/shader_program.hpp"
 #include "gl/vbo.hpp"
 #include "gl/vao.hpp"
-#include "gl/vbo.hpp"
 
-#include "file.hpp"
-
-#include "math/vector3f.hpp"
-#include "math/vector2f.hpp"
-#include "math/color.hpp"
 #include "math/matrix4f.hpp"
 
 #include "gl/texture2d.hpp"
 
 #include "camera.hpp"
+#include "height_map.hpp"
 
 using namespace std;
 
@@ -32,8 +27,6 @@ void TuhuApplication::Init() {
 
     shader = make_unique<ShaderProgram>("shader/simple");
 
-    positionsBuffer = unique_ptr<VBO>(VBO::CreatePosition(3));
-    texCoordsBuffer = unique_ptr<VBO>(VBO::CreateTexCoord(2));
     indexBuffer = unique_ptr<VBO>(VBO::CreateIndex());
 
     vertexBuffer = unique_ptr<VBO>(VBO::CreateInterleaved(
@@ -86,7 +79,9 @@ void TuhuApplication::Init() {
 
 //    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,+0.3,.9), Vector3f(0,2.3,+2.9));
 
-    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(10,1,0), Vector3f(-1,0,0));
+    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,1,0), Vector3f(-1,0,0));
+
+    heightMap = make_unique<HeightMap>("img/height.png");
 
 }
 
@@ -100,22 +95,26 @@ void TuhuApplication::Render() {
 
     shader->SetUniform("mvp", camera->GetMvp());
 
-    vertexBuffer->EnableVertexAttribInterleaved();
-
-    texture->Bind();
     GL_C(glActiveTexture( GL_TEXTURE0));
     shader->SetUniform("tex", 0);
 
+
+    texture->Bind();
+
+
+    vertexBuffer->EnableVertexAttribInterleaved();
     indexBuffer->Bind();
-
-    indexBuffer->DrawIndices(GL_TRIANGLES, 6);
-
+//    indexBuffer->DrawIndices(GL_TRIANGLES, 6);
     indexBuffer->Unbind();
 
+    heightMap->Draw();
 
     texture->Unbind();
-
     vertexBuffer->DisableVertexAttribInterleaved();
+
+
+
+
 
 
     shader->Unbind();
@@ -126,10 +125,18 @@ void TuhuApplication::Update(const double delta) {
 	camera->Walk(delta);
     }  else if(GetKey( GLFW_KEY_S ) == GLFW_PRESS) {
 	camera->Walk(-delta);
-    } else if(GetKey( GLFW_KEY_A ) == GLFW_PRESS) {
+    }
+
+    if(GetKey( GLFW_KEY_A ) == GLFW_PRESS) {
 	camera->Stride(-delta);
     }else if(GetKey( GLFW_KEY_D ) == GLFW_PRESS) {
 	camera->Stride(+delta);
+    }
+
+    if(GetKey( GLFW_KEY_O ) == GLFW_PRESS) {
+	camera->Fly(+delta);
+    }else if(GetKey( GLFW_KEY_L ) == GLFW_PRESS) {
+	camera->Fly(-delta);
     }
 
     camera->HandleInput();
@@ -140,12 +147,3 @@ void ShaderProgramDeleter::operator()(ShaderProgram *p){ delete p;}
 void VBODeleter::operator()(VBO *p){ delete p;}
 
 void TextureDeleter::operator()(Texture *p){ delete p;}
-
-/*
-according to voxelspel, the matrix should look like this:
-
-Info: mat: 0.0, 0.0, -1.0000199, -1.0
-0.0, 2.4142134, 0.0, 0.0
--1.81066, 0.0, 0.0, 0.0
-0.724264, -6.0355334, 0.20000598, 0.4
-*/

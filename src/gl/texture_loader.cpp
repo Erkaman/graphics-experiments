@@ -14,7 +14,6 @@ TextureInfo TextureLoader::Load(const std::string& texturePath) {
     unsigned int width;
     unsigned int height;
 
-
     std::vector<unsigned char> buffer;
     lodepng::load_file(buffer, texturePath);
 

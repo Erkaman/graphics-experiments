@@ -43,7 +43,15 @@ void Camera::Stride(const double amount) {
     ComputeViewMatrix();
 }
 
+void Camera::Fly(const double amount) {
+    m_position += amount * m_up;
+    ComputeViewMatrix();
+}
+
 void Camera::HandleInput() {
+
+
+
     const Mouse& mouse = Mouse::getInstance();
 
     bool rotated = false;
