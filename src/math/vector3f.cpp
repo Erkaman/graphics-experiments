@@ -1,4 +1,7 @@
 #include "vector3f.hpp"
+#include "math/quat4f.hpp"
+#include <math.h>
+#include "math_common.hpp"
 
 Vector3f& Vector3f::Rotate(const float angle, const Vector3f& axis) {
 
@@ -51,4 +54,9 @@ Vector3f Vector3f::Cross(const Vector3f& v1, const Vector3f& v2) {
 	v1.z * v2.x - v1.x * v2.z,
 	v1.x * v2.y - v1.y * v2.x
 	);
+}
+
+bool operator==(const Vector3f& v1, const Vector3f& v2) {
+    constexpr static float EPSILON = 0.0001f;
+    return fabs(v1.x - v2.x) <= EPSILON && fabs(v1.y - v2.y) <= EPSILON && fabs(v1.z - v2.z) <= EPSILON;
 }

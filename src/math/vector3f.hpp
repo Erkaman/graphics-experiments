@@ -1,9 +1,6 @@
 #pragma once
 
 #include <string>
-#include "common.hpp"
-#include "math_common.hpp"
-#include "math/quat4f.hpp"
 
 class Vector3f {
 
@@ -80,10 +77,7 @@ inline Vector3f operator-(const Vector3f& v1, const Vector3f& v2) {
     return v1 + (-v2);
 }
 
-inline bool operator==(const Vector3f& v1, const Vector3f& v2) {
-    constexpr static float EPSILON = 0.0001f;
-    return fabs(v1.x - v2.x) <= EPSILON && fabs(v1.y - v2.y) <= EPSILON && fabs(v1.z - v2.z) <= EPSILON;
-}
+
 
 inline bool operator!=(const Vector3f& v1, const Vector3f& v2) {
     return !(v1 == v2);

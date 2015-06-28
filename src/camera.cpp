@@ -4,6 +4,7 @@
 
 #include "math/quat4f.hpp"
 #include "mouse.hpp"
+#include "math/math_common.hpp"
 
 using std::string;
 
