@@ -6,6 +6,7 @@
 
 class Color;
 class Matrix4f;
+class Vector4f;
 
 class UniformLocationStore;
 struct UniformLocationStoreDeleter
@@ -47,5 +48,6 @@ public:
     void SetUniform(const std::string& uniformName, const Color& color);
     void SetUniform(const std::string& uniformName, const Matrix4f& matrix);
     void SetUniform(const std::string& uniformName, const int val);
+    void SetUniform(const std::string& uniformName, const Vector4f& v);
 
 };

@@ -10,6 +10,8 @@
 #include "math/matrix4f.hpp"
 #include "camera.hpp"
 #include "math/vector3f.hpp"
+#include "math/vector4f.hpp"
+
 #include "common.hpp"
 
 using std::unique_ptr;
@@ -134,8 +136,8 @@ void HeightMap::Draw(const Camera& camera)  {
     viewMatrix.Transpose().Inverse();
     shader->SetUniform("normalMatrix", normalMatrix);
 
-//    Vector3f lightPosition(0,10,0);
-//    shader->SetUniform("viewSpaceLightPosition", viewMatrix * lightPosition);
+    Vector4f lightPosition(0,10,0,1);
+    shader->SetUniform("viewSpaceLightPosition", viewMatrix * lightPosition);
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );

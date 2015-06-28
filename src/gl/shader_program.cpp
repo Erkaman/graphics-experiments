@@ -7,6 +7,7 @@
 
 #include "math/color.hpp"
 #include "math/matrix4f.hpp"
+#include "math/vector4f.hpp"
 
 
 using namespace std;
@@ -96,6 +97,16 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const int val) {
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	GL_C(glUniform1i(location, val));
+    } else {
+	SetUniformWarn(uniformName);
+    }
+}
+
+
+void ShaderProgram::SetUniform(const std::string& uniformName, const Vector4f& v) {
+    if (m_uniformLocationStore->UniformExists(uniformName)) {
+	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
+	GL_C(glUniform4f(location, v.x, v.y, v.z, v.w));
     } else {
 	SetUniformWarn(uniformName);
     }
