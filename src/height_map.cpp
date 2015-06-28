@@ -8,6 +8,7 @@
 #include "gl/vbo.hpp"
 #include "gl/shader_program.hpp"
 #include "math/matrix4f.hpp"
+#include "camera.hpp"
 #include "math/vector3f.hpp"
 #include "common.hpp"
 
@@ -122,11 +123,12 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
     indexBuffer->Unbind();
 }
 
-void HeightMap::Draw(const Matrix4f& mvp) {
 
+void HeightMap::Draw(const Camera& camera)  {
 
     shader->Bind();
-    shader->SetUniform("mvp", mvp);
+    shader->SetUniform("mvp", camera.GetMvp());
+    shader->SetUniform("modelView", camera.GetViewMatrix());
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );

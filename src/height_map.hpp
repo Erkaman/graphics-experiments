@@ -4,7 +4,7 @@
 
 class VBO;
 class ShaderProgram;
-class Matrix4f;
+class Camera;
 
 class HeightMap {
 
@@ -28,7 +28,7 @@ public:
 
     HeightMap(const std::string& path);
 
-    void Draw(const Matrix4f& mvp);
+    void Draw(const Camera& camera);
 
     void SetWireframe(const bool wireframe);
 

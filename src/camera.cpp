@@ -74,3 +74,7 @@ void Camera::HandleInput() {
     }
 
 }
+
+Matrix4f Camera::GetViewMatrix() const {
+    return *m_viewMatrix;
+}

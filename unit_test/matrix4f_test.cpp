@@ -3,6 +3,7 @@
 #include "math/matrix4f.hpp"
 #include "framework.hpp"
 #include "math/vector3f.hpp"
+#include "common.hpp"
 
 static void TestCreateTranslation() {
     Matrix4f trans = Matrix4f::CreateTranslation(1,2,3);
@@ -58,7 +59,6 @@ static void TestMult() {
 	21,22,23,24,
 	25,26,27,28,
 	29,30,31,32
-
 	);
 
     Matrix4f expected(
@@ -101,9 +101,147 @@ static void TestTranspose() {
 
     a.Transpose();
     AssertEquals(a, expected);
+}
+
+
+static void TestDeterminant() {
+    Matrix4f a(
+	2,5,3,5,
+	4,6,6,3,
+	11,3,2,-2,
+	4,-7,9,3
+	);
+
+    AssertEquals(a.Determinant(), 2960);
+}
+
+static void TestTrace() {
+    Matrix4f a(
+	1,2,3,4,
+	5,6,7,8,
+	9,10,11,12,
+	13,14,15,16
+	);
+
+    AssertEquals(a.Trace(), 34);
+}
+
+static void TestScale() {
+    Matrix4f a(
+	1,2,3,4,
+	5,6,7,8,
+	9,10,11,12,
+	13,14,15,16
+	);
+
+    Matrix4f expected(
+	5,10,15,20,
+	25,30,35,40,
+	45,50,55,60,
+	65,70,75,80
+	);
+
+    AssertEquals(5*a, expected);
+    AssertEquals(a*5, expected);
 
 }
 
+static void TestDiv() {
+    Matrix4f expected(
+	1,2,3,4,
+	5,6,7,8,
+	9,10,11,12,
+	13,14,15,16
+	);
+
+    Matrix4f a(
+	5,10,15,20,
+	25,30,35,40,
+	45,50,55,60,
+	65,70,75,80
+	);
+
+    AssertEquals(a/5.0f, expected);
+}
+
+
+static void TestAdd() {
+
+    Matrix4f a(
+	1,2,3,4,
+	5,6,7,8,
+	9,10,11,12,
+	13,14,15,16
+	);
+
+    Matrix4f b(
+	17,18,19,20,
+	21,22,23,24,
+	25,26,27,28,
+	29,30,31,32
+	);
+
+    Matrix4f expected(
+	18,20,22,24,
+	26,28,30,32,
+	34,36,38,40,
+	42,44,46,48
+	);
+
+    AssertEquals(a+b, expected);
+    AssertEquals(b+a, expected);
+
+}
+
+static void TestSub() {
+
+    Matrix4f a(
+	1,2,3,4,
+	5,6,7,8,
+	9,10,11,12,
+	13,14,15,16
+	);
+
+    Matrix4f b(
+	17,18,19,20,
+	21,22,23,24,
+	25,26,27,28,
+	29,30,31,32
+	);
+
+    Matrix4f expected(
+	16,16,16,16,
+	16,16,16,16,
+	16,16,16,16,
+	16,16,16,16
+	);
+
+    AssertEquals(b-a, expected);
+
+
+}
+
+static void TestInverse() {
+
+    Matrix4f a(
+	9,2,3,9,
+	5,6,7,8,
+	9,11,11,12,
+	13,14,15,16
+	);
+
+
+    Matrix4f expected(
+	8,-67,-40,59,
+	0,-72,144,-72,
+	-24,57,-168,111,
+	16,64,64,-80
+	);
+    expected = expected / 144.0f;
+
+    AssertEquals(a.Inverse(), expected);
+
+}
 
 void Matrix4fTestSuite() {
 
@@ -114,6 +252,13 @@ void Matrix4fTestSuite() {
     suite.emplace_back(TestMult, "TestMult");
     suite.emplace_back(TestCreatePerspective, "TestCreatePerspective");
     suite.emplace_back(TestTranspose, "TestTranspose");
+    suite.emplace_back(TestDeterminant, "TestDeterminant");
+    suite.emplace_back(TestTrace, "TestTrace");
+    suite.emplace_back(TestScale, "TestScale");
+    suite.emplace_back(TestDiv, "TestDiv");
+    suite.emplace_back(TestAdd, "TestAdd");
+    suite.emplace_back(TestSub, "TestSub");
+    suite.emplace_back(TestInverse, "TestInverse");
 
     RunSuite(suite, "Matrix4f");
 
@@ -124,48 +269,4 @@ void Matrix4fTestSuite() {
 
     printf("M: %s\n", std::string(m).c_str());
 
-    /*
-      matrix:
-mat: -0.861847639
-mat: 0.241469175
-mat: -0.445994705
-mat: 0.000000000
-
-mat: 0.391748935
-mat: 0.875456393
-mat: -0.283035100
-mat: 0.000000000
-
-mat: 0.322104663
-mat: -0.418651104
-mat: -0.849105299
-mat: 0.000000000
-
-mat: -0.679031491
-mat: -2.765397072
-mat: -2.427240372
-mat: 1.000000000
-*/
 }
-/*
-
-mat: 0.000000000
-mat: 0.000000000
-mat: 1.000000000
-mat: 0.000000000
-
-mat: 0.000000000
-mat: 1.000000000
-mat: 0.000000000
-mat: 0.000000000
-
-mat: -1.000000000
-mat: 0.000000000
-mat: 0.000000000
-mat: 0.000000000
-
-mat: 0.000000000
-mat: -1.000000000
-mat: 0.000000000
-mat: 1.000000000
-*/

@@ -54,7 +54,7 @@ void TuhuApplication::Render() {
 
     heightMap->SetWireframe(false);
 
-    heightMap->Draw(camera->GetMvp());
+    heightMap->Draw(*camera);
 }
 
 void TuhuApplication::Update(const double delta) {

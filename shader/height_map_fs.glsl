@@ -8,6 +8,8 @@ out vec4 fragmentColor;
 
 void main()
 {
+    vec3 diffuseColor = vec3(0.33, 0.33, 0.33);
+
 //    vec4 col = texture(tex, texCoord.xy);
-    fragmentColor = vec4(0.33, 0.33, 0.33, 1.0);//col;
+    fragmentColor = vec4(diffuseColor, 1.0);//col;
 }

@@ -25,6 +25,8 @@ public:
 
     Matrix4f GetMvp() const;
 
+    Matrix4f GetViewMatrix() const;
+
     void Walk(const double amount);
     void Stride(const double amount);
     void Fly(const double amount);
