@@ -2,7 +2,6 @@
 
 #include <string>
 #include <stdio.h>
-#include <string>
 
 class File {
 
