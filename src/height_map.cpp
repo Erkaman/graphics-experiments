@@ -11,8 +11,9 @@
 #include "camera.hpp"
 #include "math/vector3f.hpp"
 #include "math/vector4f.hpp"
+#include "math/color.hpp"
 
-#include "common.hpp"
+//#include "common.hpp"
 
 using std::unique_ptr;
 using std::vector;
@@ -48,10 +49,14 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
     unsigned int zpos = 0;
 
     vertexBuffer = unique_ptr<VBO>(VBO::CreateInterleaved(
-				       vector<GLuint>{VBO_POSITION_ATTRIB_INDEX, VBO_NORMAL_ATTRIB_INDEX},
-				       vector<GLuint>{3,3}
+				       vector<GLuint>{
+					   VBO_POSITION_ATTRIB_INDEX,
+					       VBO_NORMAL_ATTRIB_INDEX,
+					       VBO_COLOR_ATTRIB_INDEX},
+				       vector<GLuint>{3,3,4}
 				       ));
 
+    Color color = Color::FromInt(128,128,128);
 
     FloatVector vertices;
     UshortVector indices;
@@ -59,6 +64,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
     int baseIndex = 0;
 
     m_numTriangles = 0;
+
+    LOG_I("width: %d", m_width);
+    LOG_I("depth: %d", m_depth);
 
     while(true) {
 
@@ -69,32 +77,38 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 	if(xpos != 0 && ( (xpos+1) % (m_width) == 0)) {
 	    ++zpos;
 	    xpos = 0;
+
+//	    LOG_I("%d, %d", xpos, zpos);
+
 	}
 	size_t i = (zpos * m_width + xpos) * 4;
 
-//	LOG_I("%ld: %d, %d", i/4, xpos, zpos);
 
-	const Vector3f v1(xpos, ComputeY(imageData[i]), zpos);
+	const Vector3f v1(ScaleXZ(xpos), ComputeY(imageData[i]), ScaleXZ(zpos));
 
-	const Vector3f v2(xpos+1, ComputeY(imageData[i+4]), zpos);
+	const Vector3f v2(ScaleXZ(xpos+1), ComputeY(imageData[i+4]), ScaleXZ(zpos));
 
-	const Vector3f v3(xpos, ComputeY(imageData[i+m_width*4]), zpos+1);
+	const Vector3f v3(ScaleXZ(xpos), ComputeY(imageData[i+m_width*4]), ScaleXZ(zpos+1));
 
-	const Vector3f v4(xpos+1, ComputeY(imageData[i+m_width*4+4]), zpos+1);
+	const Vector3f v4(ScaleXZ(xpos+1), ComputeY(imageData[i+m_width*4+4]), ScaleXZ(zpos+1));
 
-	const Vector3f normal = Vector3f::Cross(v3 - v1, v2 - v1);
+	const Vector3f normal = Vector3f::Cross(v3 - v1, v2 - v1).Normalize();
 
 	v1.Add(vertices);
 	normal.Add(vertices);
+	VertexColoring(v1.y).Add(vertices);
 
 	v2.Add(vertices);
 	normal.Add(vertices);
+	VertexColoring(v2.y).Add(vertices);
 
 	v3.Add(vertices);
 	normal.Add(vertices);
+	VertexColoring(v3.y).Add(vertices);
 
 	v4.Add(vertices);
 	normal.Add(vertices);
+	VertexColoring(v4.y).Add(vertices);
 
 	indices.push_back(2+baseIndex);
 	indices.push_back(1+baseIndex);
@@ -142,7 +156,6 @@ void HeightMap::Draw(const Camera& camera)  {
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-
     vertexBuffer->Bind();
     vertexBuffer->EnableVertexAttribInterleaved();
     vertexBuffer->Bind();
@@ -164,9 +177,25 @@ void HeightMap::Draw(const Camera& camera)  {
 }
 
 const float HeightMap::ComputeY(const unsigned char heightMapData ) {
-    return (float)heightMapData  / 255.0f;
+    return ((float)heightMapData  / 255.0f) * 1.0f;
 }
 
 void HeightMap::SetWireframe(const bool wireframe) {
     m_isWireframe = wireframe;
+}
+
+const float HeightMap::ScaleXZ(const float x) {
+    return 0.2f * x;
+}
+
+const Color HeightMap::VertexColoring(const float y) {
+    if(y < 0.5f) {
+	Color lower = Color::FromInt(237, 201, 175);
+	Color higher = Color::FromInt(0, 255, 0);
+	return Color::Lerp(lower, higher, y / 0.5f);
+    } else {
+	Color lower = Color::FromInt(0, 255, 0);
+	Color higher = Color::FromInt(100, 100, 100);
+	return Color::Lerp(lower, higher, (y-0.5f) / 0.5f);
+    }
 }

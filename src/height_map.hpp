@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "math/color.hpp"
 
 class VBO;
 class ShaderProgram;
@@ -22,7 +23,9 @@ private:
 
     std::unique_ptr<ShaderProgram> shader;
 
-    const float ComputeY(const unsigned char heightMapData );
+    static const float ComputeY(const unsigned char heightMapData );
+    static const float ScaleXZ(const float x);
+    static const Color VertexColoring(const float y);
 
 public:
 

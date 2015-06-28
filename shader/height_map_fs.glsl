@@ -8,6 +8,8 @@ out vec4 fragmentColor;
 
 uniform vec3 viewSpaceLightPosition;
 
+in vec3 vertexColor;
+
 
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
@@ -24,7 +26,7 @@ vec3 calculateDiffuse(vec3 diffuseLight, vec3 materialDiffuse,
 }
 
 vec3 sampleDiffuseTexture() {
-    return vec3(0.5, 0.5, 0.5);
+    return vertexColor; //vec3(0.5, 0.5, 0.5);
 }
 
 void main()

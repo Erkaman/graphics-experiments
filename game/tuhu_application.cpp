@@ -21,14 +21,6 @@ void TuhuApplication::Init() {
     VAO().Bind();
     LOG_I("init");
 
-    /*
-    vertexBuffer = unique_ptr<VBO>(VBO::CreateInterleaved(
-				       vector<GLuint>{VBO_POSITION_ATTRIB_INDEX, VBO_TEX_COORD_ATTRIB_INDEX},
-				       vector<GLuint>{3,2}
-				       ));
-*/
-
-
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
     GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
@@ -38,9 +30,9 @@ void TuhuApplication::Init() {
     texture->SetMagFilter(GL_NEAREST);
     texture->Unbind();
 */
-    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,0.6,0), Vector3f(-1,0,0));
+    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-0.5,0.6,-0.5), Vector3f(1,-0.5,1));
 
-    heightMap = make_unique<HeightMap>("img/height.png");
+    heightMap = make_unique<HeightMap>("img/cloud.png");
 
 }
 
