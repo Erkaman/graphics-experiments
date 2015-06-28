@@ -24,3 +24,31 @@ Vector3f& Vector3f::Rotate(const float angle, const Vector3f& axis) {
 
     return (*this);
 }
+
+
+Vector3f::operator std::string() const {
+    return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
+}
+
+
+float Vector3f::Length()const {
+    return sqrt(x*x + y*y + z*z);
+}
+
+Vector3f& Vector3f::Normalize() {
+    const float len = Length();
+
+    x /= len;
+    y /= len;
+    z /= len;
+
+    return *this;
+}
+
+Vector3f Vector3f::Cross(const Vector3f& v1, const Vector3f& v2) {
+    return Vector3f(
+	v1.y * v2.z - v1.z * v2.y,
+	v1.z * v2.x - v1.x * v2.z,
+	v1.x * v2.y - v1.y * v2.x
+	);
+}

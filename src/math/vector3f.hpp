@@ -9,9 +9,17 @@ class Vector3f {
 
 public:
 
+/*
+  INSTANCE VARIABLES
+ */
+
     float x,y,z;
 
 public:
+
+    /*
+      CONSTRUCTORS
+     */
 
     Vector3f():x(0.0f),y(0.0f),z(0.0f) {  }
 
@@ -21,54 +29,45 @@ public:
 
     Vector3f(const Vector3f& that): x(that.x), y(that.y), z(that.z){ }
 
+    /*
+      OPERATOR OVERLOADS
+     */
+
     friend Vector3f operator+(const Vector3f& v1, const Vector3f& v2);
     friend Vector3f operator-(const Vector3f& v1, const Vector3f& v2);
     friend bool operator==(const Vector3f& v1, const Vector3f& v2);
     friend bool operator!=(const Vector3f& v1, const Vector3f& v2);
-
     friend Vector3f operator*(const double scale, const Vector3f& v);
+    Vector3f& operator += (const Vector3f& that);
+    Vector3f operator-() const;
+    operator std::string() const;
 
-    Vector3f& operator += (const Vector3f& that){
-	*this = (*this) + that;
-	return (*this);
-    }
+    /*
+      PUBLIC METHODS
+     */
 
-    Vector3f operator-() const {
-	Vector3f v(-x,-y,-z);
-	return v;
-    }
 
-    operator std::string() const {
-	return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
-    }
+    float Length()const;
 
-    float Length() {
-	return sqrt(x*x + y*y + z*z);
-    }
+    Vector3f& Normalize();
 
-    const Vector3f& Normalize() {
-	const float len = Length();
-
-	x /= len;
-	y /= len;
-	z /= len;
-
-	return *this;
-    }
-
+    /*
+      Rotate this vector around the axis.
+     */
     Vector3f& Rotate(const float angle, const Vector3f& axis);
 
-    static Vector3f Cross(const Vector3f& v1, const Vector3f& v2) {
-	return Vector3f(
-	    v1.y * v2.z - v1.z * v2.y,
-	    v1.z * v2.x - v1.x * v2.z,
-	    v1.x * v2.y - v1.y * v2.x
-	    );
-    }
+    /*
+      STATIC METHODS
+     */
 
-
+    static Vector3f Cross(const Vector3f& v1, const Vector3f& v2);
 
 };
+
+
+/*
+  OPERATOR DEFINITIONS
+ */
 
 inline Vector3f operator+(const Vector3f& v1, const Vector3f& v2) {
     return Vector3f(
@@ -96,4 +95,14 @@ inline Vector3f operator*(const double scale, const Vector3f& v) {
 	scale * v.x,
 	scale * v.y,
 	scale * v.z);
+}
+
+inline Vector3f& Vector3f::operator += (const Vector3f& that){
+    *this = (*this) + that;
+    return (*this);
+}
+
+inline Vector3f Vector3f::operator-() const {
+    Vector3f v(-x,-y,-z);
+    return v;
 }
