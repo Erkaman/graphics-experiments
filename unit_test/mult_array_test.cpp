@@ -95,7 +95,7 @@ static void TestGetWrap() {
     AssertEqualsInt(m1.GetWrap(2,-1),2);
 
     AssertEqualsInt(m1.GetWrap(2,1),4);
-    AssertEqualsInt(m1.GetWrap(2,2),5);
+    AssertEqualsInt(m1.GetWrap(2,2),6);
 }
 
 void MultArrayTestSuite() {
