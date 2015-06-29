@@ -30,7 +30,7 @@ public:
 	GL_C(glGenBuffers(1, &m_buffer));
     }
 
-    void Dispose() {
+    ~VBO() {
 	GL_C(glDeleteBuffers(1, &m_buffer));
     }
 

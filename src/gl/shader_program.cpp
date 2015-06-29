@@ -13,8 +13,6 @@
 
 using namespace std;
 
-ShaderProgram::~ShaderProgram() {}
-
 ShaderProgram::ShaderProgram():m_uniformLocationStore(nullptr) {
 
 }
@@ -52,7 +50,7 @@ void ShaderProgram::Unbind() {
     m_alreadyBoundProgram = false;
 }
 
-void ShaderProgram::Dispose() {
+ShaderProgram::~ShaderProgram() {
     glDeleteProgram(m_alreadyBoundProgram);
 }
 

@@ -45,8 +45,6 @@ public:
 
     void Unbind();
 
-    void Dispose();
-
     void SetUniform(const std::string& uniformName, const Color& color);
     void SetUniform(const std::string& uniformName, const Matrix4f& matrix);
     void SetUniform(const std::string& uniformName, const int val);

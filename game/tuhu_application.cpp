@@ -18,7 +18,6 @@ TuhuApplication::~TuhuApplication() { }
 
 void TuhuApplication::Init() {
 
-    VAO().Bind();
     LOG_I("init");
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing

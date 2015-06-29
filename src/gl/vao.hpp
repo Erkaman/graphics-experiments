@@ -13,6 +13,11 @@ public:
         GL_C(glGenVertexArrays(1, &vao));
     }
 
+    ~VAO() {
+        GL_C(glDeleteVertexArrays(1, &vao));
+    }
+
+
     void Bind() {
         GL_C(glBindVertexArray(vao));
     }
@@ -21,7 +26,4 @@ public:
         GL_C(glBindVertexArray(0));
     }
 
-    void Dispose () {
-        GL_C(glDeleteVertexArrays(1, &vao));
-    }
 };

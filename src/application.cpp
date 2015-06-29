@@ -3,6 +3,7 @@
 #include "common.hpp"
 
 #include "gl/gl_common.hpp"
+#include "gl/vao.hpp"
 
 
 #include <stdio.h>
@@ -56,6 +57,9 @@ void Application::DoMainLoop() {
 }
 
 void Application::Cleanup() {
+    vao->Unbind();
+    delete vao;
+
     glfwTerminate();
     LogDispose();
 }
@@ -109,6 +113,9 @@ void Application::SetupOpenGL() {
     LOG_I( "GL  VENDOR:%s", glGetString( GL_VENDOR) );
     LOG_I( "   VERSION:%s", glGetString( GL_VERSION ));
     LOG_I( "  RENDERER:%s", glGetString( GL_RENDERER ) );
+
+    vao = new VAO();
+    vao->Bind();
 }
 
 void Application::SetViewport() {
@@ -152,3 +159,4 @@ void Application::SetWindowTitle(const std::string& title) {
     glfwSetWindowTitle(window, title.c_str());
 
 }
+

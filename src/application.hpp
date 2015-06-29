@@ -1,8 +1,10 @@
 #pragma once
 
 #include <string>
+#include <memory>
+#include "gl/vao.hpp"
 
-struct GLFWwindow;
+class GLFWwindow;
 
 class Application {
 
@@ -17,9 +19,14 @@ private:
     GLFWwindow* window;
     bool running;
 
+    VAO* vao;
+
+
 public:
 
     Application() {}
+    ~Application() {}
+
     void Start();
 
     int GetWindowWidth();

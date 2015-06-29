@@ -25,6 +25,10 @@ public:
 	GL_C(glGenTextures(1, &m_textureHandle));
     }
 
+    ~Texture()  {
+	GL_C(glDeleteTextures(1, &m_textureHandle));
+    }
+
     GLsizei GetWidth() const{
         return m_width;
     }
