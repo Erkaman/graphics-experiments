@@ -6,6 +6,7 @@
 #include <string>
 
 #include "math/math_common.hpp"
+#include <string.h>
 
 template<typename T>
 class MultArray {
