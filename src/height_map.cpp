@@ -12,6 +12,7 @@
 #include "math/vector3f.hpp"
 #include "math/vector4f.hpp"
 #include "math/color.hpp"
+#include "mult_array.hpp"
 
 //#include "common.hpp"
 
@@ -67,6 +68,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
     LOG_I("width: %d", m_width);
     LOG_I("depth: %d", m_depth);
     LOG_I("imageData size: %ld", imageData.size());
+
 
     while(true) {
 

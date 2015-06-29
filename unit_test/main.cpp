@@ -2,6 +2,7 @@
 #include "vector4f_test.hpp"
 #include "matrix4f_test.hpp"
 #include "color_test.hpp"
+#include "mult_array_test.hpp"
 #include "log.hpp"
 #include <stdio.h>
 
@@ -13,6 +14,7 @@ int main() {
     Vector4fTestSuite();
     Matrix4fTestSuite();
     ColorTestSuite();
+    MultArrayTestSuite();
 
     printf("ALL TESTS PASSED!");
 
