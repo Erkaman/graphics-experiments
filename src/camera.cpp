@@ -78,3 +78,8 @@ void Camera::HandleInput() {
 Matrix4f Camera::GetViewMatrix() const {
     return *m_viewMatrix;
 }
+
+
+Vector3f Camera::GetPosition() const {
+    return m_position;
+}

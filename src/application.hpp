@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 struct GLFWwindow;
 
 class Application {
@@ -32,6 +34,8 @@ protected:
     void SetViewport();
 
     int GetKey(int key);
+
+    void SetWindowTitle(const std::string& title);
 
 
 };

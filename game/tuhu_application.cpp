@@ -30,7 +30,7 @@ void TuhuApplication::Init() {
     texture->SetMagFilter(GL_NEAREST);
     texture->Unbind();
 */
-    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-0.5,0.6,-0.5), Vector3f(1,-0.5,1));
+    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-0.5,0.6,126), Vector3f(1,-0.5,1));
 
     heightMap = make_unique<HeightMap>("img/cloud.png");
 
@@ -50,25 +50,38 @@ void TuhuApplication::Render() {
 }
 
 void TuhuApplication::Update(const double delta) {
+    static float speed = 1.0f;
+
+
     if(GetKey( GLFW_KEY_W ) == GLFW_PRESS) {
-	camera->Walk(delta);
+	camera->Walk(delta * speed);
     }  else if(GetKey( GLFW_KEY_S ) == GLFW_PRESS) {
-	camera->Walk(-delta);
+	camera->Walk(-delta * speed);
     }
 
     if(GetKey( GLFW_KEY_A ) == GLFW_PRESS) {
-	camera->Stride(-delta);
+	camera->Stride(-delta * speed);
     }else if(GetKey( GLFW_KEY_D ) == GLFW_PRESS) {
-	camera->Stride(+delta);
+	camera->Stride(+delta * speed);
     }
 
     if(GetKey( GLFW_KEY_O ) == GLFW_PRESS) {
-	camera->Fly(+delta);
+	camera->Fly(+delta * speed);
     }else if(GetKey( GLFW_KEY_L ) == GLFW_PRESS) {
-	camera->Fly(-delta);
+	camera->Fly(-delta * speed);
+    }
+
+    if(GetKey( GLFW_KEY_M ) == GLFW_PRESS) {
+	speed = 5.0f;
+    }else {
+	speed = 1.0f;
     }
 
     camera->HandleInput();
+
+
+    SetWindowTitle(tos(camera->GetPosition()) );
+
 }
 
 void TextureDeleter::operator()(Texture *p){ delete p;}

@@ -56,32 +56,38 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 				       vector<GLuint>{3,3,4}
 				       ));
 
-    Color color = Color::FromInt(128,128,128);
 
     FloatVector vertices;
     UshortVector indices;
 
-    int baseIndex = 0;
+    GLushort baseIndex = 0;
 
     m_numTriangles = 0;
 
     LOG_I("width: %d", m_width);
     LOG_I("depth: %d", m_depth);
+    LOG_I("imageData size: %ld", imageData.size());
 
     while(true) {
-
-	if((zpos+2)==m_depth && (xpos+1) == m_width ) {
-	    break;
-	}
 
 	if(xpos != 0 && ( (xpos+1) % (m_width) == 0)) {
 	    ++zpos;
 	    xpos = 0;
 
-//	    LOG_I("%d, %d", xpos, zpos);
-
+//	    LOG_I("new row: %d, %d", xpos, zpos);
 	}
-	size_t i = (zpos * m_width + xpos) * 4;
+
+	if((zpos+1)==m_depth) {
+	    LOG_I("break %d", zpos);
+	    break;
+	}
+
+	size_t i = ( zpos * (m_width) + xpos) * 4;
+/*	LOG_I("i: %ld, %d", i, imageData[i]);
+
+	if(i > 1500) {
+	    LOG_E("stop");
+	}*/
 
 
 	const Vector3f v1(ScaleXZ(xpos), ComputeY(imageData[i]), ScaleXZ(zpos));
@@ -92,6 +98,10 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 
 	const Vector3f v4(ScaleXZ(xpos+1), ComputeY(imageData[i+m_width*4+4]), ScaleXZ(zpos+1));
 
+
+/*	if(i > 67000)
+	    LOG_I("index: %ld, %d, v1=%s, v4=%s", i+m_width*4+4, imageData[i+m_width*4+4], tos(v1).c_str(), tos(v4).c_str() );
+*/
 	const Vector3f normal = Vector3f::Cross(v3 - v1, v2 - v1).Normalize();
 
 	v1.Add(vertices);
@@ -120,11 +130,22 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 
 	m_numTriangles += 2;
 	baseIndex += 4;
+//	LOG_I("base index: %d", baseIndex);
 
 	++xpos;
 
     }
 
+    LOG_I("base index: %d", baseIndex);
+
+
+    LOG_I("size of vertex data: %ld", vertices.size());
+    LOG_I("size of index data: %ld", indices.size());
+/*
+  every square takes 6 indices.
+
+  number of indices is 99846
+ */
     vertexBuffer->Bind();
     vertexBuffer->SetBufferData(vertices);
     vertexBuffer->Unbind();
@@ -132,7 +153,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
     /*
       Finally, we create the index buffer.
      */
-    indexBuffer = unique_ptr<VBO>(VBO::CreateIndex());
+    indexBuffer = unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
 
     indexBuffer->Bind();
     indexBuffer->SetBufferData(indices);
@@ -162,7 +183,7 @@ void HeightMap::Draw(const Camera& camera)  {
 
     indexBuffer->Bind();
 
-    indexBuffer->DrawIndices(GL_TRIANGLES, m_numTriangles*3);
+    indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
 
     indexBuffer->Unbind();
 
@@ -177,7 +198,9 @@ void HeightMap::Draw(const Camera& camera)  {
 }
 
 const float HeightMap::ComputeY(const unsigned char heightMapData ) {
-    return ((float)heightMapData  / 255.0f) * 1.0f;
+//    return ((float)heightMapData  / 255.0f) * 0.2;
+    return ((float)heightMapData  / 255.0f) * 1.0;
+
 }
 
 void HeightMap::SetWireframe(const bool wireframe) {
@@ -185,10 +208,14 @@ void HeightMap::SetWireframe(const bool wireframe) {
 }
 
 const float HeightMap::ScaleXZ(const float x) {
-    return 0.2f * x;
+//    return 0.03f * x;
+    return x;
+
 }
 
 const Color HeightMap::VertexColoring(const float y) {
+    return Color(0.33,0.33,0.33);
+    /*
     if(y < 0.5f) {
 	Color lower = Color::FromInt(237, 201, 175);
 	Color higher = Color::FromInt(0, 255, 0);
@@ -197,5 +224,5 @@ const Color HeightMap::VertexColoring(const float y) {
 	Color lower = Color::FromInt(0, 255, 0);
 	Color higher = Color::FromInt(100, 100, 100);
 	return Color::Lerp(lower, higher, (y-0.5f) / 0.5f);
-    }
+	}*/
 }

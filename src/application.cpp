@@ -43,7 +43,10 @@ void Application::DoMainLoop() {
 
 	delta = fps.ManageFPS();
 
-	glfwSetWindowTitle(window, fps.GetFpsString().c_str());
+//	SetWindowTitle(fps.GetFpsString());
+
+//	std::string str = camera
+
     }
 }
 
@@ -136,4 +139,11 @@ int Application::GetWindowHeight() {
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     return height;
+}
+
+
+void Application::SetWindowTitle(const std::string& title) {
+
+    glfwSetWindowTitle(window, title.c_str());
+
 }

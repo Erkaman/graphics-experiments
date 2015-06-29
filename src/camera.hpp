@@ -27,10 +27,14 @@ public:
 
     Matrix4f GetViewMatrix() const;
 
+    Vector3f GetPosition() const;
+
     void Walk(const double amount);
     void Stride(const double amount);
     void Fly(const double amount);
 
     void HandleInput();
+
+
 
 };
