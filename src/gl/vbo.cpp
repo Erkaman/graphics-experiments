@@ -5,6 +5,8 @@
 #include "math/vector3f.hpp"
 #include "math/vector2f.hpp"
 
+#include <assert.h>
+
 
 VBO* VBO::CreatePosition(const GLint numComponents) {
     VBO* positionBuffer = new VBO();

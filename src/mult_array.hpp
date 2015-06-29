@@ -4,7 +4,7 @@
 #include <utility>
 #include <assert.h>
 #include <string>
-
+#include <string.h>
 
 template<typename T>
 class MultArray {

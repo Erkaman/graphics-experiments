@@ -2,6 +2,7 @@
 
 #include <string>
 #include "math/color.hpp"
+#include <memory>
 
 class VBO;
 class ShaderProgram;
