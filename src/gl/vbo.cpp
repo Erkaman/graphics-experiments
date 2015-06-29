@@ -112,6 +112,11 @@ void VBO::SetBufferData(const std::vector<GLushort>& data) {
     SetBufferData(data.size()*sizeof(GLushort), &data[0]);
 }
 
+void VBO::SetBufferData(const std::vector<GLuint>& data) {
+    SetBufferData(data.size()*sizeof(GLuint), &data[0]);
+}
+
+
 void VBO::SetBufferData(const std::vector<GLfloat>& data) {
     SetBufferData(data.size()*sizeof(GLfloat), reinterpret_cast<const GLvoid*>(&data[0]));
 }

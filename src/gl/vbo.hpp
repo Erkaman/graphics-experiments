@@ -49,6 +49,7 @@ public:
 
     void SetBufferData(const std::vector<Vector2f>& data);
     void SetBufferData(const std::vector<GLushort>& data);
+    void SetBufferData(const std::vector<GLuint>& data);
     void SetBufferData(const std::vector<GLfloat>& data);
 
     void EnableVertexAttrib();

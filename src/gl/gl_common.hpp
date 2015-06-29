@@ -18,3 +18,4 @@ constexpr GLuint VBO_COLOR_ATTRIB_INDEX = 3;
 
 typedef std::vector<GLushort> UshortVector;
 typedef std::vector<GLfloat> FloatVector;
+typedef std::vector<GLuint> UintVector;

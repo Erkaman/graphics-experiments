@@ -58,9 +58,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 
 
     FloatVector vertices;
-    UshortVector indices;
+    UintVector indices;
 
-    GLushort baseIndex = 0;
+    GLuint baseIndex = 0;
 
     m_numTriangles = 0;
 
@@ -153,7 +153,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
     /*
       Finally, we create the index buffer.
      */
-    indexBuffer = unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
+    indexBuffer = unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_INT));
 
     indexBuffer->Bind();
     indexBuffer->SetBufferData(indices);
