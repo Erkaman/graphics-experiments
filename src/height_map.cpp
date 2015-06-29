@@ -14,7 +14,12 @@
 #include "math/color.hpp"
 #include "mult_array.hpp"
 
-//#include "common.hpp"
+#include <memory>
+
+#if defined (_WIN32)
+#include <memory>
+using std::make_unique;
+#endif
 
 using std::unique_ptr;
 using std::vector;
@@ -87,7 +92,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 
     for(size_t i = 0; i < imageData.size(); i+=4) {
 
-	map.Get(xpos, zpos).position = Vector3f(xpos, ComputeY(imageData[i]), zpos);
+	map.Get(xpos, zpos).position = Vector3f((float)xpos, ComputeY(imageData[i]), (float)zpos);
 //	LOG_I("pos: %s", tos(map.Get(xpos, zpos).position).c_str() );
 
 	++xpos;
@@ -189,7 +194,7 @@ void HeightMap::Draw(const Camera& camera)  {
 
 const float HeightMap::ComputeY(const unsigned char heightMapData ) {
 //    return ((float)heightMapData  / 255.0f) * 0.2;
-    return ((float)heightMapData  / 255.0f) * 1.0;
+    return ((float)heightMapData  / 255.0f) * 1.0f;
 
 }
 
@@ -204,7 +209,7 @@ const float HeightMap::ScaleXZ(const float x) {
 }
 
 const Color HeightMap::VertexColoring(const float y) {
-    return Color(0.33,0.33,0.33);
+    return Color(0.33f,0.33f,0.33f);
     /*
     if(y < 0.5f) {
 	Color lower = Color::FromInt(237, 201, 175);

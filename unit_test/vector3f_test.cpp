@@ -32,7 +32,7 @@ static void TestNegation() {
 static void TestLength() {
     Vector3f v(-2, 5, 9);
 
-    AssertEqualsFloat(v.Length(),10.48808);
+    AssertEqualsFloat(v.Length(),10.48808f);
 }
 
 static void TestNormalize() {
@@ -43,7 +43,7 @@ static void TestNormalize() {
 
     v = Vector3f(3,1,2);
     v.Normalize();
-    AssertEquals(v,Vector3f(.80178,.26726,.53452));
+    AssertEquals(v,Vector3f(.80178f,.26726f,.53452f));
 }
 
 static void TestEquals() {
@@ -85,9 +85,9 @@ static void TestRotate() {
     Vector3f v(1,2,3);
     Vector3f axis(4,5,6.5f);
 
-    v.Rotate(30.0, axis);
+    v.Rotate(30.0f, axis);
 
-    AssertEquals(v,Vector3f(0.5874642, 0.4271195, 0.6873536));
+    AssertEquals(v,Vector3f(0.5874642f, 0.4271195f, 0.6873536f));
 }
 
 void Vector3fTestSuite() {

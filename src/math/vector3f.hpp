@@ -36,7 +36,7 @@ public:
     friend Vector3f operator-(const Vector3f& v1, const Vector3f& v2);
     friend bool operator==(const Vector3f& v1, const Vector3f& v2);
     friend bool operator!=(const Vector3f& v1, const Vector3f& v2);
-    friend Vector3f operator*(const double scale, const Vector3f& v);
+    friend Vector3f operator*(const float scale, const Vector3f& v);
     Vector3f& operator += (const Vector3f& that);
     Vector3f operator-() const;
     operator std::string() const;
@@ -91,7 +91,7 @@ inline bool operator!=(const Vector3f& v1, const Vector3f& v2) {
 }
 
 
-inline Vector3f operator*(const double scale, const Vector3f& v) {
+inline Vector3f operator*(const float scale, const Vector3f& v) {
     return Vector3f(
 	scale * v.x,
 	scale * v.y,
