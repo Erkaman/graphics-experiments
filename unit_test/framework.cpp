@@ -5,9 +5,14 @@
 constexpr static float EPSILON = 0.00001f;
 
 
-void AssertEquals(const float expected, const float actual) {
+void AssertEqualsFloat(const float expected, const float actual) {
     AssertEqualsBase( fabs(expected - actual) < EPSILON, std::to_string(expected), std::to_string(actual));
 }
+
+void AssertEqualsInt(const int expected, const int actual) {
+    AssertEqualsBase(expected == actual, std::to_string(expected), std::to_string(actual));
+}
+
 
 void AssertEqualsBase(const bool equals ,const std::string& expectedStr, const std::string& actualStr) {
     if(! equals ) {

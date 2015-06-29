@@ -5,27 +5,30 @@
 #include <assert.h>
 #include <string>
 
+#include "math/math_common.hpp"
 
 template<typename T>
 class MultArray {
 
 private:
 
-    size_t m_xsize;
-    size_t m_ysize;
-    size_t m_totalsize;
+    signed int m_xsize;
+    signed int m_ysize;
+    signed int m_totalsize;
     T* m_data;
 
-    size_t Index(const size_t x, const size_t y)const {
+    signed int Index(const signed int x, const signed int y)const {
 	return y * m_xsize + x;
     }
 
 public:
 
+    typedef T* iterator;
+
     /*
       CONSTRUCTOR
      */
-    MultArray(const size_t xsize, const size_t ysize):
+    MultArray(const signed int xsize, const signed int ysize):
 	m_xsize(xsize), m_ysize(ysize), m_totalsize(m_xsize*m_ysize),
 	m_data(new T[m_totalsize]){
 
@@ -91,7 +94,7 @@ public:
 	    return false;
 	}
 
-	for(size_t i = 0; i < m1.m_totalsize; ++i) {
+	for(signed int i = 0; i < m1.m_totalsize; ++i) {
 	    if(m1.m_data[i] != m2.m_data[i])
 		return false;
 	}
@@ -110,8 +113,8 @@ public:
 
 	str += "{\n";
 
-	for(size_t y = 0; y < m_ysize; ++y) {
-	    for(size_t x = 0; x < m_xsize; ++x) {
+	for(signed int y = 0; y < m_ysize; ++y) {
+	    for(signed int x = 0; x < m_xsize; ++x) {
 
 		str += std::to_string(m_data[Index(x,y)]);
 
@@ -131,8 +134,15 @@ public:
     /*
       GETTERS
     */
+    iterator Begin()const {
+	return m_data;
+    }
 
-    const T& Get(const size_t x, const size_t y)const {
+    iterator End()const {
+	return m_data + m_totalsize;
+    }
+
+    const T& Get(const signed int x, const signed int y)const {
 
 	assert(x < m_xsize);
 	assert(y < m_ysize);
@@ -140,23 +150,33 @@ public:
 	return m_data[Index(x,y)];
     }
 
-    T& Get(const size_t x, const size_t y) {
+    T& Get(const signed  x, const signed int y) {
 	assert(x < m_xsize);
 	assert(y < m_ysize);
 
 	return m_data[Index(x,y)];
     }
 
-    size_t GetXsize()const {
+    const T& GetWrap(const signed int x, const signed int y) {
+	return m_data[Index(
+		Clamp(x, (signed int)0, m_xsize-1),
+		Clamp(y, (signed int)0, m_ysize-1))];
+    }
+
+    signed int GetXsize()const {
 	return m_xsize;
     }
 
-    size_t GetYsize()const {
+    signed int GetYsize()const {
 	return m_ysize;
     }
 
-    size_t GetTotalsize()const {
+    signed int GetTotalsize()const {
 	return m_totalsize;
+    }
+
+    T* GetData() const {
+	return m_data;
     }
 
 };

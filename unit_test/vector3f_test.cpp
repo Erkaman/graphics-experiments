@@ -32,7 +32,7 @@ static void TestNegation() {
 static void TestLength() {
     Vector3f v(-2, 5, 9);
 
-    AssertEquals(v.Length(),10.48808);
+    AssertEqualsFloat(v.Length(),10.48808);
 }
 
 static void TestNormalize() {

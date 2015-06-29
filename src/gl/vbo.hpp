@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gl_common.hpp"
+#include "mult_array.hpp"
 
 #include <vector>
 
@@ -51,6 +52,11 @@ public:
     void SetBufferData(const std::vector<GLushort>& data);
     void SetBufferData(const std::vector<GLuint>& data);
     void SetBufferData(const std::vector<GLfloat>& data);
+
+    template<typename T>
+    void SetBufferData(const MultArray<T>& m) {
+	SetBufferData(m.GetTotalsize() * sizeof(T), reinterpret_cast<GLvoid *>(m.GetData()));
+    }
 
     void EnableVertexAttrib();
     void DisableVertexAttrib();

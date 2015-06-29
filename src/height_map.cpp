@@ -19,6 +19,21 @@
 using std::unique_ptr;
 using std::vector;
 
+struct Cell {
+    Vector3f position;
+    Vector3f normal;
+    Color color;
+};
+
+static Vector3f CalculateNormal (float north, float south, float east, float west)
+{
+    return Vector3f(
+	west - east,
+	2.0f,
+	north - south).Normalize();
+}
+
+
 HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 
     /*
@@ -46,8 +61,6 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
       Next we create the vertex buffer.
      */
 
-    unsigned int xpos = 0;
-    unsigned int zpos = 0;
 
     vertexBuffer = unique_ptr<VBO>(VBO::CreateInterleaved(
 				       vector<GLuint>{
@@ -57,11 +70,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 				       vector<GLuint>{3,3,4}
 				       ));
 
-
-    FloatVector vertices;
     UintVector indices;
 
-    GLuint baseIndex = 0;
 
     m_numTriangles = 0;
 
@@ -70,83 +80,64 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
     LOG_I("imageData size: %ld", imageData.size());
 
 
-    while(true) {
+    MultArray<Cell> map(m_width, m_depth);
 
-	if(xpos != 0 && ( (xpos+1) % (m_width) == 0)) {
-	    ++zpos;
-	    xpos = 0;
-	}
+    unsigned int xpos = 0;
+    unsigned int zpos = 0;
 
-	if((zpos+1)==m_depth) {
-	    LOG_I("break %d", zpos);
-	    break;
-	}
+    for(size_t i = 0; i < imageData.size(); i+=4) {
 
-	size_t i = ( zpos * (m_width) + xpos) * 4;
-
-	const Vector3f v1(ScaleXZ(xpos), ComputeY(imageData[i]), ScaleXZ(zpos));
-
-	const Vector3f v2(ScaleXZ(xpos+1), ComputeY(imageData[i+4]), ScaleXZ(zpos));
-
-	const Vector3f v3(ScaleXZ(xpos), ComputeY(imageData[i+m_width*4]), ScaleXZ(zpos+1));
-
-	const Vector3f v4(ScaleXZ(xpos+1), ComputeY(imageData[i+m_width*4+4]), ScaleXZ(zpos+1));
-
-
-/*	if(i > 67000)
-	    LOG_I("index: %ld, %d, v1=%s, v4=%s", i+m_width*4+4, imageData[i+m_width*4+4], tos(v1).c_str(), tos(v4).c_str() );
-*/
-	const Vector3f normal = Vector3f::Cross(v3 - v1, v2 - v1).Normalize();
-
-	v1.Add(vertices);
-	normal.Add(vertices);
-	VertexColoring(v1.y).Add(vertices);
-
-	v2.Add(vertices);
-	normal.Add(vertices);
-	VertexColoring(v2.y).Add(vertices);
-
-	v3.Add(vertices);
-	normal.Add(vertices);
-	VertexColoring(v3.y).Add(vertices);
-
-	v4.Add(vertices);
-	normal.Add(vertices);
-	VertexColoring(v4.y).Add(vertices);
-
-	indices.push_back(2+baseIndex);
-	indices.push_back(1+baseIndex);
-	indices.push_back(0+baseIndex);
-
-	indices.push_back(1+baseIndex);
-	indices.push_back(2+baseIndex);
-	indices.push_back(3+baseIndex);
-
-	m_numTriangles += 2;
-	baseIndex += 4;
-//	LOG_I("base index: %d", baseIndex);
+	map.Get(xpos, zpos).position = Vector3f(xpos, ComputeY(imageData[i]), zpos);
+//	LOG_I("pos: %s", tos(map.Get(xpos, zpos).position).c_str() );
 
 	++xpos;
-
+	if(xpos != 0 && ( xpos % (m_width) == 0)) {
+	    xpos = 0;
+	    ++zpos;
+	}
     }
 
-    LOG_I("base index: %d", baseIndex);
+    /*
+      TODO: SMOOTH OUT THE VERTEX DATA.
+     */
 
+    for(size_t x = 0; x < m_width; ++x) {
+	for(size_t z = 0; z < m_depth; ++z) {
+	    Cell& c = map.Get(x,z);
 
-    LOG_I("size of vertex data: %ld", vertices.size());
-    LOG_I("size of index data: %ld", indices.size());
-/*
-  every square takes 6 indices.
+	    c.normal = CalculateNormal(
+		map.GetWrap(x,z-1).position.y,
+		map.GetWrap(x,z+1).position.y,
+		map.GetWrap(x+1,z).position.y,
+		map.GetWrap(x-1,z).position.y);
 
-  number of indices is 99846
- */
+	    c.color = VertexColoring(c.position.y);
+	}
+    }
+
     vertexBuffer->Bind();
-    vertexBuffer->SetBufferData(vertices);
+    vertexBuffer->SetBufferData(map);
     vertexBuffer->Unbind();
 
-    /*
-      Finally, we create the index buffer.
-     */
+    GLuint baseIndex = 0;
+
+    for(size_t x = 0; x < (m_width-1); ++x) {
+	for(size_t z = 0; z < (m_depth-1); ++z) {
+
+	    indices.push_back(baseIndex+m_width);
+	    indices.push_back(baseIndex+1);
+	    indices.push_back(baseIndex+0);
+
+	    indices.push_back(baseIndex+m_width+1);
+	    indices.push_back(baseIndex+1);
+	    indices.push_back(baseIndex+m_width);
+
+	    m_numTriangles += 2;
+	    baseIndex += 1;
+	}
+	baseIndex += 1;
+    }
+
     indexBuffer = unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_INT));
 
     indexBuffer->Bind();

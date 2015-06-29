@@ -113,7 +113,7 @@ static void TestDeterminant() {
 	4,-7,9,3
 	);
 
-    AssertEquals(a.Determinant(), 2960);
+    AssertEqualsFloat(a.Determinant(), 2960);
 }
 
 static void TestTrace() {
@@ -124,7 +124,7 @@ static void TestTrace() {
 	13,14,15,16
 	);
 
-    AssertEquals(a.Trace(), 34);
+    AssertEqualsFloat(a.Trace(), 34);
 }
 
 static void TestScale() {
