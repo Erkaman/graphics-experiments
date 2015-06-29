@@ -73,8 +73,6 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 	if(xpos != 0 && ( (xpos+1) % (m_width) == 0)) {
 	    ++zpos;
 	    xpos = 0;
-
-//	    LOG_I("new row: %d, %d", xpos, zpos);
 	}
 
 	if((zpos+1)==m_depth) {
@@ -83,12 +81,6 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 	}
 
 	size_t i = ( zpos * (m_width) + xpos) * 4;
-/*	LOG_I("i: %ld, %d", i, imageData[i]);
-
-	if(i > 1500) {
-	    LOG_E("stop");
-	}*/
-
 
 	const Vector3f v1(ScaleXZ(xpos), ComputeY(imageData[i]), ScaleXZ(zpos));
 
