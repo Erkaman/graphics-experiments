@@ -11,7 +11,7 @@ void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSe
 
 
     // source string
-    string srcStr = nullptr;
+    string srcStr;
     switch (aSource) {
     case GL_DEBUG_SOURCE_API:				srcStr = "API";	break;
     case GL_DEBUG_SOURCE_WINDOW_SYSTEM:		srcStr = "WINDOW_SYSTEM"; break;
@@ -23,7 +23,7 @@ void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSe
     }
 
     // type
-    string  typeStr = nullptr;
+    string  typeStr;
     switch (aType)	{
     case GL_DEBUG_TYPE_ERROR:				typeStr = "ERROR";	break;
     case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:	typeStr = "DEPRECATED_BEHAVIOR";	break;
@@ -35,7 +35,7 @@ void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSe
     }
 
     // severity
-    string sevStr = nullptr;
+    string sevStr;
     switch( aSeverity ) {
     case GL_DEBUG_SEVERITY_HIGH:			sevStr = "HIGH"; break;
     case GL_DEBUG_SEVERITY_MEDIUM:			sevStr = "MEDIUM"; break;

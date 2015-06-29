@@ -34,6 +34,7 @@ void TuhuApplication::Init() {
 
     heightMap = make_unique<HeightMap>("img/cloud.png");
 
+
 }
 
 void TuhuApplication::Render() {
@@ -44,7 +45,9 @@ void TuhuApplication::Render() {
 //    GL_C(glActiveTexture( GL_TEXTURE0));
 //    shader->SetUniform("tex", 0);
 
+
     heightMap->SetWireframe(false);
+
 
     heightMap->Draw(*camera);
 }

@@ -76,7 +76,13 @@ static void TestPlusEquals() {
     AssertEquals(a,Vector4f(6,8,10,3));
 }
 
+static void TestConversion() {
+    Vector4f a(2,3,4,1);
 
+    Vector3f expected(2,3,4);
+
+    AssertEquals(Vector3f(a),expected);
+}
 
 void Vector4fTestSuite() {
 
@@ -90,6 +96,7 @@ void Vector4fTestSuite() {
     suite.emplace_back(TestNormalize, "TestNormalize");
     suite.emplace_back(TestScale, "TestScale");
     suite.emplace_back(TestPlusEquals, "TestPlusEquals");
+    suite.emplace_back(TestConversion, "TestConversion");
 
     RunSuite(suite, "Vector4f");
 }

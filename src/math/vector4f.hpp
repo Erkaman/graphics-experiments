@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "vector3f.hpp"
 
 class Vector4f {
 
@@ -39,6 +40,7 @@ public:
     Vector4f& operator += (const Vector4f& that);
     Vector4f operator-() const;
     operator std::string() const;
+    operator Vector3f() const;
 
     /*
       PUBLIC METHODS

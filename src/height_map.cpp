@@ -140,9 +140,12 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 
     indexBuffer = unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_INT));
 
+
     indexBuffer->Bind();
     indexBuffer->SetBufferData(indices);
     indexBuffer->Unbind();
+
+
 }
 
 
@@ -157,10 +160,12 @@ void HeightMap::Draw(const Camera& camera)  {
     shader->SetUniform("normalMatrix", normalMatrix);
 
     Vector4f lightPosition(0,10,0,1);
-    shader->SetUniform("viewSpaceLightPosition", viewMatrix * lightPosition);
+
+    shader->SetUniform("viewSpaceLightPosition", Vector3f(viewMatrix * lightPosition) );
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
 
     vertexBuffer->Bind();
     vertexBuffer->EnableVertexAttribInterleaved();

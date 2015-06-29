@@ -31,10 +31,15 @@ void Application::DoMainLoop() {
     fps.Start();
 
     double delta = 0;
+
+
     while(running) {
 
 	this->Update_internal(delta);
+
 	this->Render();
+
+
 
 	// update frame buffer
 	glfwSwapBuffers(window);

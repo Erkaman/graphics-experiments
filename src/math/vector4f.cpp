@@ -33,3 +33,7 @@ void Vector4f::Add(std::vector<float>& v)const {
     v.push_back(z);
     v.push_back(w);
 }
+
+Vector4f::operator Vector3f() const {
+    return Vector3f(x, y, z);
+}

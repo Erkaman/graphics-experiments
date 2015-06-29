@@ -47,3 +47,12 @@ void main()
 //    vec3 shading = calculateAmbient(scene_ambient_light, ambient);
     fragmentColor = vec4(shading, 1.0);
 }
+
+
+
+
+
+
+
+
+
