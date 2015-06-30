@@ -12,6 +12,9 @@
 
 #include "common.hpp"
 
+#include "gl/cube_map_texture.hpp"
+
+
 using namespace std;
 
 TuhuApplication::TuhuApplication() { }

@@ -118,4 +118,8 @@ public:
     void SetMinFilter(const GLint filter) {
         GL_C(glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, filter ));
     }
+
+    static void SetActiveTextureUnit(const GLenum textureUnit) {
+	GL_C(glActiveTexture(GL_TEXTURE0 + textureUnit));
+    }
 };

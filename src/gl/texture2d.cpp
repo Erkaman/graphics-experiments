@@ -2,8 +2,6 @@
 
 #include "texture_loader.hpp"
 
-#include "log.hpp"
-
 Texture2D::Texture2D(const std::string& texturePath): Texture(GL_TEXTURE_2D) {
     TextureInfo ti = TextureLoader::Load(texturePath);
 
