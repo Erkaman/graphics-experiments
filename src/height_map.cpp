@@ -39,7 +39,7 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
 }
 
 
-HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_lightPosition(0,10,0,1), m_movement(3.0f) {
+HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_lightPosition(0,10,5,1), m_movement(3.0f) {
 
     /*
       load the shader
