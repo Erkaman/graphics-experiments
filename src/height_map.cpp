@@ -1,3 +1,37 @@
+/*
+http://www.flipcode.com/archives/Calculating_Vertex_Normals_for_Height_Maps.shtml
+http://www.gamedev.net/topic/163625-fast-way-to-calculate-heightmap-normals/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ */
+
+
 #include "height_map.hpp"
 
 #include <vector>
