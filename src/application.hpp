@@ -17,7 +17,7 @@ private:
     void DoMainLoop();
     void Cleanup();
 
-    void Update_internal(const double delta);
+    void Update_internal(const float delta);
 
     GLFWwindow* window;
     bool running;
@@ -39,7 +39,7 @@ public:
 protected:
     virtual void Render() = 0;
     virtual void Init() = 0;
-    virtual void Update(const double delta) = 0;
+    virtual void Update(const float delta) = 0;
 
     void SetViewport();
 

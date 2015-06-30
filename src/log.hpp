@@ -2,6 +2,10 @@
 
 #include <stdio.h>
 
+#pragma warning( disable : 4996 )
+#pragma warning( disable : 4127 )
+
+
 void Log(const char* logLevel, const char* file, int line, const char* func, const char* logStr );
 
 void LogInit();

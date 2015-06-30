@@ -32,7 +32,7 @@ void Application::DoMainLoop() {
 
     fps.Start();
 
-    double delta = 0;
+    float delta = 0.0f;
 
 
     while(running) {
@@ -128,7 +128,7 @@ void Application::SetViewport() {
     GL_C(glViewport(0, 0, width, height));
 }
 
-void Application::Update_internal(const double delta) {
+void Application::Update_internal(const float delta) {
 
     running = GetKey(GLFW_KEY_ESCAPE) != GLFW_PRESS ;
 

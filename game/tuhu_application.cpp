@@ -31,7 +31,7 @@ void TuhuApplication::Init() {
     texture->SetMagFilter(GL_NEAREST);
     texture->Unbind();
 */
-    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-0.5,0.6,0), Vector3f(1,-0.5,1));
+    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-0.5f,0.6f,0.0f), Vector3f(1.0f,-0.5f,1.0f));
 
     heightMap = make_unique<HeightMap>("img/cloud.png");
 
@@ -53,7 +53,7 @@ void TuhuApplication::Render() {
     heightMap->Draw(*camera);
 }
 
-void TuhuApplication::Update(const double delta) {
+void TuhuApplication::Update(const float delta) {
     static float speed = 1.0f;
 
 

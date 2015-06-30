@@ -24,6 +24,6 @@ public:
 
     void Init() override;
     void Render() override;
-    void Update(const double delta) override;
+    void Update(const float delta) override;
 
 };

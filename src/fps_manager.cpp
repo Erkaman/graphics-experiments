@@ -11,16 +11,16 @@ std::chrono::milliseconds oneMilliSecond(1);
 FPSManager::FPSManager(const int maxFPS): m_maxFPS(maxFPS), m_targetFrameDuration(1.0/m_maxFPS),m_frameStartTime(0),m_frameEndTime(0) {
 }
 
-double FPSManager::ManageFPS() {
+float FPSManager::ManageFPS() {
 
     m_frameEndTime = glfwGetTime();
 
-    double frameDuration = m_frameEndTime - m_frameStartTime;
+    float frameDuration = m_frameEndTime - m_frameStartTime;
 
-    if ((m_frameEndTime - m_lastReportTime) > 1.0)
+    if ((m_frameEndTime - m_lastReportTime) > 1.0f)
     {
 	m_lastReportTime = m_frameEndTime;
-	double currentFps =  (double)m_frameCount / 1.0;
+	float currentFps =  (float)m_frameCount / 1.0f;
 	m_frameCount = 1;
 
 	fpsString = "fps: " + std::to_string(currentFps);
@@ -28,7 +28,7 @@ double FPSManager::ManageFPS() {
 	++m_frameCount;
     }
 
-    const double sleepDuration = m_targetFrameDuration - frameDuration;
+    const float sleepDuration = m_targetFrameDuration - frameDuration;
 
     if (sleepDuration > 0.0) {
 	std::this_thread::sleep_for(std::chrono::milliseconds((int)sleepDuration));

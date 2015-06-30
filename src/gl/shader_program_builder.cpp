@@ -58,8 +58,7 @@ GLuint createShaderFromString(const string& str, GLenum shaderType, const string
     GL_C(shader =    glCreateShader(shaderType));
 
     if(shader == 0) {
-	LOG_W("Could not create shader of type %d", shaderType);
-	return -1;
+		LOG_E("Could not create shader of type %d", shaderType);
     }
 
 
