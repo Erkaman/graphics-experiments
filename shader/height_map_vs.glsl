@@ -14,8 +14,10 @@ void main()
 {
     gl_Position = mvp * vec4(positionIn,1);
 
-    viewSpaceNormal = (normalMatrix * vec4(normalIn,0.0)).xyz;
+    viewSpaceNormal = normalize((normalMatrix * vec4(normalize(normalIn),0.0)).xyz);
+
     viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
+
     vertexColor = colorIn.rgb;
 
 //    texCoord = texCoordIn;

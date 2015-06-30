@@ -72,7 +72,6 @@ void Camera::HandleInput() {
 	m_up = Vector3f(0.0f,1.0f,0.0f);//Vector3f::Cross(m_right, m_viewDir).Normalize();
 	ComputeViewMatrix();
     }
-
 }
 
 Matrix4f Camera::GetViewMatrix() const {

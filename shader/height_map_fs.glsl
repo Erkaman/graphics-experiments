@@ -1,11 +1,5 @@
 out vec4 fragmentColor;
 
-//uniform vec4 color;
-
-//in vec2 texCoord;
-
-//uniform sampler2D tex;
-
 uniform vec3 viewSpaceLightPosition;
 
 in vec3 vertexColor;
@@ -26,7 +20,7 @@ vec3 calculateDiffuse(vec3 diffuseLight, vec3 materialDiffuse,
 }
 
 vec3 sampleDiffuseTexture() {
-    return vertexColor; //vec3(0.5, 0.5, 0.5);
+    return vec3(0.5, 0.5, 0.5);
 }
 
 void main()
@@ -41,18 +35,8 @@ void main()
     vec3 directionToLight =
 	normalize(viewSpaceLightPosition - viewSpacePosition);
 
-    vec3 shading = calculateAmbient(scene_ambient_light, ambient)
-	+ calculateDiffuse(scene_light, diffuse, normal, directionToLight);
+    vec3 shading = /*calculateAmbient(scene_ambient_light, ambient)
+		     +*/ calculateDiffuse(scene_light, diffuse, normal, directionToLight);
 
-//    vec3 shading = calculateAmbient(scene_ambient_light, ambient);
     fragmentColor = vec4(shading, 1.0);
 }
-
-
-
-
-
-
-
-
-

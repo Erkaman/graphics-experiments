@@ -86,6 +86,8 @@ void TuhuApplication::Update(const float delta) {
 
     SetWindowTitle(tos(camera->GetPosition()) );
 
+    heightMap->Update(delta);
+
 }
 
 void TextureDeleter::operator()(Texture *p){ delete p;}

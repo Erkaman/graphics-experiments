@@ -39,7 +39,7 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
 }
 
 
-HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
+HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_lightPosition(0,10,0,1), m_movement(3.0f) {
 
     /*
       load the shader
@@ -189,12 +189,10 @@ void HeightMap::Draw(const Camera& camera)  {
     Matrix4f viewMatrix = camera.GetViewMatrix();
     shader->SetUniform("modelViewMatrix", viewMatrix);
     Matrix4f normalMatrix(viewMatrix);
-    viewMatrix.Transpose().Inverse();
+    normalMatrix.Transpose().Inverse();
     shader->SetUniform("normalMatrix", normalMatrix);
 
-    Vector4f lightPosition(0,10,0,1);
-
-    shader->SetUniform("viewSpaceLightPosition", Vector3f(viewMatrix * lightPosition) );
+    shader->SetUniform("viewSpaceLightPosition", Vector3f(viewMatrix * m_lightPosition) );
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -246,4 +244,22 @@ const Color HeightMap::VertexColoring(const float y) {
 	Color higher = Color::FromInt(190, 190, 190);
 	return Color::Lerp(lower, higher, (y-0.7f) / 0.3f);
     }
+}
+
+
+
+void HeightMap::Update(const float delta) {
+
+    m_lightPosition.x += delta * m_movement;
+
+    if(m_lightPosition.x > 70.0f) {
+	m_lightPosition.x = 10.0f;
+	m_movement *= -1;
+    } else if(m_lightPosition.x < -1.0f) {
+	m_lightPosition.x = -1.0f;
+	m_movement *= -1;
+    }
+
+
+//    LOG_I("light: %s", tos(m_lightPosition).c_str());
 }

@@ -3,6 +3,7 @@
 #include <string>
 #include "math/color.hpp"
 #include <memory>
+#include "math/vector4f.hpp"
 
 class VBO;
 class ShaderProgram;
@@ -24,6 +25,9 @@ private:
 
     std::unique_ptr<ShaderProgram> shader;
 
+    Vector4f m_lightPosition;
+    float m_movement;
+
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const float x);
     static const Color VertexColoring(const float y);
@@ -35,5 +39,8 @@ public:
     void Draw(const Camera& camera);
 
     void SetWireframe(const bool wireframe);
+
+    void Update(const float delta);
+
 
 };
