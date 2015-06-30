@@ -12,8 +12,7 @@
 
 #include "common.hpp"
 
-#include "gl/cube_map_texture.hpp"
-
+#include "skybox.hpp"
 
 using namespace std;
 
@@ -38,6 +37,15 @@ void TuhuApplication::Init() {
 
     heightMap = make_unique<HeightMap>("img/combined.png");
 
+    skybox = make_unique<Skybox>(
+	"img/bluecloud_ft.png",
+	"img/bluecloud_bk.png",
+	"img/bluecloud_lf.png",
+	"img/bluecloud_rt.png",
+	"img/bluecloud_up.png",
+	"img/bluecloud_dn.png"
+	);
+
 
 }
 
@@ -49,9 +57,9 @@ void TuhuApplication::Render() {
 //    GL_C(glActiveTexture( GL_TEXTURE0));
 //    shader->SetUniform("tex", 0);
 
+    skybox->Draw(*camera);
 
     heightMap->SetWireframe(false);
-
 
     heightMap->Draw(*camera);
 }

@@ -16,3 +16,5 @@ void ClearOpenGLError();
 #endif
 
 void setupGLDebugMessages();
+
+void SetDepthTest(bool enable);

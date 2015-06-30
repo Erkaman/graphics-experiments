@@ -21,7 +21,7 @@ TextureInfo TextureLoader::Load(const std::string& texturePath) {
     unsigned error = lodepng::decode(textureInfo.imageData, width, height, state, buffer);
 
     if(error != 0){
-	LOG_E("could not load png: %s", lodepng_error_text(error));
+	LOG_E("could not load png %s: %s", texturePath.c_str(), lodepng_error_text(error));
     }
 
 /*    const LodePNGInfo info = state.info_png;

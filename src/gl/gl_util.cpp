@@ -123,3 +123,7 @@ void CheckOpenGLError(const char* stmt, const char* fname, int line)
 void ClearOpenGLError() {
     while(glGetError() != GL_NO_ERROR) {}
 }
+
+void SetDepthTest(bool enable) {
+    enable ? GL_C(glEnable(GL_DEPTH_TEST)) : GL_C(glDisable(GL_DEPTH_TEST));
+}

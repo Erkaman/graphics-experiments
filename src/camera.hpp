@@ -26,6 +26,7 @@ public:
     Matrix4f GetMvp() const;
 
     Matrix4f GetViewMatrix() const;
+    Matrix4f GetProjectionMatrix() const;
 
     Vector3f GetPosition() const;
 

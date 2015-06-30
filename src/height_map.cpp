@@ -84,7 +84,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     /*
       load the shader
      */
-    shader = make_unique<ShaderProgram>("shader/height_map");
+    m_shader = make_unique<ShaderProgram>("shader/height_map");
 
 
     /*
@@ -110,7 +110,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
      */
 
 
-    vertexBuffer = unique_ptr<VBO>(VBO::CreateInterleaved(
+    m_vertexBuffer = unique_ptr<VBO>(VBO::CreateInterleaved(
 				       vector<GLuint>{
 					   VBO_POSITION_ATTRIB_INDEX,
 					       VBO_NORMAL_ATTRIB_INDEX,
@@ -211,9 +211,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     }
 //    exit(1);
 
-    vertexBuffer->Bind();
-    vertexBuffer->SetBufferData(map);
-    vertexBuffer->Unbind();
+    m_vertexBuffer->Bind();
+    m_vertexBuffer->SetBufferData(map);
+    m_vertexBuffer->Unbind();
 
     GLuint baseIndex = 0;
 
@@ -234,12 +234,12 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 	baseIndex += 1;
     }
 
-    indexBuffer = unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_INT));
+    m_indexBuffer = unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_INT));
 
 
-    indexBuffer->Bind();
-    indexBuffer->SetBufferData(indices);
-    indexBuffer->Unbind();
+    m_indexBuffer->Bind();
+    m_indexBuffer->SetBufferData(indices);
+    m_indexBuffer->Unbind();
 
 
 }
@@ -247,38 +247,38 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
 void HeightMap::Draw(const Camera& camera)  {
 
-    shader->Bind();
-    shader->SetUniform("mvp", camera.GetMvp());
+    m_shader->Bind();
+    m_shader->SetUniform("mvp", camera.GetMvp());
     Matrix4f viewMatrix = camera.GetViewMatrix();
-    shader->SetUniform("modelViewMatrix", viewMatrix);
+    m_shader->SetUniform("modelViewMatrix", viewMatrix);
     Matrix4f normalMatrix(viewMatrix);
     normalMatrix.Transpose().Inverse();
-    shader->SetUniform("normalMatrix", normalMatrix);
+    m_shader->SetUniform("normalMatrix", normalMatrix);
 
-    shader->SetUniform("viewSpaceLightPosition", Vector3f(viewMatrix * m_lightPosition) );
+    m_shader->SetUniform("viewSpaceLightPosition", Vector3f(viewMatrix * m_lightPosition) );
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 
-    vertexBuffer->Bind();
-    vertexBuffer->EnableVertexAttribInterleaved();
-    vertexBuffer->Bind();
+    m_vertexBuffer->Bind();
+    m_vertexBuffer->EnableVertexAttribInterleaved();
+    m_vertexBuffer->Bind();
 
-    indexBuffer->Bind();
+    m_indexBuffer->Bind();
 
-    indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
 
-    indexBuffer->Unbind();
+    m_indexBuffer->Unbind();
 
-    vertexBuffer->Bind();
-    vertexBuffer->DisableVertexAttribInterleaved();
-    vertexBuffer->Bind();
+    m_vertexBuffer->Bind();
+    m_vertexBuffer->DisableVertexAttribInterleaved();
+    m_vertexBuffer->Bind();
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
-    shader->Unbind();
+    m_shader->Unbind();
 }
 
 const float HeightMap::ComputeY(const unsigned char heightMapData ) {

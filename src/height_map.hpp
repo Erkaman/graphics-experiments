@@ -20,10 +20,10 @@ private:
     bool m_isWireframe;
 
 
-    std::unique_ptr<VBO> vertexBuffer;
-    std::unique_ptr<VBO> indexBuffer;
+    std::unique_ptr<VBO> m_vertexBuffer;
+    std::unique_ptr<VBO> m_indexBuffer;
 
-    std::unique_ptr<ShaderProgram> shader;
+    std::unique_ptr<ShaderProgram> m_shader;
 
     Vector4f m_lightPosition;
     float m_movement;

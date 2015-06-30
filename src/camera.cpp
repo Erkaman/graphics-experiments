@@ -78,6 +78,10 @@ Matrix4f Camera::GetViewMatrix() const {
     return *m_viewMatrix;
 }
 
+Matrix4f Camera::GetProjectionMatrix() const {
+    return *m_projectionMatrix;
+}
+
 
 Vector3f Camera::GetPosition() const {
     return m_position;
