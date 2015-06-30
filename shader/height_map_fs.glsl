@@ -50,10 +50,10 @@ void main()
 
     vec3 directionFromEye = normalize(viewSpacePosition);
 
-    vec3 shading = //calculateAmbient(scene_ambient_light, ambient)
+    vec3 shading = calculateAmbient(scene_ambient_light, ambient) +
 	calculateDiffuse(scene_light, diffuse, normal, directionToLight);
 /*	calculateSpecular(scene_light, specular, material_shininess,
 	normal, directionToLight, directionFromEye);*/
 
-    fragmentColor = vec4(clamp(shading, 0, 1), 1.0);
+    fragmentColor = vec4(shading, 1.0);
 }

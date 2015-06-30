@@ -32,10 +32,16 @@ struct Cell {
 
 static Vector3f CalculateNormal (float north, float south, float east, float west)
 {
-    return Vector3f(
+    Vector3f n(
 	west - east,
 	2.0f,
-	north - south).Normalize();
+	north - south);
+
+//    LOG_I("nsew: %f, %f, %f, %f", north, south, east, west);
+
+    //  LOG_I("unnormalize  normal: %s", tos(n).c_str() );
+
+	return n.Normalize();
 }
 
 
@@ -129,10 +135,27 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 	}
     }
 
+    constexpr int BLEND_RANGE = 0;
 
-    /*
-      TODO: SMOOTH OUT THE VERTEX DATA.
-     */
+    for(size_t x = 0; x < m_width; ++x) {
+	for(size_t z = 0; z < m_depth; ++z) {
+	    Cell& c = map.Get(x,z);
+
+
+/*	    float smooth = 0.0f;
+	    int samples = 0;
+
+	    for (int xx = -BLEND_RANGE; xx <= BLEND_RANGE; xx++) {
+		for(int zz = -BLEND_RANGE; zz <= BLEND_RANGE; ++zz) {
+		    smooth += map.GetWrap(x+xx,z+zz).position.y;
+		    ++samples;
+		}
+		}*/
+
+//	    c.position.y *= 2.0f;// (smooth / (float)samples) * 2.0f;
+	}
+    }
+
 
     for(size_t x = 0; x < m_width; ++x) {
 	for(size_t z = 0; z < m_depth; ++z) {
@@ -146,10 +169,13 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 		map.GetWrap(x+1,z).position.y,
 		map.GetWrap(x-1,z).position.y);
 
+//	    LOG_I("normal: %d, %d, %f, %s", x, z, map.GetWrap(x,z).position.y, tos(c.normal).c_str() );
+
 	    c.color = VertexColoring(c.position.y);
 
 	}
     }
+//    exit(1);
 
     vertexBuffer->Bind();
     vertexBuffer->SetBufferData(map);
