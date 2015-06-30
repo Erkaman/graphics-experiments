@@ -80,20 +80,27 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 
     m_numTriangles = 0;
 
-    LOG_I("width: %d", m_width);
-    LOG_I("depth: %d", m_depth);
-    LOG_I("imageData size: %ld", imageData.size());
-
 
     MultArray<Cell> map(m_width, m_depth);
 
     unsigned int xpos = 0;
     unsigned int zpos = 0;
 
+    float high = -9999.0f;
+    float low = 9999.0f;
+
     for(size_t i = 0; i < imageData.size(); i+=4) {
 
-	map.Get(xpos, zpos).position = Vector3f((float)xpos, ComputeY(imageData[i]), (float)zpos);
-//	LOG_I("pos: %s", tos(map.Get(xpos, zpos).position).c_str() );
+	Cell& c = map.Get(xpos, zpos);
+
+	float height = imageData[i+1] / 20.0f;
+
+//	LOG_I("red: %d", imageData[i]);
+
+	c.position = Vector3f(ScaleXZ(xpos), height, ScaleXZ(zpos));
+
+	high = std::max(c.position.y, high);
+	low = std::min(c.position.y, low);
 
 	++xpos;
 	if(xpos != 0 && ( xpos % (m_width) == 0)) {
@@ -101,6 +108,24 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 	    ++zpos;
 	}
     }
+
+/*    LOG_I("high: %f", high);
+    LOG_I("low: %f", low);
+*/
+
+    // normalize the vertex data.
+    for(size_t x = 0; x < m_width; ++x) {
+	for(size_t z = 0; z < m_depth; ++z) {
+	    Cell& c = map.Get(x,z);
+
+	    c.position.y = (c.position.y - low) / (high - low);
+
+
+//	    LOG_I("height: %f", c.position.y);
+
+	}
+    }
+
 
     /*
       TODO: SMOOTH OUT THE VERTEX DATA.
@@ -110,6 +135,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 	for(size_t z = 0; z < m_depth; ++z) {
 	    Cell& c = map.Get(x,z);
 
+	    c.position.y *= 2.0f;
+
 	    c.normal = CalculateNormal(
 		map.GetWrap(x,z-1).position.y,
 		map.GetWrap(x,z+1).position.y,
@@ -117,6 +144,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false) {
 		map.GetWrap(x-1,z).position.y);
 
 	    c.color = VertexColoring(c.position.y);
+
 	}
     }
 
@@ -195,7 +223,6 @@ void HeightMap::Draw(const Camera& camera)  {
 const float HeightMap::ComputeY(const unsigned char heightMapData ) {
 //    return ((float)heightMapData  / 255.0f) * 0.2;
     return ((float)heightMapData  / 255.0f) * 1.0f;
-
 }
 
 void HeightMap::SetWireframe(const bool wireframe) {
@@ -204,20 +231,19 @@ void HeightMap::SetWireframe(const bool wireframe) {
 
 const float HeightMap::ScaleXZ(const float x) {
 //    return 0.03f * x;
-    return x;
-
+    return 0.2f * x;
 }
 
 const Color HeightMap::VertexColoring(const float y) {
-    return Color(0.33f,0.33f,0.33f);
-    /*
-    if(y < 0.5f) {
+//    return Color(0.33f,0.33f,0.33f);
+
+    if(y < 0.7f) {
 	Color lower = Color::FromInt(237, 201, 175);
 	Color higher = Color::FromInt(0, 255, 0);
-	return Color::Lerp(lower, higher, y / 0.5f);
+	return Color::Lerp(lower, higher, y / 0.7f);
     } else {
 	Color lower = Color::FromInt(0, 255, 0);
-	Color higher = Color::FromInt(100, 100, 100);
-	return Color::Lerp(lower, higher, (y-0.5f) / 0.5f);
-	}*/
+	Color higher = Color::FromInt(190, 190, 190);
+	return Color::Lerp(lower, higher, (y-0.7f) / 0.3f);
+    }
 }

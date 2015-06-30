@@ -23,7 +23,7 @@ void TuhuApplication::Init() {
     LOG_I("init");
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
-//    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
+    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
 /*    texture->Bind();
     texture->SetTextureTiling();
@@ -33,7 +33,7 @@ void TuhuApplication::Init() {
 */
     camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-0.5f,0.6f,0.0f), Vector3f(1.0f,-0.5f,1.0f));
 
-    heightMap = make_unique<HeightMap>("img/cloud.png");
+    heightMap = make_unique<HeightMap>("img/combined.png");
 
 
 }
