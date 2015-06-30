@@ -133,11 +133,10 @@ void Skybox::Draw(const Camera& camera) {
 
     SetDepthTest(false);
 
-
     Matrix4f modelView =  camera.GetViewMatrix();
-    modelView.m30 = 0;
-    modelView.m31 = 0;
-    modelView.m32 = 0;
+    modelView.m03 = 0;
+    modelView.m13 = 0;
+    modelView.m23 = 0;
 
     Matrix4f mvp = camera.GetProjectionMatrix() * modelView;
 
