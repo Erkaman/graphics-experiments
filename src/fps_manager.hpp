@@ -18,6 +18,9 @@ public:
 
     FPSManager(const int maxFPS=30);
 
+	FPSManager(const FPSManager&) = delete;
+	FPSManager& operator=(const FPSManager&) = delete;
+
     // should be called at the start of every frame.
     double ManageFPS();
     void Start();

@@ -4,6 +4,9 @@
 #include <memory>
 #include "gl/vao.hpp"
 
+#pragma warning( disable : 4099 )
+
+
 class GLFWwindow;
 
 class Application {
