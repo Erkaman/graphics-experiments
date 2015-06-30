@@ -31,7 +31,7 @@ void TuhuApplication::Init() {
     texture->SetMagFilter(GL_NEAREST);
     texture->Unbind();
 */
-    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-0.5f,0.6f,0.0f), Vector3f(1.0f,-0.5f,1.0f));
+    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-0.5f,3.6f,0.0f), Vector3f(1.0f,-0.5f,1.0f));
 
     heightMap = make_unique<HeightMap>("img/combined.png");
 
@@ -85,8 +85,6 @@ void TuhuApplication::Update(const float delta) {
 
 
     SetWindowTitle(tos(camera->GetPosition()) );
-
-    heightMap->Update(delta);
 
 }
 

@@ -40,7 +40,4 @@ public:
 
     void SetWireframe(const bool wireframe);
 
-    void Update(const float delta);
-
-
 };

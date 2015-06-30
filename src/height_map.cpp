@@ -39,7 +39,7 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
 }
 
 
-HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_lightPosition(0,10,5,1), m_movement(3.0f) {
+HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f) {
 
     /*
       load the shader
@@ -61,6 +61,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_lightPosi
     if(error != 0){
 	LOG_E("could not load height map: %s", lodepng_error_text(error));
     }
+
+
+    m_lightPosition = Vector4f(ScaleXZ(m_width),10,ScaleXZ(m_width), 1.0);
 
     /*
       Next we create the vertex buffer.
@@ -244,22 +247,4 @@ const Color HeightMap::VertexColoring(const float y) {
 	Color higher = Color::FromInt(190, 190, 190);
 	return Color::Lerp(lower, higher, (y-0.7f) / 0.3f);
     }
-}
-
-
-
-void HeightMap::Update(const float delta) {
-
-    m_lightPosition.x += delta * m_movement;
-
-    if(m_lightPosition.x > 70.0f) {
-	m_lightPosition.x = 10.0f;
-	m_movement *= -1;
-    } else if(m_lightPosition.x < -1.0f) {
-	m_lightPosition.x = -1.0f;
-	m_movement *= -1;
-    }
-
-
-//    LOG_I("light: %s", tos(m_lightPosition).c_str());
 }
