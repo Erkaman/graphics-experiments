@@ -19,7 +19,7 @@ private:
 
 public:
 
-	void Mouse::Update(GLFWwindow* window);
+    void Update(GLFWwindow* window);
 
     static Mouse& getInstance(){
 	static Mouse instance;
