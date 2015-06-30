@@ -1,6 +1,6 @@
 #pragma once
 
-class GLFWwindow;
+struct GLFWwindow;
 
 // a singelton class.
 class Mouse {
@@ -11,15 +11,15 @@ private:
     Mouse(Mouse const&);
     void operator=(Mouse const&);
 
-    double m_previousX;
-    double m_previousY;
+    float m_previousX;
+    float m_previousY;
 
-    double m_deltaX;
-    double m_deltaY;
+    float m_deltaX;
+    float m_deltaY;
 
 public:
 
-    void Update(GLFWwindow* window);
+	void Mouse::Update(GLFWwindow* window);
 
     static Mouse& getInstance(){
 	static Mouse instance;
@@ -27,11 +27,11 @@ public:
 	return instance;
     }
 
-    double GetDeltaX() const {
+    float GetDeltaX() const {
 	return m_deltaX;
     }
 
-    double GetDeltaY() const {
+    float GetDeltaY() const {
 	return m_deltaY;
     }
 

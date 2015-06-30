@@ -31,7 +31,7 @@ double FPSManager::ManageFPS() {
     const double sleepDuration = m_targetFrameDuration - frameDuration;
 
     if (sleepDuration > 0.0) {
-	std::this_thread::sleep_for(sleepDuration * oneMilliSecond);
+	std::this_thread::sleep_for(std::chrono::milliseconds((int)sleepDuration));
     }
 
     m_frameStartTime = glfwGetTime();

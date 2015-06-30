@@ -10,12 +10,12 @@ void Mouse::Update(GLFWwindow* window) {
     glfwGetCursorPos(window, &xpos, &ypos);
 
 
-    m_deltaX = xpos - m_previousX;
-    m_deltaY = ypos - m_previousY;
+    m_deltaX = (float)xpos - m_previousX;
+    m_deltaY = (float)ypos - m_previousY;
 
 //    LOG_I("delta: %f, %f", m_deltaX, m_deltaY);
 
-    m_previousX = xpos;
-    m_previousY = ypos;
+    m_previousX = (float)xpos;
+    m_previousY = (float)ypos;
 
 }

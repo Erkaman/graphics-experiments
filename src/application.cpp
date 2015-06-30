@@ -12,6 +12,7 @@
 #include "fps_manager.hpp"
 #include "mouse.hpp"
 
+
 using namespace std;
 
 void Application::Start() {
@@ -60,12 +61,14 @@ void Application::Cleanup() {
     vao->Unbind();
     delete vao;
 
+
     glfwTerminate();
     LogDispose();
 }
 
 
 void Application::SetupOpenGL() {
+
     // start GL context and O/S window using the GLFW helper library
     if (!glfwInit ()) {
 	fprintf (stderr, "ERROR: could not start GLFW3\n");

@@ -10,6 +10,8 @@
 #include "camera.hpp"
 #include "height_map.hpp"
 
+#include "common.hpp"
+
 using namespace std;
 
 TuhuApplication::TuhuApplication() { }

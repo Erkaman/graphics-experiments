@@ -33,18 +33,18 @@ void Camera::ComputeViewMatrix() {
 						     m_up)));
 }
 
-void Camera::Walk(const double amount) {
+void Camera::Walk(const float amount) {
     m_position += amount * m_viewDir;
 
     ComputeViewMatrix();
 }
 
-void Camera::Stride(const double amount) {
+void Camera::Stride(const float amount) {
     m_position += amount * m_right;
     ComputeViewMatrix();
 }
 
-void Camera::Fly(const double amount) {
+void Camera::Fly(const float amount) {
     m_position += amount * m_up;
     ComputeViewMatrix();
 }
@@ -57,19 +57,19 @@ void Camera::HandleInput() {
 
     bool rotated = false;
 
-    if(!FloatEquals(mouse.GetDeltaX(), 0)) {
-	m_viewDir.Rotate(mouse.GetDeltaX()*-0.1, m_up).Normalize();
+    if(!FloatEquals(mouse.GetDeltaX(), 0.0f)) {
+	m_viewDir.Rotate(mouse.GetDeltaX()*-0.1f, m_up).Normalize();
 	rotated = true;
     }
 
-    if(!FloatEquals(mouse.GetDeltaY(), 0)) {
-	m_viewDir.Rotate(mouse.GetDeltaY()*-0.1, m_right).Normalize();
+    if(!FloatEquals(mouse.GetDeltaY(), 0.0f)) {
+	m_viewDir.Rotate(mouse.GetDeltaY()*-0.1f, m_right).Normalize();
 	rotated = true;
     }
 
     if(rotated) {
 	m_right = Vector3f::Cross(m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
-	m_up = Vector3f(0,1.0f,0);//Vector3f::Cross(m_right, m_viewDir).Normalize();
+	m_up = Vector3f(0.0f,1.0f,0.0f);//Vector3f::Cross(m_right, m_viewDir).Normalize();
 	ComputeViewMatrix();
     }
 

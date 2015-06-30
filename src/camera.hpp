@@ -29,9 +29,9 @@ public:
 
     Vector3f GetPosition() const;
 
-    void Walk(const double amount);
-    void Stride(const double amount);
-    void Fly(const double amount);
+    void Walk(const float amount);
+    void Stride(const float amount);
+    void Fly(const float amount);
 
     void HandleInput();
 

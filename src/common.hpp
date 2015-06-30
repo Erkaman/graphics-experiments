@@ -15,12 +15,13 @@ std::unique_ptr<T> make_unique(Args&&... args)
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
-template <typename T>
-std::string tos(const T& t) {
-    return std::string(t);
-}
 
 #endif
+
+template <typename T>
+std::string tos(const T& t) {
+	return std::string(t);
+}
 
 #include "log.hpp"
 
