@@ -1,9 +1,6 @@
-* textures.
-* indexed vbo, and interleaved VBO stuff.
-* movable camera.
-* fps.
-* text?
+*fix noise texture for height map.
 
 
 misc todo:
 * make bmp loader.
+* render text.
