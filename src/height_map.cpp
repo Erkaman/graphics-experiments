@@ -34,21 +34,25 @@ http://www.gamedev.net/topic/163625-fast-way-to-calculate-heightmap-normals/
 
 #include "height_map.hpp"
 
-#include <vector>
-#include "lodepng.h"
-
 #include "log.hpp"
 
 #include "gl/vbo.hpp"
 #include "gl/shader_program.hpp"
+#include "gl/texture2d.hpp"
+
 #include "math/matrix4f.hpp"
 #include "camera.hpp"
+
+#include "math/vector2f.hpp"
 #include "math/vector3f.hpp"
 #include "math/vector4f.hpp"
 #include "math/color.hpp"
 #include "mult_array.hpp"
 
 #include <memory>
+#include <vector>
+
+#include "lodepng.h"
 
 #if defined (_WIN32)
 #include <memory>
@@ -62,6 +66,7 @@ struct Cell {
     Vector3f position;
     Vector3f normal;
     Color color;
+    Vector2f texCoord;
 };
 
 static Vector3f CalculateNormal (float north, float south, float east, float west)
@@ -80,6 +85,16 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
 
 
 HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f) {
+
+    m_noiseTexture = make_unique<Texture2D>("img/noise.png");
+
+    m_noiseTexture->Bind();
+    m_noiseTexture->SetTextureTiling();
+    m_noiseTexture->SetMinFilter(GL_LINEAR);
+    m_noiseTexture->SetMagFilter(GL_NEAREST);
+    m_noiseTexture->Unbind();
+
+
 
     /*
       load the shader
@@ -114,8 +129,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 				       vector<GLuint>{
 					   VBO_POSITION_ATTRIB_INDEX,
 					       VBO_NORMAL_ATTRIB_INDEX,
-					       VBO_COLOR_ATTRIB_INDEX},
-				       vector<GLuint>{3,3,4}
+					       VBO_COLOR_ATTRIB_INDEX,
+					       VBO_TEX_COORD_ATTRIB_INDEX},
+				       vector<GLuint>{3,3,4,2}
 				       ));
 
     UintVector indices;
@@ -207,6 +223,10 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
 	    c.color = VertexColoring(c.position.y);
 
+	    c.texCoord.x = x;
+	    c.texCoord.y = z;
+
+
 	}
     }
 //    exit(1);
@@ -248,26 +268,36 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 void HeightMap::Draw(const Camera& camera)  {
 
     m_shader->Bind();
+
+    // setup texture.
+    m_noiseTexture->Bind();
+    m_shader->SetUniform("noiseSampler", 0);
+
+
+
+    // Set up matrices.
     m_shader->SetUniform("mvp", camera.GetMvp());
     Matrix4f viewMatrix = camera.GetViewMatrix();
     m_shader->SetUniform("modelViewMatrix", viewMatrix);
     Matrix4f normalMatrix(viewMatrix);
     normalMatrix.Transpose().Inverse();
     m_shader->SetUniform("normalMatrix", normalMatrix);
-
     m_shader->SetUniform("viewSpaceLightPosition", Vector3f(viewMatrix * m_lightPosition) );
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-
+    // setup vertex buffers.
     m_vertexBuffer->Bind();
     m_vertexBuffer->EnableVertexAttribInterleaved();
     m_vertexBuffer->Bind();
 
     m_indexBuffer->Bind();
 
+    // DRAW.
     m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+
+    // unsetup vertex buffer.
 
     m_indexBuffer->Unbind();
 
@@ -277,6 +307,10 @@ void HeightMap::Draw(const Camera& camera)  {
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
+    // unsetup texture.
+    m_noiseTexture->Unbind();
+
 
     m_shader->Unbind();
 }

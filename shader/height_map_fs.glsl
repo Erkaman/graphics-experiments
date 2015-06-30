@@ -2,7 +2,10 @@ out vec4 fragmentColor;
 
 uniform vec3 viewSpaceLightPosition;
 
+uniform sampler2D noiseSampler;
+
 in vec3 vertexColor;
+in vec2 texCoord;
 
 vec3 material_specular_color = vec3(1.0);
 float material_shininess = 25.0;
@@ -31,7 +34,7 @@ vec3 directionToLight, vec3 directionFromEye)
 }
 
 vec3 sampleDiffuseTexture() {
-    return vec3(0.5, 0.5, 0.5);
+    return 0.1 * texture(noiseSampler, texCoord).xyz + vec3(0.5, 0.5, 0.5);
 }
 
 void main()

@@ -162,4 +162,3 @@ void Application::SetWindowTitle(const std::string& title) {
     glfwSetWindowTitle(window, title.c_str());
 
 }
-

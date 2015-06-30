@@ -27,12 +27,8 @@ void TuhuApplication::Init() {
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
     GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
-/*    texture->Bind();
-    texture->SetTextureTiling();
-    texture->SetMinFilter(GL_LINEAR);
-    texture->SetMagFilter(GL_NEAREST);
-    texture->Unbind();
-*/
+
+
     camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-0.5f,3.6f,0.0f), Vector3f(1.0f,-0.5f,1.0f));
 
     heightMap = make_unique<HeightMap>("img/combined.png");
