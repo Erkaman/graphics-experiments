@@ -149,7 +149,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 	    Cell& c = map.Get(x,z);
 
 	    c.position.y = (c.position.y - low) / (high - low);
-	    //   c.position.y *= 2.0f;
+	    c.position.y *=2.9f;
 
 
 //	    LOG_I("height: %f", c.position.y);
@@ -157,14 +157,14 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 	}
     }
 
-    constexpr int BLEND_RANGE = 0;
+    constexpr int BLEND_RANGE = 1;
 
     for(size_t x = 0; x < m_width; ++x) {
 	for(size_t z = 0; z < m_depth; ++z) {
 	    Cell& c = map.Get(x,z);
 
 
-/*	    float smooth = 0.0f;
+	    float smooth = 0.0f;
 	    int samples = 0;
 
 	    for (int xx = -BLEND_RANGE; xx <= BLEND_RANGE; xx++) {
@@ -172,9 +172,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 		    smooth += map.GetWrap(x+xx,z+zz).position.y;
 		    ++samples;
 		}
-		}*/
+	    }
 
-//	    c.position.y *= 2.0f;// (smooth / (float)samples) * 2.0f;
+	    c.position.y = (smooth / (float)samples);
 	}
     }
 
@@ -191,8 +191,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 		map.GetWrap(x+1,z).position.y,
 		map.GetWrap(x-1,z).position.y);
 
-	    if(x == 3 && z == 3)
-		LOG_I("normal: %s", tos(c.normal).c_str() );
+//	    if(x == 3 && z == 3)
+//		LOG_I("normal: %s", tos(c.normal).c_str() );
 
 	    c.color = VertexColoring(c.position.y);
 
@@ -329,19 +329,20 @@ void HeightMap::SetWireframe(const bool wireframe) {
 
 const float HeightMap::ScaleXZ(const float x) {
 //    return 0.03f * x;
-    return 0.1f * x;
+    return 0.3f * x;
 }
 
 const Color HeightMap::VertexColoring(const float y) {
-//    return Color(0.33f,0.33f,0.33f);
 
-    if(y < 0.7f) {
+   if(y < 1.7f) {
 	Color lower = Color::FromInt(237, 201, 175);
-	Color higher = Color::FromInt(0, 255, 0);
-	return Color::Lerp(lower, higher, y / 0.7f);
+	Color higher = Color::FromInt(0x76, 0xa9, 0x12);
+	return Color::Lerp(lower, higher, y / 1.7f);
     } else {
-	Color lower = Color::FromInt(0, 255, 0);
-	Color higher = Color::FromInt(190, 190, 190);
-	return Color::Lerp(lower, higher, (y-0.7f) / 0.3f);
-    }
+	Color lower = Color::FromInt(0x76, 0xa9, 0x12);
+	Color higher = Color::FromInt(255, 255 , 255);
+
+	return Color::Lerp(lower, higher, (y-1.7f) / 1.2f);
+   }
+
 }

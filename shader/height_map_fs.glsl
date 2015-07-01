@@ -12,7 +12,7 @@ float material_shininess = 25.0;
 
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
-vec3 scene_ambient_light = vec3(0.1);
+vec3 scene_ambient_light = vec3(0.6);
 vec3 scene_light = vec3(0.8);
 vec3 calculateAmbient(vec3 ambientLight, vec3 materialAmbient)
 {
@@ -34,7 +34,9 @@ vec3 directionToLight, vec3 directionFromEye)
 }
 
 vec3 sampleDiffuseTexture() {
-    return /*0.1 * texture(noiseSampler, texCoord).xyz + */vec3(0.0, 1.0, 0.0);
+    return
+	mix(texture(noiseSampler, texCoord).xyz, vertexColor, 0.90 );
+//	vertexColor;
 }
 
 void main()
