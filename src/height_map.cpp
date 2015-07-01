@@ -36,12 +36,7 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
 	(west - east),
 	2.0f,
 	(north - south));
-
-//    LOG_I("nsew: %f, %f, %f, %f", north, south, east, west);
-
-    //  LOG_I("unnormalize  normal: %s", tos(n).c_str() );
-
-	return n.Normalize();
+    return n.Normalize();
 }
 
 
@@ -55,14 +50,10 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     m_noiseTexture->SetMagFilter(GL_NEAREST);
     m_noiseTexture->Unbind();
 
-
-
     /*
       load the shader
      */
     m_shader = std::make_unique<ShaderProgram>("shader/height_map");
-
-    m_normalsShader = std::make_unique<ShaderProgram>("shader/draw_normals");
 
 
     /*
@@ -138,10 +129,6 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
 	    c.position.y = (c.position.y - low) / (high - low);
 	    c.position.y *=2.9f;
-
-
-//	    LOG_I("height: %f", c.position.y);
-
 	}
     }
 
@@ -179,9 +166,6 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 		map.GetWrap(x+1,z).position.y,
 		map.GetWrap(x-1,z).position.y);
 
-//	    if(x == 3 && z == 3)
-//		LOG_I("normal: %s", tos(c.normal).c_str() );
-
 	    c.color = VertexColoring(c.position.y);
 
 	    c.texCoord.x = (float)x;
@@ -190,8 +174,6 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
 	}
     }
-//    exit(1);
-
     m_vertexBuffer->Bind();
     m_vertexBuffer->SetBufferData(map);
     m_vertexBuffer->Unbind();
@@ -274,35 +256,6 @@ void HeightMap::Draw(const Camera& camera)  {
 
 
 
-
-
-    m_normalsShader->Bind();
-
-
-
-    m_normalsShader->SetUniform("mvp", camera.GetMvp());
-
-
-    // setup vertex buffers.
-    m_vertexBuffer->Bind();
-    m_vertexBuffer->EnableVertexAttribInterleaved();
-    m_vertexBuffer->Bind();
-
-    m_indexBuffer->Bind();
-
-    // DRAW.
-//    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
-
-    // unsetup vertex buffer.
-
-    m_indexBuffer->Unbind();
-
-    m_vertexBuffer->Bind();
-    m_vertexBuffer->DisableVertexAttribInterleaved();
-    m_vertexBuffer->Bind();
-
-
-    m_normalsShader->Unbind();
 
 }
 
