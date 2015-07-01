@@ -113,7 +113,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
     for(size_t i = 0; i < imageData.size(); i+=4) {
 
-	Cell& c = map.Get(xpos, zpos);
+	Cell& c = map(xpos, zpos);
 
 	float height = imageData[i+1] / 20.0f;
 
@@ -134,7 +134,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     // normalize the vertex data.
     for(size_t x = 0; x < m_width; ++x) {
 	for(size_t z = 0; z < m_depth; ++z) {
-	    Cell& c = map.Get(x,z);
+	    Cell& c = map(x,z);
 
 	    c.position.y = (c.position.y - low) / (high - low);
 	    c.position.y *=2.9f;
@@ -149,7 +149,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
     for(size_t x = 0; x < m_width; ++x) {
 	for(size_t z = 0; z < m_depth; ++z) {
-	    Cell& c = map.Get(x,z);
+	    Cell& c = map(x,z);
 
 
 	    float smooth = 0.0f;
@@ -169,7 +169,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
     for(size_t x = 0; x < m_width; ++x) {
 	for(size_t z = 0; z < m_depth; ++z) {
-	    Cell& c = map.Get(x,z);
+	    Cell& c = map(x,z);
 
 	    //  c.position.y *= 2.0f;
 

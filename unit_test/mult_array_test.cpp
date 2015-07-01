@@ -10,20 +10,20 @@ typedef MultArray<int>::iterator iterator;
 static void TestGet() {
 
     IMultArray m1(2,2);
-    m1.Get(0,0) = 1;
-    m1.Get(1,0) = 2;
-    m1.Get(0,1) = 3;
-    m1.Get(1,1) = 4;
+    m1(0,0) = 1;
+    m1(1,0) = 2;
+    m1(0,1) = 3;
+    m1(1,1) = 4;
 
     IMultArray m2(m1);
 
     AssertEquals(m1,m2);
 
-    m1.Get(0,0) = 9;
+    m1(0,0) = 9;
 
     AssertNotEquals(m1,m2);
 
-    m2.Get(0,0) = 9;
+    m2(0,0) = 9;
 
     AssertEquals(m1,m2);
 }
@@ -40,12 +40,12 @@ static void TestGetters() {
 static void TestAssignment() {
     IMultArray m1(1,2);
 
-    m1.Get(0,0) = 2;
-    m1.Get(0,1) = 3;
+    m1(0,0) = 2;
+    m1(0,1) = 3;
 
     IMultArray m2(m1);
 
-    m2.Get(0,0) = 3;
+    m2(0,0) = 3;
 
     m2 = m1;
 
@@ -54,10 +54,10 @@ static void TestAssignment() {
 
 static void TestIterator() {
     IMultArray m1(2,2);
-    m1.Get(0,0) = 1;
-    m1.Get(1,0) = 2;
-    m1.Get(0,1) = 3;
-    m1.Get(1,1) = 4;
+    m1(0,0) = 1;
+    m1(1,0) = 2;
+    m1(0,1) = 3;
+    m1(1,1) = 4;
 
     iterator it = m1.Begin();
 
@@ -80,12 +80,12 @@ static void TestIterator() {
 static void TestGetWrap() {
 
     IMultArray m1(2,3);
-    m1.Get(0,0) = 1;
-    m1.Get(1,0) = 2;
-    m1.Get(0,1) = 3;
-    m1.Get(1,1) = 4;
-    m1.Get(0,2) = 5;
-    m1.Get(1,2) = 6;
+    m1(0,0) = 1;
+    m1(1,0) = 2;
+    m1(0,1) = 3;
+    m1(1,1) = 4;
+    m1(0,2) = 5;
+    m1(1,2) = 6;
 
     AssertEqualsInt(m1.GetWrap(0,3),5);
     AssertEqualsInt(m1.GetWrap(1,3),6);

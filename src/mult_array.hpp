@@ -143,15 +143,15 @@ public:
 	return m_data + m_totalsize;
     }
 
-    const T& Get(const signed int x, const signed int y)const {
-
+    const T&operator()(const signed int x, const signed int y) const{
 	assert(x < m_xsize);
 	assert(y < m_ysize);
 
 	return m_data[Index(x,y)];
+
     }
 
-    T& Get(const signed  x, const signed int y) {
+    T&operator()(const signed int x, const signed int y) {
 	assert(x < m_xsize);
 	assert(y < m_ysize);
 
