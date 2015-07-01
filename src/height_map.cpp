@@ -1,9 +1,3 @@
-/*
-http://www.flipcode.com/archives/Calculating_Vertex_Normals_for_Height_Maps.shtml
-http://www.gamedev.net/topic/163625-fast-way-to-calculate-heightmap-normals/
-
- */
-
 
 #include "height_map.hpp"
 
@@ -27,12 +21,6 @@ http://www.gamedev.net/topic/163625-fast-way-to-calculate-heightmap-normals/
 
 #include "lodepng.h"
 
-#if defined (_WIN32)
-#include <memory>
-using std::make_unique;
-#endif
-
-using std::unique_ptr;
 using std::vector;
 
 struct Cell {
@@ -59,7 +47,7 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
 
 HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f) {
 
-    m_noiseTexture = make_unique<Texture2D>("img/noise.png");
+    m_noiseTexture = std::make_unique<Texture2D>("img/noise.png");
 
     m_noiseTexture->Bind();
     m_noiseTexture->SetTextureTiling();
@@ -72,9 +60,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     /*
       load the shader
      */
-    m_shader = make_unique<ShaderProgram>("shader/height_map");
+    m_shader = std::make_unique<ShaderProgram>("shader/height_map");
 
-    m_normalsShader = make_unique<ShaderProgram>("shader/draw_normals");
+    m_normalsShader = std::make_unique<ShaderProgram>("shader/draw_normals");
 
 
     /*
@@ -93,14 +81,14 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     }
 
 
-    m_lightPosition = Vector4f(ScaleXZ(m_width-200),10,ScaleXZ(m_width-200), 1.0);
+    m_lightPosition = Vector4f(ScaleXZ(m_width-200),10.0f,ScaleXZ(m_width-200), 1.0f);
 
     /*
       Next we create the vertex buffer.
      */
 
 
-    m_vertexBuffer = unique_ptr<VBO>(VBO::CreateInterleaved(
+    m_vertexBuffer = std::unique_ptr<VBO>(VBO::CreateInterleaved(
 				       vector<GLuint>{
 					   VBO_POSITION_ATTRIB_INDEX,
 					       VBO_NORMAL_ATTRIB_INDEX,
@@ -196,8 +184,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
 	    c.color = VertexColoring(c.position.y);
 
-	    c.texCoord.x = x;
-	    c.texCoord.y = z;
+	    c.texCoord.x = (float)x;
+	    c.texCoord.y = (float)z;
 
 
 	}
@@ -227,7 +215,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 	baseIndex += 1;
     }
 
-    m_indexBuffer = unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_INT));
+    m_indexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_INT));
 
 
     m_indexBuffer->Bind();
@@ -327,7 +315,7 @@ void HeightMap::SetWireframe(const bool wireframe) {
     m_isWireframe = wireframe;
 }
 
-const float HeightMap::ScaleXZ(const float x) {
+const float HeightMap::ScaleXZ(const int x) {
 //    return 0.03f * x;
     return 0.3f * x;
 }

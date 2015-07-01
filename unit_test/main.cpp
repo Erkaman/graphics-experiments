@@ -6,6 +6,7 @@
 #include "log.hpp"
 #include <stdio.h>
 
+
 int main() {
 
     LogInit();
@@ -19,6 +20,7 @@ int main() {
     printf("ALL TESTS PASSED!");
 
     LogDispose();
+
 
 
 }

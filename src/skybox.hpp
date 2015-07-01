@@ -2,6 +2,8 @@
 
 #include "gl/cube_map_texture.hpp"
 
+#include <memory>
+
 class ShaderProgram;
 struct ShaderProgramDeleter{void operator()(ShaderProgram *p);};
 

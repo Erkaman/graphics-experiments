@@ -33,7 +33,7 @@ private:
     float m_movement;
 
     static const float ComputeY(const unsigned char heightMapData );
-    static const float ScaleXZ(const float x);
+    static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);
 
 public:

@@ -117,7 +117,10 @@ void ShaderProgramBuilder::Attach()  {
     // clean up.
     GL_C(glDeleteShader( m_compiledFragmentShader));
     GL_C(glDeleteShader(m_compiledVertexShader));
+	if (m_hasGeometryShader) {
+
     GL_C(glDeleteShader(m_compiledGeometryShader));
+	}
 }
 
 void ShaderProgramBuilder::BindAttribLocation(const GLuint attribIndex, const string& attribName) {

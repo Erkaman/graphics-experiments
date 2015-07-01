@@ -125,5 +125,9 @@ void ClearOpenGLError() {
 }
 
 void SetDepthTest(bool enable) {
-    enable ? GL_C(glEnable(GL_DEPTH_TEST)) : GL_C(glDisable(GL_DEPTH_TEST));
+	if (enable) {
+		GL_C(glEnable(GL_DEPTH_TEST));
+	} else {
+		GL_C(glDisable(GL_DEPTH_TEST));
+	}
 }

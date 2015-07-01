@@ -16,7 +16,7 @@ static void  AddFace(
     const float cx, const float cy, const float cz,
     const float dx, const float dy, const float dz
     ) {
-    const int base = positions.size() / 3;
+    const GLushort base = (GLushort)(positions.size() / 3);
 
     positions.push_back(ax);
     positions.push_back(ay);
@@ -50,7 +50,7 @@ Skybox::Skybox(const std::string& frontFace, const std::string& backFace, const 
 
 
     // load shader.
-    m_shader = make_unique<ShaderProgram>("shader/skybox");
+    m_shader = std::make_unique<ShaderProgram>("shader/skybox");
 
 
     // create the vertex data.
@@ -108,7 +108,7 @@ Skybox::Skybox(const std::string& frontFace, const std::string& backFace, const 
 	-0.5f, -0.5f, -0.5f,
 	-0.5f, 0.5f, -0.5f);
 
-    m_numIndices = indices.size();
+    m_numIndices =(GLushort)indices.size();
 
     m_positionBuffer = std::unique_ptr<VBO>(VBO::CreatePosition(3));
 
