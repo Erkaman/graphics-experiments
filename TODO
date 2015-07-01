@@ -1,5 +1,4 @@
-*fix noise texture for height map.
-
+* figure out a nice way to separate the phong code from the heightmap shader.
 
 misc todo:
 * make bmp loader.
