@@ -9,6 +9,7 @@
 
 #include "math/matrix4f.hpp"
 #include "camera.hpp"
+#include "file.hpp"
 
 #include "math/vector2f.hpp"
 #include "math/vector3f.hpp"
@@ -22,6 +23,9 @@
 #include "lodepng.h"
 
 using std::vector;
+
+constexpr char VERTEX_FILE[] = "dat/vert.dat";
+constexpr char INDEX_FILE[] = "dat/indx.dat";
 
 struct Cell {
     Vector3f position;
@@ -56,27 +60,13 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     m_shader = std::make_unique<ShaderProgram>("shader/height_map");
 
 
-    /*
-      Load the heightmap data.
-     */
 
-    std::vector<unsigned char> buffer;
-    lodepng::load_file(buffer, path);
-
-    lodepng::State state;
-    std::vector<unsigned char> imageData;
-    unsigned error = lodepng::decode(imageData, m_width, m_depth, state, buffer);
-
-    if(error != 0){
-	LOG_E("could not load height map: %s", lodepng_error_text(error));
+    if(! (File::Exists(VERTEX_FILE) && File::Exists(INDEX_FILE) )) {
+	CreateHeightmap(path);
     }
 
+    m_lightPosition = Vector4f(93,10.0f,93, 1.0f);
 
-    m_lightPosition = Vector4f(ScaleXZ(m_width-200),10.0f,ScaleXZ(m_width-200), 1.0f);
-
-    /*
-      Next we create the vertex buffer.
-     */
 
 
     m_vertexBuffer = std::unique_ptr<VBO>(VBO::CreateInterleaved(
@@ -88,122 +78,24 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 				       vector<GLuint>{3,3,4,2}
 				       ));
 
-    UintVector indices;
+    size_t dataSize;
+    void* vertexData = File::ReadArray(VERTEX_FILE, dataSize);
 
-
-    m_numTriangles = 0;
-
-
-    MultArray<Cell> map(m_width, m_depth);
-
-    unsigned int xpos = 0;
-    unsigned int zpos = 0;
-
-    float high = -9999.0f;
-    float low = 9999.0f;
-
-    for(size_t i = 0; i < imageData.size(); i+=4) {
-
-	Cell& c = map(xpos, zpos);
-
-	float height = imageData[i+1] / 20.0f;
-
-//	LOG_I("red: %d", imageData[i]);
-
-	c.position = Vector3f(ScaleXZ(xpos), height, ScaleXZ(zpos));
-
-	high = std::max(c.position.y, high);
-	low = std::min(c.position.y, low);
-
-	++xpos;
-	if(xpos != 0 && ( xpos % (m_width) == 0)) {
-	    xpos = 0;
-	    ++zpos;
-	}
-    }
-
-    // normalize the vertex data.
-    for(size_t x = 0; x < m_width; ++x) {
-	for(size_t z = 0; z < m_depth; ++z) {
-	    Cell& c = map(x,z);
-
-	    c.position.y = (c.position.y - low) / (high - low);
-	    c.position.y *=2.9f;
-	}
-    }
-
-    constexpr int BLEND_RANGE = 1;
-
-    for(size_t x = 0; x < m_width; ++x) {
-	for(size_t z = 0; z < m_depth; ++z) {
-	    Cell& c = map(x,z);
-
-
-	    float smooth = 0.0f;
-	    int samples = 0;
-
-	    for (int xx = -BLEND_RANGE; xx <= BLEND_RANGE; xx++) {
-		for(int zz = -BLEND_RANGE; zz <= BLEND_RANGE; ++zz) {
-		    smooth += map.GetWrap(x+xx,z+zz).position.y;
-		    ++samples;
-		}
-	    }
-
-	    c.position.y = (smooth / (float)samples);
-	}
-    }
-
-
-    for(size_t x = 0; x < m_width; ++x) {
-	for(size_t z = 0; z < m_depth; ++z) {
-	    Cell& c = map(x,z);
-
-	    //  c.position.y *= 2.0f;
-
-	    c.normal = CalculateNormal(
-		map.GetWrap(x,z-1).position.y,
-		map.GetWrap(x,z+1).position.y,
-		map.GetWrap(x+1,z).position.y,
-		map.GetWrap(x-1,z).position.y);
-
-	    c.color = VertexColoring(c.position.y);
-
-	    c.texCoord.x = (float)x;
-	    c.texCoord.y = (float)z;
-
-
-	}
-    }
     m_vertexBuffer->Bind();
-    m_vertexBuffer->SetBufferData(map);
+    m_vertexBuffer->SetBufferData(dataSize, vertexData);
     m_vertexBuffer->Unbind();
+    free(vertexData);
 
-    GLuint baseIndex = 0;
 
-    for(size_t x = 0; x < (m_width-1); ++x) {
-	for(size_t z = 0; z < (m_depth-1); ++z) {
-
-	    indices.push_back(baseIndex+m_width);
-	    indices.push_back(baseIndex+1);
-	    indices.push_back(baseIndex+0);
-
-	    indices.push_back(baseIndex+m_width+1);
-	    indices.push_back(baseIndex+1);
-	    indices.push_back(baseIndex+m_width);
-
-	    m_numTriangles += 2;
-	    baseIndex += 1;
-	}
-	baseIndex += 1;
-    }
+    void* indexData = File::ReadArray(INDEX_FILE, dataSize);
 
     m_indexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_INT));
-
+    m_numTriangles = dataSize / (3 * sizeof(GLushort));
 
     m_indexBuffer->Bind();
-    m_indexBuffer->SetBufferData(indices);
+    m_indexBuffer->SetBufferData(dataSize, indexData);
     m_indexBuffer->Unbind();
-
+    free(indexData);
 
 }
 
@@ -286,4 +178,141 @@ const Color HeightMap::VertexColoring(const float y) {
 	return Color::Lerp(lower, higher, (y-1.7f) / 1.2f);
    }
 
+}
+
+void HeightMap::CreateHeightmap(const std::string& path) {
+
+
+    /*
+      Load the heightmap data.
+     */
+
+    std::vector<unsigned char> buffer;
+    lodepng::load_file(buffer, path);
+
+    lodepng::State state;
+    std::vector<unsigned char> imageData;
+    unsigned int width;
+    unsigned int depth;
+
+    unsigned error = lodepng::decode(imageData, width, depth, state, buffer);
+
+    if(error != 0){
+	LOG_E("could not load height map: %s", lodepng_error_text(error));
+    }
+
+
+
+    /*
+      Next we create the vertex buffer.
+     */
+
+
+    MultArray<Cell> map(width, depth);
+
+    unsigned int xpos = 0;
+    unsigned int zpos = 0;
+
+    float high = -9999.0f;
+    float low = 9999.0f;
+
+    for(size_t i = 0; i < imageData.size(); i+=4) {
+
+	Cell& c = map(xpos, zpos);
+
+	float height = imageData[i+1] / 20.0f;
+
+//	LOG_I("red: %d", imageData[i]);
+
+	c.position = Vector3f(ScaleXZ(xpos), height, ScaleXZ(zpos));
+
+	high = std::max(c.position.y, high);
+	low = std::min(c.position.y, low);
+
+	++xpos;
+	if(xpos != 0 && ( xpos % (width) == 0)) {
+	    xpos = 0;
+	    ++zpos;
+	}
+    }
+
+    // normalize the vertex data.
+    for(size_t x = 0; x < width; ++x) {
+	for(size_t z = 0; z < depth; ++z) {
+	    Cell& c = map(x,z);
+
+	    c.position.y = (c.position.y - low) / (high - low);
+	    c.position.y *=2.9f;
+	}
+    }
+
+    constexpr int BLEND_RANGE = 1;
+
+    for(size_t x = 0; x < width; ++x) {
+	for(size_t z = 0; z < depth; ++z) {
+	    Cell& c = map(x,z);
+
+
+	    float smooth = 0.0f;
+	    int samples = 0;
+
+	    for (int xx = -BLEND_RANGE; xx <= BLEND_RANGE; xx++) {
+		for(int zz = -BLEND_RANGE; zz <= BLEND_RANGE; ++zz) {
+		    smooth += map.GetWrap(x+xx,z+zz).position.y;
+		    ++samples;
+		}
+	    }
+
+	    c.position.y = (smooth / (float)samples);
+	}
+    }
+
+
+    for(size_t x = 0; x < width; ++x) {
+	for(size_t z = 0; z < depth; ++z) {
+	    Cell& c = map(x,z);
+
+	    //  c.position.y *= 2.0f;
+
+	    c.normal = CalculateNormal(
+		map.GetWrap(x,z-1).position.y,
+		map.GetWrap(x,z+1).position.y,
+		map.GetWrap(x+1,z).position.y,
+		map.GetWrap(x-1,z).position.y);
+
+	    c.color = VertexColoring(c.position.y);
+
+	    c.texCoord.x = (float)x;
+	    c.texCoord.y = (float)z;
+
+
+	}
+    }
+
+
+    File::WriteArray(VERTEX_FILE, reinterpret_cast<void *>(map.GetData()), map.GetTotalsize() * sizeof(Cell) );
+
+
+
+    GLuint baseIndex = 0;
+    UintVector indices;
+
+
+    for(size_t x = 0; x < (width-1); ++x) {
+	for(size_t z = 0; z < (depth-1); ++z) {
+
+	    indices.push_back(baseIndex+width);
+	    indices.push_back(baseIndex+1);
+	    indices.push_back(baseIndex+0);
+
+	    indices.push_back(baseIndex+width+1);
+	    indices.push_back(baseIndex+1);
+	    indices.push_back(baseIndex+width);
+
+	    baseIndex += 1;
+	}
+	baseIndex += 1;
+    }
+
+    File::WriteArray(INDEX_FILE, reinterpret_cast<void *>(&indices[0]), indices.size() * sizeof(GLuint) );
 }

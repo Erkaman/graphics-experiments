@@ -15,11 +15,8 @@ class HeightMap {
 
 private:
 
-    unsigned int m_width;
-    unsigned int m_depth;
     unsigned int m_numTriangles;
     bool m_isWireframe;
-
 
     std::unique_ptr<VBO> m_vertexBuffer;
     std::unique_ptr<VBO> m_indexBuffer;
@@ -35,6 +32,8 @@ private:
     static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);
 
+    static void CreateHeightmap(const std::string& path);
+
 public:
 
     HeightMap(const std::string& path);
@@ -42,5 +41,7 @@ public:
     void Draw(const Camera& camera);
 
     void SetWireframe(const bool wireframe);
+
+
 
 };

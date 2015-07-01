@@ -69,3 +69,24 @@ bool File::Exists(const std::string& filename) {
 	return false;
     }
 }
+
+void File::WriteArray(const void* data, size_t dataSize) {
+    fwrite(data, 1, dataSize, m_fp);
+}
+
+void File::WriteArray(const std::string& filename, const void* data, const size_t dataSize) {
+    File(filename, "w").WriteArray(data, dataSize);
+}
+
+void* File::ReadArray(const size_t& dataSize) {
+    void* ptr = malloc(dataSize);
+    fread(ptr, 1, dataSize, m_fp);
+    return ptr;
+}
+
+
+void* File::ReadArray(const std::string& filename, size_t& dataSize) {
+    File file(filename, "r");
+    dataSize = file.GetFileSize();
+    return file.ReadArray(dataSize);
+}
