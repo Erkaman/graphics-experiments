@@ -8,7 +8,7 @@
 using namespace std;
 
 GLuint CreateShaderFromString(const string& str, GLenum shaderType, const string& shaderPath);
-string FormatCompilerErrorOutput(GLuint shader);
+string FormatCompilerErrorOutput(const GLuint shader, const string& shaderStr);
 
 string GetLogInfo(GLuint shaderProgram);
 bool GetCompileStatus(GLuint shaderProgram);
@@ -66,26 +66,39 @@ GLuint CreateShaderFromString(const string& str, const GLenum shaderType, const 
 
     if (!GetCompileStatus(shader)) {
 	// compilation failed
-	LOG_W("Could not compile shader %s\n%s", shaderPath.c_str(), FormatCompilerErrorOutput(shader).c_str());
+	LOG_W("Could not compile shader %s\n%s", shaderPath.c_str(), FormatCompilerErrorOutput(shader, str).c_str());
 	exit(1);
     }
 
     return shader;
 }
 
-
-string FormatCompilerErrorOutput(GLuint shader)  {
+string FormatCompilerErrorOutput(const GLuint shader, const string& shaderStr)  {
     string result = "";
 
     vector<string> errors =  SplitString(GetLogInfo(shader), "\n");
 
+    vector<string> shaderLines = SplitString(shaderStr, "\n");
+
+
     // iterate over the errors, one after one.
     for(string error: errors) {
 
+	if(error == "")
+	    continue;
+
+	size_t firstColonIndex = error.find(":");
+	size_t secondColonIndex = error.find(":", firstColonIndex+1);
+	size_t thirdColonIndex = error.find(":", secondColonIndex+1);
+
+	int lineNumber = std::stoi(error.substr(secondColonIndex+1, thirdColonIndex-(secondColonIndex+1)));
 
 	// print the error.
 	result.append(error);
-	result.append("\n");
+	result.append("\nLine where the error occurred:\n");
+	result.append(shaderLines[lineNumber-1]);
+
+	// the affected line.
     }
 
     return result;
