@@ -12,7 +12,7 @@ data = []
 for y in range(size):
     row = []
     for x in range(size):
-        row.append(random.randint(0,128))
+        row.append(random.randint(0,64))
     data.append(row)
 
 w.write(f, data)
