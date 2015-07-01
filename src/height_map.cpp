@@ -281,8 +281,40 @@ void HeightMap::Draw(const Camera& camera)  {
     // unsetup texture.
     m_noiseTexture->Unbind();
 
-
     m_shader->Unbind();
+
+
+
+
+
+    m_normalsShader->Bind();
+
+
+
+    m_normalsShader->SetUniform("mvp", camera.GetMvp());
+
+
+    // setup vertex buffers.
+    m_vertexBuffer->Bind();
+    m_vertexBuffer->EnableVertexAttribInterleaved();
+    m_vertexBuffer->Bind();
+
+    m_indexBuffer->Bind();
+
+    // DRAW.
+    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+
+    // unsetup vertex buffer.
+
+    m_indexBuffer->Unbind();
+
+    m_vertexBuffer->Bind();
+    m_vertexBuffer->DisableVertexAttribInterleaved();
+    m_vertexBuffer->Bind();
+
+
+    m_normalsShader->Unbind();
+
 }
 
 const float HeightMap::ComputeY(const unsigned char heightMapData ) {
