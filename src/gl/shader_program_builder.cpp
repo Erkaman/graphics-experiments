@@ -10,23 +10,10 @@ using namespace std;
 GLuint CreateShaderFromString(const string& str, GLenum shaderType, const string& shaderPath);
 string FormatCompilerErrorOutput(GLuint shader);
 
-string GetLogInfo(GLuint shaderProgram) {
-    GLint len;
-    GL_C(glGetShaderiv(shaderProgram,  GL_INFO_LOG_LENGTH, &len));
+string GetLogInfo(GLuint shaderProgram);
+bool GetCompileStatus(GLuint shaderProgram);
 
-    char* infoLog = new char[len];
-    GLsizei actualLen;
-    glGetShaderInfoLog(shaderProgram, len, &actualLen, infoLog);
-    string logInfoStr(infoLog, actualLen);
-    delete infoLog;
-    return logInfoStr;
-}
-
-bool GetCompileStatus(GLuint shaderProgram)  {
-    GLint status;
-    GL_C(glGetShaderiv(shaderProgram,  GL_COMPILE_STATUS, &status));
-    return status == GL_TRUE;
-}
+string ParseShader(const std::string& shaderPath);
 
 ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const string& fragmentShaderPath, const string& geometryShaderPath) {
     m_compiledVertexShader = BuildAndCompileShader(vertexShaderPath, GL_VERTEX_SHADER);
@@ -52,7 +39,9 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const
 
 GLuint ShaderProgramBuilder::BuildAndCompileShader(const string& shaderPath, const GLenum shaderType){
 
-    string shaderContents = "#version 150\n"  + File::GetFileContents(shaderPath) + "\0";
+    string shaderContents = ParseShader(shaderPath);
+
+
 
 
     return CreateShaderFromString(shaderContents, shaderType, shaderPath);
@@ -143,4 +132,48 @@ void ShaderProgramBuilder::Link() {
 
 GLuint ShaderProgramBuilder::GetLinkedShaderProgram() {
     return m_shaderProgram;
+}
+
+bool GetCompileStatus(GLuint shaderProgram)  {
+    GLint status;
+    GL_C(glGetShaderiv(shaderProgram,  GL_COMPILE_STATUS, &status));
+    return status == GL_TRUE;
+}
+
+string GetLogInfo(GLuint shaderProgram) {
+    GLint len;
+    GL_C(glGetShaderiv(shaderProgram,  GL_INFO_LOG_LENGTH, &len));
+
+    char* infoLog = new char[len];
+    GLsizei actualLen;
+    glGetShaderInfoLog(shaderProgram, len, &actualLen, infoLog);
+    string logInfoStr(infoLog, actualLen);
+    delete infoLog;
+    return logInfoStr;
+}
+
+string ParseShader(const std::string& shaderPath) {
+
+    string parsedShader = "";
+
+    parsedShader +=  "#version 150\n";
+
+    vector<string> shaderLines = SplitString(File::GetFileContents(shaderPath), "\n");
+
+    for(const string& line: shaderLines) {
+
+	if(BeginsWith(line, "#include")) {
+
+	    string includePath = line.substr(10, line.length()-11 );
+	    string shaderDir = GetFileDirectory(shaderPath);
+
+	    string includeStr = File::GetFileContents(AppendPaths(shaderDir, includePath));
+
+	    parsedShader += includeStr + "\n";
+	} else {
+	    parsedShader += line + "\n";
+	}
+    }
+
+    return parsedShader;
 }

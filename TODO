@@ -1,4 +1,5 @@
 * figure out a nice way to separate the phong code from the heightmap shader.
+* save heightmap vertex data to file.
 
 misc todo:
 * make bmp loader.

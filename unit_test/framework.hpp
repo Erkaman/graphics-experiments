@@ -14,6 +14,8 @@ void AssertEquals(const T& expected, const T& actual) {
 
 void AssertEqualsFloat(const float expected, const float actual);
 void AssertEqualsInt(const int expected, const int actual);
+void AssertTrue(const bool b);
+void AssertNotTrue(const bool b);
 
 void AssertNotEqualsBase(const bool notEquals ,const std::string& expectedStr, const std::string& actualStr);
 

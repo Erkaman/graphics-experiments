@@ -32,6 +32,25 @@ void AssertNotEqualsBase(const bool notEquals ,const std::string& expectedStr, c
     }
 }
 
+void AssertTrue(const bool b) {
+    if(!b) {
+	fprintf(stderr, "  AssertTrue failed\n");
+	exit(1);
+    } else {
+	fprintf(stdout, "  AssertTrue passed\n");
+    }
+}
+
+void AssertNotTrue(const bool b) {
+    if(b) {
+	fprintf(stderr, "  AssertNotTrue failed\n");
+	exit(1);
+    } else {
+	fprintf(stdout, "  AssertNotTrue passed\n");
+    }
+}
+
+
 void BeginSuite(const std::string& suiteName) {
     printf("Begin suite %s\n", suiteName.c_str());
 }

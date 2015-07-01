@@ -1,3 +1,6 @@
+
+#include "lib.glsl"
+
 out vec4 fragmentColor;
 
 uniform vec3 viewSpaceLightPosition;
