@@ -45,9 +45,9 @@ struct Cell {
 static Vector3f CalculateNormal (float north, float south, float east, float west)
 {
     Vector3f n(
-	west - east,
+	(west - east),
 	2.0f,
-	north - south);
+	(north - south));
 
 //    LOG_I("nsew: %f, %f, %f, %f", north, south, east, west);
 
@@ -93,7 +93,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     }
 
 
-    m_lightPosition = Vector4f(ScaleXZ(m_width),10,ScaleXZ(m_width), 1.0);
+    m_lightPosition = Vector4f(ScaleXZ(m_width-200),10,ScaleXZ(m_width-200), 1.0);
 
     /*
       Next we create the vertex buffer.
@@ -149,6 +149,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 	    Cell& c = map.Get(x,z);
 
 	    c.position.y = (c.position.y - low) / (high - low);
+	    //   c.position.y *= 2.0f;
 
 
 //	    LOG_I("height: %f", c.position.y);
@@ -182,7 +183,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 	for(size_t z = 0; z < m_depth; ++z) {
 	    Cell& c = map.Get(x,z);
 
-	    c.position.y *= 2.0f;
+	    //  c.position.y *= 2.0f;
 
 	    c.normal = CalculateNormal(
 		map.GetWrap(x,z-1).position.y,
@@ -302,7 +303,7 @@ void HeightMap::Draw(const Camera& camera)  {
     m_indexBuffer->Bind();
 
     // DRAW.
-    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+//    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
 
     // unsetup vertex buffer.
 
@@ -328,7 +329,7 @@ void HeightMap::SetWireframe(const bool wireframe) {
 
 const float HeightMap::ScaleXZ(const float x) {
 //    return 0.03f * x;
-    return 0.2f * x;
+    return 0.1f * x;
 }
 
 const Color HeightMap::VertexColoring(const float y) {

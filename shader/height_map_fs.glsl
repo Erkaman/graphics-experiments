@@ -13,7 +13,7 @@ float material_shininess = 25.0;
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
 vec3 scene_ambient_light = vec3(0.1);
-vec3 scene_light = vec3(0.8, 0.8, 0.8);
+vec3 scene_light = vec3(0.8);
 vec3 calculateAmbient(vec3 ambientLight, vec3 materialAmbient)
 {
     return ambientLight *  materialAmbient;
