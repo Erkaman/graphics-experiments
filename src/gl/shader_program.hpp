@@ -30,7 +30,7 @@ private:
 
     GLuint m_shaderProgram;
 
-    void CompileShaderProgram(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+    void CompileShaderProgram(const std::string& vertexShaderPath, const std::string& fragmentShaderPath,const std::string& geometryShaderPath);
 
     ShaderProgram();
 

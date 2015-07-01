@@ -2,33 +2,6 @@
 http://www.flipcode.com/archives/Calculating_Vertex_Normals_for_Height_Maps.shtml
 http://www.gamedev.net/topic/163625-fast-way-to-calculate-heightmap-normals/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  */
 
 
@@ -101,6 +74,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
      */
     m_shader = make_unique<ShaderProgram>("shader/height_map");
 
+    m_normalsShader = make_unique<ShaderProgram>("shader/draw_normals");
+
 
     /*
       Load the heightmap data.
@@ -168,10 +143,6 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 	}
     }
 
-/*    LOG_I("high: %f", high);
-    LOG_I("low: %f", low);
-*/
-
     // normalize the vertex data.
     for(size_t x = 0; x < m_width; ++x) {
 	for(size_t z = 0; z < m_depth; ++z) {
@@ -219,7 +190,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 		map.GetWrap(x+1,z).position.y,
 		map.GetWrap(x-1,z).position.y);
 
-//	    LOG_I("normal: %d, %d, %f, %s", x, z, map.GetWrap(x,z).position.y, tos(c.normal).c_str() );
+	    if(x == 3 && z == 3)
+		LOG_I("normal: %s", tos(c.normal).c_str() );
 
 	    c.color = VertexColoring(c.position.y);
 
@@ -272,8 +244,6 @@ void HeightMap::Draw(const Camera& camera)  {
     // setup texture.
     m_noiseTexture->Bind();
     m_shader->SetUniform("noiseSampler", 0);
-
-
 
     // Set up matrices.
     m_shader->SetUniform("mvp", camera.GetMvp());

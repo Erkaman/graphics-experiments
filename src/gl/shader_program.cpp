@@ -4,6 +4,7 @@
 #include "shader_program_builder.hpp"
 
 #include "common.hpp"
+#include "file.hpp"
 
 #include "math/color.hpp"
 #include "math/matrix4f.hpp"
@@ -21,13 +22,18 @@ ShaderProgram::ShaderProgram(const std::string& shaderName){
 
     m_alreadyBoundProgram = false;
 
-    CompileShaderProgram(shaderName + "_vs.glsl", shaderName + "_fs.glsl");
+    string geometryShaderPath = shaderName + "_gs.glsl";
+    if(	!File::Exists(geometryShaderPath)) {
+	geometryShaderPath = ""; // do not load a geometry shader, because it does not exist.
+    }
+
+    CompileShaderProgram(shaderName + "_vs.glsl", shaderName + "_fs.glsl", geometryShaderPath);
 }
 
-void ShaderProgram::CompileShaderProgram(const string& vertexShaderPath, const string& fragmentShaderPath) {
+void ShaderProgram::CompileShaderProgram(const string& vertexShaderPath, const string& fragmentShaderPath,const string& geometryShaderPath) {
     // link shader program.
-    ShaderProgramBuilder shaderBuilder(vertexShaderPath, fragmentShaderPath);
-    m_shaderProgram = shaderBuilder.getLinkedShaderProgram();
+    ShaderProgramBuilder shaderBuilder(vertexShaderPath, fragmentShaderPath, geometryShaderPath);
+    m_shaderProgram = shaderBuilder.GetLinkedShaderProgram();
 
     m_uniformLocationStore = make_unique<UniformLocationStore>(m_shaderProgram);
 }

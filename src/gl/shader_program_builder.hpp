@@ -7,24 +7,24 @@ class ShaderProgramBuilder {
 
 private:
 
-    void attach();
-    void link();
 
-    GLuint compiledFragmentShader;
-    GLuint compiledVertexShader;
+    GLuint m_compiledFragmentShader;
+    GLuint m_compiledVertexShader;
+    GLuint m_compiledGeometryShader;
 
-    GLuint shaderProgram;
+    bool m_hasGeometryShader;
 
-    GLuint buildAndCompileShader(const std::string& shaderPath, GLenum shaderType);
+    GLuint m_shaderProgram;
 
-    void bindAttribLocation(GLuint attribIndex, const std::string& attribName);
+    GLuint BuildAndCompileShader(const std::string& shaderPath, const GLenum shaderType);
+    void BindAttribLocation(const GLuint attribIndex, const std::string& attribName);
+    void Attach();
+    void Link();
+
 
 public:
 
-    ShaderProgramBuilder(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+    ShaderProgramBuilder(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::string& geometryShaderPath);
 
-
-    inline int getLinkedShaderProgram() {
-	return this->shaderProgram;
-    }
+    GLuint GetLinkedShaderProgram();
 };

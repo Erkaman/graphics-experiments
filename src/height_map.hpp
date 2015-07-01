@@ -25,6 +25,8 @@ private:
     std::unique_ptr<VBO> m_indexBuffer;
 
     std::unique_ptr<ShaderProgram> m_shader;
+    std::unique_ptr<ShaderProgram> m_normalsShader;
+
     std::unique_ptr<Texture> m_noiseTexture;
 
     Vector4f m_lightPosition;

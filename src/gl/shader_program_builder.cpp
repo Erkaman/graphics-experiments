@@ -7,10 +7,10 @@
 
 using namespace std;
 
-GLuint createShaderFromString(const string& str, GLenum shaderType, const string& shaderPath);
-string formatCompilerErrorOutput(GLuint shader);
+GLuint CreateShaderFromString(const string& str, GLenum shaderType, const string& shaderPath);
+string FormatCompilerErrorOutput(GLuint shader);
 
-string getLogInfo(GLuint shaderProgram) {
+string GetLogInfo(GLuint shaderProgram) {
     GLint len;
     GL_C(glGetShaderiv(shaderProgram,  GL_INFO_LOG_LENGTH, &len));
 
@@ -22,36 +22,44 @@ string getLogInfo(GLuint shaderProgram) {
     return logInfoStr;
 }
 
-bool getCompileStatus(GLuint shaderProgram)  {
+bool GetCompileStatus(GLuint shaderProgram)  {
     GLint status;
     GL_C(glGetShaderiv(shaderProgram,  GL_COMPILE_STATUS, &status));
     return status == GL_TRUE;
 }
 
-ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const string& fragmentShaderPath) {
-    compiledVertexShader = buildAndCompileShader(vertexShaderPath, GL_VERTEX_SHADER);
-    compiledFragmentShader = buildAndCompileShader(fragmentShaderPath,  GL_FRAGMENT_SHADER);
+ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const string& fragmentShaderPath, const string& geometryShaderPath) {
+    m_compiledVertexShader = BuildAndCompileShader(vertexShaderPath, GL_VERTEX_SHADER);
+    m_compiledFragmentShader = BuildAndCompileShader(fragmentShaderPath,  GL_FRAGMENT_SHADER);
 
-    attach();
+    if(geometryShaderPath != "") {
+	m_compiledGeometryShader = BuildAndCompileShader(geometryShaderPath,  GL_GEOMETRY_SHADER);
+	m_hasGeometryShader = true;
+    } else {
+	m_hasGeometryShader = false;
+    }
 
-    bindAttribLocation(VBO_POSITION_ATTRIB_INDEX, "positionIn"); // vertex attribute "position" will have index 0
-    bindAttribLocation(VBO_TEX_COORD_ATTRIB_INDEX, "texCoordIn"); //vertex attribute "texCoord" will have index 2
-    bindAttribLocation(VBO_NORMAL_ATTRIB_INDEX, "normalIn");//vertex attribute "normal" will have index 1
-    bindAttribLocation(VBO_COLOR_ATTRIB_INDEX, "colorIn");
+    Attach();
 
-    link();
+    BindAttribLocation(VBO_POSITION_ATTRIB_INDEX, "positionIn"); // vertex attribute "position" will have index 0
+    BindAttribLocation(VBO_TEX_COORD_ATTRIB_INDEX, "texCoordIn"); //vertex attribute "texCoord" will have index 2
+    BindAttribLocation(VBO_NORMAL_ATTRIB_INDEX, "normalIn");//vertex attribute "normal" will have index 1
+    BindAttribLocation(VBO_COLOR_ATTRIB_INDEX, "colorIn");
+
+    Link();
 
 }
 
-GLuint ShaderProgramBuilder::buildAndCompileShader(const string& shaderPath, GLenum shaderType){
+GLuint ShaderProgramBuilder::BuildAndCompileShader(const string& shaderPath, const GLenum shaderType){
 
     string shaderContents = "#version 150\n"  + File::GetFileContents(shaderPath) + "\0";
 
-    return createShaderFromString(shaderContents, shaderType, shaderPath);
+
+    return CreateShaderFromString(shaderContents, shaderType, shaderPath);
 }
 
 
-GLuint createShaderFromString(const string& str, GLenum shaderType, const string& shaderPath) {
+GLuint CreateShaderFromString(const string& str, const GLenum shaderType, const string& shaderPath) {
 
     GLuint shader;
     // this one is quite old. and it doesn't seem to work.
@@ -67,21 +75,20 @@ GLuint createShaderFromString(const string& str, GLenum shaderType, const string
     GL_C(glShaderSource(shader, 1, &c_str, &len));
     GL_C(glCompileShader(shader));
 
-    if (!getCompileStatus(shader)) {
+    if (!GetCompileStatus(shader)) {
 	// compilation failed
-	LOG_W("Could not compile shader %s\n%s", shaderPath.c_str(), formatCompilerErrorOutput(shader).c_str());
+	LOG_W("Could not compile shader %s\n%s", shaderPath.c_str(), FormatCompilerErrorOutput(shader).c_str());
 	exit(1);
-
     }
 
     return shader;
 }
 
 
-string formatCompilerErrorOutput(GLuint shader)  {
+string FormatCompilerErrorOutput(GLuint shader)  {
     string result = "";
 
-    vector<string> errors =  SplitString(getLogInfo(shader), "\n");
+    vector<string> errors =  SplitString(GetLogInfo(shader), "\n");
 
     // iterate over the errors, one after one.
     for(string error: errors) {
@@ -96,32 +103,41 @@ string formatCompilerErrorOutput(GLuint shader)  {
 
 }
 
-void ShaderProgramBuilder::attach()  {
+void ShaderProgramBuilder::Attach()  {
 
-    GL_C(shaderProgram = glCreateProgram());
+    GL_C(m_shaderProgram = glCreateProgram());
 
     // attach.
-    GL_C(glAttachShader(shaderProgram, compiledFragmentShader));
-    GL_C(glAttachShader(shaderProgram, compiledVertexShader));
+    GL_C(glAttachShader(m_shaderProgram, m_compiledFragmentShader));
+    GL_C(glAttachShader(m_shaderProgram, m_compiledVertexShader));
+    if(m_hasGeometryShader) {
+	GL_C(glAttachShader(m_shaderProgram, m_compiledGeometryShader));
+    }
 
     // clean up.
-    GL_C(glDeleteShader( compiledFragmentShader));
-    GL_C(glDeleteShader(compiledVertexShader));
+    GL_C(glDeleteShader( m_compiledFragmentShader));
+    GL_C(glDeleteShader(m_compiledVertexShader));
+    GL_C(glDeleteShader(m_compiledGeometryShader));
 }
 
-void ShaderProgramBuilder::bindAttribLocation(GLuint attribIndex, const string& attribName) {
+void ShaderProgramBuilder::BindAttribLocation(const GLuint attribIndex, const string& attribName) {
 
-    GL_C(glBindAttribLocation(this->shaderProgram, attribIndex, attribName.c_str()));
+    GL_C(glBindAttribLocation(m_shaderProgram, attribIndex, attribName.c_str()));
 }
 
-void ShaderProgramBuilder::link() {
+void ShaderProgramBuilder::Link() {
 
-    GL_C(glLinkProgram(shaderProgram));
+    GL_C(glLinkProgram(m_shaderProgram));
 
     GLint linkOk;
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linkOk);
+    glGetProgramiv(m_shaderProgram, GL_LINK_STATUS, &linkOk);
 
     if (linkOk == GL_FALSE) {
-	LOG_E("Error linking program: %s", getLogInfo(shaderProgram).c_str());
+	LOG_E("Error linking program: %s", GetLogInfo(m_shaderProgram).c_str());
     }
+}
+
+
+GLuint ShaderProgramBuilder::GetLinkedShaderProgram() {
+    return m_shaderProgram;
 }
