@@ -10,8 +10,6 @@ class Camera;
 class HeightMap;
 class Skybox;
 class Tree;
-class Font;
-class ShaderProgram;
 
 class TuhuApplication : public Application{
 
@@ -21,9 +19,7 @@ private:
     std::unique_ptr<HeightMap> heightMap;
     std::unique_ptr<Skybox> skybox;
     std::unique_ptr<Tree> tree;
-    std::unique_ptr<Font> font;
 
-    std::unique_ptr<ShaderProgram> m_fontShader;
 
 
 public:
@@ -33,6 +29,7 @@ public:
 
     void Init() override;
     void Render() override;
+    void RenderText() override;
     void Update(const float delta) override;
 
 };

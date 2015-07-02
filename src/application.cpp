@@ -4,6 +4,11 @@
 
 #include "gl/gl_common.hpp"
 #include "gl/vao.hpp"
+#include "gl/shader_program.hpp"
+#include "gl/texture.hpp"
+#include "gl/vbo.hpp"
+
+#include "font.hpp"
 
 
 #include <stdio.h>
@@ -20,6 +25,15 @@ void Application::Start() {
     LogInit();
 
     this->SetupOpenGL();
+
+    m_fontShader = make_unique<ShaderProgram>("shader/font_render");
+
+    m_font = make_unique<Font>("img/font.png",
+			     624,624,
+			     39,39,
+			     GetWindowWidth(),GetWindowHeight());
+
+
     this->Init();
     this->DoMainLoop();
     this->Cleanup();
@@ -40,6 +54,8 @@ void Application::DoMainLoop() {
 	this->Update_internal(delta);
 
 	this->Render();
+
+	RenderText_internal(fps.GetFpsString());
 
 
 
@@ -156,9 +172,23 @@ int Application::GetWindowHeight() {
     return height;
 }
 
-
 void Application::SetWindowTitle(const std::string& title) {
 
     glfwSetWindowTitle(window, title.c_str());
 
+}
+
+void Application::RenderText_internal(const std::string& fpsString) {
+    GL_C(glEnable (GL_BLEND));
+    GL_C(glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+
+    m_fontShader->Bind();
+
+    RenderText();
+
+    m_font->DrawString(*m_fontShader, 600,550, fpsString.substr(0,9) );
+    m_fontShader->Unbind();
+
+    GL_C(glDisable (GL_BLEND));
 }

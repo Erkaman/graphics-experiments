@@ -49,13 +49,8 @@ void TuhuApplication::Init() {
 	);
 
 
-    font = make_unique<Font>("img/font.png",
-			     1024, 1024,
-			     64, 64,
-			     GetWindowWidth(),GetWindowHeight());
 
 
-    m_fontShader = make_unique<ShaderProgram>("shader/font_render");
 
 }
 
@@ -75,14 +70,6 @@ void TuhuApplication::Render() {
     tree->Draw(*camera, lightPosition);
 
 
-    GL_C(glEnable (GL_BLEND));
-    GL_C(glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-    m_fontShader->Bind();
-    font->DrawString(*m_fontShader, 100,100, string("Hello world!") );
-    m_fontShader->Unbind();
-
-    GL_C(glDisable (GL_BLEND));
 
 
 }
@@ -123,3 +110,8 @@ void TuhuApplication::Update(const float delta) {
 }
 
 void TextureDeleter::operator()(Texture *p){ delete p;}
+
+void TuhuApplication::RenderText()  {
+//    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
+
+}

@@ -9,6 +9,12 @@
 
 class GLFWwindow;
 
+class ShaderProgram;
+
+
+class Font;
+
+
 class Application {
 
 private:
@@ -18,6 +24,7 @@ private:
     void Cleanup();
 
     void Update_internal(const float delta);
+    void RenderText_internal(const std::string& fpsString);
 
     GLFWwindow* window;
     bool running;
@@ -25,10 +32,9 @@ private:
     VAO* vao;
 
 
+
 public:
 
-    Application() {}
-    ~Application() {}
 
     void Start();
 
@@ -37,9 +43,15 @@ public:
 
 
 protected:
+
+    std::unique_ptr<Font> m_font;
+    std::unique_ptr<ShaderProgram> m_fontShader;
+
     virtual void Render() = 0;
     virtual void Init() = 0;
     virtual void Update(const float delta) = 0;
+    virtual void RenderText() {}
+
 
     void SetViewport();
 
