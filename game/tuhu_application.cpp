@@ -12,6 +12,8 @@
 #include "tree.hpp"
 #include "skybox.hpp"
 
+#include "font.hpp"
+
 
 #include "common.hpp"
 
@@ -27,7 +29,7 @@ void TuhuApplication::Init() {
     LOG_I("init");
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
-    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
+//    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
 
 
@@ -47,6 +49,14 @@ void TuhuApplication::Init() {
 	);
 
 
+    font = make_unique<Font>("img/font.png",
+			     1024, 1024,
+			     64, 64,
+			     GetWindowWidth(),GetWindowHeight());
+
+
+    m_fontShader = make_unique<ShaderProgram>("shader/font_render");
+
 }
 
 void TuhuApplication::Render() {
@@ -54,10 +64,7 @@ void TuhuApplication::Render() {
     GL_C(glClearColor(0.0f, 0.0f, 1.0f, 1.0f));
     GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-//    GL_C(glActiveTexture( GL_TEXTURE0));
-//    shader->SetUniform("tex", 0);
-
-    skybox->Draw(*camera);
+/*    skybox->Draw(*camera);
 
     heightMap->SetWireframe(false);
 
@@ -65,7 +72,11 @@ void TuhuApplication::Render() {
     heightMap->Draw(*camera, lightPosition);
 
 
-    tree->Draw(*camera, lightPosition);
+    tree->Draw(*camera, lightPosition);*/
+
+    m_fontShader->Bind();
+    font->DrawString(*m_fontShader, 30,30, string("H") );
+    m_fontShader->Unbind();
 
 }
 

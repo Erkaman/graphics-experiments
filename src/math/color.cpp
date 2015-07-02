@@ -66,3 +66,7 @@ bool operator==(const Color& c1, const Color& c2) {
 Color::operator std::string() const {
     return "(" + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b)  + ", " + std::to_string(a)+ ")";
 }
+
+Color Color::White() {
+    return Color(1.0,1.0,1.0);
+}

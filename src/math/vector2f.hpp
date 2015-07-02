@@ -1,14 +1,16 @@
 #pragma once
 
+#include <string>
+
 class Vector2f {
 
 public:
 
     float x,y;
 
-    Vector2f(const float x_, const float y_): x(x_),y(y_){ }
+    Vector2f(const float x_, const float y_);
+    Vector2f();
 
-    Vector2f(): x(0.0f),y(0.0f){ }
-
+    operator std::string() const;
 
 };

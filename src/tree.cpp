@@ -36,6 +36,7 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
     m_leavesIndexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
 
 
+    // DO REMEMBER TO RESERVE MEMORY IN VERTEX VECTOR.
     AddLeaf(Vector3f(0,4,0));
 
     AddLeaf(Vector3f(3,4,0));

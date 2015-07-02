@@ -96,6 +96,7 @@ public:
     }
 
     void DrawIndices(const GLenum mode, const GLsizei count);
+    void DrawVertices(const GLenum mode, const GLsizei count);
 
     void EnableVertexAttribInterleavedWithBind();
     void DisableVertexAttribInterleavedWithBind();
@@ -105,7 +106,7 @@ public:
     static VBO* CreateTexCoord(const GLint numberOfComponents);
     static VBO* CreateNormal();
 
-    static VBO* CreateInterleaved(std::vector<GLuint>&& vertexAttribs, std::vector<GLuint>&& sizes);
+    static VBO* CreateInterleaved(const std::vector<GLuint>&& vertexAttribs, const std::vector<GLuint>&& sizes, const GLenum usage = GL_STATIC_DRAW);
 
 
 };

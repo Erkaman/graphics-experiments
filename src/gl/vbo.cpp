@@ -58,7 +58,7 @@ VBO* VBO::CreateNormal() {
     return positionBuffer;
 }
 
-VBO* VBO::CreateInterleaved(std::vector<GLuint>&& vertexAttribs, std::vector<GLuint>&& sizes){
+VBO* VBO::CreateInterleaved(const std::vector<GLuint>&& vertexAttribs, const std::vector<GLuint>&& sizes, const GLenum usage){
 
     assert(vertexAttribs.size() == sizes.size());
 
@@ -67,7 +67,7 @@ VBO* VBO::CreateInterleaved(std::vector<GLuint>&& vertexAttribs, std::vector<GLu
     buffer->SetVertexAttribIndex(VBO_NORMAL_ATTRIB_INDEX);
     buffer->SetTarget(GL_ARRAY_BUFFER);
     buffer->SetType(GL_FLOAT);
-    buffer->SetUsage(GL_STATIC_DRAW);
+    buffer->SetUsage(usage);
 
     buffer->m_vertexAttribs = std::move(vertexAttribs);
     buffer->m_sizes = std::move(sizes);
@@ -125,6 +125,10 @@ void VBO::SetBufferData(const std::vector<GLfloat>& data) {
 
 void VBO::DrawIndices(const GLenum mode, const GLsizei count) {
     GL_C(glDrawElements(mode, count, m_type, 0));
+}
+
+void VBO::DrawVertices(const GLenum mode, const GLsizei count) {
+    GL_C(glDrawArrays(mode, 0, count));
 }
 
 void VBO::EnableVertexAttribInterleaved() {
