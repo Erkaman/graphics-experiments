@@ -61,9 +61,11 @@ void TuhuApplication::Render() {
 
     heightMap->SetWireframe(false);
 
-    heightMap->Draw(*camera);
+    Vector4f lightPosition(93,10.0f,93, 1.0f);
+    heightMap->Draw(*camera, lightPosition);
 
-    tree->Draw(*camera);
+
+    tree->Draw(*camera, lightPosition);
 
 }
 

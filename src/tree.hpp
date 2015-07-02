@@ -8,6 +8,7 @@ class ShaderProgram;
 class VBO;
 class Camera;
 class Texture;
+class Vector4f;
 
 class Tree {
 
@@ -50,7 +51,7 @@ private:
 
 	);
 
-    void DrawLeaves(const Camera& camera);
+    void DrawLeaves(const Camera& camera, const Vector4f& lightPosition);
 
 
 public:
@@ -61,6 +62,6 @@ public:
 
     Tree(const Vector3f& position);
 
-    void Draw(const Camera& camera);
+    void Draw(const Camera& camera, const Vector4f& lightPosition);
 
 };

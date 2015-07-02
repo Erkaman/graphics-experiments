@@ -65,7 +65,6 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 	CreateHeightmap(path);
     }
 
-    m_lightPosition = Vector4f(93,10.0f,93, 1.0f);
 
 
 
@@ -100,7 +99,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 }
 
 
-void HeightMap::Draw(const Camera& camera)  {
+void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_shader->Bind();
 
@@ -115,7 +114,7 @@ void HeightMap::Draw(const Camera& camera)  {
     m_shader->SetUniform("mvp", mvp);
     m_shader->SetUniform("modelViewMatrix", modelViewMatrix);
     m_shader->SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
-    m_shader->SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * m_lightPosition) );
+    m_shader->SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * lightPosition) );
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );

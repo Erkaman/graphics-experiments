@@ -25,7 +25,6 @@ private:
 
     std::unique_ptr<Texture> m_noiseTexture;
 
-    Vector4f m_lightPosition;
     float m_movement;
 
     static const float ComputeY(const unsigned char heightMapData );
@@ -38,7 +37,7 @@ public:
 
     HeightMap(const std::string& path);
 
-    void Draw(const Camera& camera);
+    void Draw(const Camera& camera, const Vector4f& lightPosition);
 
     void SetWireframe(const bool wireframe);
 

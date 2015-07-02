@@ -7,6 +7,9 @@
 #include "gl/vbo.hpp"
 #include "gl/texture2d.hpp"
 
+#include "math/matrix4f.hpp"
+#include "math/vector4f.hpp"
+
 using std::vector;
 
 Tree::Tree(const Vector3f& position): m_stemPosition(position) {
@@ -33,7 +36,7 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
     m_leavesIndexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
 
 
-    AddLeaf(Vector3f(0,10,0));
+    AddLeaf(Vector3f(0,3,0));
 
     m_leavesVertexBuffer->Bind();
     m_leavesVertexBuffer->SetBufferData(m_leavesVertices);
@@ -125,22 +128,31 @@ const float ax, const float ay, const float az,
 }
 
 
-void Tree::Draw(const Camera& camera) {
+void Tree::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_phongShader->Bind();
-    DrawLeaves(camera);
+    DrawLeaves(camera, lightPosition);
 
     m_phongShader->Unbind();
 
 }
 
-void Tree::DrawLeaves(const Camera& camera) {
+void Tree::DrawLeaves(const Camera& camera, const Vector4f& lightPosition) {
     // next load texture.
     m_leafTexture->Bind();
     m_phongShader->SetUniform("tex", 0);
     Texture::SetActiveTextureUnit(0);
 
     // setup matrices.
+
+    const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(Matrix4f::CreateTranslation(m_stemPosition) );
+    const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
+
+    m_phongShader->SetUniform("mvp", mvp);
+    m_phongShader->SetUniform("modelViewMatrix", modelViewMatrix);
+    m_phongShader->SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
+    m_phongShader->SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * lightPosition) );
+
 
     m_leavesVertexBuffer->EnableVertexAttribInterleavedWithBind();
 
