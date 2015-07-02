@@ -8,5 +8,5 @@ void main(void) {
 
     vec4 sample  = texture(tex, texCoord).rgba;
 
-    fragmentColor  =vec4(1,0,0,1); //vec4(sample.rgb * color , sample.a);
+    fragmentColor  =vec4(sample.rgb * color , sample.a);
 }

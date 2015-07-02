@@ -29,7 +29,7 @@ void TuhuApplication::Init() {
     LOG_I("init");
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
-//    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
+    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
 
 
@@ -64,7 +64,7 @@ void TuhuApplication::Render() {
     GL_C(glClearColor(0.0f, 0.0f, 1.0f, 1.0f));
     GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-/*    skybox->Draw(*camera);
+    skybox->Draw(*camera);
 
     heightMap->SetWireframe(false);
 
@@ -72,11 +72,18 @@ void TuhuApplication::Render() {
     heightMap->Draw(*camera, lightPosition);
 
 
-    tree->Draw(*camera, lightPosition);*/
+    tree->Draw(*camera, lightPosition);
+
+
+    GL_C(glEnable (GL_BLEND));
+    GL_C(glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     m_fontShader->Bind();
-    font->DrawString(*m_fontShader, 30,30, string("H") );
+    font->DrawString(*m_fontShader, 100,100, string("Hello world!") );
     m_fontShader->Unbind();
+
+    GL_C(glDisable (GL_BLEND));
+
 
 }
 

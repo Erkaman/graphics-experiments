@@ -137,6 +137,7 @@ void Font::DrawQuad(const float drawX, const float drawY, const float drawX2, co
 
     int i = 0;
 
+
     vertices[i++] =(drawX);
     vertices[i++] =(drawY);
     vertices[i++] =(textureSrcX);
@@ -157,19 +158,12 @@ void Font::DrawQuad(const float drawX, const float drawY, const float drawX2, co
     vertices[i++] =(textureSrcX + renderWidth);
     vertices[i++] =(textureSrcY);
 
-/*  for(int i = 0; i < 2* 4 * 2; ++i) {
-    LOG_I("float: %f", vertices[i]);
-    }
-    exit(1);*/
 
     m_vertexBuffer->Bind();
-    m_vertexBuffer->SetBufferData(2* 4 * 2, vertices);
+    m_vertexBuffer->SetBufferData(2* 4 * 2 * sizeof(GLfloat), vertices);
     m_vertexBuffer->Unbind();
 
     m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
-
-//    exit(1);
     m_vertexBuffer->DrawVertices(GL_TRIANGLE_STRIP,4);
-
     m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
 }
