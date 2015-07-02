@@ -64,8 +64,13 @@ public:
     */
 
     static Matrix4f CreateIdentity();
+
     static Matrix4f CreateTranslation(const float x, const float y, const float z);
     static Matrix4f CreateTranslation(const Vector3f& trans);
+
+    static Matrix4f CreateScale(const Vector3f& scale);
+    static Matrix4f CreateScale(const float x, const float y, const float z);
+
     static Matrix4f CreatePerspective( const float fov, const float aspectRatio, const float near, const float far);
     static Matrix4f CreateLookAt(const Vector3f& eye, const Vector3f& center, const Vector3f& up);
 

@@ -29,6 +29,29 @@ static void TestCreateTranslation() {
     AssertEquals(trans, expected);
 }
 
+static void TestCreateScale() {
+    Matrix4f trans = Matrix4f::CreateScale(2,3,4);
+    Matrix4f expected(
+	2,0,0,0,
+	0,3,0,0,
+	0,0,4,0,
+	0,0,0,1
+	);
+
+    AssertEquals(trans, expected);
+
+    // now test the Vector3f version.
+    trans = Matrix4f::CreateScale(Vector3f(2,3,4));
+    expected = Matrix4f(
+	2,0,0,0,
+	0,3,0,0,
+	0,0,4,0,
+	0,0,0,1
+	);
+
+    AssertEquals(trans, expected);
+}
+
 static void TestEquals() {
     Matrix4f a(
 	1,2,3,4,
@@ -275,6 +298,10 @@ void Matrix4fTestSuite() {
     suite.emplace_back(TestSub, "TestSub");
     suite.emplace_back(TestInverse, "TestInverse");
     suite.emplace_back(MultVector, "MultVector");
+
+    suite.emplace_back(TestCreateScale, "TestCreateScale");
+
+
 
     RunSuite(suite, "Matrix4f");
 

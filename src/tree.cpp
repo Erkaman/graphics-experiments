@@ -25,18 +25,20 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
     m_phongShader = std::make_unique<ShaderProgram>("shader/phong");
 
     m_leavesVertexBuffer = std::unique_ptr<VBO>(VBO::CreateInterleaved(
-				       vector<GLuint>{
-					   VBO_POSITION_ATTRIB_INDEX,
-					       VBO_NORMAL_ATTRIB_INDEX,
-					       VBO_TEX_COORD_ATTRIB_INDEX},
-				       vector<GLuint>{3,3,2}
-				       ));
+						    vector<GLuint>{
+							VBO_POSITION_ATTRIB_INDEX,
+							    VBO_NORMAL_ATTRIB_INDEX,
+							    VBO_TEX_COORD_ATTRIB_INDEX},
+						    vector<GLuint>{3,3,2}
+						    ));
 
 
     m_leavesIndexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
 
 
-    AddLeaf(Vector3f(0,3,0));
+    AddLeaf(Vector3f(0,4,0));
+
+    AddLeaf(Vector3f(3,4,0));
 
     m_leavesVertexBuffer->Bind();
     m_leavesVertexBuffer->SetBufferData(m_leavesVertices);
@@ -53,21 +55,67 @@ void Tree::AddLeaf(const Vector3f& position) {
     const Vector3f leafPosition = position + m_stemPosition;
 
     AddLeafFace(
-    leafPosition,
-    0.5f, 0.5f, 0.5f,
-	    0.5f, -0.5f, 0.5f,
-	    -0.5f, -0.5f, 0.5f,
-	    -0.5f, 0.5f, 0.5f,
+	leafPosition,
+	0.5f, 0.5f, 0.5f,
+	0.5f, -0.5f, 0.5f,
+	-0.5f, -0.5f, 0.5f,
+	-0.5f, 0.5f, 0.5f,
 	0.0f,0.0f,1.0
-	    );
+	);
 
+    AddLeafFace(
+	leafPosition,
+	-0.5f, 0.5f, -0.5f,
+	-0.5f, -0.5f, -0.5f,
+	0.5f, -0.5f, -0.5f,
+	0.5f, 0.5f, -0.5f,
+	0.0f,0.0f, -1.0f
+	);
+
+    AddLeafFace(
+	leafPosition,
+	-0.5f, 0.5f, -0.5f,
+	0.5f, 0.5f, -0.5f,
+	0.5f, 0.5f, 0.5f,
+	-0.5f, 0.5f, 0.5f,
+	0.0f,1.0,0.0f
+	);
+
+
+    AddLeafFace(
+	leafPosition,
+	0.5f, -0.5f, -0.5f,
+	-0.5f, -0.5f, -0.5f,
+	-0.5f, -0.5f, 0.5f,
+	0.5f, -0.5f, 0.5f,
+	0.0f,-1.0,0.0f
+
+	);
+
+    AddLeafFace(
+	leafPosition,
+	0.5f, 0.5f, -0.5f,
+	0.5f, -0.5f, -0.5f,
+	0.5f, -0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f,
+	1.0f, 0.0f, 0.0f
+	);
+
+    AddLeafFace(
+	leafPosition,
+	-0.5f, 0.5f, 0.5f,
+	-0.5f, -0.5f, 0.5f,
+	-0.5f, -0.5f, -0.5f,
+	-0.5f, 0.5f, -0.5f,
+	-1.0f, 0.0f, 0.0f
+	);
 
 
 }
 
 void  Tree::AddLeafFace(
-const Vector3f& leafPosition,
-const float ax, const float ay, const float az,
+    const Vector3f& leafPosition,
+    const float ax, const float ay, const float az,
     const float bx, const float by, const float bz,
     const float cx, const float cy, const float cz,
     const float dx, const float dy, const float dz,
@@ -77,9 +125,12 @@ const float ax, const float ay, const float az,
     ) {
     const GLushort base = (GLushort)(m_leavesVertices.size() / 8);
 
-    m_leavesVertices.push_back(ax+leafPosition.x);
-    m_leavesVertices.push_back(ay+leafPosition.y);
-    m_leavesVertices.push_back(az+leafPosition.z);
+
+    constexpr float SCALE = 0.2f;
+
+    m_leavesVertices.push_back(ax*SCALE+leafPosition.x);
+    m_leavesVertices.push_back(ay*SCALE+leafPosition.y);
+    m_leavesVertices.push_back(az*SCALE+leafPosition.z);
     m_leavesVertices.push_back(nx);
     m_leavesVertices.push_back(ny);
     m_leavesVertices.push_back(nz);
@@ -87,9 +138,9 @@ const float ax, const float ay, const float az,
     m_leavesVertices.push_back(0);
 
 
-    m_leavesVertices.push_back(bx+leafPosition.x);
-    m_leavesVertices.push_back(by+leafPosition.y);
-    m_leavesVertices.push_back(bz+leafPosition.z);
+    m_leavesVertices.push_back(bx*SCALE+leafPosition.x);
+    m_leavesVertices.push_back(by*SCALE+leafPosition.y);
+    m_leavesVertices.push_back(bz*SCALE+leafPosition.z);
     m_leavesVertices.push_back(nx);
     m_leavesVertices.push_back(ny);
     m_leavesVertices.push_back(nz);
@@ -98,9 +149,9 @@ const float ax, const float ay, const float az,
 
 
 
-    m_leavesVertices.push_back(cx+leafPosition.x);
-    m_leavesVertices.push_back(cy+leafPosition.y);
-    m_leavesVertices.push_back(cz+leafPosition.z);
+    m_leavesVertices.push_back(cx*SCALE+leafPosition.x);
+    m_leavesVertices.push_back(cy*SCALE+leafPosition.y);
+    m_leavesVertices.push_back(cz*SCALE+leafPosition.z);
     m_leavesVertices.push_back(nx);
     m_leavesVertices.push_back(ny);
     m_leavesVertices.push_back(nz);
@@ -109,9 +160,9 @@ const float ax, const float ay, const float az,
 
 
 
-    m_leavesVertices.push_back(dx+leafPosition.x);
-    m_leavesVertices.push_back(dy+leafPosition.y);
-    m_leavesVertices.push_back(dz+leafPosition.z);
+    m_leavesVertices.push_back(dx*SCALE+leafPosition.x);
+    m_leavesVertices.push_back(dy*SCALE+leafPosition.y);
+    m_leavesVertices.push_back(dz*SCALE+leafPosition.z);
     m_leavesVertices.push_back(nx);
     m_leavesVertices.push_back(ny);
     m_leavesVertices.push_back(nz);
@@ -119,12 +170,16 @@ const float ax, const float ay, const float az,
     m_leavesVertices.push_back(1);
 
 
-    m_leavesIndices.push_back(base);
+
+    m_leavesIndices.push_back(base + 2);
     m_leavesIndices.push_back(base + 1);
+    m_leavesIndices.push_back(base);
+
+
+    m_leavesIndices.push_back(base + 3);
     m_leavesIndices.push_back(base + 2);
     m_leavesIndices.push_back(base);
-    m_leavesIndices.push_back(base + 2);
-    m_leavesIndices.push_back(base + 3);
+
 }
 
 
@@ -145,7 +200,8 @@ void Tree::DrawLeaves(const Camera& camera, const Vector4f& lightPosition) {
 
     // setup matrices.
 
-    const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(Matrix4f::CreateTranslation(m_stemPosition) );
+    const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
+	Matrix4f::CreateTranslation(m_stemPosition) );
     const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
 
     m_phongShader->SetUniform("mvp", mvp);
@@ -166,8 +222,6 @@ void Tree::DrawLeaves(const Camera& camera, const Vector4f& lightPosition) {
     m_leavesIndexBuffer->Unbind();
 
     m_leavesVertexBuffer->DisableVertexAttribInterleavedWithBind();
-
-
 
     m_leafTexture->Unbind();
 

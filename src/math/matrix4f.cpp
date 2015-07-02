@@ -218,6 +218,20 @@ Matrix4f Matrix4f::CreateTranslation(const float x, const float y, const float z
     return t;
 }
 
+Matrix4f Matrix4f::CreateScale(const float x, const float y, const float z) {
+    Matrix4f s = CreateIdentity();
+
+    s.m00 = x;
+    s.m11 = y;
+    s.m22 = z;
+
+    return s;
+}
+
+Matrix4f Matrix4f::CreateScale(const Vector3f& scale) {
+    return CreateScale(scale.x, scale.y, scale.z);
+}
+
 Matrix4f operator*(const float scale, const Matrix4f& m){
     return Matrix4f(
 	scale*m.m00, scale*m.m01, scale*m.m02, scale*m.m03,

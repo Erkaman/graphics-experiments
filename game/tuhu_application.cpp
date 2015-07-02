@@ -31,7 +31,7 @@ void TuhuApplication::Init() {
 
 
 
-    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-0.5f,3.6f,0.0f), Vector3f(1.0f,-0.5f,1.0f));
+    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-1.7f,5.1f,-1.4f), Vector3f(1.0f,-0.5f,1.0f));
 
     heightMap = make_unique<HeightMap>("img/combined.png");
 
