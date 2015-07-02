@@ -38,6 +38,8 @@ public:
     friend bool operator!=(const Vector3f& v1, const Vector3f& v2);
     friend Vector3f operator*(const float scale, const Vector3f& v);
     Vector3f& operator += (const Vector3f& that);
+    Vector3f& operator -= (const Vector3f& that);
+
     Vector3f operator-() const;
     operator std::string() const;
 
@@ -100,6 +102,11 @@ inline Vector3f operator*(const float scale, const Vector3f& v) {
 
 inline Vector3f& Vector3f::operator += (const Vector3f& that){
     *this = (*this) + that;
+    return (*this);
+}
+
+inline Vector3f& Vector3f::operator -= (const Vector3f& that){
+    *this = (*this) - that;
     return (*this);
 }
 

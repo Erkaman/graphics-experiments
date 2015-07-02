@@ -24,8 +24,12 @@ public:
     Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir);
 
     Matrix4f GetMvp() const;
+    Matrix4f GetMvp(const Matrix4f& modelViewMatrix) const;
 
     Matrix4f GetViewMatrix() const;
+    Matrix4f GetModelViewMatrix() const; // with the identity matrix as the model matrix.
+    Matrix4f GetModelViewMatrix(const Matrix4f& modelMatrix) const;
+
     Matrix4f GetProjectionMatrix() const;
 
     Vector3f GetPosition() const;

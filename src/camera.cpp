@@ -25,6 +25,11 @@ Matrix4f Camera::GetMvp() const {
     return (*m_projectionMatrix) * (*m_viewMatrix);
 }
 
+Matrix4f Camera::GetMvp(const Matrix4f& modelViewMatrix) const {
+    return (*m_projectionMatrix) * modelViewMatrix;
+}
+
+
 void Camera::ComputeViewMatrix() {
     m_viewMatrix = std::unique_ptr<Matrix4f>(new Matrix4f(
 						 Matrix4f::CreateLookAt(
@@ -85,4 +90,18 @@ Matrix4f Camera::GetProjectionMatrix() const {
 
 Vector3f Camera::GetPosition() const {
     return m_position;
+}
+
+
+Matrix4f Camera::GetModelViewMatrix() const {
+    return *m_viewMatrix;
+}
+
+
+Matrix4f Camera::GetModelViewMatrix(const Matrix4f& modelMatrix) const {
+    Matrix4f ret =  (*m_viewMatrix) * modelMatrix;
+
+//    LOG_I("ret: %s", tos(ret).c_str() );
+
+    return ret;
 }

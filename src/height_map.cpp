@@ -110,20 +110,16 @@ void HeightMap::Draw(const Camera& camera)  {
 
     // Set up matrices.
     m_shader->SetUniform("mvp", camera.GetMvp());
-    Matrix4f viewMatrix = camera.GetViewMatrix();
-    m_shader->SetUniform("modelViewMatrix", viewMatrix);
-    Matrix4f normalMatrix(viewMatrix);
-    normalMatrix.Transpose().Inverse();
-    m_shader->SetUniform("normalMatrix", normalMatrix);
-    m_shader->SetUniform("viewSpaceLightPosition", Vector3f(viewMatrix * m_lightPosition) );
+    Matrix4f modelViewMatrix = camera.GetModelViewMatrix(Matrix4f::CreateTranslation(0,0,0));
+    m_shader->SetUniform("modelViewMatrix", modelViewMatrix);
+    m_shader->SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
+    m_shader->SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * m_lightPosition) );
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     // setup vertex buffers.
-    m_vertexBuffer->Bind();
-    m_vertexBuffer->EnableVertexAttribInterleaved();
-    m_vertexBuffer->Bind();
+    m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
 
     m_indexBuffer->Bind();
 
@@ -134,9 +130,7 @@ void HeightMap::Draw(const Camera& camera)  {
 
     m_indexBuffer->Unbind();
 
-    m_vertexBuffer->Bind();
-    m_vertexBuffer->DisableVertexAttribInterleaved();
-    m_vertexBuffer->Bind();
+    m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );

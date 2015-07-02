@@ -90,6 +90,15 @@ static void TestRotate() {
     AssertEquals(v,Vector3f(0.5874642f, 0.4271195f, 0.6873536f));
 }
 
+static void TestMinusEquals() {
+    Vector3f a(2,3,4);
+
+    a -= Vector3f(4,5,7);
+
+    AssertEquals(a,Vector3f(-2,-2,-3));
+}
+
+
 void Vector3fTestSuite() {
 
     TestSuite suite;
@@ -104,6 +113,7 @@ void Vector3fTestSuite() {
     suite.emplace_back(TestScale, "TestScale");
     suite.emplace_back(TestPlusEquals, "TestPlusEquals");
     suite.emplace_back(TestRotate, "TestRotate");
+    suite.emplace_back(TestMinusEquals, "TestMinusEquals");
 
     RunSuite(suite, "Vector3f");
 }

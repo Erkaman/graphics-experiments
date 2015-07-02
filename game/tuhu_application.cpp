@@ -9,10 +9,12 @@
 
 #include "camera.hpp"
 #include "height_map.hpp"
+#include "tree.hpp"
+#include "skybox.hpp"
+
 
 #include "common.hpp"
 
-#include "skybox.hpp"
 
 using namespace std;
 
@@ -32,6 +34,8 @@ void TuhuApplication::Init() {
     camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-0.5f,3.6f,0.0f), Vector3f(1.0f,-0.5f,1.0f));
 
     heightMap = make_unique<HeightMap>("img/combined.png");
+
+    tree = make_unique<Tree>(Vector3f(0,0,0));
 
     skybox = make_unique<Skybox>(
 	"img/bluecloud_ft.png",
@@ -58,6 +62,9 @@ void TuhuApplication::Render() {
     heightMap->SetWireframe(false);
 
     heightMap->Draw(*camera);
+
+    tree->Draw(*camera);
+
 }
 
 void TuhuApplication::Update(const float delta) {

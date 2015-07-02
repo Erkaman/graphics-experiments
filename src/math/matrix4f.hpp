@@ -69,4 +69,6 @@ public:
     static Matrix4f CreatePerspective( const float fov, const float aspectRatio, const float near, const float far);
     static Matrix4f CreateLookAt(const Vector3f& eye, const Vector3f& center, const Vector3f& up);
 
+    static Matrix4f GetNormalMatrix(const Matrix4f& modelViewMatrix);
+
 };

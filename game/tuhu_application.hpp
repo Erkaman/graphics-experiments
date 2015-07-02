@@ -9,6 +9,7 @@ struct TextureDeleter{void operator()(Texture *p);};
 class Camera;
 class HeightMap;
 class Skybox;
+class Tree;
 
 class TuhuApplication : public Application{
 
@@ -17,7 +18,7 @@ private:
     std::unique_ptr<Camera> camera;
     std::unique_ptr<HeightMap> heightMap;
     std::unique_ptr<Skybox> skybox;
-
+    std::unique_ptr<Tree> tree;
 
 public:
 

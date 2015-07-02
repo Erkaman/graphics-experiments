@@ -155,3 +155,16 @@ void VBO::DisableVertexAttribInterleaved() {
 
     Unbind();
 }
+
+void VBO::EnableVertexAttribInterleavedWithBind() {
+    Bind();
+    EnableVertexAttribInterleaved();
+    Unbind();
+}
+
+
+void VBO::DisableVertexAttribInterleavedWithBind() {
+    Bind();
+    DisableVertexAttribInterleaved();
+    Unbind();
+}

@@ -415,3 +415,9 @@ Vector4f operator*(const Matrix4f& a, const Vector4f& b) {
 	a.m20 * b.x + a.m21 * b.y + a.m22 * b.z + a.m23 * b.w,
 	a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33 * b.w);
 }
+
+Matrix4f Matrix4f::GetNormalMatrix(const Matrix4f& modelViewMatrix) {
+
+    Matrix4f mv(modelViewMatrix);
+    return mv.Transpose().Inverse();
+}

@@ -5,7 +5,7 @@ out vec4 fragmentColor;
 
 uniform vec3 viewSpaceLightPosition;
 
-uniform sampler2D noiseSampler;
+uniform sampler2D tex;
 
 in vec3 vertexColor;
 in vec2 texCoord;
@@ -14,9 +14,7 @@ in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
 
 vec3 sampleDiffuseTexture() {
-    return
-	mix(texture(noiseSampler, texCoord).xyz, vec3(1), 0.90 );
-//	vertexColor;
+    return texture(tex, texCoord).xyz;
 }
 
 
