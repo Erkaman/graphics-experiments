@@ -15,7 +15,7 @@ in vec3 viewSpacePosition;
 
 vec3 sampleDiffuseTexture() {
     return
-	mix(texture(noiseSampler, texCoord).xyz, vec3(1), 0.90 );
+	mix(texture(noiseSampler, texCoord).xyz, vertexColor, 0.90 );
 //	vertexColor;
 }
 

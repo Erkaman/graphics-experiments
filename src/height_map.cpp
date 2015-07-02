@@ -109,8 +109,10 @@ void HeightMap::Draw(const Camera& camera)  {
     m_shader->SetUniform("noiseSampler", 0);
 
     // Set up matrices.
-    m_shader->SetUniform("mvp", camera.GetMvp());
     Matrix4f modelViewMatrix = camera.GetModelViewMatrix(Matrix4f::CreateTranslation(0,0,0));
+    Matrix4f mvp = camera.GetMvp(modelViewMatrix);
+
+    m_shader->SetUniform("mvp", mvp);
     m_shader->SetUniform("modelViewMatrix", modelViewMatrix);
     m_shader->SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
     m_shader->SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * m_lightPosition) );
