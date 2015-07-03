@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "camera.hpp"
+#include "colonization.hpp"
 
 #include "gl/shader_program.hpp"
 #include "gl/vbo.hpp"
@@ -53,7 +54,7 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
 
 void Tree::AddLeaf(const Vector3f& position) {
 
-    const Vector3f leafPosition = position + m_stemPosition;
+    const Vector3f leafPosition = position;
 
     AddLeafFace(
 	leafPosition,

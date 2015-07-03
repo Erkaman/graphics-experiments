@@ -130,7 +130,7 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Vector3f& v
 void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& camera, const Vector4f& lightPosition) {
 
     const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
-	);
+	modelMatrix);
 
     const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
 

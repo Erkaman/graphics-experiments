@@ -107,15 +107,20 @@ void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
     m_noiseTexture->Bind();
     m_shader->SetUniform("noiseSampler", 0);
 
+    m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0)
+
+	 , camera, lightPosition);
+
+
     // Set up matrices.
-    Matrix4f modelViewMatrix = camera.GetModelViewMatrix(Matrix4f::CreateTranslation(0,0,0));
+/*    Matrix4f modelViewMatrix = camera.GetModelViewMatrix(Matrix4f::CreateTranslation(0,0,0));
     Matrix4f mvp = camera.GetMvp(modelViewMatrix);
 
     m_shader->SetUniform("mvp", mvp);
     m_shader->SetUniform("modelViewMatrix", modelViewMatrix);
     m_shader->SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
     m_shader->SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * lightPosition) );
-
+*/
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
