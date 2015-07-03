@@ -66,6 +66,7 @@ static void TestScale() {
     Vector4f a(2,3,4,5);
 
     AssertEquals(3*a,Vector4f(6,9,12,15));
+
 }
 
 static void TestPlusEquals() {

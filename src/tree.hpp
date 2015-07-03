@@ -24,7 +24,7 @@ private:
 
     FloatVector m_treeVertices;
     UshortVector m_treeIndices;
-    GLushort m_TreeNumTriangles;
+    GLushort m_treeNumTriangles;
 
 
 
@@ -62,7 +62,9 @@ private:
 	);
 
     void DrawLeaves(const Camera& camera, const Vector4f& lightPosition);
+    void DrawTree(const Camera& camera, const Vector4f& lightPosition);
 
+    void AddBranch(const std::vector<float>& branchWidths, const std::vector<Vector3f>& branchPositions, const int steps = 5);
 
 public:
 

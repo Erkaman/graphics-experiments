@@ -13,6 +13,30 @@
 
 using std::vector;
 
+void GetAxis(
+
+    Vector3f& from,
+    Vector3f& to,
+    Vector3f& xaxis,
+    Vector3f& zaxis)
+{
+    // get vector from to A to B
+    Vector3f yaxis(to);
+    yaxis -= from; //yaxis.subtract(from);
+    yaxis.Normalize();
+
+    // 1/sin(pi/4) or 1/cos(pi/4)
+    // cross products to get axis
+    zaxis = Vector3f(1/1.414f, -1/1.414f, 0.0f);
+    zaxis = Vector3f::Cross(zaxis, yaxis);//zaxis.cross(yaxis);
+    zaxis.Normalize();
+
+    xaxis = yaxis;
+    xaxis = Vector3f::Cross(xaxis, zaxis); //xaxis.cross(zaxis);
+    xaxis.Normalize();
+}
+
+
 Tree::Tree(const Vector3f& position): m_stemPosition(position) {
 
     m_leafTexture = std::make_unique<Texture2D>("img/leaf.png");
@@ -63,6 +87,30 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
     m_leavesIndexBuffer->SetBufferData(m_leavesIndices);
     m_leavesIndexBuffer->Unbind();
     m_leavesNumTriangles = (GLushort)(m_leavesIndices.size() / 3);
+
+
+    vector<float> branchWidths;
+    vector<Vector3f> branchPositions;
+
+    branchWidths.push_back(0.25f);
+    branchWidths.push_back(0.20f);
+    branchWidths.push_back(0.15f);
+
+    branchPositions.emplace_back(0.0f,0.0f,0.0f);
+    branchPositions.emplace_back(0.0f,0.5f,0.0f);
+    branchPositions.emplace_back(0.0f,1.0f,0.0f);
+
+    AddBranch(branchWidths, branchPositions);
+
+    m_treeVertexBuffer->Bind();
+    m_treeVertexBuffer->SetBufferData(m_treeVertices);
+    m_treeVertexBuffer->Unbind();
+
+    m_treeIndexBuffer->Bind();
+    m_treeIndexBuffer->SetBufferData(m_treeIndices);
+    m_treeIndexBuffer->Unbind();
+    m_treeNumTriangles = (GLushort)(m_treeIndices.size() / 3);
+
 }
 
 void Tree::AddLeaf(const Vector3f& position) {
@@ -204,6 +252,9 @@ void Tree::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     DrawLeaves(camera, lightPosition);
 
+    DrawTree(camera, lightPosition);
+
+
     m_phongShader->Unbind();
 
 }
@@ -221,4 +272,124 @@ void Tree::DrawLeaves(const Camera& camera, const Vector4f& lightPosition) {
     VBO::DrawIndices(*m_leavesVertexBuffer, *m_leavesIndexBuffer, GL_TRIANGLES, (m_leavesNumTriangles)*3);
 
     m_leafTexture->Unbind();
+}
+
+void Tree::DrawTree(const Camera& camera, const Vector4f& lightPosition) {
+
+    m_leafTexture->Bind();
+
+    VBO::DrawIndices(*m_treeVertexBuffer, *m_treeIndexBuffer, GL_TRIANGLES, (m_treeNumTriangles)*3);
+
+    m_leafTexture->Unbind();
+}
+
+
+void Tree::AddBranch(const std::vector<float>& branchWidths, const std::vector<Vector3f>& branchPositions, const int steps) {
+    static const double BRANCH_SCALE = 1/10.0;
+
+
+    assert(branchWidths.size() == branchPositions.size());
+
+    int count = branchWidths.size();
+
+    int baseIndex = m_treeVertices.size();
+  double radius;
+  Vector3f normal, from, to, xaxis, zaxis;
+  Vector3f v;
+
+  for (int i = 0; i <= steps; i++)
+  {
+    double angle = (2*PI*i)/steps;
+    double x = cos(angle);
+    double z = sin(angle);
+    double height = 0.0;
+
+    // add interior points
+    for (int j = count-1; j > 0; j--)
+    {
+      // find axis at next segment
+      from = branchPositions[j];
+      to = branchPositions[j-1];
+      radius = branchWidths[j];
+
+      Vector3f oldNormal(normal);
+
+      // get normal
+      GetAxis(from, to, xaxis, zaxis);
+      normal.x = x*xaxis.x + z*zaxis.x;
+      normal.y = x*xaxis.y + z*zaxis.y;
+      normal.z = x*xaxis.z + z*zaxis.z;
+
+      if (j < count-1) // at first iteration not executed.
+      {
+	  normal += oldNormal;  //normal.add(oldNormal);
+	  normal *= 0.5f;//normal.scale(0.5);
+      }
+
+      // set point
+      m_treeVertices.push_back( (float) (from.x + radius * normal.x));
+      m_treeVertices.push_back((float) (from.y + radius * normal.y));
+      m_treeVertices.push_back((float) (from.z + radius * normal.z));
+
+      // normal faces out
+      m_treeVertices.push_back((float) normal.x);
+      m_treeVertices.push_back( (float) normal.y);
+      m_treeVertices.push_back( (float) normal.z);
+
+      // texture coordinates
+      m_treeVertices.push_back( (float) (BRANCH_SCALE*2*PI*i)/steps);
+      m_treeVertices.push_back( (float) (BRANCH_SCALE*height));
+
+      Vector3f delta(to);
+      delta -= from;//delta.subtract(from);
+      height += delta.Length();
+    }
+
+    // add the top row
+    from = branchPositions[1];
+    to = branchPositions[0];
+    radius = branchWidths[0];
+    GetAxis(from, to, xaxis, zaxis);
+
+    // multiply by axis
+    normal.x = x*xaxis.x + z*zaxis.x;
+    normal.y = x*xaxis.y + z*zaxis.y;
+    normal.z = x*xaxis.z + z*zaxis.z;
+
+    // set point
+    m_treeVertices.push_back( (float) (to.x + radius * normal.x));
+    m_treeVertices.push_back(  (float) (to.y + radius * normal.y));
+    m_treeVertices.push_back( (float) (to.z + radius * normal.z));
+
+
+    // normal faces out
+    m_treeVertices.push_back((float) normal.x);
+    m_treeVertices.push_back( (float) normal.y);
+    m_treeVertices.push_back( (float) normal.z);
+
+
+    // texture coordinates
+    m_treeVertices.push_back( (float) (BRANCH_SCALE*2*PI*i)/steps);
+    m_treeVertices.push_back( (float) (BRANCH_SCALE*height));
+  }
+
+
+  // add the indexes
+  for (int i = 0; i < steps; i++)
+  {
+    int index = baseIndex + i*count;
+    for (int j = 0; j < count-1; j++)
+    {
+      m_treeIndices.push_back(index);  // tl
+      m_treeIndices.push_back(index+1);  // bl
+      m_treeIndices.push_back(index+count);  // tr
+
+      m_treeIndices.push_back(index+1);  // bl
+      m_treeIndices.push_back(index+count+1);  // br
+      m_treeIndices.push_back(index+count);  // tr
+
+      index++;
+    }
+  }
+
 }

@@ -70,6 +70,11 @@ static void TestScale() {
     Vector3f a(2,3,4);
 
     AssertEquals(3*a,Vector3f(6,9,12));
+
+    Vector3f b(2,3,4);
+    b *= 3;
+    AssertEquals(b,Vector3f(6,9,12));
+
 }
 
 static void TestPlusEquals() {
