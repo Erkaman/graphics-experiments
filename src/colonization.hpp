@@ -36,11 +36,11 @@ public:
 
 struct Leaf {
 
-    bool m_reached;
+    bool m_active;
     Vector3f m_position;
     int m_closest; // cloest branch index?
 
-    Leaf() {}
+    Leaf(const Vector3f& position);
 };
 
 class Colonization {
@@ -53,6 +53,11 @@ private:
     std::vector<Branch> m_branches;
 
     void GenerateLeaves();
+
+    void AddLeaf(const Vector3f& position);
+
+    bool FindClosestBranch(const Vector3f& leafPosition, int& closest);
+
 
 public:
 
@@ -67,6 +72,11 @@ public:
 
     Branch& GetBranch(int i);
     size_t GetBranchCount();
+    Leaf& GetLeaf(int i);
+
+    bool Colonize();
+
+
 
 
 };

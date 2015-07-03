@@ -81,6 +81,8 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
 
     m_treeIndexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
 
+//    m_colonization.Colonize();
+
     vector<Leaf> leaves = m_colonization.GetLeaves();
 
     for(const Leaf& leaf : leaves) {
@@ -103,7 +105,7 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
 	branchPositions.clear();
 
 	branchPositions.push_back(branch.m_position);
-	branchWidths.push_back(0);
+	branchWidths.push_back(0); // make the branch sharp.
 /*    branchPts[0] = branch->m_pt;
       branchWidths[0] = 0.0;*/
 
@@ -134,14 +136,13 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
 	    if (parent.m_path != child)
 	    {
 		// fix base to reflect root, not parent width
-		branchWidths[branchWidths.size()-2] = sqrt(branch.m_area);
+		branchWidths[branchWidths.size()-2] = sqrt(branch.m_area); // ???
 		break;
 	    }
 	    child = branch.m_parentIndex;
 	    branch = parent;
 	}
 	if (branchPositions.size() > 0) {
-	    LOG_I("add branch");
 	    AddBranch(branchWidths, branchPositions);
 	}
 //      addBranch(m_branchVertexes, m_branchIndexes, count+1, BRANCH_SIDES, branchWidths, branchPts);
@@ -354,10 +355,6 @@ void Tree::DrawTree(const Camera& camera, const Vector4f& lightPosition) {
 
 void Tree::AddBranch(const std::vector<float>& branchWidths, const std::vector<Vector3f>& branchPositions, const int steps) {
     static const double BRANCH_SCALE = 1/10.0;
-
-    for(const Vector3f& v : branchPositions) {
-	LOG_I("V: %s", tos(v).c_str());
-    }
 
     assert(branchWidths.size() == branchPositions.size());
 
