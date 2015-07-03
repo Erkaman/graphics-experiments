@@ -154,9 +154,7 @@ void Skybox::Draw(const Camera& camera) {
 void Skybox::SetupForRender() {
     m_shader->Bind();
 
-    m_positionBuffer->Bind();
-    m_positionBuffer->EnableVertexAttrib();
-    m_positionBuffer->Unbind();
+    m_positionBuffer->EnableVertexAttribWithBind();
 
     m_indexBuffer->Bind();
 
@@ -167,15 +165,11 @@ void Skybox::SetupForRender() {
 
 void Skybox::UnsetupForRender() {
 
-
-    m_positionBuffer->Bind();
-    m_positionBuffer->DisableVertexAttrib();
-    m_positionBuffer->Unbind();
+    m_positionBuffer->DisableVertexAttribWithBind();
 
     m_indexBuffer->Unbind();
 
     m_cubeMap.Unbind();
 
     m_shader->Unbind();
-
 }

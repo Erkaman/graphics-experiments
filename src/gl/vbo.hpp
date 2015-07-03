@@ -101,6 +101,10 @@ public:
     void EnableVertexAttribInterleavedWithBind();
     void DisableVertexAttribInterleavedWithBind();
 
+    void EnableVertexAttribWithBind();
+    void DisableVertexAttribWithBind();
+
+
     static VBO* CreatePosition(const GLint numComponents);
     static VBO* CreateIndex(const GLenum type = GL_UNSIGNED_SHORT);
     static VBO* CreateTexCoord(const GLint numberOfComponents);
@@ -108,6 +112,7 @@ public:
 
     static VBO* CreateInterleaved(const std::vector<GLuint>&& vertexAttribs, const std::vector<GLuint>&& sizes, const GLenum usage = GL_STATIC_DRAW);
 
+    static void DrawIndices(VBO& vertexBuffer, VBO& indexBuffer, const GLenum mode, const GLsizei count);
 
 };
 

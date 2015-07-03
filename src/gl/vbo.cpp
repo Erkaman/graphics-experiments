@@ -172,3 +172,29 @@ void VBO::DisableVertexAttribInterleavedWithBind() {
     DisableVertexAttribInterleaved();
     Unbind();
 }
+
+void VBO::EnableVertexAttribWithBind() {
+    Bind();
+    EnableVertexAttrib();
+    Unbind();
+}
+
+void VBO::DisableVertexAttribWithBind() {
+    Bind();
+    DisableVertexAttrib();
+    Unbind();
+}
+
+
+void VBO::DrawIndices(VBO& vertexBuffer, VBO& indexBuffer, const GLenum mode, const GLsizei count) {
+
+    vertexBuffer.EnableVertexAttribInterleavedWithBind();
+
+    indexBuffer.Bind();
+
+    indexBuffer.DrawIndices(mode, count);
+
+    indexBuffer.Unbind();
+
+    vertexBuffer.DisableVertexAttribInterleavedWithBind();
+}

@@ -5,6 +5,7 @@
 
 #include "common.hpp"
 #include "file.hpp"
+#include "camera.hpp"
 
 #include "math/color.hpp"
 #include "math/matrix4f.hpp"
@@ -124,4 +125,18 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Vector3f& v
     } else {
 	SetUniformWarn(uniformName);
     }
+}
+
+void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& camera, const Vector4f& lightPosition) {
+
+    const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
+	);
+
+    const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
+
+    SetUniform("mvp", mvp);
+    SetUniform("modelViewMatrix", modelViewMatrix);
+    SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
+    SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * lightPosition) );
+
 }

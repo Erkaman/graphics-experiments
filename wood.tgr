@@ -1,0 +1,61 @@
+#NTEVersion 6
+#BeginNodes 15
+388 -97 0
+engine.graphics.synthesis.texture.PatternPerlinNoise
+ExportName "" Transformation 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 Color_Mapping 2 0.0 0.0 0.0 1.0 0.0 1.0 1.0 1.0 1.0 1.0 ScaleX 4.0 ScaleY 1.0 ValueScale 1.0 Persistence 0.5 Spectral_Control 9 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 StartBand 1 EndBand 8 Seed -1 Periodic true endparameters
+356 167 0
+engine.graphics.synthesis.texture.FilterColorize
+ExportName "" Gray_to_Color_Mapping 3 0.4 0.20392157 0.0 1.0 0.0 0.5768116 0.43851474 0.294686 1.0 0.47826087 0.8148188 0.754302 0.6913647 1.0 1.0 endparameters
+483 -114 0
+engine.graphics.synthesis.texture.PatternPerlinNoise
+ExportName "" Transformation 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 Color_Mapping 2 0.0 0.0 0.0 1.0 0.0 1.0 1.0 1.0 1.0 1.0 ScaleX 1.0 ScaleY 1.0 ValueScale 1.0 Persistence 0.5 Spectral_Control 9 0.5 0.38333333 0.47500002 0.51666665 0.5333333 0.56666666 0.65 0.725 0.7833333 StartBand 1 EndBand 8 Seed -1 Periodic true endparameters
+290 72 0
+engine.graphics.synthesis.texture.FilterWarp
+ExportName "" Strength 0.01 endparameters
+460 60 0
+engine.graphics.synthesis.texture.FilterEmboss
+ExportName "" Strength 1.0 Angle 45.0 endparameters
+605 -15 0
+engine.graphics.synthesis.texture.PatternPerlinNoise
+ExportName "" Transformation 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 Color_Mapping 2 0.0 0.0 0.0 1.0 0.0 1.0 1.0 1.0 1.0 1.0 ScaleX 1.0 ScaleY 1.0 ValueScale 1.0 Persistence 0.5 Spectral_Control 9 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 StartBand 1 EndBand 8 Seed -1 Periodic true endparameters
+22 -70 0
+engine.graphics.synthesis.texture.PatternCellular
+ExportName "" Transformation 1.5607209 7.846279 -0.71298754 -7.846279 1.5607209 -0.69290954 0.0 0.0 1.0 Color_Mapping 2 0.0 0.0 0.0 1.0 0.0 1.0 1.0 1.0 1.0 1.0 Cell_Type 4 Distance_ 0 PointGen 0 Seed 2 Intensity 1.0 Jitter 1.0 NumPoints 4 RandColor false Periodic true endparameters
+-77 -33 0
+engine.graphics.synthesis.texture.PatternBrick
+ExportName "" Transformation 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 Color_Mapping 2 0.0 0.0 0.0 1.0 0.0 1.0 1.0 1.0 1.0 1.0 NumX 13 NumY 1 Shift 0.5 RandShift 0.1 GapX 0.03 GapY 0.03 Smooth 0.05 RandColor false endparameters
+350 -33 0
+engine.graphics.synthesis.texture.PatternCellular
+ExportName "" Transformation 4.0 0.0 0.0 0.0 4.0 0.0 0.0 0.0 1.0 Color_Mapping 2 0.0 0.0 0.0 1.0 0.0 1.0 1.0 1.0 1.0 1.0 Cell_Type 4 Distance_ 0 PointGen 0 Seed 0 Intensity 1.0 Jitter 0.0 NumPoints 5 RandColor false Periodic true endparameters
+-75 118 0
+engine.graphics.synthesis.texture.FilterColorize
+ExportName "" Gray_to_Color_Mapping 5 0.4 0.4 0.0 1.0 0.09178744 1.0 0.8 0.8 1.0 0.2415459 0.2 0.2 0.0 1.0 0.4830918 0.2 0.0 0.2 1.0 0.7487923 1.0 1.0 1.0 1.0 0.942029 endparameters
+226 100 0
+engine.graphics.synthesis.texture.PatternPerlinNoise
+ExportName "" Transformation 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 Color_Mapping 2 0.0 0.0 0.0 1.0 0.0 1.0 1.0 1.0 1.0 1.0 ScaleX 1.0 ScaleY 1.0 ValueScale 1.0 Persistence 0.5 Spectral_Control 9 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 StartBand 1 EndBand 8 Seed -1 Periodic true endparameters
+139 150 0
+engine.graphics.synthesis.texture.FilterEmboss
+ExportName "" Strength 2.0 Angle 45.0 endparameters
+135 59 0
+engine.graphics.synthesis.texture.FilterWarp
+ExportName "" Strength 0.25 endparameters
+169 -99 0
+engine.graphics.synthesis.texture.PatternPerlinNoise
+ExportName "" Transformation 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 Color_Mapping 2 0.0 0.0 0.0 1.0 0.0 1.0 1.0 1.0 1.0 1.0 ScaleX 8.0 ScaleY 1.0 ValueScale 1.0 Persistence 0.5 Spectral_Control 9 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 StartBand 1 EndBand 8 Seed -1 Periodic true endparameters
+216 -32 0
+engine.graphics.synthesis.texture.PatternFunction
+ExportName "" Transformation 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 Color_Mapping 2 0.0 0.0 0.0 1.0 0.0 1.0 1.0 1.0 1.0 1.0 FunctionU 2 FunctionV 2 Combiner 4 ScaleX 13.0 ScaleY 1.0 endparameters
+#EndNodes
+#BeginConnections 10
+0 3 0
+2 3 1
+0 4 0
+2 4 1
+4 1 0
+6 9 0
+6 11 0
+10 11 1
+6 12 1
+14 12 0
+#EndConnections
+glpreview 12 -1 -1 -1 Object 0 Spec._Power 60.0 POM_Strength 0.125 Ambient 0.125 TexScale_U 2 TexScale_V 2 CamRotX 89.0 CamRotY 4.0 CamDist 2.1000001 endglpreview

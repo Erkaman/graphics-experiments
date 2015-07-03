@@ -1,6 +1,14 @@
 
 
 misc todo:
-* make perlin noise generator.
+* make perlin noise generator(tileable: http://gamedev.stackexchange.com/a/23705)
 * make bmp loader.
 * make prettier text.
+
+
+
+http://freespace.virgin.net/hugo.elias/models/m_perlin.htm
+https://graphics.ethz.ch/teaching/imsynth12/competition//2nd%20Place..%20Adrian%20Blumer/report.html
+http://www.sci.utah.edu/~leenak/IndStudy_reportfall/Perlin%20Noise%20on%20GPU.html
+https://skybase.wordpress.com/2012/01/26/how-to-creating-super-simple-procedural-wood-textures-in-filter-forge/
+http://amber.rc.arizona.edu/darktree/cellular.html

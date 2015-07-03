@@ -187,6 +187,7 @@ void  Tree::AddLeafFace(
 void Tree::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_phongShader->Bind();
+
     DrawLeaves(camera, lightPosition);
 
     m_phongShader->Unbind();
@@ -201,30 +202,9 @@ void Tree::DrawLeaves(const Camera& camera, const Vector4f& lightPosition) {
 
     // setup matrices.
 
-    const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
-	Matrix4f::CreateTranslation(m_stemPosition) );
-    const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
+    m_phongShader->SetPhongUniforms(Matrix4f::CreateTranslation(m_stemPosition) , camera, lightPosition);
 
-    m_phongShader->SetUniform("mvp", mvp);
-    m_phongShader->SetUniform("modelViewMatrix", modelViewMatrix);
-    m_phongShader->SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
-    m_phongShader->SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * lightPosition) );
-
-
-    m_leavesVertexBuffer->EnableVertexAttribInterleavedWithBind();
-
-    m_leavesIndexBuffer->Bind();
-
-    // DRAW.
-    m_leavesIndexBuffer->DrawIndices(GL_TRIANGLES, (m_leavesNumTriangles)*3);
-
-    // unsetup vertex buffer.
-
-    m_leavesIndexBuffer->Unbind();
-
-    m_leavesVertexBuffer->DisableVertexAttribInterleavedWithBind();
+    VBO::DrawIndices(*m_leavesVertexBuffer, *m_leavesIndexBuffer, GL_TRIANGLES, (m_leavesNumTriangles)*3);
 
     m_leafTexture->Unbind();
-
-
 }

@@ -9,6 +9,7 @@ class Color;
 class Matrix4f;
 class Vector4f;
 class Vector3f;
+class Camera;
 
 class UniformLocationStore;
 struct UniformLocationStoreDeleter
@@ -50,5 +51,7 @@ public:
     void SetUniform(const std::string& uniformName, const int val);
     void SetUniform(const std::string& uniformName, const Vector4f& v);
     void SetUniform(const std::string& uniformName, const Vector3f& v);
+
+    void SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& camera, const Vector4f& lightPosition);
 
 };
