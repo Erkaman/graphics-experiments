@@ -45,7 +45,6 @@ private:
 
     Colonization m_colonization;
 
-
     /*
       PRIVATE INSTANCE METHODS
     */

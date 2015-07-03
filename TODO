@@ -1,6 +1,7 @@
 
 
 misc todo:
+* bump mapping.
 * make perlin noise generator(tileable: http://gamedev.stackexchange.com/a/23705)
 * make bmp loader.
 * make prettier text.
