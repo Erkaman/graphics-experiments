@@ -42,6 +42,7 @@ private:
 
 
     std::unique_ptr<Texture> m_leafTexture;
+    std::unique_ptr<Texture> m_woodTexture;
 
     Colonization m_colonization;
 

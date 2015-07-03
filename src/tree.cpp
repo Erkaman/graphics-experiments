@@ -40,12 +40,21 @@ void GetAxis(
 Tree::Tree(const Vector3f& position): m_stemPosition(position) {
 
     m_leafTexture = std::make_unique<Texture2D>("img/leaf.png");
+     m_woodTexture = std::make_unique<Texture2D>("img/wood.png");
 
     m_leafTexture->Bind();
     m_leafTexture->SetTextureTiling();
     m_leafTexture->SetMinFilter(GL_LINEAR);
     m_leafTexture->SetMagFilter(GL_NEAREST);
     m_leafTexture->Unbind();
+
+    m_woodTexture->Bind();
+    m_woodTexture->SetTextureTiling();
+    m_woodTexture->SetMinFilter(GL_LINEAR);
+    m_woodTexture->SetMagFilter(GL_NEAREST);
+    m_woodTexture->Unbind();
+
+
 
     m_phongShader = std::make_unique<ShaderProgram>("shader/phong");
 
@@ -335,11 +344,11 @@ void Tree::DrawLeaves(const Camera& camera, const Vector4f& lightPosition) {
 
 void Tree::DrawTree(const Camera& camera, const Vector4f& lightPosition) {
 
-    m_leafTexture->Bind();
+    m_woodTexture->Bind();
 
     VBO::DrawIndices(*m_treeVertexBuffer, *m_treeIndexBuffer, GL_TRIANGLES, (m_treeNumTriangles)*3);
 
-    m_leafTexture->Unbind();
+    m_woodTexture->Unbind();
 }
 
 
