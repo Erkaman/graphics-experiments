@@ -1,5 +1,8 @@
 #pragma once
 
+#include "math/vector3f.hpp"
+#include "random.hpp"
+
 class Branch
 {
 public:
@@ -20,4 +23,29 @@ public:
     int m_next;   // chain of branches in octree cell
 
     Branch() {}
+};
+
+struct Leaf {
+
+    bool m_reached;
+    Vector3f position;
+    int m_closest; // cloest branch index?
+
+    Leaf() {}
+};
+
+class Colonization {
+
+private:
+
+    Random rng;
+
+    std::vector<Leaf> leaves;
+
+    void GenerateLeaves();
+
+public:
+
+    Colonization();
+
 };

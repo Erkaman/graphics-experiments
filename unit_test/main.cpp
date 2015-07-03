@@ -4,6 +4,7 @@
 #include "color_test.hpp"
 #include "mult_array_test.hpp"
 #include "str_test.hpp"
+#include "random_test.hpp"
 #include "log.hpp"
 #include <stdio.h>
 
@@ -18,6 +19,7 @@ int main() {
     ColorTestSuite();
     MultArrayTestSuite();
     StrTestSuite();
+    RandomTestSuite();
 
     printf("ALL TESTS PASSED!");
 

@@ -17,6 +17,10 @@ void AssertEqualsInt(const int expected, const int actual);
 void AssertTrue(const bool b);
 void AssertNotTrue(const bool b);
 
+void AssertFailed(const std::string& message);
+void AssertPassed(const std::string& message);
+
+
 void AssertNotEqualsBase(const bool notEquals ,const std::string& expectedStr, const std::string& actualStr);
 
 template<typename T>

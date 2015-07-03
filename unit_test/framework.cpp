@@ -83,3 +83,12 @@ void RunSuite(const TestSuite& suite, const std::string& suiteName) {
 
     EndSuite(suiteName);
 }
+
+void AssertFailed(const std::string& message) {
+    fprintf(stderr, "  Assert failed: %s\n", message.c_str());
+    exit(1);
+}
+
+void AssertPassed(const std::string& message) {
+    fprintf(stderr, "  Assert passed: %s\n", message.c_str());
+}
