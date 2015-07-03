@@ -32,12 +32,11 @@ void TuhuApplication::Init() {
     GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
 
-
     camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-1.7f,5.1f,-1.4f), Vector3f(1.0f,-0.5f,1.0f));
 
     heightMap = make_unique<HeightMap>("img/combined.png");
 
-    tree = make_unique<Tree>(Vector3f(0,0,0));
+    tree = make_unique<Tree>(Vector3f(0,2,0));
 
     skybox = make_unique<Skybox>(
 	"img/bluecloud_ft.png",

@@ -73,11 +73,18 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
     m_treeIndexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
 
 
+// m_colonization
+
+    vector<Leaf> leaves = m_colonization.GetLeaves();
+
+    for(const Leaf& leaf : leaves) {
+	AddLeaf(leaf.m_position);
+    }
 
     // DO REMEMBER TO RESERVE MEMORY IN VERTEX VECTOR.
-    AddLeaf(Vector3f(0,4,0));
+//
 
-    AddLeaf(Vector3f(3,4,0));
+//    AddLeaf(Vector3f(3,4,0));
 
     m_leavesVertexBuffer->Bind();
     m_leavesVertexBuffer->SetBufferData(m_leavesVertices);

@@ -2,6 +2,7 @@
 
 #include "gl/gl_common.hpp"
 #include "math/vector3f.hpp"
+#include "colonization.hpp"
 
 
 class ShaderProgram;
@@ -41,6 +42,8 @@ private:
 
 
     std::unique_ptr<Texture> m_leafTexture;
+
+    Colonization m_colonization;
 
 
     /*

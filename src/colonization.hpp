@@ -28,7 +28,7 @@ public:
 struct Leaf {
 
     bool m_reached;
-    Vector3f position;
+    Vector3f m_position;
     int m_closest; // cloest branch index?
 
     Leaf() {}
@@ -38,14 +38,16 @@ class Colonization {
 
 private:
 
-    Random rng;
+    Random m_rng;
 
-    std::vector<Leaf> leaves;
+    std::vector<Leaf> m_leaves;
 
     void GenerateLeaves();
 
 public:
 
     Colonization();
+
+    std::vector<Leaf> GetLeaves()const;
 
 };
