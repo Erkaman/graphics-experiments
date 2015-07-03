@@ -37,6 +37,19 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
     m_leavesIndexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
 
 
+    m_treeVertexBuffer = std::unique_ptr<VBO>(VBO::CreateInterleaved(
+						    vector<GLuint>{
+							VBO_POSITION_ATTRIB_INDEX,
+							    VBO_NORMAL_ATTRIB_INDEX,
+							    VBO_TEX_COORD_ATTRIB_INDEX},
+						    vector<GLuint>{3,3,2}
+						    ));
+
+
+    m_treeIndexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
+
+
+
     // DO REMEMBER TO RESERVE MEMORY IN VERTEX VECTOR.
     AddLeaf(Vector3f(0,4,0));
 

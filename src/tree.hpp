@@ -20,7 +20,13 @@ private:
 
     FloatVector m_leavesVertices;
     UshortVector m_leavesIndices;
-    GLuint m_leavesNumTriangles;
+    GLushort m_leavesNumTriangles;
+
+    FloatVector m_treeVertices;
+    UshortVector m_treeIndices;
+    GLushort m_TreeNumTriangles;
+
+
 
     // the position of the beginning of the stem.
     Vector3f m_stemPosition;
@@ -29,6 +35,10 @@ private:
 
     std::unique_ptr<VBO> m_leavesVertexBuffer;
     std::unique_ptr<VBO> m_leavesIndexBuffer;
+
+    std::unique_ptr<VBO> m_treeVertexBuffer;
+    std::unique_ptr<VBO> m_treeIndexBuffer;
+
 
     std::unique_ptr<Texture> m_leafTexture;
 
