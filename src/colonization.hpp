@@ -70,9 +70,9 @@ public:
 
     void computeBranchSizes(int lastCount) ;
 
-    Branch& GetBranch(int i);
+    Branch& GetBranch(const size_t i);
     size_t GetBranchCount();
-    Leaf& GetLeaf(int i);
+    Leaf& GetLeaf(const size_t i);
 
     bool Colonize();
 

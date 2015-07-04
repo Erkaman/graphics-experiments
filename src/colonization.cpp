@@ -109,15 +109,24 @@ void Colonization::computeBranchSizes(int lastCount)  {
 
 }
 
-Branch& Colonization::GetBranch(int i) {
+Branch& Colonization::GetBranch(const size_t i) {
+    assert(i < m_branches.size());
+
     return m_branches[i];
 }
 
-Leaf& Colonization::GetLeaf(int i) {
+Leaf& Colonization::GetLeaf(const size_t i) {
+
+    assert(i < m_leaves.size());
+
+
+
     return m_leaves[i];
 }
 
 size_t Colonization::GetBranchCount() {
+
+
     return m_branches.size();
 }
 
@@ -170,13 +179,13 @@ bool Colonization::Colonize()
       pt += branch.m_growDir;//pt.add(branch.m_growDir);
       addBranch(pt, j);
 
-      branch.m_childCount++;
+      branch.m_childCount++; // invalid read of size 4
       active = true;
     }
 
     // reset growth vector on branch
-    branch.m_growDir = Vector3f(0, 0, 0);
-    branch.m_growCount = 0;
+    branch.m_growDir = Vector3f(0, 0, 0); // Invalid write of size 8
+    branch.m_growCount = 0; // Invalid write of size 4
   }
 
   return active;
@@ -218,4 +227,61 @@ bool Colonization::FindClosestBranch(const Vector3f& leafPosition, int& closest)
 
 
     }
+
+    // what this returns???
+    /*
+     *
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     */
+
+
+
 }

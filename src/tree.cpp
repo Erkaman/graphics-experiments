@@ -96,7 +96,6 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
     {
 	Branch& branch = m_colonization.GetBranch(i);
 
-	LOG_I("Path: %d", branch.m_path);
 	if (branch.m_path != -1)
 	    continue;  // parent of some other branch
 	int child = i;
