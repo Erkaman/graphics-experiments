@@ -16,15 +16,18 @@ bool GetCompileStatus(GLuint shaderProgram);
 string ParseShader(const std::string& shaderPath);
 
 ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const string& fragmentShaderPath, const string& geometryShaderPath) {
-    m_compiledVertexShader = BuildAndCompileShader(vertexShaderPath, GL_VERTEX_SHADER);
-    m_compiledFragmentShader = BuildAndCompileShader(fragmentShaderPath,  GL_FRAGMENT_SHADER);
+	m_compiledVertexShader = BuildAndCompileShader(vertexShaderPath, GL_VERTEX_SHADER);
+	m_compiledFragmentShader = BuildAndCompileShader(fragmentShaderPath,  GL_FRAGMENT_SHADER);
 
-    if(geometryShaderPath != "") {
-	m_compiledGeometryShader = BuildAndCompileShader(geometryShaderPath,  GL_GEOMETRY_SHADER);
+    
+	if(geometryShaderPath != "") {
+
+		m_compiledGeometryShader = BuildAndCompileShader(geometryShaderPath,  GL_GEOMETRY_SHADER);
 	m_hasGeometryShader = true;
     } else {
 	m_hasGeometryShader = false;
     }
+	LOG_I("attching fragment");
 
     Attach();
 
@@ -40,8 +43,6 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const
 GLuint ShaderProgramBuilder::BuildAndCompileShader(const string& shaderPath, const GLenum shaderType){
 
     string shaderContents = ParseShader(shaderPath);
-
-
 
 
     return CreateShaderFromString(shaderContents, shaderType, shaderPath);
@@ -182,7 +183,7 @@ string ParseShader(const std::string& shaderPath) {
 
 	    string includeStr = File::GetFileContents(AppendPaths(shaderDir, includePath));
 
-	    parsedShader += includeStr + "\n";
+		parsedShader += includeStr + "\n";
 	} else {
 	    parsedShader += line + "\n";
 	}

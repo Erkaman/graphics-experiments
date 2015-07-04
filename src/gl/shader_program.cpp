@@ -24,11 +24,13 @@ ShaderProgram::ShaderProgram(const std::string& shaderName){
     m_alreadyBoundProgram = false;
 
     string geometryShaderPath = shaderName + "_gs.glsl";
+	LOG_I("maling shader");
     if(	!File::Exists(geometryShaderPath)) {
 	geometryShaderPath = ""; // do not load a geometry shader, because it does not exist.
     }
-
+	
     CompileShaderProgram(shaderName + "_vs.glsl", shaderName + "_fs.glsl", geometryShaderPath);
+	LOG_I("done maling shader");
 }
 
 void ShaderProgram::CompileShaderProgram(const string& vertexShaderPath, const string& fragmentShaderPath,const string& geometryShaderPath) {

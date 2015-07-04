@@ -31,10 +31,16 @@ void TuhuApplication::Init() {
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
     GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
+	LOG_I("making camera");
 
     camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-1.7f,5.1f,-1.4f), Vector3f(1.0f,-0.5f,1.0f));
 
+	LOG_I("making height map");
+
+
     heightMap = make_unique<HeightMap>("img/combined.png");
+
+	LOG_I("making tree");
 
     tree = make_unique<Tree>(Vector3f(0,2,0));
 
@@ -50,6 +56,7 @@ void TuhuApplication::Init() {
 
 
 
+	LOG_I("done init");
 
 }
 

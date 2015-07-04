@@ -3,12 +3,12 @@
 #include "math/vector3f.hpp"
 #include "random.hpp"
 
-const double TWIG_AREA = 0.1*0.1;
+const float TWIG_AREA = 0.1f*0.1f;
 
-const double GROW_DISTANCE = 1.0;
-const double MIN_GROW = 1.0;
-const double MIN_DISTANCE = 2 * GROW_DISTANCE;
-const double MAX_DISTANCE = 10 * GROW_DISTANCE;
+const float GROW_DISTANCE = 1.0f;
+const float MIN_GROW = 1.0f;
+const float MIN_DISTANCE = 2.0f * GROW_DISTANCE;
+const float MAX_DISTANCE = 10.0f * GROW_DISTANCE;
 
 
 class Branch

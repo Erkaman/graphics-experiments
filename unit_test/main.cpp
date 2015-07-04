@@ -8,6 +8,8 @@
 #include "log.hpp"
 #include <stdio.h>
 
+#include <stdlib.h>
+
 
 int main() {
 
@@ -25,6 +27,6 @@ int main() {
 
     LogDispose();
 
-
+	system("pause");
 
 }

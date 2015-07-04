@@ -4,6 +4,7 @@
 #include "math/vector3f.hpp"
 #include "colonization.hpp"
 
+#include <memory>
 
 class ShaderProgram;
 class VBO;

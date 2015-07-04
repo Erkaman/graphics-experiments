@@ -346,6 +346,8 @@ void Tree::DrawTree(const Camera& camera, const Vector4f& lightPosition) {
 
     m_woodTexture->Bind();
 
+	//m_phongShader->SetPhongUniforms(Matrix4f::CreateTranslation(m_stemPosition), camera, lightPosition);
+
     VBO::DrawIndices(*m_treeVertexBuffer, *m_treeIndexBuffer, GL_TRIANGLES, (m_treeNumTriangles)*3);
 
     m_woodTexture->Unbind();
@@ -353,11 +355,11 @@ void Tree::DrawTree(const Camera& camera, const Vector4f& lightPosition) {
 
 
 void Tree::AddBranch(const std::vector<float>& branchWidths, const std::vector<Vector3f>& branchPositions, const int steps) {
-    static const double BRANCH_SCALE = 1/10.0;
+    static const float BRANCH_SCALE = 1.0f/10.0f;
 
     assert(branchWidths.size() == branchPositions.size());
 
-    int count = branchWidths.size();
+    GLushort count = (GLushort)branchWidths.size();
 
     int baseIndex = m_treeVertices.size();
     double radius;
@@ -366,10 +368,10 @@ void Tree::AddBranch(const std::vector<float>& branchWidths, const std::vector<V
 
     for (int i = 0; i <= steps; i++)
     {
-	double angle = (2*PI*i)/steps;
-	double x = cos(angle);
-	double z = sin(angle);
-	double height = 0.0;
+	float angle = (2*PI*i)/steps;
+	float x = cos(angle);
+	float z = sin(angle);
+	float height = 0.0f;
 
 	// add interior points
 	for (int j = count-1; j > 0; j--)
@@ -442,10 +444,10 @@ void Tree::AddBranch(const std::vector<float>& branchWidths, const std::vector<V
 
 
     // add the indexes
-    for (int i = 0; i < steps; i++)
+    for (GLushort i = GLushort(0); i < steps; i++)
     {
-	int index = baseIndex + i*count;
-	for (int j = 0; j < count-1; j++)
+	GLushort index = GLushort(baseIndex + i*count);
+	for (GLushort j = GLushort(0); j < count-1; j++)
 	{
 	    m_treeIndices.push_back(index);  // tl
 	    m_treeIndices.push_back(index+1);  // bl

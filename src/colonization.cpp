@@ -4,6 +4,8 @@
 
 #include "common.hpp"
 
+#include <assert.h>
+
 Colonization::Colonization(): m_rng(1) {
     GenerateLeaves();
 }
@@ -16,17 +18,17 @@ void Colonization::GenerateLeaves() {
 
     for(int i = 0; i < NUM_LEAVES; ++i) {
 	AddLeaf(Vector3f(
-	    m_rng.RandomFloat(-4.0, +4.0),
-	    m_rng.RandomFloat(2.0, +3.0),
-	    m_rng.RandomFloat(-4.0, +4.0)
+	    m_rng.RandomFloat(-4.0f, +4.0f),
+	    m_rng.RandomFloat(2.0f, +3.0f),
+	    m_rng.RandomFloat(-4.0f, +4.0f)
 		    ));
     }
 
 
-    for (double y = 0.0; y < 8.0f; y += GROW_DISTANCE) {
+    for (float y = 0.0; y < 8.0f; y += GROW_DISTANCE) {
 
 	int parent = (y > 0) ? m_branches.size()-1 : -1;
-	addBranch(Vector3f(0,y,0), parent);
+	addBranch(Vector3f(0.0f,y,0.0f), parent);
     }
 
     computeBranchSizes(0);
@@ -89,6 +91,21 @@ void Colonization::computeBranchSizes(int lastCount)  {
 	}
 
 	// starting from tips, find the thickest child for each parent.
+	// j hides the upper j, should it really be like this???
+
+
+
+
+
+
+
+
+
+
+
+
+
+	////
 	for (int j = m_branches.size()-1; j >= 0; j--)
 	{
 	    Branch& branch = GetBranch(j);
