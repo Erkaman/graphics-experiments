@@ -8,6 +8,11 @@ using namespace std;
 void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSeverity, GLsizei /*aLength*/, const GLchar* aMessage, void* )
 {
 
+    // we'll ignore these warnings:
+    if(aId == 131218)  {
+	return;
+    }
+
 
 
     // source string

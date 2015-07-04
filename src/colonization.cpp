@@ -6,6 +6,8 @@
 
 #include <assert.h>
 
+#include <limits.h>
+
 Colonization::Colonization(): m_rng(1) {
     GenerateLeaves();
 }

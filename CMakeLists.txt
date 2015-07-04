@@ -23,7 +23,6 @@ ADD_DEFINITIONS( -pedantic -Wno-deprecated -fno-exceptions -fno-rtti -Waddress
 -Wformat
 -Wnonnull
 -Wparentheses
--Wpointer-sign
 -Wreorder
 -Wreturn-type
 -Wsequence-point
