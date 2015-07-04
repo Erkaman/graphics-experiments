@@ -143,7 +143,6 @@ void ShaderProgramBuilder::Link() {
     }
 }
 
-
 GLuint ShaderProgramBuilder::GetLinkedShaderProgram() {
     return m_shaderProgram;
 }
@@ -178,10 +177,14 @@ string ParseShader(const std::string& shaderPath) {
 
 	if(BeginsWith(line, "#include")) {
 
-	    string includePath = line.substr(10, line.length()-11 );
-	    string shaderDir = GetFileDirectory(shaderPath);
+		const size_t firstQuoteIndex = line.find("\"");
+		const size_t secondQuoteIndex = line.find("\"", firstQuoteIndex + 1);
 
-	    string includeStr = File::GetFileContents(AppendPaths(shaderDir, includePath));
+
+		string includePath = line.substr(firstQuoteIndex + 1, secondQuoteIndex - firstQuoteIndex - 1);
+		string shaderDir = GetFileDirectory(shaderPath);
+
+		string includeStr = File::GetFileContents(AppendPaths(shaderDir, includePath));
 
 		parsedShader += includeStr + "\n";
 	} else {

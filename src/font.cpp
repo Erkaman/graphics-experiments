@@ -79,9 +79,9 @@ void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, c
 
 	// currently not working.
 //	fontShader.SetUniform("color", Color(1,0,0));
-
-	const float scaledCharacterWidth = 0.5 * m_fontCellWidth * m_scaleX; // TODO: is this really correct?
-	const float scaledCharacterHeight = 0.5 * m_fontCellHeight * m_scaleY;
+		
+	const float scaledCharacterWidth = 0.5f * m_fontCellWidth * m_scaleX; // TODO: is this really correct?
+	const float scaledCharacterHeight = 0.5f * m_fontCellHeight * m_scaleY;
 
 	for(const char ch : str) {
 
