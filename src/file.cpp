@@ -75,7 +75,7 @@ void File::WriteArray(const void* data, size_t dataSize) {
 }
 
 void File::WriteArray(const std::string& filename, const void* data, const size_t dataSize) {
-    File(filename, "w").WriteArray(data, dataSize);
+    File(filename, "wb").WriteArray(data, dataSize);
 }
 
 void* File::ReadArray(const size_t& dataSize) {
@@ -86,7 +86,7 @@ void* File::ReadArray(const size_t& dataSize) {
 
 
 void* File::ReadArray(const std::string& filename, size_t& dataSize) {
-    File file(filename, "r");
+    File file(filename, "rb");
     dataSize = file.GetFileSize();
     return file.ReadArray(dataSize);
 }

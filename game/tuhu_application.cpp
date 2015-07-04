@@ -43,7 +43,7 @@ void TuhuApplication::Init() {
 	LOG_I("making tree");
 
     tree = make_unique<Tree>(Vector3f(0,2,0));
-
+	
     skybox = make_unique<Skybox>(
 	"img/bluecloud_ft.png",
 	"img/bluecloud_bk.png",
@@ -68,13 +68,13 @@ void TuhuApplication::Render() {
     skybox->Draw(*camera);
 
     heightMap->SetWireframe(false);
-
+	
     Vector4f lightPosition(93,10.0f,93, 1.0f);
     heightMap->Draw(*camera, lightPosition);
-
+	
 
     tree->Draw(*camera, lightPosition);
-
+	
 
 
 
