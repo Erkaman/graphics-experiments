@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 class Vector2f {
 
@@ -12,5 +13,8 @@ public:
     Vector2f();
 
     operator std::string() const;
+
+
+    void Add(std::vector<float>& v)const;
 
 };

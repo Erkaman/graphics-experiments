@@ -331,7 +331,6 @@ void Tree::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
 
     m_phongShader->Unbind();
-
 }
 
 void Tree::DrawLeaves(const Camera& camera, const Vector4f& lightPosition) {
