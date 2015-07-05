@@ -81,29 +81,31 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
 
     m_treeIndexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
 
-//    m_colonization.Colonize();
+   m_colonization.Colonize();
 
-    vector<Leaf> leaves = m_colonization.GetLeaves();
 
-    for(const Leaf& leaf : leaves) {
-	AddLeaf(leaf.m_position);
+    for(size_t i = 0; i < m_colonization.GetLeafCount(); ++i) {
+	Leaf* leaf = m_colonization.GetLeaf(i);
+	AddLeaf(leaf->m_position);
+
     }
+
 
     vector<float> branchWidths;
     vector<Vector3f> branchPositions;
 
     for (int i = m_colonization.GetBranchCount()-1; i >= 0; i--)
     {
-	Branch& branch = m_colonization.GetBranch(i);
+	Branch* branch = m_colonization.GetBranch(i);
 
-	if (branch.m_path != -1)
+	if (branch->m_path != -1)
 	    continue;  // parent of some other branch
 	int child = i;
 
 	branchWidths.clear();
 	branchPositions.clear();
 
-	branchPositions.push_back(branch.m_position);
+	branchPositions.push_back(branch->m_position);
 	branchWidths.push_back(0); // make the branch sharp.
 /*    branchPts[0] = branch->m_pt;
       branchWidths[0] = 0.0;*/
@@ -119,12 +121,12 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
       branchPts[0] = v;
       }*/
 
-	while (branch.m_parentIndex != -1)
+	while (branch->m_parentIndex != -1)
 	{
-	    Branch& parent = m_colonization.GetBranch(branch.m_parentIndex);
+	    Branch* parent = m_colonization.GetBranch(branch->m_parentIndex);
 
-	    branchPositions.push_back(parent.m_position);
-	    branchWidths.push_back(sqrt(parent.m_area));
+	    branchPositions.push_back(parent->m_position);
+	    branchWidths.push_back(sqrt(parent->m_area));
 
 /*
   branchPts[count+1] = parent->m_positions;
@@ -132,13 +134,13 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
 //      count++;
 
 	    // if this is a root
-	    if (parent.m_path != child)
+	    if (parent->m_path != child)
 	    {
 		// fix base to reflect root, not parent width
-		branchWidths[branchWidths.size()-2] = sqrt(branch.m_area); // ???
+		branchWidths[branchWidths.size()-2] = sqrt(branch->m_area); // ???
 		break;
 	    }
-	    child = branch.m_parentIndex;
+	    child = branch->m_parentIndex;
 	    branch = parent;
 	}
 	if (branchPositions.size() > 0) {

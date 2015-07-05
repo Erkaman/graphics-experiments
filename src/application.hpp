@@ -31,8 +31,6 @@ private:
 
     VAO* vao;
 
-
-
 public:
 
 

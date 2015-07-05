@@ -49,8 +49,8 @@ private:
 
     Random m_rng;
 
-    std::vector<Leaf> m_leaves;
-    std::vector<Branch> m_branches;
+    std::vector<Leaf* > m_leaves;
+    std::vector<Branch* > m_branches;
 
     void GenerateLeaves();
 
@@ -62,17 +62,18 @@ private:
 public:
 
     Colonization();
-
-    std::vector<Leaf> GetLeaves()const;
+    ~Colonization();
 
     void addBranch(const Vector3f& position,
 				 const int parent);
 
     void computeBranchSizes(int lastCount) ;
 
-    Branch& GetBranch(const size_t i);
-    size_t GetBranchCount();
-    Leaf& GetLeaf(const size_t i);
+    Branch* GetBranch(const size_t i);
+    size_t GetBranchCount()const;
+    size_t GetLeafCount()const;
+
+    Leaf* GetLeaf(const size_t i);
 
     bool Colonize();
 
