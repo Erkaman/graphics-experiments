@@ -12,7 +12,7 @@ using std::vector;
 
 Plane::Plane(const Vector3f& position): m_position(position){
 
-    m_noiseShader = std::make_unique<ShaderProgram>("shader/phong");
+    m_noiseShader = std::make_unique<ShaderProgram>("shader/noise");
     LOG_I("noiseeeee");
 
     m_vertexBuffer = std::unique_ptr<VBO>(VBO::CreateInterleaved(
@@ -29,7 +29,7 @@ Plane::Plane(const Vector3f& position): m_position(position){
     FloatVector vertices;
     UshortVector indices;
 
-    const float SCALE = 1.0f;
+    const float SCALE = 10.0f;
     // compute the 4 corners.
     Vector3f c4 = Vector3f(0,0,SCALE);
     Vector3f n = Vector3f(0,1,0);
@@ -40,16 +40,16 @@ Plane::Plane(const Vector3f& position): m_position(position){
 
     Vector3f(SCALE,0,0).Add(vertices);
     n.Add(vertices);
-    Vector2f(1,0).Add(vertices);
+    Vector2f(SCALE,0).Add(vertices);
 
 
     Vector3f(SCALE,0,SCALE).Add(vertices);
     n.Add(vertices);
-    Vector2f(1,1).Add(vertices);
+    Vector2f(SCALE,SCALE).Add(vertices);
 
     Vector3f(0,0,SCALE).Add(vertices);
     n.Add(vertices);
-    Vector2f(0,1).Add(vertices);
+    Vector2f(0,SCALE).Add(vertices);
 
     indices.push_back(2);
     indices.push_back(1);
