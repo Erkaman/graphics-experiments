@@ -27,13 +27,19 @@ void Colonization::GenerateLeaves() {
     m_leaves.reserve(NUM_LEAVES);
 
 
-    for(int i = 0; i < NUM_LEAVES; ++i) {
+/*    for(int i = 0; i < NUM_LEAVES; ++i) {
 	AddLeaf(Vector3f(
 	    m_rng.RandomFloat(-4.0f, +4.0f),
 	    m_rng.RandomFloat(2.0f, +3.0f),
 	    m_rng.RandomFloat(-4.0f, +4.0f)
 		    ));
-    }
+		    }*/
+
+    AddLeaf(Vector3f(
+	     +4.0f,
+	     2.5f,
+	     -2.0f
+		    ));
 
 
     for (float y = 0.0; y < 8.0f; y += GROW_DISTANCE) {
@@ -158,7 +164,6 @@ bool Colonization::Colonize()
 
     // the closest branch will be put in m_closest.
     leaf->m_active = FindClosestBranch(leaf->m_position, leaf->m_closest);
-    LOG_I("leaf: %d, active = %d, closest = %d, pos = %s", i, leaf->m_active, leaf->m_closest, tos(leaf->m_position).c_str());
 
     // update growth of closest branch
     if (leaf->m_closest != -1)
@@ -176,17 +181,10 @@ bool Colonization::Colonize()
     }
   }
 
-
-  for (int j = 0; j < branchCount; j++){
-    Branch* branch = GetBranch(j);
-    LOG_I("fetched branch %d, %d", j, branch->m_childCount);
-  }
-
   // for each branch
   for (int j = 0; j < branchCount; j++)
   {
     Branch* branch = GetBranch(j);
-    LOG_I("fetched branch %d", j);
     // if there's growth, add a new branch
     if (branch->m_growCount != 0 && branch->m_childCount < 3)
     {
@@ -194,26 +192,22 @@ bool Colonization::Colonize()
       branch->m_growDir.Normalize();
       branch->m_growDir *= GROW_DISTANCE; //branch.m_growDir.scale(GROW_DISTANCE);
 
-      LOG_I("growed branch %d", j);
-
       // create a new branch
       Vector3f pt(branch->m_position);
       pt += branch->m_growDir;//pt.add(branch.m_growDir);
       addBranch(pt, j);
 
-      LOG_I("added branch branch %d", j);
-
-
       branch->m_childCount++; // invalid read of size 4
       active = true;
     }
-      LOG_I("end if branch %d", j);
-
 
     // reset growth vector on branch
     branch->m_growDir = Vector3f(0, 0, 0); // Invalid write of size 8
     branch->m_growCount = 0; // Invalid write of size 4
   }
+
+
+    computeBranchSizes(0);
 
   return active;
 }

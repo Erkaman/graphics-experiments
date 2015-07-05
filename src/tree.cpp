@@ -87,12 +87,17 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
     for(size_t i = 0; i < m_colonization.GetLeafCount(); ++i) {
 	Leaf* leaf = m_colonization.GetLeaf(i);
 	AddLeaf(leaf->m_position);
-
     }
 
 
     vector<float> branchWidths;
     vector<Vector3f> branchPositions;
+
+    for (int i = m_colonization.GetBranchCount()-1; i >= 0; i--){
+	Branch* branch = m_colonization.GetBranch(i);
+
+	LOG_I("branch num %d, pos: %s, parent %d, growDir %s, growCount %d, childCount %d, area: %f, pathArea: %f, path: %d ", i, tos(branch->m_position).c_str(), branch->m_parentIndex,  tos(branch->m_growDir).c_str(), branch->m_growCount, branch->m_childCount, branch->m_area, branch->m_pathArea, branch->m_path  );
+    }
 
     for (int i = m_colonization.GetBranchCount()-1; i >= 0; i--)
     {
