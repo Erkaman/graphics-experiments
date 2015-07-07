@@ -13,6 +13,7 @@
 #include "tree.hpp"
 #include "skybox.hpp"
 #include "plane.hpp"
+#include "quad.hpp"
 
 #include "font.hpp"
 
