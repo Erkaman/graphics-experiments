@@ -17,7 +17,7 @@ in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
 
 vec3 sampleDiffuseTexture() {
-    return vec3( snoise(vec3(texCoord.xy,0)));
+    return vec3( snoise(vec3(10*texCoord.xy,0)));
 
 //    return texture(tex, texCoord).xyz;
 }
@@ -30,3 +30,6 @@ void main()
 
     fragmentColor = vec4(shading, 1.0);
 }
+
+
+// https://github.com/okelly4408/MITSubmission/blob/b400fa2f94c41a41a7f694c2326e35287e8b0d33/FromSpaceScatteringWithProceduralClouds/src/Main.java
