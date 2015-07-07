@@ -18,6 +18,7 @@ in vec3 viewSpacePosition;
 
 vec3 sampleDiffuseTexture() {
     return vec3( snoise(vec3(texCoord.xy,0)));
+
 //    return texture(tex, texCoord).xyz;
 }
 
