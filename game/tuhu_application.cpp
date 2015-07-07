@@ -125,7 +125,7 @@ void TextureDeleter::operator()(Texture *p){ delete p;}
 
 void TuhuApplication::RenderText()  {
 
-    fbo->Bind();
+/*    fbo->Bind();
 
     GL_C(glViewport(0, 0, 100, 100));
     GL_C(glClearColor(0.0f, 0.0f, 1.0f, 1.0f));
@@ -133,7 +133,8 @@ void TuhuApplication::RenderText()  {
 
     fbo->Unbind();
 
-
+    fbo->GetRenderTargetTexture().WriteToFile("out.png");
+    exit(2);*/
 
     m_font->DrawString(*m_fontShader, 600,150, "hello world" );
 

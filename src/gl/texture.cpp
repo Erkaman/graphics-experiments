@@ -1,6 +1,11 @@
 #include "texture.hpp"
 #include "math/math_common.hpp"
 
+#include "lodepng.h"
+
+#include "log.hpp"
+
+
 
 GLfloat Texture::cachedMaxAnisotropic = 0.0f;
 
@@ -130,4 +135,25 @@ GLenum Texture::GetTarget() const{
 
 GLuint Texture::GetHandle() const{
     return m_textureHandle;
+}
+
+
+void Texture::WriteToFile(const std::string& filename) {
+
+    // first, get the raw pixel data from opengl
+    Bind();
+    size_t size = m_width* m_height * 4;
+    unsigned char* pixels = new unsigned char[size];
+    GL_C(glGetTexImage(m_target, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+    Unbind();
+
+
+    //Encode the image
+    unsigned error = lodepng::encode(filename, pixels, m_width, m_height);
+
+    delete pixels;
+
+  //if there's an error, display it
+    if(error)
+      LOG_E("PNG encoder error: %d: %s", error, lodepng_error_text(error) );
 }

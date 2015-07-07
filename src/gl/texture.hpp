@@ -78,6 +78,12 @@ public:
     void SetMinFilter(const GLint filter);
 
     /*
+      Load the pixeldata of this texture from OpenGL and write it to a file.
+     */
+    void WriteToFile(const std::string& filename);
+
+
+    /*
       String conversion operator.
      */
     operator std::string() const;
