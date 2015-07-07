@@ -7,6 +7,10 @@ class Texture {
 
 private:
 
+    Texture(const Texture&);
+    Texture& operator=(const Texture&);
+
+
     static GLfloat cachedMaxAnisotropic;
 
     bool m_alreadyBound;
@@ -24,6 +28,9 @@ public:
     Texture(const GLenum target):m_alreadyBound(false), m_target(target)  {
 	GL_C(glGenTextures(1, &m_textureHandle));
     }
+
+    // create an empty texture.
+    Texture(const GLenum target, const GLsizei width, const GLsizei height, const GLint internalFormat, const GLenum type);
 
     ~Texture()  {
 	GL_C(glDeleteTextures(1, &m_textureHandle));

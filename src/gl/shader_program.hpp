@@ -21,6 +21,10 @@ class ShaderProgram {
 
 private:
 
+    ShaderProgram(const ShaderProgram&);
+    ShaderProgram& operator=(const ShaderProgram&);
+
+
     std::unique_ptr<UniformLocationStore> m_uniformLocationStore;
 
     std::vector<std::string> m_warnedUniforms;

@@ -7,6 +7,10 @@ class VAO {
 private:
     GLuint vao;
 
+    VAO(const VAO&);
+    VAO& operator=(const VAO&);
+
+
 public:
 
     VAO() {

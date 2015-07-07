@@ -18,3 +18,18 @@ float Texture::GetMaxAnisotropic() {
     }
     return cachedMaxAnisotropic;
 }
+
+
+
+Texture::Texture(const GLenum target, const GLsizei width, const GLsizei height, const GLint internalFormat, const GLenum type):
+    Texture(target) {
+
+    Bind();
+
+    m_width = width;
+    m_height = height;
+
+    GL_C(glTexImage2D(m_target, 0, internalFormat, width, height, 0, GL_RGBA, type, NULL));
+
+    Unbind();
+}

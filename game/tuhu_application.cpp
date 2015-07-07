@@ -6,6 +6,7 @@
 #include "math/matrix4f.hpp"
 
 #include "gl/texture2d.hpp"
+#include "gl/fbo.hpp"
 
 #include "camera.hpp"
 #include "height_map.hpp"
@@ -60,6 +61,9 @@ void TuhuApplication::Init() {
 
 
     LOG_I("done init");
+
+    fbo = make_unique<FBO>(10, 100,100);
+
 
 }
 
