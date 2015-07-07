@@ -2,7 +2,7 @@
 #include "lib.glsl"
 
 #include "noise_lib.glsl"
-#include "noise_2d.glsl"
+#include "noise_3d.glsl"
 
 out vec4 fragmentColor;
 
@@ -17,8 +17,7 @@ in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
 
 vec3 sampleDiffuseTexture() {
-    float r = snoise(texCoord.xy);
-    return vec3(r);
+    return vec3( snoise(vec3(texCoord.xy,0)));
 //    return texture(tex, texCoord).xyz;
 }
 
