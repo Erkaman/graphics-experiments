@@ -124,6 +124,17 @@ void TuhuApplication::Update(const float delta) {
 void TextureDeleter::operator()(Texture *p){ delete p;}
 
 void TuhuApplication::RenderText()  {
-//    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
+
+    fbo->Bind();
+
+    GL_C(glViewport(0, 0, 100, 100));
+    GL_C(glClearColor(0.0f, 0.0f, 1.0f, 1.0f));
+    GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+    fbo->Unbind();
+
+
+
+    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
 
 }
