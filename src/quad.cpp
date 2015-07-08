@@ -1,5 +1,9 @@
 #include "quad.hpp"
 
+#include "gl/vbo.hpp"
+
+#include "math/vector3f.hpp"
+#include "math/vector2f.hpp"
 
 using std::vector;
 
@@ -20,17 +24,17 @@ Quad::Quad(){
     const float SCALE = 1.0f;
 
 
-    Vector3f(0,0).Add(vertices);
-    Vector2f(0,0).Add(vertices);
+    Vector2f(0.0f,0.0f).Add(vertices);
+    Vector2f(0.0f,0.0f).Add(vertices);
 
-    Vector3f(SCALE,0).Add(vertices);
-    Vector2f(SCALE,0).Add(vertices);
+    Vector2f(SCALE,0.0f).Add(vertices);
+    Vector2f(SCALE,0.0f).Add(vertices);
 
-    Vector3f(SCALE,SCALE).Add(vertices);
+    Vector2f(SCALE,SCALE).Add(vertices);
     Vector2f(SCALE,SCALE).Add(vertices);
 
-    Vector3f(0,SCALE).Add(vertices);
-    Vector2f(0,SCALE).Add(vertices);
+    Vector2f(0.0f,SCALE).Add(vertices);
+    Vector2f(0.0f,SCALE).Add(vertices);
 
     indices.push_back(2);
     indices.push_back(1);

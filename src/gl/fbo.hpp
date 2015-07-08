@@ -4,6 +4,8 @@
 
 #include "texture.hpp"
 
+#include <common.hpp>
+
 class FBO{
 
 private:
