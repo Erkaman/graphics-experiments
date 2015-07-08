@@ -85,6 +85,7 @@ void* File::ReadArray(const size_t& dataSize) {
 }
 
 
+
 void* File::ReadArray(const std::string& filename, size_t& dataSize) {
     File file(filename, "rb");
     dataSize = file.GetFileSize();
