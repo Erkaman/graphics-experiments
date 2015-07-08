@@ -10,6 +10,8 @@ class Camera;
 class HeightMap;
 class Skybox;
 class Tree;
+class Plane;
+class FBO;
 
 class TuhuApplication : public Application{
 
@@ -19,6 +21,8 @@ private:
     std::unique_ptr<HeightMap> heightMap;
     std::unique_ptr<Skybox> skybox;
     std::unique_ptr<Tree> tree;
+    std::unique_ptr<Plane> plane;
+    std::unique_ptr<FBO> fbo;
 
 
 

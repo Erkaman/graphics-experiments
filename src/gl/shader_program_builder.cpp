@@ -19,7 +19,7 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const
 	m_compiledVertexShader = BuildAndCompileShader(vertexShaderPath, GL_VERTEX_SHADER);
 	m_compiledFragmentShader = BuildAndCompileShader(fragmentShaderPath,  GL_FRAGMENT_SHADER);
 
-    
+
 	if(geometryShaderPath != "") {
 
 		m_compiledGeometryShader = BuildAndCompileShader(geometryShaderPath,  GL_GEOMETRY_SHADER);
@@ -27,7 +27,6 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const
     } else {
 	m_hasGeometryShader = false;
     }
-	LOG_I("attching fragment");
 
     Attach();
 

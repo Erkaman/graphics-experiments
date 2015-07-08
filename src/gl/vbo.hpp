@@ -12,6 +12,10 @@ class VBO {
 
 private:
 
+    VBO(const VBO&);
+    VBO& operator=(const VBO&);
+
+
     GLuint m_buffer;
     GLuint m_vertexAttribIndex;
     GLenum m_target;

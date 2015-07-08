@@ -6,11 +6,14 @@
 #include "math/matrix4f.hpp"
 
 #include "gl/texture2d.hpp"
+#include "gl/fbo.hpp"
 
 #include "camera.hpp"
 #include "height_map.hpp"
 #include "tree.hpp"
 #include "skybox.hpp"
+#include "plane.hpp"
+#include "quad.hpp"
 
 #include "font.hpp"
 
@@ -29,21 +32,21 @@ void TuhuApplication::Init() {
     LOG_I("init");
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
-    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
+     GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
 	LOG_I("making camera");
 
-    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(-1.7f,5.1f,-1.4f), Vector3f(1.0f,-0.5f,1.0f));
+    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,5.1f,0), Vector3f(1.0f,-0.5f,1.0f));
 
 	LOG_I("making height map");
 
 
     heightMap = make_unique<HeightMap>("img/combined.png");
 
-	LOG_I("making tree");
+/*	LOG_I("making tree");
 
     tree = make_unique<Tree>(Vector3f(0,2,0));
-
+*/
     skybox = make_unique<Skybox>(
 	"img/bluecloud_ft.png",
 	"img/bluecloud_bk.png",
@@ -55,8 +58,13 @@ void TuhuApplication::Init() {
 
 
 
+    plane = make_unique<Plane>(Vector3f(1,4,1));
 
-	LOG_I("done init");
+
+    LOG_I("done init");
+
+    fbo = make_unique<FBO>(10, 100,100);
+
 
 }
 
@@ -73,10 +81,9 @@ void TuhuApplication::Render() {
     heightMap->Draw(*camera, lightPosition);
 
 
-    tree->Draw(*camera, lightPosition);
+//    tree->Draw(*camera, lightPosition);
 
-
-
+      plane->Draw(*camera, lightPosition);
 
 }
 
@@ -118,6 +125,18 @@ void TuhuApplication::Update(const float delta) {
 void TextureDeleter::operator()(Texture *p){ delete p;}
 
 void TuhuApplication::RenderText()  {
-//    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
+
+/*    fbo->Bind();
+
+    GL_C(glViewport(0, 0, 100, 100));
+    GL_C(glClearColor(0.0f, 0.0f, 1.0f, 1.0f));
+    GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+    fbo->Unbind();
+
+    fbo->GetRenderTargetTexture().WriteToFile("out.png");
+    exit(2);*/
+
+    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
 
 }

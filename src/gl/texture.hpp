@@ -7,119 +7,103 @@ class Texture {
 
 private:
 
-    static GLfloat cachedMaxAnisotropic;
+    /*
+      Copying is not possible.
+    */
+    Texture(const Texture&);
+    Texture& operator=(const Texture&);
 
+    /*
+
+      PRIVATE VARIABLES
+    */
+    static GLfloat cachedMaxAnisotropic;
     bool m_alreadyBound;
 
 protected:
 
+    /*
+      PROTECTED VARIABLES:
+    */
     GLuint m_textureHandle;
-
     GLenum m_target;
     GLsizei m_width;
     GLsizei m_height;
 
 public:
 
-    Texture(const GLenum target):m_alreadyBound(false), m_target(target)  {
-	GL_C(glGenTextures(1, &m_textureHandle));
-    }
+    /*
+      CONSTRUCTORS AND DESTRUCTORS:
+    */
 
-    ~Texture()  {
-	GL_C(glDeleteTextures(1, &m_textureHandle));
-    }
+    Texture(const GLenum target);
 
-    GLsizei GetWidth() const{
-        return m_width;
-    }
+    // create an empty texture.
+    Texture(const GLenum target, const GLsizei width, const GLsizei height, const GLint internalFormat, const GLenum type);
 
-    GLsizei GetHeight() const{
-        return m_height;
-    }
+    ~Texture();
 
-    GLenum GetTarget() const{
-        return m_target;
-    }
+    /*
+      INSTANCE METHODS
+    */
 
-    GLuint GetHandle() const{
-        return m_textureHandle;
-    }
+    void Bind();
 
-    void Bind() {
-        if(m_alreadyBound)
-            return;
-
-        GL_C(glBindTexture(m_target, m_textureHandle));
-        m_alreadyBound = true;
-    }
-
-    void Unbind() {
-        if(!m_alreadyBound)
-            return;
-
-        GL_C(glBindTexture(m_target, 0));
-        m_alreadyBound = false;
-    }
-
-    operator std::string() const;
+    void Unbind();
 
 
     /**
      * Enables texture tiling for this texture.
      */
-    void SetTextureTiling() {
-        GL_C(glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_REPEAT));
-        GL_C(glTexParameteri(m_target, GL_TEXTURE_WRAP_T, GL_REPEAT));
-    }
+    void SetTextureTiling();
 
     /**
      * Enables texture clamping for this texture
      */
-    void SetTextureClamping() {
-        GL_C(glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-        GL_C(glTexParameteri(m_target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    }
+    void SetTextureClamping();
 
 
-    void EnableAnisotropicFiltering() {
-        GL_C(glTexParameterf(m_target,GL_TEXTURE_MAX_ANISOTROPY_EXT, GetMaxAnisotropic()));
-    }
+    void EnableAnisotropicFiltering();
+
+    void SetBestMagMinFilters(const bool generateMipmap);
+
+    void SetBestMagMinFilters();
+
+    void GenerateMipmap();
+
+    void SetMagMinFilters(const GLint filter);
+
+    void SetMagFilter(const GLint filter);
+
+    void SetMinFilter(const GLint filter);
+
+    /*
+      Load the pixeldata of this texture from OpenGL and write it to a file.
+     */
+    void WriteToFile(const std::string& filename);
+
+
+    /*
+      String conversion operator.
+     */
+    operator std::string() const;
+
+
+    /*
+      GETTERS
+    */
+
+    GLsizei GetWidth() const;
+    GLsizei GetHeight() const;
+    GLenum GetTarget() const;
+    GLuint GetHandle() const;
+
+    /*
+      STATIC METHODS:
+     */
 
     static float GetMaxAnisotropic();
 
-    void SetBestMagMinFilters(const bool generateMipmap) {
-        if(generateMipmap)
-            GenerateMipmap();
+    static void SetActiveTextureUnit(const GLenum textureUnit);
 
-        EnableAnisotropicFiltering();
-
-        GL_C(glTexParameteri(m_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-        GL_C(glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-    }
-
-    void SetBestMagMinFilters() {
-        SetBestMagMinFilters(true);
-    }
-
-    void GenerateMipmap() {
-    	GL_C(glGenerateMipmap(m_target));
-    }
-
-    void SetMagMinFilters(const GLint filter) {
-    	SetMagFilter(filter);
-    	SetMinFilter(filter);
-
-    }
-
-    void SetMagFilter(const GLint filter) {
-        GL_C(glTexParameteri(m_target, GL_TEXTURE_MAG_FILTER,  filter));
-    }
-
-    void SetMinFilter(const GLint filter) {
-        GL_C(glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, filter ));
-    }
-
-    static void SetActiveTextureUnit(const GLenum textureUnit) {
-	GL_C(glActiveTexture(GL_TEXTURE0 + textureUnit));
-    }
 };

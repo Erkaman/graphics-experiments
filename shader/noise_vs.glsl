@@ -13,9 +13,6 @@ out vec3 viewSpacePosition;
 out vec3 vertexColor;
 out vec2 texCoord;
 
-out vec3 position;
-
-
 void main()
 {
     gl_Position = mvp * vec4(positionIn,1);
@@ -27,8 +24,4 @@ void main()
     vertexColor = colorIn.rgb;
 
     texCoord = texCoordIn;
-
-    position = positionIn;
-
-//    texCoord = texCoordIn;
 }

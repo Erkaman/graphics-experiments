@@ -10,4 +10,8 @@ public:
     Texture2D(const std::string& texturePath);
 
 
+    Texture2D(GLvoid* data, GLsizei width, GLsizei height, GLint internalFormat, GLenum format, GLenum type);
+
+
+
 };

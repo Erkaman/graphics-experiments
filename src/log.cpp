@@ -10,7 +10,7 @@ void Log(const char* logLevel, const char* file, int line, const char* func, con
 }
 
 void LogInit() {
-    logBuffer = new char[200];
+    logBuffer = new char[1024];
 }
 
 void LogDispose() {

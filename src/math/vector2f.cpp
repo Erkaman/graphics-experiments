@@ -8,3 +8,9 @@ Vector2f::operator std::string() const {
 
 	return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
 }
+
+
+void Vector2f::Add(std::vector<float>& v)const {
+    v.push_back(x);
+    v.push_back(y);
+}

@@ -1,16 +1,23 @@
 #include "tuhu_application.hpp"
 
-
+/*#include "colonization.hpp"
+#include "log.hpp"
+*/
 int main () {
 
     TuhuApplication app;
     app.Start();
 
-  /* OTHER STUFF GOES HERE NEXT */
+/*    LogInit();
 
-  // close GL context and any other GLFW resources
 
-	
+    Colonization col;
+
+    col.Colonize();
+
+    LOG_I("done");
+
+    LogDispose();*/
+
   return 0;
 }
-	

@@ -23,8 +23,6 @@ private:
 
     std::unique_ptr<ShaderProgram> m_shader;
 
-    std::unique_ptr<Texture> m_noiseTexture;
-
     float m_movement;
 
     static const float ComputeY(const unsigned char heightMapData );

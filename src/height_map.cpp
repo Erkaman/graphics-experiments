@@ -46,13 +46,7 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
 
 HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f) {
 
-    m_noiseTexture = std::make_unique<Texture2D>("img/noise.png");
 
-    m_noiseTexture->Bind();
-    m_noiseTexture->SetTextureTiling();
-    m_noiseTexture->SetMinFilter(GL_LINEAR);
-    m_noiseTexture->SetMagFilter(GL_NEAREST);
-    m_noiseTexture->Unbind();
 
     /*
       load the shader
@@ -103,9 +97,6 @@ void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_shader->Bind();
 
-    // setup texture.
-    m_noiseTexture->Bind();
-    m_shader->SetUniform("noiseSampler", 0);
 
     m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0)
 
@@ -141,12 +132,8 @@ void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
-    // unsetup texture.
-    m_noiseTexture->Unbind();
 
     m_shader->Unbind();
-
-
 
 
 }
