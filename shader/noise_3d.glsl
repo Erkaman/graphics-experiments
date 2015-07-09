@@ -16,7 +16,7 @@ float gradperm(float x, vec3 p)
 
 float snoise(vec3 p) {
 
-//    return perm2d(p.xy).b;
+//    float val = texture(permGradSampler, vec2(p.x,0) ).g;
 
     vec3 P = mod(floor(p), 256.0);
     p -= floor(p);

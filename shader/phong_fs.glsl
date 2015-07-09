@@ -14,6 +14,7 @@ in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
 
 vec3 sampleDiffuseTexture() {
+
     return texture(tex, texCoord).xyz;
 }
 

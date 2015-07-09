@@ -82,8 +82,8 @@ void Plane::CreateTextures() {
 
     int i = 0;
 
-    for(int x = 0; x < 256; x++){
 	for(int y = 0; y < 256; y++){
+    for(int x = 0; x < 256; x++){
 	    int A =  GetPermvalue(x) + y;
             int AA = GetPermvalue(A);
             int AB = GetPermvalue(A + 1);
@@ -114,8 +114,6 @@ void Plane::CreateTextures() {
     permutationTable->Unbind();
 
 
-
-
     data = (GLfloat*)malloc(sizeof(GLfloat) * 256 * 1 * 4);
 
     i = 0;
@@ -140,7 +138,7 @@ void Plane::CreateTextures() {
       also, make sure that texture is correctly bound.
      */
 
-    gradTable->SetTextureRepeat();
+    gradTable->SetTextureWrap(GL_REPEAT, GL_CLAMP_TO_EDGE);
     gradTable->SetMinFilter(GL_LINEAR);
     gradTable->SetMagFilter(GL_NEAREST);
 

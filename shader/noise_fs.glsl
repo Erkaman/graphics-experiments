@@ -17,7 +17,11 @@ in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
 
 vec3 sampleDiffuseTexture() {
-    return vec3( snoise(vec3(10*texCoord.xy,0)));
+
+    vec3 red = vec3(1,0,0);
+    vec3 blue = vec3(0,1,0);
+
+    return mix(red, blue, snoise(vec3(10 * texCoord.xy,0)));
 
 //    return texture(tex, texCoord).xyz;
 }
