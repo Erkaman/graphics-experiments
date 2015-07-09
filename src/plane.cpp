@@ -82,8 +82,8 @@ void Plane::CreateTextures() {
 
     int i = 0;
 
-	for(int y = 0; y < 256; y++){
-    for(int x = 0; x < 256; x++){
+    for(int y = 0; y < 256; y++){
+	for(int x = 0; x < 256; x++){
 	    int A =  GetPermvalue(x) + y;
             int AA = GetPermvalue(A);
             int AB = GetPermvalue(A + 1);
@@ -109,7 +109,7 @@ void Plane::CreateTextures() {
 
     permutationTable->SetTextureRepeat();
     permutationTable->SetMinFilter(GL_LINEAR);
-    permutationTable->SetMagFilter(GL_NEAREST);
+    permutationTable->SetMagFilter(GL_LINEAR);
 
     permutationTable->Unbind();
 
@@ -140,7 +140,7 @@ void Plane::CreateTextures() {
 
     gradTable->SetTextureWrap(GL_REPEAT, GL_CLAMP_TO_EDGE);
     gradTable->SetMinFilter(GL_LINEAR);
-    gradTable->SetMagFilter(GL_NEAREST);
+    gradTable->SetMagFilter(GL_LINEAR);
 
     gradTable->Unbind();
 }

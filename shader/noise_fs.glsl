@@ -21,7 +21,7 @@ vec3 sampleDiffuseTexture() {
     vec3 red = vec3(1,0,0);
     vec3 blue = vec3(0,1,0);
 
-    return mix(red, blue, snoise(vec3(10 * texCoord.xy,0)));
+    return mix(red, blue, snoise(vec3(30 * texCoord.xy,0)));
 
 //    return texture(tex, texCoord).xyz;
 }
