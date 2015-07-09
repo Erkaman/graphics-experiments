@@ -91,6 +91,8 @@ void Plane::CreateTextures() {
             int BA = GetPermvalue(B);
             int BB = GetPermvalue(B + 1);
 
+
+
 	    data[i++] = (float)AA/255.0f;
 	    data[i++] = (float)AB/255.0f;
 	    data[i++] = (float)BA/255.0f;
@@ -105,14 +107,11 @@ void Plane::CreateTextures() {
 
     permutationTable->Bind();
 
-    permutationTable->SetTextureTiling();
+    permutationTable->SetTextureRepeat();
     permutationTable->SetMinFilter(GL_LINEAR);
     permutationTable->SetMagFilter(GL_NEAREST);
 
     permutationTable->Unbind();
-
-
-
 
 
 
@@ -136,24 +135,21 @@ void Plane::CreateTextures() {
 
     gradTable->Bind();
 
-    gradTable->SetTextureTiling();
+    /*
+      fix tiling of s and t.
+      also, make sure that texture is correctly bound.
+     */
+
+    gradTable->SetTextureRepeat();
     gradTable->SetMinFilter(GL_LINEAR);
     gradTable->SetMagFilter(GL_NEAREST);
 
     gradTable->Unbind();
-
-
-
 }
 
 void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_noiseShader->Bind();
-
-/*    m_phongShader->SetUniform("tex", 0);
-    Texture::SetActiveTextureUnit(0);
-*/
-    // setup matrices.
 
     m_noiseShader->SetPhongUniforms(Matrix4f::CreateTranslation(m_position) , camera, lightPosition);
 
@@ -168,11 +164,6 @@ void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
     Texture::SetActiveTextureUnit(1);
     gradTable->Bind();
 
-
-/*    m_noiseShader->SetUniform("permSampler2d", 0);
-    Texture::SetActiveTextureUnit(1);
-*/
-
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
 
 
@@ -182,7 +173,6 @@ void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_noiseShader->Unbind();
 }
-
 
 int Plane::GetPermvalue(int i){
     return permutationArray[i % 256];

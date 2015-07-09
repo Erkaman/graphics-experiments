@@ -90,11 +90,19 @@ void Texture::Unbind() {
 }
 
 
-void Texture::SetTextureTiling() {
-    GL_C(glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_REPEAT));
-    GL_C(glTexParameteri(m_target, GL_TEXTURE_WRAP_T, GL_REPEAT));
+void Texture::SetTextureRepeat() {
+    SetTextureWrap(GL_REPEAT);
 }
 
+void Texture::SetTextureWrap(const GLenum s, const GLenum t) {
+    GL_C(glTexParameteri(m_target, GL_TEXTURE_WRAP_S, s));
+    GL_C(glTexParameteri(m_target, GL_TEXTURE_WRAP_T, t));
+}
+
+
+void Texture::SetTextureWrap(const GLenum sAndT) {
+    SetTextureWrap(sAndT, sAndT);
+}
 
 Texture::Texture(const GLenum target):m_alreadyBound(false), m_target(target){
     GL_C(glGenTextures(1, &m_textureHandle));
@@ -107,8 +115,7 @@ Texture::~Texture()  {
 
 
 void Texture::SetTextureClamping() {
-    GL_C(glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-    GL_C(glTexParameteri(m_target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    SetTextureWrap(GL_CLAMP_TO_EDGE);
 }
 
 

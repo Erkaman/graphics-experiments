@@ -55,12 +55,15 @@ public:
     /**
      * Enables texture tiling for this texture.
      */
-    void SetTextureTiling();
+    void SetTextureRepeat();
 
     /**
      * Enables texture clamping for this texture
      */
     void SetTextureClamping();
+
+    void SetTextureWrap(const GLenum s, const GLenum t);
+    void SetTextureWrap(const GLenum sAndT);
 
 
     void EnableAnisotropicFiltering();

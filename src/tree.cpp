@@ -43,13 +43,13 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
      m_woodTexture = std::make_unique<Texture2D>("img/wood.png");
 
     m_leafTexture->Bind();
-    m_leafTexture->SetTextureTiling();
+    m_leafTexture->SetTextureRepeat();
     m_leafTexture->SetMinFilter(GL_LINEAR);
     m_leafTexture->SetMagFilter(GL_NEAREST);
     m_leafTexture->Unbind();
 
     m_woodTexture->Bind();
-    m_woodTexture->SetTextureTiling();
+    m_woodTexture->SetTextureRepeat();
     m_woodTexture->SetMinFilter(GL_LINEAR);
     m_woodTexture->SetMagFilter(GL_NEAREST);
     m_woodTexture->Unbind();
