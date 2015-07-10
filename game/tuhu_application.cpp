@@ -73,9 +73,9 @@ void TuhuApplication::Init() {
 
     LOG_I("done init");
 
-    fbo = new FBO(10, 512,512);
+    fbo = new FBO(10, 256,256);
 
-    quad = new Quad(Vector2f(-1.0f), Vector2f(+1.0f));
+    quad = new Quad(Vector2f(0.0f), Vector2f(+1.0f));
 
     simpleShader = new ShaderProgram("shader/simple");
 
@@ -125,7 +125,7 @@ void TuhuApplication::Render() {
 
 fbo->Bind();
     {
-		SetViewport();
+	::SetViewport(-256,-256,512,512);
 	Clear(0.0f, 0.0f, 1.0f);
 
 
