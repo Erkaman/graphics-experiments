@@ -1,9 +1,16 @@
 #include "random.hpp"
 
+#include "log.hpp"
+
 #include <time.h>
 #include <limits.h>
 
 Random::Random(unsigned long long seed) {
+
+    if(seed == 0) {
+	LOG_E("The seed must be a non-zero value.");
+    }
+
     m_seed = seed;
 }
 

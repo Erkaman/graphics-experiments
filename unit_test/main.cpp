@@ -6,10 +6,6 @@
 #include "str_test.hpp"
 #include "random_test.hpp"
 #include "log.hpp"
-#include <stdio.h>
-
-#include <stdlib.h>
-
 
 int main() {
 
@@ -26,7 +22,4 @@ int main() {
     printf("ALL TESTS PASSED!");
 
     LogDispose();
-
-	system("pause");
-
 }

@@ -5,7 +5,9 @@
 static void TestRandomFloat() {
     Random rng(1);
 
-    for(int i= 0; i < 2000; ++i) {
+    constexpr int N = 2000;
+
+    for(int i= 0; i < N; ++i) {
 
 	float f = rng.RandomFloat(3.5f,5.9f);
 	if(f < 3.5f || f > 5.9f) {
@@ -16,9 +18,23 @@ static void TestRandomFloat() {
 
 	    AssertFailed(message);
 	}
-
     }
-    AssertPassed("All random number were in the expected range [3.5,5.9]");
+    AssertPassed("1. All random number were in the expected range [3.5,5.9]");
+
+    bool found = false;
+
+    for(int i= 0; i < N; ++i) {
+
+	float f = rng.RandomFloat(3.5f,5.9f);
+	if(f > 5.8f) {
+	    found = true;
+	}
+    }
+
+    if(found)
+	AssertPassed("2: All random number were in the expected range [3.5,5.9]");
+    else
+	AssertFailed("2: All random number were NOT in the expected range [3.5,5.9]");
 }
 
 
