@@ -17,14 +17,12 @@ class TuhuApplication : public Application{
 
 private:
 
-    std::unique_ptr<Camera> camera;
-    std::unique_ptr<HeightMap> heightMap;
-    std::unique_ptr<Skybox> skybox;
-    std::unique_ptr<Tree> tree;
-    std::unique_ptr<Plane> plane;
-    std::unique_ptr<FBO> fbo;
-
-
+    Camera* camera;
+    HeightMap* heightMap;
+    Skybox* skybox;
+    Tree* tree;
+    Plane* plane;
+    FBO* fbo;
 
 public:
 

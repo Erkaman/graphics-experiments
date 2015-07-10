@@ -1,10 +1,10 @@
 #pragma once
 
-#include "render_buffer.hpp"
+#include "gl_common.hpp"
 
-#include "texture.hpp"
+class RenderBuffer;
+class Texture;
 
-#include <common.hpp>
 
 class FBO{
 
@@ -17,36 +17,22 @@ private:
     const GLenum m_target;
     const GLenum m_targetTextureUnit;
 
-    std::unique_ptr<RenderBuffer> m_depthBuffer;
+    RenderBuffer* m_depthBuffer;
 
-    std::unique_ptr<Texture> m_renderTargetTexture;
+    Texture* m_renderTargetTexture;
 
-    void Attach(const  GLenum attachment, const Texture& texture) {
-	GL_C(glFramebufferTexture2D(m_target, attachment, texture.GetTarget(), texture.GetHandle(), 0));
-    }
+    void Attach(const  GLenum attachment, const Texture& texture);
 
 
     static void CheckFramebufferStatus(const GLenum target);
 
-    void CheckFramebufferStatus()  {
-	CheckFramebufferStatus(m_target);
-    }
-
+    void CheckFramebufferStatus();
 
 public:
 
-    FBO(const GLenum targetTextureUnit, const GLsizei width, const GLsizei height): m_target(GL_FRAMEBUFFER), m_targetTextureUnit(targetTextureUnit) {
+    FBO(const GLenum targetTextureUnit, const GLsizei width, const GLsizei height);
 
-	GL_C(glGenFramebuffers(1, &m_fboHandle));
-
-
-
-	RecreateBuffers(width, height);
-    }
-
-    ~FBO()  {
-	GL_C(glDeleteFramebuffers(1, &m_fboHandle));
-    }
+    ~FBO();
 
 
     /**

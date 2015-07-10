@@ -1,7 +1,5 @@
 #include "vbo.hpp"
 
-#include "common.hpp"
-
 #include "math/vector3f.hpp"
 #include "math/vector2f.hpp"
 

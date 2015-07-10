@@ -1,5 +1,4 @@
 #include "uniform_location_store.hpp"
-#include "common.hpp"
 
 using namespace std;
 
@@ -38,7 +37,7 @@ UniformLocationStore::UniformLocationStore(const GLuint shaderProgram) {
 	// If the uniform is located in a uniform block, then uniformLocation will be -1.
 	if(uniformLocation != -1) {
 
-	    this->uniformLocationStore[string(nameBuffer)] = uniformLocation;
+	    this->uniformLocationStore[std::string(nameBuffer)] = uniformLocation;
 	}
     }
 }

@@ -8,25 +8,22 @@
 #include "math/matrix4f.hpp"
 #include "math/vector2f.hpp"
 
-#include "common.hpp"
-
 using std::vector;
 
 Plane::Plane(const Vector3f& position): m_position(position){
 
-    m_noiseShader = std::make_unique<ShaderProgram>("shader/noise");
-    LOG_I("noiseeeee");
+    m_noiseShader = new ShaderProgram("shader/noise");
 
-    m_vertexBuffer = std::unique_ptr<VBO>(VBO::CreateInterleaved(
+    m_vertexBuffer = VBO::CreateInterleaved(
 						    vector<GLuint>{
 							VBO_POSITION_ATTRIB_INDEX,
 							    VBO_NORMAL_ATTRIB_INDEX,
 							    VBO_TEX_COORD_ATTRIB_INDEX},
 						    vector<GLuint>{3,3,2}
-						    ));
+			  );
 
 
-    m_indexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
+    m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
     FloatVector vertices;
     UshortVector indices;
@@ -92,4 +89,7 @@ void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
 Plane::~Plane() {
     delete m_perlinSeed;
+    delete m_vertexBuffer;
+    delete m_indexBuffer;
+    delete m_noiseShader;
 }

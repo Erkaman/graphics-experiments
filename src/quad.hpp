@@ -8,7 +8,6 @@ class Vector4f;
 
 #include "gl/gl_common.hpp"
 
-#include <memory>
 
 class VBO;
 

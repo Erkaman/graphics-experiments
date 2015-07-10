@@ -2,6 +2,7 @@
 
 #include <map>
 #include "gl_common.hpp"
+#include <string>
 
 /**
  * Creates a store that stores all locations of all uniforms in a shader program.

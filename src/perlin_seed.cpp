@@ -8,6 +8,12 @@ int PerlinSeed::GetPermvalue(int i){
     return permutationArray[i % 256];
 }
 
+PerlinSeed::~PerlinSeed() {
+    delete permutationTable;
+    delete gradTable;
+}
+
+
 PerlinSeed::PerlinSeed() {
 
     GLfloat* data = (GLfloat*)malloc(sizeof(GLfloat) * 256 * 256 * 4);
@@ -33,7 +39,7 @@ PerlinSeed::PerlinSeed() {
 	}
     }
 
-    permutationTable = std::make_unique<Texture2D>((GLvoid* )data, 256, 256, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+    permutationTable = new Texture2D((GLvoid* )data, 256, 256, GL_RGBA16F, GL_RGBA, GL_FLOAT);
 
     free(data);
 
@@ -59,7 +65,7 @@ PerlinSeed::PerlinSeed() {
 	data[i++] = 1.0f;
     }
 
-    gradTable = std::make_unique<Texture2D>((GLvoid* )data, 256, 1, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+    gradTable = new Texture2D((GLvoid* )data, 256, 1, GL_RGBA16F, GL_RGBA, GL_FLOAT);
 
     free(data);
 

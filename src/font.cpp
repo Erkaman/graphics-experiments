@@ -1,7 +1,5 @@
 #include "font.hpp"
 
-#include "common.hpp"
-
 #include "gl/texture2d.hpp"
 #include "gl/vbo.hpp"
 #include "gl/shader_program.hpp"
@@ -15,6 +13,11 @@ using std::string;
 GLfloat vertices[2* 4 * 2];
 
 
+Font::~Font() {
+    delete m_fontTexture;
+    delete m_vertexBuffer;
+}
+
 Font::Font(
     const std::string& fontTexturePath,
     const unsigned int fontTextureWidth, const unsigned int fontTextureHeight,
@@ -26,7 +29,7 @@ Font::Font(
     m_scaleX(2.0f / windowWidth), m_scaleY(2.0f / windowHeight) {
 
 
-    m_fontTexture = std::make_unique<Texture2D>(fontTexturePath);
+    m_fontTexture = new Texture2D(fontTexturePath);
     m_fontTexture->Bind();
     m_fontTexture->SetTextureClamping();
     m_fontTexture->SetMagMinFilters(GL_LINEAR);
@@ -35,13 +38,13 @@ Font::Font(
 
     // allocate vbo.
 
-    m_vertexBuffer = std::unique_ptr<VBO>(VBO::CreateInterleaved(
+    m_vertexBuffer = VBO::CreateInterleaved(
 					      vector<GLuint>{
 						  VBO_POSITION_ATTRIB_INDEX,
 						      VBO_TEX_COORD_ATTRIB_INDEX},
 					      vector<GLuint>{2,2},
 					      GL_DYNAMIC_DRAW
-					      ));
+					      );
 
 
     float x = 0;
@@ -79,7 +82,7 @@ void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, c
 
 	// currently not working.
 //	fontShader.SetUniform("color", Color(1,0,0));
-		
+
 	const float scaledCharacterWidth = 0.5f * m_fontCellWidth * m_scaleX; // TODO: is this really correct?
 	const float scaledCharacterHeight = 0.5f * m_fontCellHeight * m_scaleY;
 

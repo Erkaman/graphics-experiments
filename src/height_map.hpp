@@ -2,7 +2,6 @@
 
 #include <string>
 #include "math/color.hpp"
-#include <memory>
 #include "math/vector4f.hpp"
 
 class VBO;
@@ -21,7 +20,7 @@ private:
     std::unique_ptr<VBO> m_vertexBuffer;
     std::unique_ptr<VBO> m_indexBuffer;
 
-    std::unique_ptr<ShaderProgram> m_shader;
+    ShaderProgram* m_shader;
 
     float m_movement;
 
@@ -34,6 +33,7 @@ private:
 public:
 
     HeightMap(const std::string& path);
+    ~HeightMap();
 
     void Draw(const Camera& camera, const Vector4f& lightPosition);
 

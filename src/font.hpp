@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -15,9 +14,8 @@ class Font {
 
 private:
 
-    std::unique_ptr<Texture> m_fontTexture;
-
-    std::unique_ptr<VBO> m_vertexBuffer;
+    Texture* m_fontTexture;
+    VBO* m_vertexBuffer;
 
     const unsigned int m_fontTextureWidth;
     const unsigned int m_fontTextureHeight;
@@ -44,6 +42,7 @@ public:
 	const unsigned int fontTextureWidth, const unsigned int fontTextureHeight,
 	const unsigned int fontCellWidth, const unsigned int fontCellHeight,
 	const unsigned int windowWidth, const unsigned int windowHeight);
+    ~Font();
 
     void DrawString(ShaderProgram& fontShader, const float x, const float y, const std::string& str, const Color& color);
     void DrawString(ShaderProgram& fontShader, const float x, const float y, const std::string& str);

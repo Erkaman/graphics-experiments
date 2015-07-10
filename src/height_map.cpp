@@ -17,7 +17,6 @@
 #include "math/color.hpp"
 #include "mult_array.hpp"
 
-#include <memory>
 #include <vector>
 
 #include "lodepng.h"
@@ -51,7 +50,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     /*
       load the shader
      */
-    m_shader = std::make_unique<ShaderProgram>("shader/height_map");
+    m_shader = new ShaderProgram("shader/height_map");
 
 
 
@@ -92,6 +91,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
 }
 
+HeightMap::~HeightMap() {
+    delete m_shader;
+}
 
 void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
 

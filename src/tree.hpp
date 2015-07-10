@@ -4,8 +4,6 @@
 #include "math/vector3f.hpp"
 #include "colonization.hpp"
 
-#include <memory>
-
 class ShaderProgram;
 class VBO;
 class Camera;
@@ -33,17 +31,17 @@ private:
     // the position of the beginning of the stem.
     Vector3f m_stemPosition;
 
-    std::unique_ptr<ShaderProgram> m_phongShader;
+    ShaderProgram* m_phongShader;
 
-    std::unique_ptr<VBO> m_leavesVertexBuffer;
-    std::unique_ptr<VBO> m_leavesIndexBuffer;
+    VBO* m_leavesVertexBuffer;
+    VBO* m_leavesIndexBuffer;
 
-    std::unique_ptr<VBO> m_treeVertexBuffer;
-    std::unique_ptr<VBO> m_treeIndexBuffer;
+    VBO* m_treeVertexBuffer;
+    VBO* m_treeIndexBuffer;
 
 
-    std::unique_ptr<Texture> m_leafTexture;
-    std::unique_ptr<Texture> m_woodTexture;
+    Texture* m_leafTexture;
+    Texture* m_woodTexture;
 
     Colonization m_colonization;
 
@@ -77,6 +75,7 @@ public:
     */
 
     Tree(const Vector3f& position);
+    ~Tree();
 
     void Draw(const Camera& camera, const Vector4f& lightPosition);
 

@@ -1,6 +1,5 @@
 #include "skybox.hpp"
 
-#include "common.hpp"
 #include "camera.hpp"
 
 #include "gl/shader_program.hpp"
@@ -50,7 +49,7 @@ Skybox::Skybox(const std::string& frontFace, const std::string& backFace, const 
 
 
     // load shader.
-    m_shader = std::make_unique<ShaderProgram>("shader/skybox");
+    m_shader = new ShaderProgram("shader/skybox");
 
 
     // create the vertex data.
@@ -110,22 +109,17 @@ Skybox::Skybox(const std::string& frontFace, const std::string& backFace, const 
 
     m_numIndices =(GLushort)indices.size();
 
-    m_positionBuffer = std::unique_ptr<VBO>(VBO::CreatePosition(3));
+    m_positionBuffer = VBO::CreatePosition(3);
 
     m_positionBuffer->Bind();
     m_positionBuffer->SetBufferData(positions);
     m_positionBuffer->Unbind();
 
-    m_indexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
+    m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
     m_indexBuffer->Bind();
     m_indexBuffer->SetBufferData(indices);
     m_indexBuffer->Unbind();
-}
-
-void ShaderProgramDeleter::operator()(ShaderProgram *p)
-{
-  delete p;
 }
 
 void Skybox::Draw(const Camera& camera) {
@@ -172,4 +166,10 @@ void Skybox::UnsetupForRender() {
     m_cubeMap.Unbind();
 
     m_shader->Unbind();
+}
+
+Skybox::~Skybox() {
+    delete m_indexBuffer;
+    delete m_positionBuffer;
+    delete m_shader;
 }

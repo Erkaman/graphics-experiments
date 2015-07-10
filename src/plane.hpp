@@ -9,8 +9,6 @@ class Vector4f;
 #include "gl/gl_common.hpp"
 #include "math/vector3f.hpp"
 
-#include <memory>
-
 class ShaderProgram;
 class VBO;
 class PerlinSeed;
@@ -26,12 +24,12 @@ class Plane {
 
     GLushort m_numTriangles;
 
-    std::unique_ptr<ShaderProgram> m_noiseShader;
+    ShaderProgram* m_noiseShader;
 
     Vector3f m_position;
 
-    std::unique_ptr<VBO> m_vertexBuffer;
-    std::unique_ptr<VBO> m_indexBuffer;
+    VBO* m_vertexBuffer;
+    VBO* m_indexBuffer;
 
     PerlinSeed* m_perlinSeed;
 

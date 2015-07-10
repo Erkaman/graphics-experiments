@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <memory>
 #include "gl/vao.hpp"
 
 #pragma warning( disable : 4099 )
@@ -42,8 +41,8 @@ public:
 
 protected:
 
-    std::unique_ptr<Font> m_font;
-    std::unique_ptr<ShaderProgram> m_fontShader;
+    Font* m_font;
+    ShaderProgram* m_fontShader;
 
     virtual void Render() = 0;
     virtual void Init() = 0;

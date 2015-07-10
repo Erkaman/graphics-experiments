@@ -2,8 +2,6 @@
 
 #include "random.hpp"
 
-#include "common.hpp"
-
 #include <assert.h>
 
 #include <limits.h>

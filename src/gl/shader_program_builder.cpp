@@ -1,7 +1,8 @@
 #include "shader_program_builder.hpp"
-#include "file.hpp"
 
-#include "common.hpp"
+#include "file.hpp"
+#include "log.hpp"
+
 #include <vector>
 #include "str.hpp"
 

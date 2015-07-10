@@ -1,7 +1,6 @@
 #pragma once
 
 #include "math/vector3f.hpp"
-#include "common.hpp"
 
 class Matrix4f;
 

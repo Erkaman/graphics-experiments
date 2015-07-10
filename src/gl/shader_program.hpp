@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-#include <memory>
 #include "gl_common.hpp"
 
 class Color;
@@ -10,12 +9,7 @@ class Matrix4f;
 class Vector4f;
 class Vector3f;
 class Camera;
-
 class UniformLocationStore;
-struct UniformLocationStoreDeleter
-{
-    void operator()(UniformLocationStore *p);
-};
 
 class ShaderProgram {
 
@@ -24,8 +18,7 @@ private:
     ShaderProgram(const ShaderProgram&);
     ShaderProgram& operator=(const ShaderProgram&);
 
-
-    std::unique_ptr<UniformLocationStore> m_uniformLocationStore;
+    UniformLocationStore* m_uniformLocationStore;
 
     std::vector<std::string> m_warnedUniforms;
 

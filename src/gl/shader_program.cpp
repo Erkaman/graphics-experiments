@@ -3,9 +3,9 @@
 #include "uniform_location_store.hpp"
 #include "shader_program_builder.hpp"
 
-#include "common.hpp"
 #include "file.hpp"
 #include "camera.hpp"
+#include "log.hpp"
 
 #include "math/color.hpp"
 #include "math/matrix4f.hpp"
@@ -18,6 +18,15 @@ using namespace std;
 ShaderProgram::ShaderProgram():m_uniformLocationStore(nullptr) {
 
 }
+
+ShaderProgram::~ShaderProgram() {
+    delete m_uniformLocationStore;
+
+    glDeleteProgram(m_alreadyBoundProgram);
+}
+
+
+
 
 ShaderProgram::ShaderProgram(const std::string& shaderName){
 
@@ -36,7 +45,7 @@ void ShaderProgram::CompileShaderProgram(const string& vertexShaderPath, const s
     ShaderProgramBuilder shaderBuilder(vertexShaderPath, fragmentShaderPath, geometryShaderPath);
     m_shaderProgram = shaderBuilder.GetLinkedShaderProgram();
 
-    m_uniformLocationStore = make_unique<UniformLocationStore>(m_shaderProgram);
+    m_uniformLocationStore = new UniformLocationStore(m_shaderProgram);
 }
 
 void ShaderProgram::Bind() {
@@ -56,16 +65,6 @@ void ShaderProgram::Unbind() {
     GL_C(glUseProgram(0));
     m_alreadyBoundProgram = false;
 }
-
-ShaderProgram::~ShaderProgram() {
-    glDeleteProgram(m_alreadyBoundProgram);
-}
-
-void UniformLocationStoreDeleter::operator()(UniformLocationStore *p)
-{
-    delete p;
-}
-
 
 void ShaderProgram::SetUniform(const std::string& uniformName, const Color& color) {
     if (m_uniformLocationStore->UniformExists(uniformName)) {

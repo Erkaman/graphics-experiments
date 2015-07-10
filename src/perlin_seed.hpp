@@ -1,7 +1,5 @@
 #pragma once
 
-#include "common.hpp"
-
 class Texture;
 class ShaderProgram;
 
@@ -44,8 +42,8 @@ private:
 	{0,-1,-1}
     };
 
-    std::unique_ptr<Texture> permutationTable;
-    std::unique_ptr<Texture> gradTable;
+    Texture* permutationTable;
+    Texture* gradTable;
 
     int GetPermvalue(int i);
 
@@ -53,6 +51,7 @@ private:
 public:
 
     PerlinSeed();
+    ~PerlinSeed();
 
     void Bind(ShaderProgram& shader);
 

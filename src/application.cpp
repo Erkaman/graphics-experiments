@@ -1,7 +1,5 @@
 #include "application.hpp"
 
-#include "common.hpp"
-
 #include "gl/gl_common.hpp"
 #include "gl/vao.hpp"
 #include "gl/shader_program.hpp"
@@ -9,7 +7,7 @@
 #include "gl/vbo.hpp"
 
 #include "font.hpp"
-
+#include "log.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,9 +24,9 @@ void Application::Start() {
 
     this->SetupOpenGL();
 
-    m_fontShader = make_unique<ShaderProgram>("shader/font_render");
+    m_fontShader = new ShaderProgram("shader/font_render");
 
-    m_font = make_unique<Font>("img/font.png",
+    m_font = new Font("img/font.png",
 			     624,624,
 			     39,39,
 			     GetWindowWidth(),GetWindowHeight());
@@ -76,7 +74,8 @@ void Application::DoMainLoop() {
 void Application::Cleanup() {
     vao->Unbind();
     delete vao;
-
+    delete m_fontShader;
+    delete m_font;
 
     glfwTerminate();
     LogDispose();

@@ -1,12 +1,16 @@
 #include "fbo.hpp"
 
-#include "common.hpp"
+#include "gl/texture.hpp"
+#include "gl/render_buffer.hpp"
+
+#include "log.hpp"
+
 
 void FBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
     Bind();
     {
 	// first we create a render target, and attach it the FBO.
-	m_renderTargetTexture = std::make_unique<Texture>(GL_TEXTURE_2D, width, height, GL_RGBA8, GL_UNSIGNED_BYTE);
+	m_renderTargetTexture = new Texture(GL_TEXTURE_2D, width, height, GL_RGBA8, GL_UNSIGNED_BYTE);
 
 	Texture::SetActiveTextureUnit(m_targetTextureUnit);
 	m_renderTargetTexture->Bind();
@@ -22,7 +26,7 @@ void FBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
 
 	// next we create a depth buffer, and attach it to the FBO.
 
-	m_depthBuffer = std::make_unique<RenderBuffer>();
+	m_depthBuffer = new RenderBuffer();
 	m_depthBuffer->Bind();
 	{
 	    m_depthBuffer->RenderbufferStorage(GL_DEPTH_COMPONENT, width, height);
@@ -46,4 +50,28 @@ void FBO::CheckFramebufferStatus(const GLenum target)  {
     {
 	LOG_E("Framebuffer not complete. Status: %d", status);
     }
+}
+
+
+FBO::~FBO()  {
+    GL_C(glDeleteFramebuffers(1, &m_fboHandle));
+
+    delete m_depthBuffer;
+
+    delete m_renderTargetTexture;
+}
+
+
+void FBO::Attach(const  GLenum attachment, const Texture& texture) {
+    GL_C(glFramebufferTexture2D(m_target, attachment, texture.GetTarget(), texture.GetHandle(), 0));
+}
+
+void FBO::CheckFramebufferStatus()  {
+    CheckFramebufferStatus(m_target);
+}
+
+
+FBO::FBO(const GLenum targetTextureUnit, const GLsizei width, const GLsizei height): m_target(GL_FRAMEBUFFER), m_targetTextureUnit(targetTextureUnit) {
+    GL_C(glGenFramebuffers(1, &m_fboHandle));
+    RecreateBuffers(width, height);
 }

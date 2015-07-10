@@ -25,7 +25,14 @@ using namespace std;
 
 TuhuApplication::TuhuApplication() { }
 
-TuhuApplication::~TuhuApplication() { }
+TuhuApplication::~TuhuApplication() {
+    delete camera;
+    delete heightMap;
+    delete skybox;
+    delete tree;
+    delete plane;
+    delete fbo;
+}
 
 void TuhuApplication::Init() {
 
@@ -36,18 +43,18 @@ void TuhuApplication::Init() {
 
 	LOG_I("making camera");
 
-    camera = make_unique<Camera>(GetWindowWidth(),GetWindowHeight(),Vector3f(0,5.1f,0), Vector3f(1.0f,-0.5f,1.0f));
+    camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,5.1f,0), Vector3f(1.0f,-0.5f,1.0f));
 
 	LOG_I("making height map");
 
 
-    heightMap = make_unique<HeightMap>("img/combined.png");
+    heightMap = new HeightMap("img/combined.png");
 
 /*	LOG_I("making tree");
 
     tree = make_unique<Tree>(Vector3f(0,2,0));
 */
-    skybox = make_unique<Skybox>(
+    skybox = new Skybox(
 	"img/bluecloud_ft.png",
 	"img/bluecloud_bk.png",
 	"img/bluecloud_lf.png",
@@ -58,12 +65,12 @@ void TuhuApplication::Init() {
 
 
 
-    plane = make_unique<Plane>(Vector3f(1,4,1));
+    plane = new Plane(Vector3f(1,4,1));
 
 
     LOG_I("done init");
 
-    fbo = make_unique<FBO>(10, 100,100);
+    fbo = new FBO(10, 100,100);
 
 
 }

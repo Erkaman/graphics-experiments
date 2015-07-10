@@ -1,6 +1,5 @@
 #include "tree.hpp"
 
-#include "common.hpp"
 #include "camera.hpp"
 #include "colonization.hpp"
 
@@ -10,6 +9,8 @@
 
 #include "math/matrix4f.hpp"
 #include "math/vector4f.hpp"
+
+#include "common.hpp"
 
 using std::vector;
 
@@ -39,8 +40,8 @@ void GetAxis(
 
 Tree::Tree(const Vector3f& position): m_stemPosition(position) {
 
-    m_leafTexture = std::make_unique<Texture2D>("img/leaf.png");
-     m_woodTexture = std::make_unique<Texture2D>("img/wood.png");
+    m_leafTexture = new Texture2D("img/leaf.png");
+    m_woodTexture = new Texture2D("img/wood.png");
 
     m_leafTexture->Bind();
     m_leafTexture->SetTextureRepeat();
@@ -56,32 +57,32 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
 
 
 
-    m_phongShader = std::make_unique<ShaderProgram>("shader/phong");
+    m_phongShader = new ShaderProgram("shader/phong");
 
-    m_leavesVertexBuffer = std::unique_ptr<VBO>(VBO::CreateInterleaved(
+    m_leavesVertexBuffer = VBO::CreateInterleaved(
 						    vector<GLuint>{
 							VBO_POSITION_ATTRIB_INDEX,
 							    VBO_NORMAL_ATTRIB_INDEX,
 							    VBO_TEX_COORD_ATTRIB_INDEX},
 						    vector<GLuint>{3,3,2}
-						    ));
+						    );
 
 
-    m_leavesIndexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
+    m_leavesIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
 
-    m_treeVertexBuffer = std::unique_ptr<VBO>(VBO::CreateInterleaved(
+    m_treeVertexBuffer = VBO::CreateInterleaved(
 						  vector<GLuint>{
 						      VBO_POSITION_ATTRIB_INDEX,
 							  VBO_NORMAL_ATTRIB_INDEX,
 							  VBO_TEX_COORD_ATTRIB_INDEX},
 						  vector<GLuint>{3,3,2}
-						  ));
+						  );
 
 
-    m_treeIndexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
+    m_treeIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
-   m_colonization.Colonize();
+    m_colonization.Colonize();
 
 
     for(size_t i = 0; i < m_colonization.GetLeafCount(); ++i) {
@@ -352,7 +353,7 @@ void Tree::DrawTree(const Camera& camera, const Vector4f& lightPosition) {
 
     m_woodTexture->Bind();
 
-	//m_phongShader->SetPhongUniforms(Matrix4f::CreateTranslation(m_stemPosition), camera, lightPosition);
+    //m_phongShader->SetPhongUniforms(Matrix4f::CreateTranslation(m_stemPosition), camera, lightPosition);
 
     VBO::DrawIndices(*m_treeVertexBuffer, *m_treeIndexBuffer, GL_TRIANGLES, (m_treeNumTriangles)*3);
 
@@ -466,5 +467,20 @@ void Tree::AddBranch(const std::vector<float>& branchWidths, const std::vector<V
 	    index++;
 	}
     }
+
+}
+
+Tree::~Tree() {
+    delete m_phongShader;
+
+    delete m_leavesVertexBuffer;
+    delete m_leavesIndexBuffer;
+
+    delete m_treeVertexBuffer;
+    delete m_treeIndexBuffer;
+
+
+    delete m_leafTexture;
+    delete m_woodTexture;
 
 }

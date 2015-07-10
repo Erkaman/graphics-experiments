@@ -2,11 +2,7 @@
 
 #include "gl/cube_map_texture.hpp"
 
-#include <memory>
-
 class ShaderProgram;
-struct ShaderProgramDeleter{void operator()(ShaderProgram *p);};
-
 class VBO;
 class Camera;
 
@@ -18,9 +14,9 @@ private:
 
     // skybox shad er.
 
-    std::unique_ptr<VBO> m_indexBuffer;
-    std::unique_ptr<VBO> m_positionBuffer;
-    std::unique_ptr<ShaderProgram> m_shader;
+    VBO* m_indexBuffer;
+    VBO* m_positionBuffer;
+    ShaderProgram* m_shader;
 
     GLushort m_numIndices;
 
@@ -32,6 +28,7 @@ public:
 
     Skybox(const std::string& frontFace, const std::string& backFace, const std::string& leftFace,
 		   const std::string& rightFace, const std::string& upFace, const std::string& downFace);
+    ~Skybox();
 
     void Draw(const Camera& camera);
 

@@ -1,7 +1,9 @@
 #include "gl_util.hpp"
 
-#include "common.hpp"
 #include "gl_common.hpp"
+
+#include "log.hpp"
+#include <string>
 
 using namespace std;
 

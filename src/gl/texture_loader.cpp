@@ -1,10 +1,8 @@
 #include "texture_loader.hpp"
 
+#include "log.hpp"
+
 #include "lodepng.h"
-
-#include "common.hpp"
-
-#include <iostream>
 
 using std::vector;
 
