@@ -7,13 +7,13 @@
 
 using std::vector;
 
-Quad::Quad(){
+
+Quad::Quad(const Vector2f c1, const Vector2f& c2) {
 
     m_vertexBuffer = VBO::CreateInterleaved(
 						    vector<GLuint>{
-							VBO_POSITION_ATTRIB_INDEX,
-							    VBO_TEX_COORD_ATTRIB_INDEX},
-						    vector<GLuint>{2,2}
+							VBO_POSITION_ATTRIB_INDEX},
+						    vector<GLuint>{2}
 						    );
 
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
@@ -24,25 +24,22 @@ Quad::Quad(){
     const float SCALE = 1.0f;
 
 
-    Vector2f(0.0f,0.0f).Add(vertices);
-    Vector2f(0.0f,0.0f).Add(vertices);
 
-    Vector2f(SCALE,0.0f).Add(vertices);
-    Vector2f(SCALE,0.0f).Add(vertices);
+    c1.Add(vertices);
 
-    Vector2f(SCALE,SCALE).Add(vertices);
-    Vector2f(SCALE,SCALE).Add(vertices);
+    Vector2f(c2.x,c1.y).Add(vertices);
 
-    Vector2f(0.0f,SCALE).Add(vertices);
-    Vector2f(0.0f,SCALE).Add(vertices);
+    c2.Add(vertices);
 
-    indices.push_back(2);
+    Vector2f(c1.x,c2.y).Add(vertices);
+
+    indices.push_back(0);
     indices.push_back(1);
-    indices.push_back(0);
-
-    indices.push_back(0);
-    indices.push_back(3);
     indices.push_back(2);
+
+    indices.push_back(2);
+    indices.push_back(3);
+    indices.push_back(0);
 
     m_vertexBuffer->Bind();
     m_vertexBuffer->SetBufferData(vertices);
@@ -60,7 +57,6 @@ Quad::~Quad() {
 	delete m_vertexBuffer;
 	delete m_indexBuffer;
 }
-
 
 void Quad::Draw() {
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);

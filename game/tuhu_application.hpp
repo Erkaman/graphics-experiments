@@ -4,7 +4,6 @@
 #include "common.hpp"
 
 class Texture;
-struct TextureDeleter{void operator()(Texture *p);};
 
 class Camera;
 class HeightMap;
@@ -12,6 +11,7 @@ class Skybox;
 class Tree;
 class Plane;
 class FBO;
+class Quad;
 
 class TuhuApplication : public Application{
 
@@ -22,7 +22,11 @@ private:
     Skybox* skybox;
     Tree* tree;
     Plane* plane;
+
     FBO* fbo;
+
+    Quad* quad;
+    ShaderProgram* simpleShader;
 
 public:
 

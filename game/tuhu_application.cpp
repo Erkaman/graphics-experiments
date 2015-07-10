@@ -32,6 +32,8 @@ TuhuApplication::~TuhuApplication() {
     delete tree;
     delete plane;
     delete fbo;
+    delete quad;
+    delete simpleShader;
 }
 
 void TuhuApplication::Init() {
@@ -39,7 +41,7 @@ void TuhuApplication::Init() {
     LOG_I("init");
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
-     GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
+    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
 	LOG_I("making camera");
 
@@ -72,6 +74,9 @@ void TuhuApplication::Init() {
 
     fbo = new FBO(10, 100,100);
 
+    quad = new Quad(Vector2f(-0.8f), Vector2f(0.8f));
+
+    simpleShader = new ShaderProgram("shader/simple");
 
 }
 
@@ -91,6 +96,11 @@ void TuhuApplication::Render() {
 //    tree->Draw(*camera, lightPosition);
 
       plane->Draw(*camera, lightPosition);
+
+      simpleShader->Bind();
+      quad->Draw();
+      simpleShader->Unbind();
+
 
 }
 
@@ -125,11 +135,8 @@ void TuhuApplication::Update(const float delta) {
     camera->HandleInput();
 
 
-    SetWindowTitle(tos(camera->GetPosition()) );
-
 }
 
-void TextureDeleter::operator()(Texture *p){ delete p;}
 
 void TuhuApplication::RenderText()  {
 

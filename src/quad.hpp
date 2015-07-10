@@ -5,6 +5,7 @@ class VBO;
 class Camera;
 class Texture;
 class Vector4f;
+class Vector2f;
 
 #include "gl/gl_common.hpp"
 
@@ -13,7 +14,7 @@ class VBO;
 
 class Quad {
 
-    private:
+private:
 
     /*
       INSTANCE VARIABLES.
@@ -26,8 +27,8 @@ class Quad {
 
 public:
 
-    Quad();
-	~Quad();
+    Quad(const Vector2f c1, const Vector2f& c2);
+    ~Quad();
 
 
     void Draw();
