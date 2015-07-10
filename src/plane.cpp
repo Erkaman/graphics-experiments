@@ -30,7 +30,6 @@ Plane::Plane(const Vector3f& position): m_position(position){
 
     const float SCALE = 10.0f;
     // compute the 4 corners.
-    Vector3f c4 = Vector3f(0,0,SCALE);
     Vector3f n = Vector3f(0,1,0);
 
     Vector3f(0,0,0).Add(vertices);
@@ -68,7 +67,7 @@ Plane::Plane(const Vector3f& position): m_position(position){
 
     m_numTriangles = 2;
 
-    m_perlinSeed = new PerlinSeed();
+    m_perlinSeed = new PerlinSeed(9);
 }
 
 
