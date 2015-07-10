@@ -1,12 +1,21 @@
+#include "noise_lib.glsl"
+
+
 out vec4 fragmentColor;
-
-uniform vec4 color;
-
 in vec2 texCoord;
-
-uniform sampler2D tex;
 
 void main()
 {
-    fragmentColor = vec4(1.0, 0.0, 0.0, 1.0);
+
+    vec3 red = vec3(1,0,0);
+    vec3 blue = vec3(0,1,0);
+
+    vec3 noise = mix(red, blue,
+	       turbulence(3, vec3(texCoord.xy,0) * 3, 2, 0.5)
+	       );
+
+    fragmentColor = vec4(noise, 1.0);
+
+//    fragmentColor =  vec4(texCoord.xy, 0.0, 1.0);
+
 }

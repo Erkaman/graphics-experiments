@@ -24,5 +24,4 @@ public:
     void Bind(ShaderProgram& shader);
 
     void Unbind();
-
 };

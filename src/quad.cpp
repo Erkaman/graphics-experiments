@@ -12,8 +12,8 @@ Quad::Quad(const Vector2f c1, const Vector2f& c2) {
 
     m_vertexBuffer = VBO::CreateInterleaved(
 						    vector<GLuint>{
-							VBO_POSITION_ATTRIB_INDEX},
-						    vector<GLuint>{2}
+							VBO_POSITION_ATTRIB_INDEX, VBO_TEX_COORD_ATTRIB_INDEX},
+						    vector<GLuint>{2, 2}
 						    );
 
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
@@ -24,14 +24,19 @@ Quad::Quad(const Vector2f c1, const Vector2f& c2) {
     const float SCALE = 1.0f;
 
 
-
     c1.Add(vertices);
+    Vector2f(0.0f,0.0f).Add(vertices);
 
     Vector2f(c2.x,c1.y).Add(vertices);
+    Vector2f(1.0f,0.0f).Add(vertices);
 
     c2.Add(vertices);
+    Vector2f(1.0f,1.0f).Add(vertices);
+
 
     Vector2f(c1.x,c2.y).Add(vertices);
+    Vector2f(0.0f,1.0f).Add(vertices);
+
 
     indices.push_back(0);
     indices.push_back(1);

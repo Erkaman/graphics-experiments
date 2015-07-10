@@ -12,6 +12,7 @@ class Tree;
 class Plane;
 class FBO;
 class Quad;
+class PerlinSeed;
 
 class TuhuApplication : public Application{
 
@@ -27,6 +28,9 @@ private:
 
     Quad* quad;
     ShaderProgram* simpleShader;
+
+    PerlinSeed* m_perlinSeed;
+
 
 public:
 

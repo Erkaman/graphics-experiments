@@ -14,6 +14,7 @@
 #include "skybox.hpp"
 #include "plane.hpp"
 #include "quad.hpp"
+#include "perlin_seed.hpp"
 
 #include "font.hpp"
 
@@ -74,9 +75,11 @@ void TuhuApplication::Init() {
 
     fbo = new FBO(10, 100,100);
 
-    quad = new Quad(Vector2f(-0.8f), Vector2f(0.8f));
+    quad = new Quad(Vector2f(-0.7f), Vector2f(+0.7f));
 
     simpleShader = new ShaderProgram("shader/simple");
+
+    m_perlinSeed = new PerlinSeed(1);
 
 }
 
@@ -95,11 +98,21 @@ void TuhuApplication::Render() {
 
 //    tree->Draw(*camera, lightPosition);
 
-      plane->Draw(*camera, lightPosition);
+    //   plane->Draw(*camera, lightPosition);
+
 
       simpleShader->Bind();
+
+      m_perlinSeed->Bind(*simpleShader);
+
+
       quad->Draw();
+
+      m_perlinSeed->Unbind();
+
       simpleShader->Unbind();
+
+
 
 
 }
