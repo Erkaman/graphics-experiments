@@ -144,7 +144,6 @@ GLuint Texture::GetHandle() const{
     return m_textureHandle;
 }
 
-
 void Texture::WriteToFile(const std::string& filename) {
 
     // first, get the raw pixel data from opengl
@@ -154,9 +153,23 @@ void Texture::WriteToFile(const std::string& filename) {
     GL_C(glGetTexImage(m_target, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
     Unbind();
 
+    // flip the image.
+
+    unsigned int* intPixels = (unsigned int*)pixels;
+
+    for (int i=0;i<m_width;++i){
+	for (int j=0;j<m_height/2;++j){
+	    unsigned int temp = intPixels[j * m_width + i];
+
+	    intPixels[j * m_width + i] = intPixels[ (m_height-j-1)*m_width + i];
+	    intPixels[(m_height-j-1)*m_width + i] = temp;
+	}
+    }
+
+    unsigned char* charPixels = (unsigned char*)intPixels;
 
     //Encode the image
-    unsigned error = lodepng::encode(filename, pixels, m_width, m_height);
+    unsigned error = lodepng::encode(filename, charPixels, m_width, m_height);
 
     delete pixels;
 
