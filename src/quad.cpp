@@ -9,14 +9,14 @@ using std::vector;
 
 Quad::Quad(){
 
-    m_vertexBuffer = std::unique_ptr<VBO>(VBO::CreateInterleaved(
+    m_vertexBuffer = VBO::CreateInterleaved(
 						    vector<GLuint>{
 							VBO_POSITION_ATTRIB_INDEX,
 							    VBO_TEX_COORD_ATTRIB_INDEX},
 						    vector<GLuint>{2,2}
-						    ));
+						    );
 
-    m_indexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_SHORT));
+    m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
     FloatVector vertices;
     UshortVector indices;
@@ -55,6 +55,12 @@ Quad::Quad(){
     m_numTriangles = 2;
 
 }
+
+Quad::~Quad() {
+	delete m_vertexBuffer;
+	delete m_indexBuffer;
+}
+
 
 void Quad::Draw() {
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);

@@ -21,12 +21,14 @@ class Quad {
 
     GLushort m_numTriangles;
 
-    std::unique_ptr<VBO> m_vertexBuffer;
-    std::unique_ptr<VBO> m_indexBuffer;
+    VBO* m_vertexBuffer;
+    VBO* m_indexBuffer;
 
 public:
 
     Quad();
+	~Quad();
+
 
     void Draw();
 

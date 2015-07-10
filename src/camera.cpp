@@ -14,28 +14,29 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
     m_right = Vector3f::Cross(m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
     m_up = Vector3f(0,1.0f,0);//Vector3f::Cross(m_right, m_viewDir).Normalize();
 
-    m_projectionMatrix = std::unique_ptr<Matrix4f>(new Matrix4f(Matrix4f::CreatePerspective(45.0f, (float)windowWidth/(float)windowHeight, 0.1f,10000.0f)));
+    m_projectionMatrix = Matrix4f::CreatePerspective(45.0f, (float)windowWidth/(float)windowHeight, 0.1f,10000.0f);
 
     ComputeViewMatrix();
 
 }
 
+
 Matrix4f Camera::GetMvp() const {
 
-    return (*m_projectionMatrix) * (*m_viewMatrix);
+    return (m_projectionMatrix) * (m_viewMatrix);
 }
 
 Matrix4f Camera::GetMvp(const Matrix4f& modelViewMatrix) const {
-    return (*m_projectionMatrix) * modelViewMatrix;
+    return (m_projectionMatrix) * modelViewMatrix;
 }
 
 
 void Camera::ComputeViewMatrix() {
-    m_viewMatrix = std::unique_ptr<Matrix4f>(new Matrix4f(
-						 Matrix4f::CreateLookAt(
-						     m_position,
-						     (m_position + m_viewDir),
-						     m_up)));
+	m_viewMatrix =
+		Matrix4f::CreateLookAt(
+			m_position,
+			(m_position + m_viewDir),
+			m_up);
 }
 
 void Camera::Walk(const float amount) {
@@ -80,11 +81,11 @@ void Camera::HandleInput() {
 }
 
 Matrix4f Camera::GetViewMatrix() const {
-    return *m_viewMatrix;
+    return m_viewMatrix;
 }
 
 Matrix4f Camera::GetProjectionMatrix() const {
-    return *m_projectionMatrix;
+    return m_projectionMatrix;
 }
 
 
@@ -94,12 +95,12 @@ Vector3f Camera::GetPosition() const {
 
 
 Matrix4f Camera::GetModelViewMatrix() const {
-    return *m_viewMatrix;
+    return m_viewMatrix;
 }
 
 
 Matrix4f Camera::GetModelViewMatrix(const Matrix4f& modelMatrix) const {
-    Matrix4f ret =  (*m_viewMatrix) * modelMatrix;
+    Matrix4f ret =  (m_viewMatrix) * modelMatrix;
 
 //    LOG_I("ret: %s", tos(ret).c_str() );
 

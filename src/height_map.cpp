@@ -61,14 +61,14 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
 
 
-    m_vertexBuffer = std::unique_ptr<VBO>(VBO::CreateInterleaved(
+    m_vertexBuffer = VBO::CreateInterleaved(
 				       vector<GLuint>{
 					   VBO_POSITION_ATTRIB_INDEX,
 					       VBO_NORMAL_ATTRIB_INDEX,
 					       VBO_COLOR_ATTRIB_INDEX,
 					       VBO_TEX_COORD_ATTRIB_INDEX},
 				       vector<GLuint>{3,3,4,2}
-				       ));
+				       );
 
     size_t dataSize;
     void* vertexData = File::ReadArray(VERTEX_FILE, dataSize);
@@ -81,7 +81,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
     void* indexData = File::ReadArray(INDEX_FILE, dataSize);
 
-    m_indexBuffer = std::unique_ptr<VBO>(VBO::CreateIndex(GL_UNSIGNED_INT));
+    m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_INT);
     m_numTriangles = dataSize / (3 * sizeof(GLushort));
 
     m_indexBuffer->Bind();
@@ -93,6 +93,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
 HeightMap::~HeightMap() {
     delete m_shader;
+	delete m_indexBuffer;
+	delete m_vertexBuffer;
 }
 
 void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {

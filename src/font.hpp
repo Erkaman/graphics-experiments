@@ -35,6 +35,12 @@ private:
     void DrawQuad(const float drawX, const float drawY, const float drawX2, const float drawY2,
 		  const float srcX, const float srcY, const float srcX2, const float srcY2);
 
+	/*
+	Copying is disallowed.
+	*/
+	Font(Font&);
+	Font& operator=(const Font&);
+
 public:
 
     Font(

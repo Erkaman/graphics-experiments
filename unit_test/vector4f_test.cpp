@@ -30,9 +30,9 @@ static void TestNegation() {
 }
 
 static void TestLength() {
-    Vector4f v(-2, 5, 9,2);
+    Vector4f v(-2.0f, 5.0f, 9.0f,2.0f);
 
-    AssertEqualsFloat(v.Length(),10.67707);
+    AssertEqualsFloat(v.Length(),10.67707f);
 }
 
 static void TestNormalize() {

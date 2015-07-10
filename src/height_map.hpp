@@ -17,8 +17,8 @@ private:
     unsigned int m_numTriangles;
     bool m_isWireframe;
 
-    std::unique_ptr<VBO> m_vertexBuffer;
-    std::unique_ptr<VBO> m_indexBuffer;
+    VBO* m_vertexBuffer;
+    VBO* m_indexBuffer;
 
     ShaderProgram* m_shader;
 
