@@ -73,9 +73,9 @@ void TuhuApplication::Init() {
 
     LOG_I("done init");
 
-    fbo = new FBO(10, 100,100);
+    fbo = new FBO(10, 512,512);
 
-    quad = new Quad(Vector2f(-0.7f), Vector2f(+0.7f));
+    quad = new Quad(Vector2f(-1.0f), Vector2f(+1.0f));
 
     simpleShader = new ShaderProgram("shader/simple");
 
@@ -84,13 +84,37 @@ void TuhuApplication::Init() {
 }
 
 void TuhuApplication::Render() {
+
+/*    fbo->Bind();
+    {
+
+	SetViewport();
+	Clear(0.0f, 0.0f, 1.0f);
+
+	simpleShader->Bind();
+
+	m_perlinSeed->Bind(*simpleShader);
+
+	quad->Draw();
+
+	m_perlinSeed->Unbind();
+
+	simpleShader->Unbind();
+    }
+    fbo->Unbind();
+
+   fbo->GetRenderTargetTexture().WriteToFile("out.png");
+
+    exit(1);
+
+*/
+
+
+
     SetViewport();
 
     Clear(0.0f, 0.0f, 1.0f);
 
-/*    GL_C(glClearColor(, 1.0f));
-    GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-*/
      skybox->Draw(*camera);
 
     heightMap->SetWireframe(false);
@@ -99,21 +123,26 @@ void TuhuApplication::Render() {
     heightMap->Draw(*camera, lightPosition);
 
 
-//    tree->Draw(*camera, lightPosition);
+fbo->Bind();
+    {
+		SetViewport();
+	Clear(0.0f, 0.0f, 1.0f);
 
-    //   plane->Draw(*camera, lightPosition);
 
+    	simpleShader->Bind();
 
-      simpleShader->Bind();
+	m_perlinSeed->Bind(*simpleShader);
 
-      m_perlinSeed->Bind(*simpleShader);
+	quad->Draw();
 
-      quad->Draw();
+	m_perlinSeed->Unbind();
 
-      m_perlinSeed->Unbind();
+	simpleShader->Unbind();
 
-      simpleShader->Unbind();
-
+    }
+     fbo->Unbind();
+         fbo->GetRenderTargetTexture().WriteToFile("out.png");
+            exit(1);
 
 
 
