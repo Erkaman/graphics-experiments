@@ -85,32 +85,6 @@ void TuhuApplication::Init() {
 
 void TuhuApplication::Render() {
 
-/*    fbo->Bind();
-    {
-
-	SetViewport();
-	Clear(0.0f, 0.0f, 1.0f);
-
-	simpleShader->Bind();
-
-	m_perlinSeed->Bind(*simpleShader);
-
-	quad->Draw();
-
-	m_perlinSeed->Unbind();
-
-	simpleShader->Unbind();
-    }
-    fbo->Unbind();
-
-   fbo->GetRenderTargetTexture().WriteToFile("out.png");
-
-    exit(1);
-
-*/
-
-
-
     SetViewport();
 
     Clear(0.0f, 0.0f, 1.0f);
@@ -122,12 +96,11 @@ void TuhuApplication::Render() {
     Vector4f lightPosition(93,10.0f,93, 1.0f);
     heightMap->Draw(*camera, lightPosition);
 
-
+/*
 fbo->Bind();
     {
 	::SetViewport(-256,-256,512,512);
 	Clear(0.0f, 0.0f, 1.0f);
-
 
     	simpleShader->Bind();
 
@@ -143,7 +116,7 @@ fbo->Bind();
      fbo->Unbind();
          fbo->GetRenderTargetTexture().WriteToFile("out.png");
             exit(1);
-
+*/
 
 
 }
