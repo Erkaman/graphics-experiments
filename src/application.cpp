@@ -97,7 +97,7 @@ void Application::SetupOpenGL() {
     glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
-    window = glfwCreateWindow (256, 256, "Tuhu", NULL, NULL);
+    window = glfwCreateWindow (128,128, "Tuhu", NULL, NULL);
     if (!window) {
 	fprintf (stderr, "ERROR: could not open window with GLFW3\n");
 	glfwTerminate();

@@ -24,6 +24,8 @@
 
 using namespace std;
 
+constexpr int TEXTURE_SIZE = 512;
+
 TuhuApplication::TuhuApplication() { }
 
 TuhuApplication::~TuhuApplication() {
@@ -70,12 +72,11 @@ void TuhuApplication::Init() {
 
     plane = new Plane(Vector3f(1,4,1));
 
-
     LOG_I("done init");
 
-    fbo = new FBO(10, 256,256);
+    fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
 
-    quad = new Quad(Vector2f(0.0f), Vector2f(+1.0f));
+    quad = new Quad(Vector2f(0.0f), Vector2f(TEXTURE_SIZE / 256.0f));
 
     simpleShader = new ShaderProgram("shader/simple");
 
@@ -96,7 +97,7 @@ void TuhuApplication::Render() {
     Vector4f lightPosition(93,10.0f,93, 1.0f);
     heightMap->Draw(*camera, lightPosition);
 
-/*
+
 fbo->Bind();
     {
 	::SetViewport(-256,-256,512,512);
@@ -116,7 +117,7 @@ fbo->Bind();
      fbo->Unbind();
          fbo->GetRenderTargetTexture().WriteToFile("out.png");
             exit(1);
-*/
+
 
 
 }
