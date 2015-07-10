@@ -138,3 +138,12 @@ void SetDepthTest(bool enable) {
 		GL_C(glDisable(GL_DEPTH_TEST));
 	}
 }
+
+void SetViewport(GLint x, GLint y, GLsizei width, GLsizei height) {
+    GL_C(glViewport(x, y, width, height));
+}
+
+void Clear(GLclampf red, GLclampf green, GLclampf blue, GLbitfield mask) {
+    GL_C(glClearColor(red, green, blue, 1.0f));
+    GL_C(glClear(mask));
+}

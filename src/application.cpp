@@ -140,7 +140,8 @@ void Application::SetViewport() {
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
 //    LOG_I("viewport: " + tos(width) + "," + tos(height) );
-    GL_C(glViewport(0, 0, width, height));
+
+    ::SetViewport(0, 0, width, height);
 }
 
 void Application::Update_internal(const float delta) {

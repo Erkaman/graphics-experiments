@@ -85,10 +85,13 @@ void TuhuApplication::Init() {
 
 void TuhuApplication::Render() {
     SetViewport();
-    GL_C(glClearColor(0.0f, 0.0f, 1.0f, 1.0f));
-    GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-    skybox->Draw(*camera);
+    Clear(0.0f, 0.0f, 1.0f);
+
+/*    GL_C(glClearColor(, 1.0f));
+    GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+*/
+     skybox->Draw(*camera);
 
     heightMap->SetWireframe(false);
 
@@ -104,7 +107,6 @@ void TuhuApplication::Render() {
       simpleShader->Bind();
 
       m_perlinSeed->Bind(*simpleShader);
-
 
       quad->Draw();
 
@@ -146,14 +148,11 @@ void TuhuApplication::Update(const float delta) {
     }
 
     camera->HandleInput();
-
-
 }
-
 
 void TuhuApplication::RenderText()  {
 
-/*    fbo->Bind();
+/*
 
     GL_C(glViewport(0, 0, 100, 100));
     GL_C(glClearColor(0.0f, 0.0f, 1.0f, 1.0f));
