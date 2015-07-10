@@ -16,18 +16,6 @@ in vec3 viewSpacePosition;
 
 #define SCALE 0.03
 
-/*float turbulence(int octaves, vec2 P, float lacunarity, float gain)
-{
-  float sum = 0;
-  float scale = 1;
-  float totalgain = 1;
-  for(int i=0;i<octaves;i++){
-    sum += totalgain*snoise(P*scale);
-    scale *= lacunarity;
-    totalgain *= gain;
-  }
-  return abs(sum);
-  }*/
 
 vec3 sampleDiffuseTexture() {
 

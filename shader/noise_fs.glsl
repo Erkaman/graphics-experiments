@@ -2,7 +2,6 @@
 #include "lib.glsl"
 
 #include "noise_lib.glsl"
-#include "noise_3d.glsl"
 
 out vec4 fragmentColor;
 
@@ -21,7 +20,10 @@ vec3 sampleDiffuseTexture() {
     vec3 red = vec3(1,0,0);
     vec3 blue = vec3(0,1,0);
 
-    return mix(red, blue, snoise(vec3(30 * texCoord.xy,0)));
+    return mix(red, blue,
+
+	       turbulence(3, vec3(texCoord.xy,0) * 3, 2, 0.5)
+	       /*snoise(vec3(3 * texCoord.xy,0))*/);
 
 //    return texture(tex, texCoord).xyz;
 }
