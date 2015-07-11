@@ -53,7 +53,7 @@ file(GLOB ENGINE_SRC src/*.cpp src/gl/shader/*.cpp src/gl/*.cpp src/math/*.cpp d
 ######################################
 
 
-FIND_PACKAGE(OpenGL)
+FIND_PACKAGE(OpenGL REQUIRED)
 LIST(APPEND game_libs ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
 
 LIST(APPEND game_libs glfw3)

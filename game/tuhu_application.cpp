@@ -54,7 +54,7 @@ void TuhuApplication::Init() {
 	LOG_I("making height map");
 
 
-//    heightMap = new HeightMap("img/combined.png");
+    heightMap = new HeightMap("img/combined.png");
 
 /*	LOG_I("making tree");
 
@@ -94,11 +94,11 @@ void TuhuApplication::Render() {
 
      skybox->Draw(*camera);
 
-/*    heightMap->SetWireframe(false);
+    heightMap->SetWireframe(false);
 
     Vector4f lightPosition(93,10.0f,93, 1.0f);
     heightMap->Draw(*camera, lightPosition);
-*/
+
 
 /*
 fbo->Bind();
