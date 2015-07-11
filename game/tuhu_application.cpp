@@ -26,20 +26,17 @@ using namespace std;
 
 constexpr int TEXTURE_SIZE = 1024;
 
-TuhuApplication::TuhuApplication() { }
+TuhuApplication::TuhuApplication(): camera(NULL), heightMap(NULL), skybox(NULL), tree(NULL), plane(NULL), fbo(NULL), quad(NULL), simpleShader(NULL), m_perlinSeed(NULL) { }
 
 TuhuApplication::~TuhuApplication() {
-    delete camera;
-    delete heightMap;
-    delete skybox;
-
-    if(tree != NULL)
-	delete tree;
-
-    delete plane;
-    delete fbo;
-    delete quad;
-    delete simpleShader;
+    MY_DELETE(camera);
+    MY_DELETE(heightMap);
+    MY_DELETE(skybox);
+    MY_DELETE(tree);
+    MY_DELETE(plane);
+    MY_DELETE(fbo);
+    MY_DELETE(quad);
+    MY_DELETE(simpleShader);
 }
 
 void TuhuApplication::Init() {
@@ -56,13 +53,12 @@ void TuhuApplication::Init() {
 	LOG_I("making height map");
 
 
-    heightMap = new HeightMap("img/combined.png");
+//    heightMap = new HeightMap("img/combined.png");
 
 /*	LOG_I("making tree");
 
     tree = make_unique<Tree>(Vector3f(0,2,0));
 */
-    tree = NULL;
 
     skybox = new Skybox(
 	"img/bluecloud_ft.png",
@@ -75,10 +71,10 @@ void TuhuApplication::Init() {
 
 
 
-    plane = new Plane(Vector3f(1,4,1));
+//    plane = new Plane(Vector3f(1,4,1));
 
     LOG_I("done init");
-
+/*
     fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
 
     quad = new Quad(Vector2f(0.0f), Vector2f(TEXTURE_SIZE / 256.0f));
@@ -86,7 +82,7 @@ void TuhuApplication::Init() {
     simpleShader = new ShaderProgram("shader/simple");
 
     m_perlinSeed = new PerlinSeed(1);
-
+*/
 }
 
 void TuhuApplication::Render() {
@@ -97,10 +93,10 @@ void TuhuApplication::Render() {
 
      skybox->Draw(*camera);
 
-    heightMap->SetWireframe(false);
+/*    heightMap->SetWireframe(false);
 
     Vector4f lightPosition(93,10.0f,93, 1.0f);
-    heightMap->Draw(*camera, lightPosition);
+    heightMap->Draw(*camera, lightPosition);*/
 
 /*
 fbo->Bind();
