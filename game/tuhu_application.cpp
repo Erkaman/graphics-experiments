@@ -24,7 +24,7 @@
 
 using namespace std;
 
-constexpr int TEXTURE_SIZE = 1024;
+constexpr int TEXTURE_SIZE = 512;
 
 TuhuApplication::TuhuApplication(): camera(NULL), heightMap(NULL), skybox(NULL), tree(NULL), plane(NULL), fbo(NULL), quad(NULL), simpleShader(NULL), m_perlinSeed(NULL) { }
 
@@ -100,10 +100,10 @@ void TuhuApplication::Render() {
     heightMap->Draw(*camera, lightPosition);
 
 
-/*
-fbo->Bind();
+
+//fbo->Bind();
     {
-	::SetViewport(-128,-128,512,512);
+	::SetViewport(-256,-256,512,512);
 	Clear(0.0f, 0.0f, 1.0f);
 
     	simpleShader->Bind();
@@ -117,11 +117,11 @@ fbo->Bind();
 	simpleShader->Unbind();
 
     }
-     fbo->Unbind();
+    /* fbo->Unbind();
          fbo->GetRenderTargetTexture().WriteToFile("out.png");
             exit(1);
+    */
 
-*/
 
 }
 
