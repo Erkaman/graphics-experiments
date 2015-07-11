@@ -32,7 +32,10 @@ TuhuApplication::~TuhuApplication() {
     delete camera;
     delete heightMap;
     delete skybox;
-    delete tree;
+
+    if(tree != NULL)
+	delete tree;
+
     delete plane;
     delete fbo;
     delete quad;
@@ -59,6 +62,8 @@ void TuhuApplication::Init() {
 
     tree = make_unique<Tree>(Vector3f(0,2,0));
 */
+    tree = NULL;
+
     skybox = new Skybox(
 	"img/bluecloud_ft.png",
 	"img/bluecloud_bk.png",
