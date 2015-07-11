@@ -37,6 +37,7 @@ TuhuApplication::~TuhuApplication() {
     MY_DELETE(fbo);
     MY_DELETE(quad);
     MY_DELETE(simpleShader);
+    MY_DELETE(m_perlinSeed);
 }
 
 void TuhuApplication::Init() {
@@ -74,7 +75,7 @@ void TuhuApplication::Init() {
 //    plane = new Plane(Vector3f(1,4,1));
 
     LOG_I("done init");
-/*
+
     fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
 
     quad = new Quad(Vector2f(0.0f), Vector2f(TEXTURE_SIZE / 256.0f));
@@ -82,7 +83,7 @@ void TuhuApplication::Init() {
     simpleShader = new ShaderProgram("shader/simple");
 
     m_perlinSeed = new PerlinSeed(1);
-*/
+
 }
 
 void TuhuApplication::Render() {
@@ -96,7 +97,8 @@ void TuhuApplication::Render() {
 /*    heightMap->SetWireframe(false);
 
     Vector4f lightPosition(93,10.0f,93, 1.0f);
-    heightMap->Draw(*camera, lightPosition);*/
+    heightMap->Draw(*camera, lightPosition);
+*/
 
 /*
 fbo->Bind();
