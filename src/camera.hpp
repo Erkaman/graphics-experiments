@@ -20,8 +20,8 @@ private:
 
 public:
 
-    Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir);
-	
+    Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir, bool usePerspectiveProjection);
+
     Matrix4f GetMvp() const;
     Matrix4f GetMvp(const Matrix4f& modelViewMatrix) const;
 
@@ -31,6 +31,8 @@ public:
 
     Matrix4f GetProjectionMatrix() const;
 
+    Matrix4f CreateProjectionMatrix(const float fov, const float aspectRatio, const float near, const float far)const;
+
     Vector3f GetPosition() const;
 
     void Walk(const float amount);
@@ -38,7 +40,5 @@ public:
     void Fly(const float amount);
 
     void HandleInput();
-
-
 
 };

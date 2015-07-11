@@ -72,6 +72,10 @@ public:
     static Matrix4f CreateScale(const float x, const float y, const float z);
 
     static Matrix4f CreatePerspective( const float fov, const float aspectRatio, const float near, const float far);
+    static Matrix4f CreateOrthographic( const float left, const float right, const float bottom, const float top, const float near, const float far);
+
+    static Matrix4f CreateOrthographic( const float fov, const float aspectRatio, const float near, const float far);
+
     static Matrix4f CreateLookAt(const Vector3f& eye, const Vector3f& center, const Vector3f& up);
 
     static Matrix4f GetNormalMatrix(const Matrix4f& modelViewMatrix);

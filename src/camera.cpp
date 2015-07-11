@@ -8,13 +8,13 @@
 
 using std::string;
 
-Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir): m_position(position), m_viewDir(viewDir){
+Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir,bool usePerspectiveProjection): m_position(position), m_viewDir(viewDir){
 
     m_viewDir.Normalize();
     m_right = Vector3f::Cross(m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
     m_up = Vector3f(0,1.0f,0);//Vector3f::Cross(m_right, m_viewDir).Normalize();
 
-    m_projectionMatrix = Matrix4f::CreatePerspective(45.0f, (float)windowWidth/(float)windowHeight, 0.1f,10000.0f);
+    m_projectionMatrix = Matrix4f::CreatePerspective (45.0f, (float)windowWidth/(float)windowHeight, 0.1f,10000.0f);
 
     ComputeViewMatrix();
 
