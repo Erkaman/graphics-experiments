@@ -45,7 +45,7 @@ void TuhuApplication::Init() {
     LOG_I("init");
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
-    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
+//    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
 	LOG_I("making camera");
 
@@ -78,7 +78,7 @@ void TuhuApplication::Init() {
 
     fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
 
-    quad = new Quad(Vector2f(0.0f), Vector2f(TEXTURE_SIZE / 256.0f));
+    quad = new Quad(Vector2f(-100.0f), Vector2f(100.0f));
 
     simpleShader = new ShaderProgram("shader/simple");
 
@@ -103,14 +103,16 @@ void TuhuApplication::Render() {
 
 //fbo->Bind();
     {
-	::SetViewport(-256,-256,512,512);
+	::SetViewport(0,0,512,512);
 	Clear(0.0f, 0.0f, 1.0f);
 
     	simpleShader->Bind();
 
 	m_perlinSeed->Bind(*simpleShader);
 
-	quad->Draw();
+	Camera  ortoCamera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,0,0.5f), Vector3f(0,0, -0.5f), false);
+
+	quad->Draw(ortoCamera, *simpleShader);
 
 	m_perlinSeed->Unbind();
 

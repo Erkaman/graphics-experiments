@@ -438,9 +438,12 @@ Matrix4f Matrix4f::GetNormalMatrix(const Matrix4f& modelViewMatrix) {
 
 
 Matrix4f Matrix4f::CreateOrthographic( const float left, const float right, const float bottom, const float top, const float near, const float far) {
+
+//    return Matrix4f::CreateIdentity();
+
      return Matrix4f(
 	 2.0f/(right-left), 0.0f, 0.0f, -(right + left) / (right - left),
 	0.0f, 2.0f / (top - bottom), 0.0f, -(top + bottom) / (top - bottom),
 	 0.0f, 0.0f, 2.0f / (far - near) ,  -(far +near) / (far - near),
-	0.0f, 0.0f,      0.0f  , 1.0f);
+	 0.0f, 0.0f,      0.0f  , 1.0f);
 }

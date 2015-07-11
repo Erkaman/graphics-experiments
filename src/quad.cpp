@@ -1,9 +1,13 @@
 #include "quad.hpp"
 
+#include "camera.hpp"
+
 #include "gl/vbo.hpp"
+#include "gl/shader_program.hpp"
 
 #include "math/vector3f.hpp"
 #include "math/vector2f.hpp"
+#include "math/matrix4f.hpp"
 
 using std::vector;
 
@@ -63,6 +67,14 @@ Quad::~Quad() {
 	delete m_indexBuffer;
 }
 
-void Quad::Draw() {
+void Quad::Draw(const Camera& camera, ShaderProgram& shader) {
+
+    const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
+	Matrix4f::CreateIdentity());
+
+    const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
+
+    shader.SetUniform("mvp", mvp);
+
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
 }

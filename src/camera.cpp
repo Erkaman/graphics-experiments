@@ -18,9 +18,9 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
     m_up = Vector3f(0,1.0f,0);//Vector3f::Cross(m_right, m_viewDir).Normalize();
 
     m_projectionMatrix =
-
-//	Matrix4f::CreateOrthographic(0,windowWidth, 0, windowHeight, NEAR, FAR);
-	Matrix4f::CreatePerspective (45.0f, (float)windowWidth/(float)windowHeight, NEAR, FAR);
+	usePerspectiveProjection ?
+	Matrix4f::CreatePerspective (45.0f, (float)windowWidth/(float)windowHeight, NEAR, FAR) :
+	Matrix4f::CreateOrthographic(-windowWidth,+windowWidth, -windowHeight, +windowHeight, -1, 1);
 
     ComputeViewMatrix();
 

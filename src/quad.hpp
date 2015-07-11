@@ -30,7 +30,6 @@ public:
     Quad(const Vector2f c1, const Vector2f& c2);
     ~Quad();
 
-
-    void Draw();
+    void Draw(const Camera& camera, ShaderProgram& shader);
 
 };
