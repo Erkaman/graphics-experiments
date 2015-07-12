@@ -2,12 +2,19 @@
 
 #pragma warning( disable : 4127 )
 
+
+#ifndef OPENGL_ALREADY_INCLUDED
+
 #ifndef GLEW_STATIC
 #define GLEW_STATIC
 #endif
 
 #include <GL/glew.h> // include GLEW and new version of GL on Windows
 #include <GLFW/glfw3.h> // GLFW helper library
+
+#endif
+
+
 #include <vector>
 #include "gl_util.hpp"
 
