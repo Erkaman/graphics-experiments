@@ -45,7 +45,7 @@ endif()
 ######################################
 
 #SET(SRC main.cpp)
-file(GLOB ENGINE_SRC src/*.cpp src/gl/shader/*.cpp src/gl/*.cpp src/math/*.cpp deps/src/glew/*.c deps/src/lodepng/*.cpp )
+file(GLOB ENGINE_SRC ewa/*.cpp ewa/gl/shader/*.cpp ewa/gl/*.cpp ewa/math/*.cpp deps/src/glew/*.c deps/src/lodepng/*.cpp )
 
 
 ######################################
@@ -83,7 +83,7 @@ ENDIF()
 file(GLOB GAME_SRC game/*.cpp)
 file(GLOB TEST_SRC unit_test/*.cpp)
 
-include_directories("deps/include" "src" "src/gl" "src/gl/shader" "deps/include/lodepng")
+include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng")
 
 ADD_LIBRARY(ewa ${ENGINE_SRC})
 TARGET_LINK_LIBRARIES(ewa ${game_libs})
