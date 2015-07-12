@@ -3,6 +3,7 @@
 #pragma warning( disable : 4127 )
 
 
+// in case you want to use the library with wxWidgets or something.
 #ifndef OPENGL_ALREADY_INCLUDED
 
 #ifndef GLEW_STATIC
