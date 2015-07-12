@@ -67,14 +67,14 @@ Quad::~Quad() {
 	delete m_indexBuffer;
 }
 
-void Quad::Draw(const Camera& camera, ShaderProgram& shader) {
+void Quad::Draw() {
 
-    const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
+/*    const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
 	Matrix4f::CreateIdentity());
 
     const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
 
     shader.SetUniform("mvp", mvp);
-
+*/
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
 }

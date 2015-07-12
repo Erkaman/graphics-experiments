@@ -24,7 +24,7 @@
 
 using namespace std;
 
-constexpr int TEXTURE_SIZE = 512;
+constexpr int TEXTURE_SIZE = 256;
 
 TuhuApplication::TuhuApplication(): camera(NULL), heightMap(NULL), skybox(NULL), tree(NULL), plane(NULL), fbo(NULL), quad(NULL), simpleShader(NULL), m_perlinSeed(NULL) { }
 
@@ -78,7 +78,7 @@ void TuhuApplication::Init() {
 
     fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
 
-    quad = new Quad(Vector2f(-100.0f), Vector2f(100.0f));
+    quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
 
     simpleShader = new ShaderProgram("shader/simple");
 
@@ -88,42 +88,26 @@ void TuhuApplication::Init() {
 
 void TuhuApplication::Render() {
 
-    SetViewport();
+    fbo->Bind();
+
+    ::SetViewport(0,0,TEXTURE_SIZE,TEXTURE_SIZE);
 
     Clear(0.0f, 0.0f, 1.0f);
 
-     skybox->Draw(*camera);
+    simpleShader->Bind();
 
-    heightMap->SetWireframe(false);
+    m_perlinSeed->Bind(*simpleShader);
 
-    Vector4f lightPosition(93,10.0f,93, 1.0f);
-    heightMap->Draw(*camera, lightPosition);
+    quad->Draw();
+
+    m_perlinSeed->Unbind();
+
+    simpleShader->Unbind();
 
 
-
-//fbo->Bind();
-    {
-	::SetViewport(0,0,512,512);
-	Clear(0.0f, 0.0f, 1.0f);
-
-    	simpleShader->Bind();
-
-	m_perlinSeed->Bind(*simpleShader);
-
-	Camera  ortoCamera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,0,0.5f), Vector3f(0,0, -0.5f), false);
-
-	quad->Draw(ortoCamera, *simpleShader);
-
-	m_perlinSeed->Unbind();
-
-	simpleShader->Unbind();
-
-    }
-    /* fbo->Unbind();
-         fbo->GetRenderTargetTexture().WriteToFile("out.png");
-            exit(1);
-    */
-
+    fbo->Unbind();
+    fbo->GetRenderTargetTexture().WriteToFile("out.png");
+    exit(1);
 
 }
 

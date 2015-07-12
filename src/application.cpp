@@ -137,9 +137,11 @@ void Application::SetupOpenGL() {
 }
 
 void Application::SetViewport() {
+
+
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
-//    LOG_I("viewport: " + tos(width) + "," + tos(height) );
+    LOG_I("viewport: %d %d", width, height );
 
     ::SetViewport(0, 0, width, height);
 }
@@ -163,6 +165,9 @@ int Application::GetKey(int key) {
 int Application::GetWindowWidth() {
     int width, height;
     glfwGetWindowSize(window, &width, &height);
+
+    LOG_I("width: %d", width );
+
     return width;
 }
 
