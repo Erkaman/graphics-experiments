@@ -88,7 +88,18 @@ void TuhuApplication::Init() {
 
 void TuhuApplication::Render() {
 
-    fbo->Bind();
+    SetViewport();
+
+    Clear(0.0f, 0.0f, 1.0f);
+
+
+    skybox->Draw(*camera);
+
+
+    Vector4f lightPosition(93,10.0f,93, 1.0f);
+    heightMap->Draw(*camera, lightPosition);
+
+/*    fbo->Bind();
 
     ::SetViewport(0,0,TEXTURE_SIZE,TEXTURE_SIZE);
 
@@ -107,7 +118,7 @@ void TuhuApplication::Render() {
 
     fbo->Unbind();
     fbo->GetRenderTargetTexture().WriteToFile("out.png");
-    exit(1);
+    exit(1);*/
 
 }
 
