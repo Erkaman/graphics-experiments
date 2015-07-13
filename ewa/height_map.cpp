@@ -2,6 +2,8 @@
 #include "height_map.hpp"
 
 #include "log.hpp"
+#include "perlin_seed.hpp"
+#include "common.hpp"
 
 #include "gl/vbo.hpp"
 #include "gl/shader_program.hpp"
@@ -89,12 +91,16 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     m_indexBuffer->Unbind();
     free(indexData);
 
+    m_perlinSeed = new PerlinSeed(1);
+
 }
 
 HeightMap::~HeightMap() {
-    delete m_shader;
-	delete m_indexBuffer;
-	delete m_vertexBuffer;
+    MY_DELETE(m_shader);
+    MY_DELETE(m_indexBuffer);
+    MY_DELETE(m_vertexBuffer);
+
+    MY_DELETE(m_perlinSeed);
 }
 
 void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
@@ -102,20 +108,13 @@ void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
     m_shader->Bind();
 
 
-    m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0)
-
-	 , camera, lightPosition);
+    m_perlinSeed->Bind(*m_shader);
 
 
-    // Set up matrices.
-/*    Matrix4f modelViewMatrix = camera.GetModelViewMatrix(Matrix4f::CreateTranslation(0,0,0));
-    Matrix4f mvp = camera.GetMvp(modelViewMatrix);
+    m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition);
 
-    m_shader->SetUniform("mvp", mvp);
-    m_shader->SetUniform("modelViewMatrix", modelViewMatrix);
-    m_shader->SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
-    m_shader->SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * lightPosition) );
-*/
+    m_shader->SetUniform("cameraPos", camera.GetPosition() );
+
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
@@ -135,6 +134,8 @@ void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
+    m_perlinSeed->Unbind();
 
 
     m_shader->Unbind();

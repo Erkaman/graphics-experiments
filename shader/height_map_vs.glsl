@@ -29,6 +29,4 @@ void main()
     texCoord = texCoordIn;
 
     position = positionIn;
-
-//    texCoord = texCoordIn;
 }

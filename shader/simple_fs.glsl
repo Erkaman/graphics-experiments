@@ -16,6 +16,4 @@ void main()
 
     fragmentColor = vec4(noise, 1.0);
 
-//    fragmentColor =  vec4(texCoord.xy, 0.0, 1.0);
-
 }

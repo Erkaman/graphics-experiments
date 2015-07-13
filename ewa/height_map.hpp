@@ -8,6 +8,7 @@ class VBO;
 class ShaderProgram;
 class Camera;
 class Texture;
+class PerlinSeed;
 
 class HeightMap {
 
@@ -23,6 +24,8 @@ private:
     ShaderProgram* m_shader;
 
     float m_movement;
+
+    PerlinSeed* m_perlinSeed;
 
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
