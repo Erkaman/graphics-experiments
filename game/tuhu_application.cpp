@@ -16,6 +16,8 @@
 #include "quad.hpp"
 #include "perlin_seed.hpp"
 
+#include "worley_seed.hpp"
+
 #include "font.hpp"
 
 
@@ -45,7 +47,7 @@ void TuhuApplication::Init() {
     LOG_I("init");
 
     GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
-//    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
+    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
 
 	LOG_I("making camera");
 
@@ -72,7 +74,7 @@ void TuhuApplication::Init() {
 
 
 
-//    plane = new Plane(Vector3f(1,4,1));
+    plane = new Plane(Vector3f(1,4,1));
 
     LOG_I("done init");
 
@@ -98,7 +100,17 @@ void TuhuApplication::Render() {
     Vector4f lightPosition(93,10.0f,93, 1.0f);
     heightMap->Draw(*camera, lightPosition);
 
-/*    fbo->Bind();
+
+
+    plane->Draw(*camera, lightPosition);
+
+    /*
+    fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
+
+    quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
+
+
+    fbo->Bind();
 
     ::SetViewport(0,0,TEXTURE_SIZE,TEXTURE_SIZE);
 

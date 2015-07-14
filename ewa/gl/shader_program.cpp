@@ -3,14 +3,16 @@
 #include "uniform_location_store.hpp"
 #include "shader_program_builder.hpp"
 
-#include "file.hpp"
 #include "camera.hpp"
 #include "log.hpp"
+#include "str.hpp"
 
 #include "math/color.hpp"
 #include "math/matrix4f.hpp"
 #include "math/vector4f.hpp"
 #include "math/vector3f.hpp"
+
+#include "file.hpp"
 
 
 using namespace std;
@@ -33,16 +35,35 @@ ShaderProgram::ShaderProgram(const std::string& shaderName){
     m_alreadyBoundProgram = false;
 
     string geometryShaderPath = shaderName + "_gs.glsl";
-    if(	!File::Exists(geometryShaderPath)) {
-	geometryShaderPath = ""; // do not load a geometry shader, because it does not exist.
+    string geometryShaderSource;
+    if(	!File::Exists(geometryShaderSource)) {
+	geometryShaderSource = ""; // do not load a geometry shader, because it does not exist.
+    } else {
+	geometryShaderSource = File::GetFileContents(geometryShaderPath);
     }
 
-    CompileShaderProgram(shaderName + "_vs.glsl", shaderName + "_fs.glsl", geometryShaderPath);
+    CompileShaderProgram(
+
+	File::GetFileContents(shaderName + "_vs.glsl"),
+	File::GetFileContents(shaderName + "_fs.glsl"),
+	geometryShaderSource,
+	GetFileDirectory(shaderName + "_vs.glsl"));
 }
 
-void ShaderProgram::CompileShaderProgram(const string& vertexShaderPath, const string& fragmentShaderPath,const string& geometryShaderPath) {
+ShaderProgram::ShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource) {
+    CompileShaderProgram(
+
+	vertexShaderSource,
+	fragmentShaderSource,
+	"",
+	"");
+
+}
+
+
+void ShaderProgram::CompileShaderProgram(const string& vertexShaderSource, const string& fragmentShaderSource,const string& geometryShaderSource, const std::string& path) {
     // link shader program.
-    ShaderProgramBuilder shaderBuilder(vertexShaderPath, fragmentShaderPath, geometryShaderPath);
+    ShaderProgramBuilder shaderBuilder(vertexShaderSource, fragmentShaderSource, geometryShaderSource, path);
     m_shaderProgram = shaderBuilder.GetLinkedShaderProgram();
 
     m_uniformLocationStore = new UniformLocationStore(m_shaderProgram);

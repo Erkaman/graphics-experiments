@@ -28,7 +28,7 @@ private:
 
     GLuint m_shaderProgram;
 
-    void CompileShaderProgram(const std::string& vertexShaderPath, const std::string& fragmentShaderPath,const std::string& geometryShaderPath);
+    void CompileShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource,const std::string& geometryShaderSource, const std::string& path);
 
     ShaderProgram();
 
@@ -37,7 +37,13 @@ private:
 public:
 
     ShaderProgram(const std::string& shaderName);
+
+    // create shader from source code.
+    ShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
+
     ~ShaderProgram();
+
+
 
     void Bind();
 

@@ -16,7 +16,7 @@ private:
 
     GLuint m_shaderProgram;
 
-    GLuint BuildAndCompileShader(const std::string& shaderPath, const GLenum shaderType);
+    GLuint BuildAndCompileShader(const std::string& shaderSource, const GLenum shaderType, const std::string& path);
     void BindAttribLocation(const GLuint attribIndex, const std::string& attribName);
     void Attach();
     void Link();
@@ -24,7 +24,10 @@ private:
 
 public:
 
-    ShaderProgramBuilder(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::string& geometryShaderPath);
+    /*
+      The source code of the shaders are passed as arguments.
+     */
+    ShaderProgramBuilder(const std::string& vertexShaderSource, const std::string& fragmentShaderSource, const std::string& geometryShaderSource, const std::string& path);
 
     GLuint GetLinkedShaderProgram();
 };

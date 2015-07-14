@@ -1,7 +1,9 @@
 
 #include "lib.glsl"
 
-#include "noise_lib.glsl"
+//#include "noise_lib.glsl"
+
+#include "cellular.glsl"
 
 out vec4 fragmentColor;
 
@@ -20,10 +22,21 @@ vec3 sampleDiffuseTexture() {
     vec3 red = vec3(1,0,0);
     vec3 blue = vec3(0,1,0);
 
-    return mix(red, blue,
+/*    return mix(red, blue,
 
 	       turbulence(3, vec3(texCoord.xy,0) * 3, 2, 0.5)
-	       /*snoise(vec3(3 * texCoord.xy,0))*/);
+
+    );
+*/
+
+    vec2 tt = cellular_euclidean(texCoord.xy);
+
+    float f1 = tt.x;
+    float f2 = tt.y;
+
+
+    return vec3( (f2+f1)*0.5 );
+
 
 //    return texture(tex, texCoord).xyz;
 }

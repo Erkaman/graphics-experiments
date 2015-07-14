@@ -8,22 +8,23 @@
 
 using namespace std;
 
-GLuint CreateShaderFromString(const string& str, GLenum shaderType, const string& shaderPath);
+GLuint CreateShaderFromString(const string& str, GLenum shaderType);
 string FormatCompilerErrorOutput(const GLuint shader, const string& shaderStr);
 
 string GetLogInfo(GLuint shaderProgram);
 bool GetCompileStatus(GLuint shaderProgram);
 
-string ParseShader(const std::string& shaderPath);
-
-ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const string& fragmentShaderPath, const string& geometryShaderPath) {
-	m_compiledVertexShader = BuildAndCompileShader(vertexShaderPath, GL_VERTEX_SHADER);
-	m_compiledFragmentShader = BuildAndCompileShader(fragmentShaderPath,  GL_FRAGMENT_SHADER);
+string ParseShader(const std::string& shaderSource, const std::string& path);
 
 
-	if(geometryShaderPath != "") {
+ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderSource, const string& fragmentShaderSource, const string& geometryShaderSource, const std::string& path) {
+    m_compiledVertexShader = BuildAndCompileShader(vertexShaderSource, GL_VERTEX_SHADER, path);
+    m_compiledFragmentShader = BuildAndCompileShader(fragmentShaderSource,  GL_FRAGMENT_SHADER, path);
 
-		m_compiledGeometryShader = BuildAndCompileShader(geometryShaderPath,  GL_GEOMETRY_SHADER);
+
+	if(geometryShaderSource != "") {
+
+	    m_compiledGeometryShader = BuildAndCompileShader(geometryShaderSource,  GL_GEOMETRY_SHADER, path);
 	m_hasGeometryShader = true;
     } else {
 	m_hasGeometryShader = false;
@@ -40,16 +41,15 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderPath, const
 
 }
 
-GLuint ShaderProgramBuilder::BuildAndCompileShader(const string& shaderPath, const GLenum shaderType){
+GLuint ShaderProgramBuilder::BuildAndCompileShader(const string& shaderSource, const GLenum shaderType, const std::string& path){
 
-    string shaderContents = ParseShader(shaderPath);
+    string shaderContents = ParseShader(shaderSource, path);
 
-
-    return CreateShaderFromString(shaderContents, shaderType, shaderPath);
+    return CreateShaderFromString(shaderContents, shaderType);
 }
 
 
-GLuint CreateShaderFromString(const string& str, const GLenum shaderType, const string& shaderPath) {
+GLuint CreateShaderFromString(const string& str, const GLenum shaderType) {
 
     GLuint shader;
     // this one is quite old. and it doesn't seem to work.
@@ -67,7 +67,7 @@ GLuint CreateShaderFromString(const string& str, const GLenum shaderType, const 
 
     if (!GetCompileStatus(shader)) {
 	// compilation failed
-	LOG_W("Could not compile shader %s\n%s", shaderPath.c_str(), FormatCompilerErrorOutput(shader, str).c_str());
+	LOG_W("Could not compile shader \n%s", /*shaderPath.c_str(),*/ FormatCompilerErrorOutput(shader, str).c_str());
 	exit(1);
     }
 
@@ -165,13 +165,14 @@ string GetLogInfo(GLuint shaderProgram) {
     return logInfoStr;
 }
 
-string ParseShader(const std::string& shaderPath) {
+string ParseShader(const std::string& shaderSource, const std::string& path) {
 
     string parsedShader = "";
 
     parsedShader +=  "#version 150\n";
 
-    vector<string> shaderLines = SplitString(File::GetFileContents(shaderPath), "\n");
+    // File::GetFileContents(
+    vector<string> shaderLines = SplitString(shaderSource, "\n");
 
     for(const string& line: shaderLines) {
 
@@ -182,9 +183,9 @@ string ParseShader(const std::string& shaderPath) {
 
 
 		string includePath = line.substr(firstQuoteIndex + 1, secondQuoteIndex - firstQuoteIndex - 1);
-		string shaderDir = GetFileDirectory(shaderPath);
+		//string shaderDir = GetFileDirectory(shaderPath);
 
-		string includeStr = File::GetFileContents(AppendPaths(shaderDir, includePath));
+		string includeStr = File::GetFileContents(AppendPaths(path, includePath));
 
 		parsedShader += includeStr + "\n";
 	} else {

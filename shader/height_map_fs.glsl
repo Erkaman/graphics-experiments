@@ -43,7 +43,7 @@ vec3 sampleDiffuseTexture() {
 
   vec3 diff = cameraPos.xyz - position.xyz;
 
-  float dist = sqrt((diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z));
+  float dist = sqrt(dot(diff,diff));
 
   int lod = calcLod(dist, 100, 1, 4 );
 /*
@@ -63,8 +63,8 @@ vec3 sampleDiffuseTexture() {
       return vec3(0,1,1); // cyan(light blue)
   } else {
       return vec3(1,0,1); //magenta(light purple)
-      }*/
-
+      }
+*/
   return mix(color1, color2,
 
     turbulence(lod, vec3(texCoord.xy,0) * 1, 2, 0.5));

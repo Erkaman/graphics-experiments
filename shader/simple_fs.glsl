@@ -1,6 +1,5 @@
 #include "noise_lib.glsl"
 
-
 out vec4 fragmentColor;
 in vec2 texCoord;
 
@@ -14,6 +13,7 @@ void main()
 	       turbulence(3, vec3(texCoord.xy,0) * 3, 2, 0.5)
 	       );
 
-    fragmentColor = vec4(noise, 1.0);
+//    noise -= vec3(10,10,10);
 
+    fragmentColor = vec4(noise, 1.0);
 }
