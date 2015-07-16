@@ -23,12 +23,14 @@
 
 #include "common.hpp"
 
+#include "sphere.hpp"
+
 
 using namespace std;
 
 constexpr int TEXTURE_SIZE = 256;
 
-TuhuApplication::TuhuApplication(): camera(NULL), heightMap(NULL), skybox(NULL), tree(NULL), plane(NULL), fbo(NULL), quad(NULL), simpleShader(NULL), m_perlinSeed(NULL) { }
+TuhuApplication::TuhuApplication(): camera(NULL), heightMap(NULL), skybox(NULL), tree(NULL), plane(NULL), fbo(NULL), quad(NULL), simpleShader(NULL), m_perlinSeed(NULL), m_sphere(NULL) { }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(camera);
@@ -40,6 +42,8 @@ TuhuApplication::~TuhuApplication() {
     MY_DELETE(quad);
     MY_DELETE(simpleShader);
     MY_DELETE(m_perlinSeed);
+    MY_DELETE(m_sphere);
+
 }
 
 void TuhuApplication::Init() {
@@ -74,7 +78,7 @@ void TuhuApplication::Init() {
 
 
 
-    plane = new Plane(Vector3f(1,4,1));
+    plane = new Plane(Vector3f(1,4,1), Vector3f(1,1,1));
 
     LOG_I("done init");
 
@@ -85,6 +89,8 @@ void TuhuApplication::Init() {
     simpleShader = new ShaderProgram("shader/simple");
 
     m_perlinSeed = new PerlinSeed(1);
+
+    m_sphere = new Sphere();
 
 }
 
@@ -104,12 +110,12 @@ void TuhuApplication::Render() {
 
     plane->Draw(*camera, lightPosition);
 
-    /*
-    fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
 
-    quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
+    //fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
 
+    //quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
 
+/*
     fbo->Bind();
 
     ::SetViewport(0,0,TEXTURE_SIZE,TEXTURE_SIZE);

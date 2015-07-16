@@ -1,20 +1,22 @@
 #pragma once
 
+
+
 class ShaderProgram;
 class VBO;
 class Camera;
 class Texture;
 class Vector4f;
+class Vector3f;
 
 #include "gl/gl_common.hpp"
-#include "math/vector3f.hpp"
+#include "geometry_object.hpp"
 
 class ShaderProgram;
 class VBO;
 class PerlinSeed;
 
-
-class Plane {
+class Plane : public GeometryObject{
 
     private:
 
@@ -26,8 +28,6 @@ class Plane {
 
     ShaderProgram* m_noiseShader;
 
-    Vector3f m_position;
-
     VBO* m_vertexBuffer;
     VBO* m_indexBuffer;
 
@@ -36,9 +36,8 @@ class Plane {
 
 public:
 
-    Plane(const Vector3f& position);
+    Plane(const Vector3f& position, const Vector3f& scale);
     ~Plane();
-
 
     void Draw(const Camera& camera, const Vector4f& lightPosition);
 

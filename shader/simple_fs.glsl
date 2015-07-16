@@ -13,6 +13,8 @@ void main()
 	       turbulence(3, vec3(texCoord.xy,0) * 3, 2, 0.5)
 	       );
 
+    noise = vec3(0,0,1);
+
 //    noise -= vec3(10,10,10);
 
     fragmentColor = vec4(noise, 1.0);

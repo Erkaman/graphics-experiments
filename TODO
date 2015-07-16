@@ -1,8 +1,8 @@
 
 misc todo:
-* +we can use less perlin octaves for distant textures! LOD!
+* billboard grass.
 * bump mapping.
-* make perlin noise generator(tileable: http://gamedev.stackexchange.com/a/23705)
+* HDR
 * make bmp loader.
 * make prettier text.
 

@@ -2,3 +2,4 @@ build/
 pdf/
 dat/
 photo/
+.DS_Store

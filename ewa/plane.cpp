@@ -7,10 +7,11 @@
 
 #include "math/matrix4f.hpp"
 #include "math/vector2f.hpp"
+#include "math/vector3f.hpp"
 
 using std::vector;
 
-Plane::Plane(const Vector3f& position): m_position(position){
+Plane::Plane(const Vector3f& position, const Vector3f& scale ): GeometryObject(position, scale){
 
     m_noiseShader = new ShaderProgram("shader/noise");
 
@@ -70,12 +71,14 @@ Plane::Plane(const Vector3f& position): m_position(position){
     m_perlinSeed = new PerlinSeed(9);
 }
 
-
 void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_noiseShader->Bind();
 
-    m_noiseShader->SetPhongUniforms(Matrix4f::CreateTranslation(m_position) , camera, lightPosition);
+    m_noiseShader->SetPhongUniforms(
+
+	GetModelMatrix()
+	 , camera, lightPosition);
 
     m_perlinSeed->Bind(*m_noiseShader);
 

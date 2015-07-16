@@ -13,6 +13,7 @@ class Plane;
 class FBO;
 class Quad;
 class PerlinSeed;
+class Sphere;
 
 class TuhuApplication : public Application{
 
@@ -30,6 +31,8 @@ private:
     ShaderProgram* simpleShader;
 
     PerlinSeed* m_perlinSeed;
+
+    Sphere* m_sphere;
 
 
 public:

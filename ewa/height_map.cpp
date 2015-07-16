@@ -44,7 +44,6 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
     return n.Normalize();
 }
 
-
 HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f) {
 
 
