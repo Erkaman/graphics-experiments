@@ -80,11 +80,8 @@ void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
 	GetModelMatrix()
 	 , camera, lightPosition);
 
-    m_perlinSeed->Bind(*m_noiseShader);
 
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
-
-    m_perlinSeed->Unbind();
 
     m_noiseShader->Unbind();
 }

@@ -120,6 +120,8 @@ Skybox::Skybox(const std::string& frontFace, const std::string& backFace, const 
     m_indexBuffer->Bind();
     m_indexBuffer->SetBufferData(indices);
     m_indexBuffer->Unbind();
+
+
 }
 
 void Skybox::Draw(const Camera& camera) {
@@ -136,6 +138,7 @@ void Skybox::Draw(const Camera& camera) {
 
     m_shader->SetUniform("mvp", mvp);
     m_shader->SetUniform("sampler", 0);
+
 
     m_indexBuffer->DrawIndices(GL_TRIANGLES, m_numIndices);
 

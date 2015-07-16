@@ -5,8 +5,7 @@
 #include "gl/shader_program.hpp"
 
 #include "math/vector3f.hpp"
-
-#include "perlin_seed.hpp"
+#include "math/color.hpp"
 
 
 #include "common.hpp"
@@ -32,19 +31,14 @@ Sphere::Sphere(const float radius, const int slices, const int stacks): Geometry
     m_vertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{
 	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX },
-	vector<GLuint>{3,3}
+		VBO_COLOR_ATTRIB_INDEX },
+	vector<GLuint>{3,4}
 	);
 
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
     m_numTriangles = GenerateVertices(radius, slices, stacks, m_vertexBuffer, m_indexBuffer);
-
-    m_perlinSeed = new PerlinSeed(2);
-
 }
-
-
 
 Sphere::~Sphere() {
     MY_DELETE(m_shader);
@@ -58,6 +52,9 @@ void Sphere::Draw(const Camera& camera) {
 
     SetDepthTest(false);
 
+    //   GL_C(glDisable (GL_CULL_FACE));
+
+
     Matrix4f modelView =  camera.GetViewMatrix();
     modelView.m03 = 0;
     modelView.m13 = 0;
@@ -66,18 +63,22 @@ void Sphere::Draw(const Camera& camera) {
     Matrix4f mvp = camera.GetProjectionMatrix() * modelView;
 
     m_shader->SetUniform("mvp", mvp);
-//    m_shader->SetUniform("sampler", 0);
 
 
+    /*
+    const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
+	GetModelMatrix());
 
-    m_perlinSeed->Bind(*m_shader);
+    const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
 
+    m_shader->SetUniform("mvp", mvp);
+
+*/
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
 
-    m_perlinSeed->Unbind();
-
-
     m_shader->Unbind();
+
+//    GL_C(glEnable (GL_CULL_FACE));
 
     SetDepthTest(true);
 
@@ -94,11 +95,14 @@ GLushort GenerateVertices(
     FloatVector vertices;
     UshortVector indices;
 
-    // loop through stacks.
+    int counter = 0;
+
+
+    // make a half sphere.
     for (int i = 0; i <= stacks; ++i){
 
 	float V   = (float)i / (float) stacks;
-	float phi = V * PI;
+	float phi = V * PI/2.0f; // PI/2.0f, means that we're only generating half a sphere.
 
 	// loop through the slices.
 	for (int j = 0; j <= slices; ++j){
@@ -115,16 +119,16 @@ GLushort GenerateVertices(
 	    pos *= radius;
 	    pos.Add(vertices);
 
-//	    Color(x,y,z).Add(vertices);
-	    Vector3f(x,y,z).Add(vertices);
-
-//	    LOG_I("Y: %f", y);
-
+	    Color(x,y,z).Add(vertices);
 	}
     }
 
-    // Calc The Index Positions
-    for (int i = 0; i < slices * stacks + slices; ++i){
+    LOG_I("vertices size: %f", vertices.size() / 7.0f );
+
+    // next, we make the vertices of the bottom of the half sphere.
+
+    int i = 0;
+    for (; i < slices * stacks + slices; ++i){
 
 	indices.push_back (i + slices);
 	indices.push_back (i + slices + 1);
@@ -135,8 +139,21 @@ GLushort GenerateVertices(
 	indices.push_back (i + slices + 1);
     }
 
+    Vector3f pos(0,0,0);
+    pos.Add(vertices);
+    Color(0,0,0).Add(vertices);
 
-//    LOG_I("SPHERE");
+    const GLushort originIndex = i + slices + 1;
+
+    for(int j = 0; j < slices; ++j) {
+
+	indices.push_back(originIndex);
+
+	indices.push_back(i+j+1);
+
+	indices.push_back(i+j);
+    }
+
 
     m_vertexBuffer->Bind();
     m_vertexBuffer->SetBufferData(vertices);

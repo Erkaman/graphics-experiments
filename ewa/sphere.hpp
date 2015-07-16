@@ -6,6 +6,7 @@ class VBO;
 class ShaderProgram;
 class Camera;
 class Vector4f;
+class PerlinSeed;
 
 class Sphere : public GeometryObject{
 
@@ -18,6 +19,9 @@ private:
     VBO* m_indexBuffer;
 
     ShaderProgram* m_shader;
+
+    PerlinSeed* m_perlinSeed;
+
 
 public:
 

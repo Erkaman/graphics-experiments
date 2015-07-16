@@ -9,8 +9,6 @@ out vec4 fragmentColor;
 
 uniform vec3 viewSpaceLightPosition;
 
-uniform sampler2D tex;
-
 in vec3 vertexColor;
 in vec2 texCoord;
 

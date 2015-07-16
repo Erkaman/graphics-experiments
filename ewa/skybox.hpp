@@ -5,6 +5,7 @@
 class ShaderProgram;
 class VBO;
 class Camera;
+class PerlinSeed;
 
 class Skybox {
 
@@ -20,6 +21,8 @@ private:
 
     GLushort m_numIndices;
 
+
+    PerlinSeed* m_perlinSeed;
 
     void SetupForRender();
     void UnsetupForRender();

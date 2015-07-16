@@ -1,13 +1,13 @@
 in  vec3 positionIn;
-in  vec4 colorIn;
+in vec3 texCoordIn;
 
 uniform mat4 mvp;
 
-out vec3 vertexColor;
+out vec3 texCoord;
 
 void main()
 {
     gl_Position = mvp * vec4(positionIn,1);
 
-    vertexColor = colorIn.rgb;
+    texCoord = texCoordIn;
 }
