@@ -41,6 +41,7 @@ void main()
     float alpha = 0.3;
 
     fragmentColor = vec4(
+//	noise3(texCoord)
 	mix(sky, clouds, alpha)
 	, 1.0);
 }

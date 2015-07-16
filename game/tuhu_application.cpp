@@ -25,6 +25,9 @@
 
 #include "sphere.hpp"
 
+#include "value_noise_seed.hpp"
+
+
 
 using namespace std;
 
@@ -100,9 +103,10 @@ void TuhuApplication::Render() {
 
     Clear(0.0f, 1.0f, 1.0f);
 
+
+
     m_sphere->Draw(*camera);
 
-//    skybox->Draw(*camera);
 
     Vector4f lightPosition(93,10.0f,93, 1.0f);
     heightMap->Draw(*camera, lightPosition);

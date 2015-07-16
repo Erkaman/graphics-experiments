@@ -55,4 +55,4 @@ float turbulence(int octaves, vec3 P, float lacunarity, float gain)
     totalgain *= gain;
   }
   return abs(sum);
-  }
+}
