@@ -116,7 +116,7 @@ void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, c
 }
 
 void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, const std::string& str) {
-    DrawString(fontShader, x, y, str, Color::White());
+    DrawString(fontShader, x, y, str, Color::WHITE);
 }
 
 Vector2f Font::LookupChar(const char ch) {

@@ -54,6 +54,7 @@ public:
     */
     static Color Lerp(const Color& a, const Color& b, const float v);
 
-    static Color White();
+    const static Color WHITE;
+    const static Color RED;
 
 };

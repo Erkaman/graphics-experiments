@@ -90,7 +90,7 @@ void TuhuApplication::Init() {
 
     m_perlinSeed = new PerlinSeed(1);
 
-    m_sphere = new Sphere();
+    m_sphere = new Sphere(1, 10, 10);
 
 }
 
@@ -98,10 +98,11 @@ void TuhuApplication::Render() {
 
     SetViewport();
 
-    Clear(0.0f, 0.0f, 1.0f);
+    Clear(0.0f, 1.0f, 1.0f);
 
+    m_sphere->Draw(*camera);
 
-    skybox->Draw(*camera);
+//    skybox->Draw(*camera);
 
     Vector4f lightPosition(93,10.0f,93, 1.0f);
     heightMap->Draw(*camera, lightPosition);
@@ -109,6 +110,7 @@ void TuhuApplication::Render() {
 
 
     plane->Draw(*camera, lightPosition);
+
 
 
     //fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);

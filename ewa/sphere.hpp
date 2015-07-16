@@ -1,11 +1,13 @@
 #pragma once
 
+#include "geometry_object.hpp"
+
 class VBO;
 class ShaderProgram;
 class Camera;
 class Vector4f;
 
-class Sphere {
+class Sphere : public GeometryObject{
 
 private:
 
@@ -15,14 +17,14 @@ private:
     VBO* m_vertexBuffer;
     VBO* m_indexBuffer;
 
-
     ShaderProgram* m_shader;
 
 public:
 
-    Sphere();
+    Sphere(const float radius, const int slices, const int stacks);
     ~Sphere();
 
-    void Draw(const Camera& camera, const Vector4f& lightPosition);
+
+    void Draw(const Camera& camera);
 
 };

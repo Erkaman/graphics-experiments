@@ -1,5 +1,9 @@
 #include "color.hpp"
 #include <math.h>
+
+const Color Color::WHITE(1.0,1.0,1.0);
+const Color Color::RED(1.0,0.0,0.0);
+
 Color::Color():r(0.0f),g(0.0f),b(0.0f), a(0.0f) {  }
 
 Color::Color(const float value): r(value), g(value),b(value), a(value){  }
@@ -65,8 +69,4 @@ bool operator==(const Color& c1, const Color& c2) {
 
 Color::operator std::string() const {
     return "(" + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b)  + ", " + std::to_string(a)+ ")";
-}
-
-Color Color::White() {
-    return Color(1.0,1.0,1.0);
 }
