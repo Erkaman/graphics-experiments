@@ -21,7 +21,7 @@ GLushort GenerateVertices(
     VBO* m_indexBuffer
     );
 
-Sphere::Sphere(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)) {
+Sphere::Sphere(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0) {
 
     /*
       load the shader
@@ -67,8 +67,9 @@ void Sphere::Draw(const Camera& camera) {
 
     m_shader->SetUniform("mvp", mvp);
 //    m_shader->SetUniform("sampler", 0);
+    m_shader->SetUniform("delta", m_delta);
 
-
+//    LOG_I("delta: %f", m_delta);
 
     m_perlinSeed->Bind(*m_shader);
 
@@ -147,4 +148,8 @@ GLushort GenerateVertices(
     m_indexBuffer->Unbind();
 
     return indices.size();
+}
+
+void Sphere::Update(const float delta) {
+    m_delta += delta;
 }

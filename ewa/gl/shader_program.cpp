@@ -160,3 +160,12 @@ void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& 
     SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * lightPosition) );
 
 }
+
+void ShaderProgram::SetUniform(const std::string& uniformName, const float val) {
+    if (m_uniformLocationStore->UniformExists(uniformName)) {
+	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
+	GL_C(glUniform1f(location, val));
+    } else {
+	SetUniformWarn(uniformName);
+    }
+}

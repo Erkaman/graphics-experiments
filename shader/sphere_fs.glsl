@@ -4,6 +4,8 @@ out vec4 fragmentColor;
 
 in vec3 texCoord;
 
+uniform float delta;
+
 // return 1 when x > 0, otherwise return 0.
 float when_positive(float x) {
     return max(sign(x), 0);
@@ -19,7 +21,13 @@ void main()
 
     vec3 sky = mix(vec3(0.50f, 0.50f, 0.66f), vec3(0.0f, 0.15f, 0.66f), y);
 
-    float noise = turbulence(5, vec3(texCoord *4) * 1, 2, 0.5);
+#define CLOUD_SPEED 0.001
+
+    float noise = turbulence(5, vec3(  vec3(
+
+    texCoord.x+delta*CLOUD_SPEED*1.5,
+	texCoord.y+delta*CLOUD_SPEED*1.3,
+	texCoord.z+delta*CLOUD_SPEED*1.1) *4) * 1, 2, 0.5);
 
     // decrease the cover of the clouds
     noise -= 0.2;
@@ -33,6 +41,6 @@ void main()
     float alpha = 0.3;
 
     fragmentColor = vec4(
-	alpha * clouds + (1 - alpha)  * sky
+	mix(sky, clouds, alpha)
 	, 1.0);
 }

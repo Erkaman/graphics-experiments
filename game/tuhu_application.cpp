@@ -170,6 +170,8 @@ void TuhuApplication::Update(const float delta) {
     }
 
     camera->HandleInput();
+
+    m_sphere->Update(delta);
 }
 
 void TuhuApplication::RenderText()  {

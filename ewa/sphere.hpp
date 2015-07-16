@@ -22,6 +22,7 @@ private:
 
     PerlinSeed* m_perlinSeed;
 
+    float m_delta;
 
 public:
 
@@ -30,5 +31,7 @@ public:
 
 
     void Draw(const Camera& camera);
+    void Update(const float delta);
+
 
 };

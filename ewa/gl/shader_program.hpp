@@ -52,6 +52,7 @@ public:
     void SetUniform(const std::string& uniformName, const Color& color);
     void SetUniform(const std::string& uniformName, const Matrix4f& matrix);
     void SetUniform(const std::string& uniformName, const int val);
+    void SetUniform(const std::string& uniformName, const float val);
     void SetUniform(const std::string& uniformName, const Vector4f& v);
     void SetUniform(const std::string& uniformName, const Vector3f& v);
 
