@@ -1,4 +1,4 @@
-#include "noise_lib.glsl"
+#include "value_noise_lib.glsl"
 
 out vec4 fragmentColor;
 
@@ -13,6 +13,7 @@ float when_positive(float x) {
 
 void main()
 {
+
     float y = texCoord.y;
 
 
@@ -21,13 +22,15 @@ void main()
 
     vec3 sky = mix(vec3(0.50f, 0.50f, 0.66f), vec3(0.0f, 0.15f, 0.66f), y);
 
-#define CLOUD_SPEED 0.001
+#define CLOUD_SPEED 0.004
 
-    float noise = turbulence(5, vec3(  vec3(
+    float noise = value_noise_turbulence(7,
 
-    texCoord.x+delta*CLOUD_SPEED*1.5,
+					 vec3(texCoord.x+delta*CLOUD_SPEED*1.5,
 	texCoord.y+delta*CLOUD_SPEED*1.3,
-	texCoord.z+delta*CLOUD_SPEED*1.1) *4) * 1, 2, 0.5);
+	texCoord.z+delta*CLOUD_SPEED*1.1) *4
+
+					 , 2, 0.5);
 
     // decrease the cover of the clouds
     noise -= 0.2;
@@ -41,7 +44,7 @@ void main()
     float alpha = 0.3;
 
     fragmentColor = vec4(
-//	noise3(texCoord)
 	mix(sky, clouds, alpha)
+//	vec3(value_noise_turbulence(7, texCoord.xyz * 4, 2, 0.5))
 	, 1.0);
 }

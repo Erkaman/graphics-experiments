@@ -15,8 +15,8 @@ float rand(float x){
 
 // 3D version
 
-float inoise(vec3 p){
-    vec3 P = fmod(floor(p), 256.0);
+float value_noise(vec3 p){
+    vec3 P = mod(floor(p), 256.0);
     p -= floor(p);
     vec3 f = fade(p);
 
@@ -40,6 +40,8 @@ float inoise(vec3 p){
     vec4 AA = perm(P.xy) + P.z;
 
 
+
+
     // put AA, AB, BA, BB in texture. 256x256 texture.
 
     // put random integer in range [0,1] in 256x1 texture
@@ -55,9 +57,23 @@ float inoise(vec3 p){
 */
 
     return mix(
-	mix(mix(rand(AA.x), rand(BA.z), f.x),
-	     mix(rand(AB.y), rand(BB.w), f.x), f.y),
-	mix(mix(rand(AA.x + one),rand(BA.z + one), f.x),
-	     mix(rand(AB.y + one),rand(BB.w + one), f.x), f.y),
+	mix(mix(rand(AA.x), rand(AA.z), f.x),
+	     mix(rand(AA.y), rand(AA.w), f.x), f.y),
+	mix(mix(rand(AA.x + one),rand(AA.z + one), f.x),
+	     mix(rand(AA.y + one),rand(AA.w + one), f.x), f.y),
 	f.z);
+}
+
+
+float value_noise_turbulence(int octaves, vec3 P, float lacunarity, float gain)
+{
+  float sum = 0;
+  float scale = 1;
+  float totalgain = 1;
+  for(int i=0;i<octaves;i++){
+    sum += totalgain*value_noise(P*scale);
+    scale *= lacunarity;
+    totalgain *= gain;
+  }
+  return abs(sum);
 }

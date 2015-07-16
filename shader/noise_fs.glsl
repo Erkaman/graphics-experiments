@@ -1,7 +1,6 @@
 
 #include "lib.glsl"
 
-//#include "noise_lib.glsl"
 
 #include "cellular.glsl"
 

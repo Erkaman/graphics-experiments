@@ -9,6 +9,7 @@ vec4 perm2d(vec2 p)
 {
     return texture(permSampler2d, p);
 }
+
 float gradperm(float x, vec3 p)
 {
     return dot(vec3(texture(permGradSampler, vec2(x,0.0)).xyz), p);
@@ -56,3 +57,7 @@ float turbulence(int octaves, vec3 P, float lacunarity, float gain)
   }
   return abs(sum);
 }
+
+
+
+//maybe we can simd optimzie this shit! like the cellular stuff.

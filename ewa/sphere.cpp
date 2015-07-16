@@ -6,8 +6,7 @@
 
 #include "math/vector3f.hpp"
 
-#include "perlin_seed.hpp"
-
+#include "value_noise_seed.hpp"
 
 #include "common.hpp"
 #include "camera.hpp"
@@ -40,7 +39,7 @@ Sphere::Sphere(const float radius, const int slices, const int stacks): Geometry
 
     m_numTriangles = GenerateVertices(radius, slices, stacks, m_vertexBuffer, m_indexBuffer);
 
-    m_perlinSeed = new PerlinSeed(2);
+    m_perlinSeed = new ValueNoiseSeed(2);
 
 }
 
@@ -50,6 +49,8 @@ Sphere::~Sphere() {
     MY_DELETE(m_shader);
     MY_DELETE(m_vertexBuffer);
     MY_DELETE(m_indexBuffer);
+    MY_DELETE(m_perlinSeed);
+
 }
 
 void Sphere::Draw(const Camera& camera) {

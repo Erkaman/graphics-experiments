@@ -1,6 +1,6 @@
 
 #include "lib.glsl"
-#include "noise_lib.glsl"
+#include "perlin_noise_lib.glsl"
 
 in vec3 position;
 

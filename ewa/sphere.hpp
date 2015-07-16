@@ -6,7 +6,7 @@ class VBO;
 class ShaderProgram;
 class Camera;
 class Vector4f;
-class PerlinSeed;
+class ValueNoiseSeed;
 
 class Sphere : public GeometryObject{
 
@@ -20,7 +20,7 @@ private:
 
     ShaderProgram* m_shader;
 
-    PerlinSeed* m_perlinSeed;
+    ValueNoiseSeed* m_perlinSeed;
 
     float m_delta;
 
