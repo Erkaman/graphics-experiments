@@ -10,7 +10,6 @@ class GLFWwindow;
 
 class ShaderProgram;
 
-
 class Font;
 
 
@@ -25,10 +24,10 @@ private:
     void Update_internal(const float delta);
     void RenderText_internal(const std::string& fpsString);
 
-    GLFWwindow* window;
-    bool running;
+    GLFWwindow* m_window;
+    bool m_running;
 
-    VAO* vao;
+    VAO* m_vao;
 
 public:
 
@@ -52,9 +51,5 @@ protected:
 
     void SetViewport();
 
-    int GetKey(int key);
-
     void SetWindowTitle(const std::string& title);
-
-
 };

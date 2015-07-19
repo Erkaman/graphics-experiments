@@ -2,6 +2,9 @@
 
 #include "geometry_object.hpp"
 
+#include "math/vector3f.hpp"
+
+
 class VBO;
 class ShaderProgram;
 class Camera;
@@ -24,6 +27,12 @@ private:
 
     float m_delta;
 
+    Vector3f m_sunDirection;
+
+    float m_azimuthAngle;
+    float m_elevationAngle;
+
+
 public:
 
     Sphere(const float radius, const int slices, const int stacks);
@@ -32,6 +41,8 @@ public:
 
     void Draw(const Camera& camera);
     void Update(const float delta);
+
+    void UpdateSunDirection();
 
 
 };

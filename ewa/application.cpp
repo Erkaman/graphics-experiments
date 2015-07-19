@@ -8,6 +8,7 @@
 
 #include "font.hpp"
 #include "log.hpp"
+#include "keyboard_state.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,13 +33,15 @@ void Application::Start() {
 			     GetWindowWidth(),GetWindowHeight());
 
 
+    KeyboardState::GetInstance().Init(m_window);
+
     this->Init();
     this->DoMainLoop();
     this->Cleanup();
 }
 
 void Application::DoMainLoop() {
-    running = true;
+    m_running = true;
 
     FPSManager fps;
 
@@ -47,7 +50,7 @@ void Application::DoMainLoop() {
     float delta = 0.0f;
 
 
-    while(running) {
+    while(m_running) {
 
 	this->Update_internal(delta);
 
@@ -58,7 +61,7 @@ void Application::DoMainLoop() {
 
 
 	// update frame buffer
-	glfwSwapBuffers(window);
+	glfwSwapBuffers(m_window);
 	// update input.
 	glfwPollEvents();
 
@@ -72,8 +75,8 @@ void Application::DoMainLoop() {
 }
 
 void Application::Cleanup() {
-    vao->Unbind();
-    delete vao;
+    m_vao->Unbind();
+    delete m_vao;
     delete m_fontShader;
     delete m_font;
 
@@ -97,15 +100,15 @@ void Application::SetupOpenGL() {
     glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
-    window = glfwCreateWindow (800, 600, "Tuhu", NULL, NULL);
-    if (!window) {
+    m_window = glfwCreateWindow (800, 600, "Tuhu", NULL, NULL);
+    if (!m_window) {
 	fprintf (stderr, "ERROR: could not open window with GLFW3\n");
 	glfwTerminate();
 	exit(1);
     }
-    glfwMakeContextCurrent (window);
+    glfwMakeContextCurrent (m_window);
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // start GLEW extension handler
     glewExperimental = GL_TRUE;
@@ -132,51 +135,47 @@ void Application::SetupOpenGL() {
     LOG_I( "   VERSION:%s", glGetString( GL_VERSION ));
     LOG_I( "  RENDERER:%s", glGetString( GL_RENDERER ) );
 
-    vao = new VAO();
-    vao->Bind();
+    m_vao = new VAO();
+    m_vao->Bind();
 }
 
 void Application::SetViewport() {
 
 
     int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
+    glfwGetFramebufferSize(m_window, &width, &height);
 
     ::SetViewport(0, 0, width, height);
 }
 
 void Application::Update_internal(const float delta) {
 
-    running = GetKey(GLFW_KEY_ESCAPE) != GLFW_PRESS ;
+    const KeyboardState& kbs = KeyboardState::GetInstance();
 
-    Mouse::getInstance().Update(window);
+    m_running = !kbs.IsPressed(GLFW_KEY_ESCAPE);// GetKey(GLFW_KEY_ESCAPE) != GLFW_PRESS ;
+
+    Mouse::getInstance().Update(m_window);
 
     this->Update(delta);
 
 }
 
-
-int Application::GetKey(int key) {
-    return glfwGetKey( window , key );
-}
-
-
 int Application::GetWindowWidth() {
     int width, height;
-    glfwGetWindowSize(window, &width, &height);
+    glfwGetWindowSize(m_window, &width, &height);
 
     return width;
 }
 
 int Application::GetWindowHeight() {
     int width, height;
-    glfwGetWindowSize(window, &width, &height);
+    glfwGetWindowSize(m_window, &width, &height);
     return height;
 }
 
 void Application::SetWindowTitle(const std::string& title) {
 
-    glfwSetWindowTitle(window, title.c_str());
+    glfwSetWindowTitle(m_window, title.c_str());
 
 }
 

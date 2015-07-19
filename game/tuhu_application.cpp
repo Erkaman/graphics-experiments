@@ -15,6 +15,7 @@
 #include "plane.hpp"
 #include "quad.hpp"
 #include "perlin_seed.hpp"
+#include "keyboard_state.hpp"
 
 #include "worley_seed.hpp"
 
@@ -150,26 +151,28 @@ void TuhuApplication::Render() {
 void TuhuApplication::Update(const float delta) {
     static float speed = 1.0f;
 
+    const KeyboardState& kbs = KeyboardState::GetInstance();
 
-    if(GetKey( GLFW_KEY_W ) == GLFW_PRESS) {
+
+    if( kbs.IsPressed(GLFW_KEY_W) ) {
 	camera->Walk(delta * speed);
-    }  else if(GetKey( GLFW_KEY_S ) == GLFW_PRESS) {
+    }  else if(kbs.IsPressed(GLFW_KEY_S) ) {
 	camera->Walk(-delta * speed);
     }
 
-    if(GetKey( GLFW_KEY_A ) == GLFW_PRESS) {
+    if(kbs.IsPressed(GLFW_KEY_A) ) {
 	camera->Stride(-delta * speed);
-    }else if(GetKey( GLFW_KEY_D ) == GLFW_PRESS) {
+    }else if( kbs.IsPressed(GLFW_KEY_D) ) {
 	camera->Stride(+delta * speed);
     }
 
-    if(GetKey( GLFW_KEY_O ) == GLFW_PRESS) {
+    if(   kbs.IsPressed(GLFW_KEY_O) ) {
 	camera->Fly(+delta * speed);
-    }else if(GetKey( GLFW_KEY_L ) == GLFW_PRESS) {
+    }else if(   kbs.IsPressed(GLFW_KEY_L) ) {
 	camera->Fly(-delta * speed);
     }
 
-    if(GetKey( GLFW_KEY_M ) == GLFW_PRESS) {
+    if(   kbs.IsPressed(GLFW_KEY_M)  ) {
 	speed = 5.0f;
     }else {
 	speed = 1.0f;

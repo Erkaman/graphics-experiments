@@ -8,9 +8,12 @@
 #include "math/vector4f.hpp"
 
 #include "value_noise_seed.hpp"
+#include "keyboard_state.hpp"
 
 #include "common.hpp"
 #include "camera.hpp"
+
+#include "gl/gl_common.hpp"
 
 using std::vector;
 
@@ -21,7 +24,8 @@ GLushort GenerateVertices(
     VBO* m_indexBuffer
     );
 
-Sphere::Sphere(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0) {
+Sphere::Sphere(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0),     m_azimuthAngle(-27.7f), m_elevationAngle(2.74f)
+ {
 
     /*
       load the shader
@@ -42,9 +46,7 @@ Sphere::Sphere(const float radius, const int slices, const int stacks): Geometry
 
     m_perlinSeed = new ValueNoiseSeed(2);
 
-
-
-
+    UpdateSunDirection();
 }
 
 
@@ -79,21 +81,7 @@ void Sphere::Draw(const Camera& camera) {
 
 
 
-
-
-
-    float azimuthAngle = -27.7f;
-    float elevationAngle = 2.74f;
-
-    const Matrix4f elevation =Matrix4f::CreateRotate(elevationAngle, Vector3f(0,0,1) ); //glm::rotate(elevationAngle, vec3(0, 0, 1));
-    const Matrix4f rotation = Matrix4f::CreateRotate(azimuthAngle, Vector3f(0,1,0) );
-//    const Matrix4f rotation = glm::rotate(azimuthAngle, vec3(0, 1, 0));
-
-    Vector3f sunDirection = Vector3f(rotation * elevation * Vector4f(1, 0, 0, 1));
-
-//    LOG_I("sun dir: %s",  std::string(sunDirection).c_str() );
-
-    m_shader->SetUniform("sunDirection", sunDirection);
+    m_shader->SetUniform("sunDirection", m_sunDirection);
 
     m_shader->SetUniform("reileighCoefficient", 1.0f);
     m_shader->SetUniform("mieCoefficient", 0.053f);
@@ -186,4 +174,42 @@ GLushort GenerateVertices(
 
 void Sphere::Update(const float delta) {
     m_delta += delta;
+
+/*    if(GetKey( GLFW_KEY_U ) == GLFW_PRESS) {
+	m_elevationAngle += delta * 0.5f;
+	}*/
+
+    const KeyboardState& kbs = KeyboardState::GetInstance();
+
+    const float SPEED = 5.5f;
+
+    if(kbs.IsPressed(GLFW_KEY_U)) {
+	m_elevationAngle += delta * SPEED;
+	UpdateSunDirection();
+    }
+    if(kbs.IsPressed(GLFW_KEY_I)) {
+	m_elevationAngle -= delta * SPEED;
+	UpdateSunDirection();
+    }
+
+    if(kbs.IsPressed(GLFW_KEY_T)) {
+	m_azimuthAngle += delta * SPEED;
+	UpdateSunDirection();
+    }
+    if(kbs.IsPressed(GLFW_KEY_Y)) {
+	m_azimuthAngle -= delta * SPEED;
+	UpdateSunDirection();
+    }
+
+
+}
+
+void Sphere::UpdateSunDirection() {
+
+    const Matrix4f elevation =Matrix4f::CreateRotate(m_elevationAngle, Vector3f(0,0,1) ); //glm::rotate(elevationAngle, vec3(0, 0, 1));
+    const Matrix4f rotation = Matrix4f::CreateRotate(m_azimuthAngle, Vector3f(0,1,0) );
+//    const Matrix4f rotation = glm::rotate(azimuthAngle, vec3(0, 1, 0));
+
+    m_sunDirection = Vector3f(rotation * elevation * Vector4f(1, 0, 0, 1));
+
 }
