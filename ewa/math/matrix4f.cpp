@@ -447,3 +447,26 @@ Matrix4f Matrix4f::CreateOrthographic( const float left, const float right, cons
 	 0.0f, 0.0f, 2.0f / (far - near) ,  -(far +near) / (far - near),
 	 0.0f, 0.0f,      0.0f  , 1.0f);
 }
+
+Matrix4f Matrix4f::CreateRotate(const float angle, const Vector3f& axis) {
+    const float a = toRadians(angle);
+   const float cosA = cos(a);
+    const float oneMinusCosA = 1 - cosA;
+    const float sinA  = sin(a);
+
+    // axis must be normalized.
+    const Vector3f normAxis = axis.Normalize();
+
+
+    const float ux = normAxis.x;
+    const float uy = normAxis.y;
+    const float uz = normAxis.z;
+
+    return Matrix4f(
+	cosA + ux*ux * (oneMinusCosA),ux * uy * oneMinusCosA - uz * sinA, ux *  uz * (oneMinusCosA) + uy * sinA, 0,
+	uy * ux * oneMinusCosA + uz * sinA, cosA + uy * uy * (oneMinusCosA), uy * uz * (oneMinusCosA) - ux * sinA, 0,
+	uz * ux * oneMinusCosA  - uy * sinA, uz * uy * oneMinusCosA + ux * sinA, cosA + uz * uz * oneMinusCosA, 0,
+	0,0,0, 1
+	);
+
+}

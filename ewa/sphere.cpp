@@ -41,6 +41,10 @@ Sphere::Sphere(const float radius, const int slices, const int stacks): Geometry
 
     m_perlinSeed = new ValueNoiseSeed(2);
 
+
+
+    float azimuthAngle = -27.7f;
+    float elevationAngle = 2.74f;
 }
 
 

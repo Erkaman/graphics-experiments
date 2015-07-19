@@ -48,6 +48,13 @@ Vector3f& Vector3f::Normalize() {
     return *this;
 }
 
+Vector3f Vector3f::Normalize()const {
+    Vector3f n(*this);
+    n.Normalize();
+    return n;
+}
+
+
 Vector3f Vector3f::Cross(const Vector3f& v1, const Vector3f& v2) {
     return Vector3f(
 	v1.y * v2.z - v1.z * v2.y,

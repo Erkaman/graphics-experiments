@@ -80,4 +80,9 @@ public:
 
     static Matrix4f GetNormalMatrix(const Matrix4f& modelViewMatrix);
 
+    /*
+      Create a matrix for rotation "angle" degrees around an axis.
+     */
+    static Matrix4f CreateRotate(const float angle, const Vector3f& axis);
+
 };

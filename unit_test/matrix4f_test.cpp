@@ -281,6 +281,32 @@ static void MultVector() {
     AssertEquals(a*b, expected);
 }
 
+static void TestCreateRotate() {
+
+    // rotate the vector (1,0,0,1) round the z-axis 90 degrees.
+    AssertEquals(
+	Matrix4f::CreateRotate(90, Vector3f(0,0,1) ) * Vector4f(1,0,0,1),
+	Vector4f(0,1,0,1));
+
+    AssertEquals(
+	Matrix4f::CreateRotate(-90, Vector3f(0,0,1) ) * Vector4f(1,0,0,1),
+	Vector4f(0,-1,0,1));
+
+    AssertEquals(
+	Matrix4f::CreateRotate(180, Vector3f(0,0,1) ) * Vector4f(1,0,0,1),
+	Vector4f(-1,0,0,1));
+
+    AssertEquals(
+	Matrix4f::CreateRotate(90, Vector3f(0,1,0) ) * Vector4f(1,0,0,1),
+	Vector4f(0,0,-1,1));
+
+    AssertEquals(
+	Matrix4f::CreateRotate(45, Vector3f(0,0,1) ) * Vector4f(1,0,0,1),
+	Vector4f(0.707107,0.707107,0,1));
+
+
+}
+
 void Matrix4fTestSuite() {
 
     TestSuite suite;
@@ -298,8 +324,8 @@ void Matrix4fTestSuite() {
     suite.emplace_back(TestSub, "TestSub");
     suite.emplace_back(TestInverse, "TestInverse");
     suite.emplace_back(MultVector, "MultVector");
-
     suite.emplace_back(TestCreateScale, "TestCreateScale");
+    suite.emplace_back(TestCreateRotate, "TestCreateRotate");
 
 
 

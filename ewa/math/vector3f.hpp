@@ -52,6 +52,7 @@ public:
     float Length()const;
 
     Vector3f& Normalize();
+    Vector3f Normalize()const;
 
     /*
       Rotate this vector around the axis.

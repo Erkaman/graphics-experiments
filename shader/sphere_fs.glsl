@@ -1,10 +1,17 @@
 #include "value_noise_lib.glsl"
 
+#include "scattering.glsl"
+
+
+
 out vec4 fragmentColor;
 
 in vec3 texCoord;
 
 uniform float delta;
+
+in vec3 worldSpacePosition;
+
 
 // return 1 when x > 0, otherwise return 0.
 float when_positive(float x) {
@@ -49,6 +56,6 @@ void main()
 
     fragmentColor = vec4(
 	vec3(1,1,1)
-	//	make_clouds(texCoord)
+	//make_clouds(texCoord)
 	, 1.0);
 }
