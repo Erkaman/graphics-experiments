@@ -58,7 +58,8 @@ void TuhuApplication::Init() {
 
 	LOG_I("making camera");
 
-	camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,5.1f,0), Vector3f(1.0f,-0.5f,1.0f), true);
+
+	camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,0.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
 
 	LOG_I("making height map");
 
@@ -93,6 +94,7 @@ void TuhuApplication::Init() {
 
     m_perlinSeed = new PerlinSeed(1);
 
+    //                    128000
     m_sphere = new Sphere(1, 10, 10);
 
 }

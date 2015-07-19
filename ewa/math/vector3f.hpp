@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+class Vector4f;
+
 class Vector3f {
 
 public:
@@ -27,6 +29,7 @@ public:
     Vector3f(const float x_, const float y_, const float z_): x(x_),y(y_),z(z_){ }
 
     Vector3f(const Vector3f& that): x(that.x), y(that.y), z(that.z){ }
+    Vector3f(const Vector4f& that);
 
     /*
       OPERATOR OVERLOADS

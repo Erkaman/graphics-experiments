@@ -1,5 +1,8 @@
 #include "vector3f.hpp"
+
 #include "math/quat4f.hpp"
+#include "math/vector4f.hpp"
+
 #include <math.h>
 #include "math_common.hpp"
 
@@ -74,3 +77,5 @@ void Vector3f::Add(std::vector<float>& v)const {
     v.push_back(y);
     v.push_back(z);
 }
+
+Vector3f::Vector3f(const Vector4f& that): x(that.x), y(that.y), z(that.z){ }

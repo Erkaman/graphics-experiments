@@ -138,8 +138,6 @@ void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
 
     m_shader->Unbind();
-
-
 }
 
 const float HeightMap::ComputeY(const unsigned char heightMapData ) {
@@ -233,7 +231,9 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 	    Cell& c = map(x,z);
 
 	    c.position.y = (c.position.y - low) / (high - low);
-	    c.position.y *=2.9f;
+	    c.position.y *=2.7f;
+	    c.position.y -=5.0f;
+
 	}
     }
 

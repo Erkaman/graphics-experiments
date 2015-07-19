@@ -19,11 +19,15 @@ const float v = 4.0f;
 
 
 // optical length at zenith for molecules
+// change this one?
 const float rayleighZenithLength = 8.4E3;
 const float mieZenithLength = 1.25E3;
 const vec3 up = vec3(0, 1, 0);
 
+// sun
 const float E = 1000.0f;
+
+// not used anywhere?
 const float sunAngularDiameterCos = 0.999956676946448443553574619906976478926848692873900859324f;
 
 // earth shadow hack
@@ -38,9 +42,15 @@ const float steepness = 0.5f;
  * the tree primaries)
  * @param lambda wavelength in m
  */
+// can be found on page 23 in
+// http://www.cs.utah.edu/~shirley/papers/sunsky/sunsky.pdf
 vec3 totalRayleigh(vec3 lambda)
 {
-	return (8 * pow(pi, 3) * pow(pow(n, 2) - 1, 2) * (6 + 3 * pn)) / (3 * N * pow(lambda, vec3(4)) * (6 - 7 * pn));
+	return (8 * pow(pi, 3) * pow(pow(n, 2) - 1, 2) * (6 + 3 * pn))
+
+	    /
+
+	    (3 * N * pow(lambda, vec3(4)) * (6 - 7 * pn));
 }
 
 /** Reileight phase function as a function of cos(theta)
@@ -66,9 +76,12 @@ float rayleighPhase(float cosTheta)
  * @param T turbidity, somewhere in the range of 0 to 20
 
  */
+// can be found on page 23 in
+// http://www.cs.utah.edu/~shirley/papers/sunsky/sunsky.pdf
 vec3 totalMie(vec3 lambda, vec3 K, float T)
 {
 	// not the formula given py Preetham.
+    // change this one?
 	float c = (0.2f * T ) * 10E-18;
 	return 0.434 * c * pi * pow((2 * pi) / lambda, vec3(v - 2)) * K;
 }
@@ -88,4 +101,5 @@ float sunIntensity(float zenithAngleCos)
 {
 //	return E;
 	return E * max(0.0f, 1.0f - exp(-((cutoffAngle - acos(zenithAngleCos))/steepness)));
+
 }

@@ -5,6 +5,7 @@
 #include "gl/shader_program.hpp"
 
 #include "math/vector3f.hpp"
+#include "math/vector4f.hpp"
 
 #include "value_noise_seed.hpp"
 
@@ -43,8 +44,7 @@ Sphere::Sphere(const float radius, const int slices, const int stacks): Geometry
 
 
 
-    float azimuthAngle = -27.7f;
-    float elevationAngle = 2.74f;
+
 }
 
 
@@ -75,6 +75,35 @@ void Sphere::Draw(const Camera& camera) {
     m_shader->SetUniform("delta", m_delta);
 
 //    LOG_I("delta: %f", m_delta);
+
+
+
+
+
+
+
+    float azimuthAngle = -27.7f;
+    float elevationAngle = 2.74f;
+
+    const Matrix4f elevation =Matrix4f::CreateRotate(elevationAngle, Vector3f(0,0,1) ); //glm::rotate(elevationAngle, vec3(0, 0, 1));
+    const Matrix4f rotation = Matrix4f::CreateRotate(azimuthAngle, Vector3f(0,1,0) );
+//    const Matrix4f rotation = glm::rotate(azimuthAngle, vec3(0, 1, 0));
+
+    Vector3f sunDirection = Vector3f(rotation * elevation * Vector4f(1, 0, 0, 1));
+
+//    LOG_I("sun dir: %s",  std::string(sunDirection).c_str() );
+
+    m_shader->SetUniform("sunDirection", sunDirection);
+
+    m_shader->SetUniform("reileighCoefficient", 1.0f);
+    m_shader->SetUniform("mieCoefficient", 0.053f);
+    m_shader->SetUniform("mieDirectionalG", 0.75f);
+    m_shader->SetUniform("turbidity", 1.0f);
+
+    m_shader->SetUniform("cameraPosition", camera.GetPosition());
+
+
+
 
     m_perlinSeed->Bind(*m_shader);
 
