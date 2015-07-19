@@ -11,10 +11,8 @@ float when_positive(float x) {
     return max(sign(x), 0);
 }
 
-void main()
-{
-
-    float y = texCoord.y;
+vec3 make_clouds(vec3 tc) {
+    float y = tc.y;
 
 
     // make sure y is not negative.
@@ -26,9 +24,9 @@ void main()
 
     float noise = value_noise_turbulence(7,
 
-					 vec3(texCoord.x+delta*CLOUD_SPEED*1.5,
-	texCoord.y+delta*CLOUD_SPEED*1.3,
-	texCoord.z+delta*CLOUD_SPEED*1.1) *4
+					 vec3(tc.x+delta*CLOUD_SPEED*1.5,
+	tc.y+delta*CLOUD_SPEED*1.3,
+	tc.z+delta*CLOUD_SPEED*1.1) *4
 
 					 , 2, 0.5);
 
@@ -43,8 +41,14 @@ void main()
 
     float alpha = 0.3;
 
+    return mix(sky, clouds, alpha);
+}
+
+void main()
+{
+
     fragmentColor = vec4(
-	mix(sky, clouds, alpha)
-//	vec3(value_noise_turbulence(7, texCoord.xyz * 4, 2, 0.5))
+	vec3(1,1,1)
+	//	make_clouds(texCoord)
 	, 1.0);
 }
