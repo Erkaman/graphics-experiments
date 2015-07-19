@@ -462,6 +462,8 @@ Matrix4f Matrix4f::CreateRotate(const float angle, const Vector3f& axis) {
     const float uy = normAxis.y;
     const float uz = normAxis.z;
 
+    // we use the following formula:
+    // https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
     return Matrix4f(
 	cosA + ux*ux * (oneMinusCosA),ux * uy * oneMinusCosA - uz * sinA, ux *  uz * (oneMinusCosA) + uy * sinA, 0,
 	uy * ux * oneMinusCosA + uz * sinA, cosA + uy * uy * (oneMinusCosA), uy * uz * (oneMinusCosA) - ux * sinA, 0,
