@@ -75,7 +75,7 @@ void TuhuApplication::Init() {
 
 void TuhuApplication::Render() {
 
-//    m_fullscreenFbo->Bind();
+    m_fullscreenFbo->Bind();
     {
 	SetViewport();
 
@@ -89,12 +89,9 @@ void TuhuApplication::Render() {
 	heightMap->Draw(*camera, lightPosition);
 
     }
-//    m_fullscreenFbo->Unbind();
+    m_fullscreenFbo->Unbind();
 
-//     m_fullscreenFbo->GetRenderTargetTexture().WriteToFile("out.png");
-//     exit(1);
-
-/*    SetViewport();
+    SetViewport();
     Clear(1.0f, 1.0f, 1.0f);
 
 
@@ -107,7 +104,6 @@ void TuhuApplication::Render() {
 
     m_fullscreenFbo->GetRenderTargetTexture().Bind();
 
-
     quad->Draw();
 
 
@@ -115,7 +111,7 @@ void TuhuApplication::Render() {
 
 
     m_postShader->Unbind();
-*/
+
 }
 
 void TuhuApplication::Update(const float delta) {

@@ -131,7 +131,7 @@ void main()
 	fragmentColor = fragmentColor0;
 
 
-	fragmentColor = vec4(make_clouds(texCoord), 1);// + fragmentColor0;
+	fragmentColor = /*vec4(make_clouds(texCoord), 1);// + */fragmentColor0;
 
 
 }
