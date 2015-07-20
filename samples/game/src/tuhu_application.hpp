@@ -11,25 +11,24 @@ class Tree;
 class FBO;
 class Quad;
 class PerlinSeed;
-class Sphere;
+class Skydome;
 
 class TuhuApplication : public Application{
 
 private:
 
-    Camera* camera;
-    HeightMap* heightMap;
+    Camera* m_camera;
+    HeightMap* m_heightMap;
 
     FBO* m_fullscreenFbo;
 
-    Quad* quad;
+    Quad* m_quad;
 
     ShaderProgram* m_postShader;
 
     PerlinSeed* m_perlinSeed;
 
-    Sphere* m_sphere;
-
+    Skydome* m_skydome;
 
 public:
 

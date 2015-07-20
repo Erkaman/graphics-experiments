@@ -10,7 +10,6 @@
 
 #include "camera.hpp"
 #include "height_map.hpp"
-#include "skybox.hpp"
 #include "quad.hpp"
 #include "perlin_seed.hpp"
 #include "keyboard_state.hpp"
@@ -21,7 +20,7 @@
 
 #include "common.hpp"
 
-#include "sphere.hpp"
+#include "skydome.hpp"
 
 #include "value_noise_seed.hpp"
 
@@ -30,14 +29,14 @@
 using namespace std;
 
 
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), camera(NULL), heightMap(NULL),m_fullscreenFbo(NULL),  quad(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL),m_fullscreenFbo(NULL),  m_quad(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_skydome(NULL){ }
 
 TuhuApplication::~TuhuApplication() {
-    MY_DELETE(camera);
-    MY_DELETE(heightMap);
-    MY_DELETE(quad);
+    MY_DELETE(m_camera);
+    MY_DELETE(m_heightMap);
+    MY_DELETE(m_quad);
     MY_DELETE(m_perlinSeed);
-    MY_DELETE(m_sphere);
+    MY_DELETE(m_skydome);
     MY_DELETE(m_postShader);
     MY_DELETE(m_fullscreenFbo);
 }
@@ -48,9 +47,9 @@ void TuhuApplication::Init() {
 
     ::SetCullFace(true);
 
-    camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,Vector3f(0,0.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
+    m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,Vector3f(0,0.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
 
-    heightMap = new HeightMap("img/combined.png");
+    m_heightMap = new HeightMap("img/combined.png");
 
 	LOG_I("making tree");
 
@@ -62,7 +61,7 @@ void TuhuApplication::Init() {
     m_fullscreenFbo = new FBO(9,
 			      GetFramebufferWidth(), GetFramebufferHeight());
 
-    quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
+    m_quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
 
     m_postShader = new ShaderProgram("shader/post");
 
@@ -70,7 +69,7 @@ void TuhuApplication::Init() {
     m_perlinSeed = new PerlinSeed(1);
 
     //                    128000
-    m_sphere = new Sphere(1, 10, 10);
+    m_skydome = new Skydome(1, 10, 10);
 }
 
 void TuhuApplication::Render() {
@@ -81,12 +80,12 @@ void TuhuApplication::Render() {
 
 	Clear(0.0f, 1.0f, 1.0f);
 
-	m_sphere->Draw(*camera);
+	m_skydome->Draw(*m_camera);
 
 
 
 	Vector4f lightPosition(93,10.0f,93, 1.0f);
-	heightMap->Draw(*camera, lightPosition);
+	m_heightMap->Draw(*m_camera, lightPosition);
 
     }
     m_fullscreenFbo->Unbind();
@@ -104,7 +103,7 @@ void TuhuApplication::Render() {
 
     m_fullscreenFbo->GetRenderTargetTexture().Bind();
 
-    quad->Draw();
+    m_quad->Draw();
 
 
     m_fullscreenFbo->GetRenderTargetTexture().Unbind();
@@ -115,9 +114,9 @@ void TuhuApplication::Render() {
 }
 
 void TuhuApplication::Update(const float delta) {
-    camera->HandleInput(delta);
+    m_camera->HandleInput(delta);
 
-    m_sphere->Update(delta);
+    m_skydome->Update(delta);
 }
 
 void TuhuApplication::RenderText()  {

@@ -1,4 +1,4 @@
-#include "sphere.hpp"
+#include "skydome.hpp"
 
 #include "gl/vbo.hpp"
 #include "gl/texture2d.hpp"
@@ -27,7 +27,7 @@ GLushort GenerateVertices(
     VBO* m_indexBuffer
     );
 
-Sphere::Sphere(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0),     m_azimuthAngle(-27.7f), m_elevationAngle(70.74f),m_reileighCoefficient(1.0f),m_mieCoefficient(0.053f), m_mieDirectionalG(0.75f),m_turbidity(1.0f)
+Skydome::Skydome(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0),     m_azimuthAngle(-27.7f), m_elevationAngle(70.74f),m_reileighCoefficient(1.0f),m_mieCoefficient(0.053f), m_mieDirectionalG(0.75f),m_turbidity(1.0f)
  {
 
     /*
@@ -54,7 +54,7 @@ Sphere::Sphere(const float radius, const int slices, const int stacks): Geometry
 
 
 
-Sphere::~Sphere() {
+Skydome::~Skydome() {
     MY_DELETE(m_shader);
     MY_DELETE(m_vertexBuffer);
     MY_DELETE(m_indexBuffer);
@@ -62,7 +62,7 @@ Sphere::~Sphere() {
 
 }
 
-void Sphere::Draw(const Camera& camera) {
+void Skydome::Draw(const Camera& camera) {
 
     m_shader->Bind();
 
@@ -107,7 +107,7 @@ void Sphere::Draw(const Camera& camera) {
 
 
 
-void Sphere::Update(const float delta) {
+void Skydome::Update(const float delta) {
     m_delta += delta;
 
 /*    if(GetKey( GLFW_KEY_U ) == GLFW_PRESS) {
@@ -169,7 +169,7 @@ void Sphere::Update(const float delta) {
 
 }
 
-void Sphere::UpdateSunDirection() {
+void Skydome::UpdateSunDirection() {
 
     const Matrix4f elevation =Matrix4f::CreateRotate(m_elevationAngle, Vector3f(0,0,1) ); //glm::rotate(elevationAngle, vec3(0, 0, 1));
     const Matrix4f rotation = Matrix4f::CreateRotate(m_azimuthAngle, Vector3f(0,1,0) );

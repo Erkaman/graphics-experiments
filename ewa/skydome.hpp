@@ -11,7 +11,7 @@ class Camera;
 class Vector4f;
 class ValueNoiseSeed;
 
-class Sphere : public GeometryObject{
+class Skydome : public GeometryObject{
 
 private:
 
@@ -39,8 +39,8 @@ private:
 
 public:
 
-    Sphere(const float radius, const int slices, const int stacks);
-    ~Sphere();
+    Skydome(const float radius, const int slices, const int stacks);
+    ~Skydome();
 
 
     void Draw(const Camera& camera);
