@@ -32,6 +32,10 @@ private:
     float m_azimuthAngle;
     float m_elevationAngle;
 
+    float m_reileighCoefficient;
+    float m_mieCoefficient;
+    float m_mieDirectionalG;
+    float m_turbidity;
 
 public:
 

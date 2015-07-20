@@ -24,7 +24,7 @@ GLushort GenerateVertices(
     VBO* m_indexBuffer
     );
 
-Sphere::Sphere(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0),     m_azimuthAngle(-27.7f), m_elevationAngle(2.74f)
+Sphere::Sphere(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0),     m_azimuthAngle(-27.7f), m_elevationAngle(2.74f),m_reileighCoefficient(1.0f),m_mieCoefficient(0.053f), m_mieDirectionalG(0.75f),m_turbidity(1.0f)
  {
 
     /*
@@ -79,18 +79,14 @@ void Sphere::Draw(const Camera& camera) {
 //    LOG_I("delta: %f", m_delta);
 
 
-
-
     m_shader->SetUniform("sunDirection", m_sunDirection);
 
-    m_shader->SetUniform("reileighCoefficient", 1.0f);
-    m_shader->SetUniform("mieCoefficient", 0.053f);
-    m_shader->SetUniform("mieDirectionalG", 0.75f);
-    m_shader->SetUniform("turbidity", 1.0f);
+    m_shader->SetUniform("reileighCoefficient", m_reileighCoefficient);
+    m_shader->SetUniform("mieCoefficient", m_mieCoefficient);
+    m_shader->SetUniform("mieDirectionalG", m_mieDirectionalG);
+    m_shader->SetUniform("turbidity", m_turbidity);
 
     m_shader->SetUniform("cameraPosition", camera.GetPosition());
-
-
 
 
     m_perlinSeed->Bind(*m_shader);
@@ -200,6 +196,38 @@ void Sphere::Update(const float delta) {
 	m_azimuthAngle -= delta * SPEED;
 	UpdateSunDirection();
     }
+
+    if(kbs.IsPressed(GLFW_KEY_B)) {
+	m_reileighCoefficient += 0.05 * SPEED;
+    }
+    if(kbs.IsPressed(GLFW_KEY_N)) {
+	m_reileighCoefficient -= 0.05 * SPEED;
+    }
+
+
+    if(kbs.IsPressed(GLFW_KEY_C)) {
+	m_mieCoefficient += 0.001 * SPEED;
+    }
+    if(kbs.IsPressed(GLFW_KEY_V)) {
+	m_mieCoefficient -= 0.001 * SPEED;
+    }
+
+    if(kbs.IsPressed(GLFW_KEY_Z)) {
+	m_mieDirectionalG += 0.01 * SPEED;
+    }
+    if(kbs.IsPressed(GLFW_KEY_X)) {
+	m_mieDirectionalG -= 0.01 * SPEED;
+    }
+
+
+    if(kbs.IsPressed(GLFW_KEY_1)) {
+	m_turbidity += 0.01 * SPEED;
+    }
+    if(kbs.IsPressed(GLFW_KEY_2)) {
+	m_turbidity -= 0.01 * SPEED;
+    }
+
+
 
 
 }
