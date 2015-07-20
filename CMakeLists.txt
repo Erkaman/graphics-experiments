@@ -79,7 +79,6 @@ ELSEIF(WIN32)
   LINK_DIRECTORIES("deps/libs/win32")
 ENDIF()
 
-file(GLOB TEST_SRC unit_test/*.cpp)
 
 include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng")
 
@@ -88,6 +87,4 @@ TARGET_LINK_LIBRARIES(ewa ${game_libs})
 
 add_subdirectory("samples")
 
-
-ADD_EXECUTABLE(unit_test ${TEST_SRC} )
-TARGET_LINK_LIBRARIES(unit_test ewa)
+add_subdirectory("unit_test")
