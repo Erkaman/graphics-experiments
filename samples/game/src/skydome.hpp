@@ -2,13 +2,10 @@
 
 #include "geometry_object.hpp"
 
-#include "math/vector3f.hpp"
-
 
 class VBO;
 class ShaderProgram;
 class Camera;
-class Vector4f;
 class ValueNoiseSeed;
 
 class Skydome : public GeometryObject{
@@ -27,16 +24,6 @@ private:
 
     float m_delta;
 
-    Vector3f m_sunDirection;
-
-    float m_azimuthAngle;
-    float m_elevationAngle;
-
-    float m_reileighCoefficient;
-    float m_mieCoefficient;
-    float m_mieDirectionalG;
-    float m_turbidity;
-
 public:
 
     Skydome(const float radius, const int slices, const int stacks);
@@ -45,8 +32,5 @@ public:
 
     void Draw(const Camera& camera);
     void Update(const float delta);
-
-    void UpdateSunDirection();
-
 
 };

@@ -47,8 +47,6 @@ Skydome::Skydome(const float radius, const int slices, const int stacks): Geomet
 
     m_numTriangles = GenerateVertices(radius, slices, stacks, m_vertexBuffer, m_indexBuffer);
 
-    m_perlinSeed = new ValueNoiseSeed(2);
-
     UpdateSunDirection();
 }
 
@@ -58,8 +56,6 @@ Skydome::~Skydome() {
     MY_DELETE(m_shader);
     MY_DELETE(m_vertexBuffer);
     MY_DELETE(m_indexBuffer);
-    MY_DELETE(m_perlinSeed);
-
 }
 
 void Skydome::Draw(const Camera& camera) {
@@ -76,11 +72,7 @@ void Skydome::Draw(const Camera& camera) {
     Matrix4f mvp = camera.GetProjectionMatrix() * modelView;
 
     m_shader->SetUniform("mvp", mvp);
-//    m_shader->SetUniform("sampler", 0);
     m_shader->SetUniform("delta", m_delta);
-
-//    LOG_I("delta: %f", m_delta);
-
 
     m_shader->SetUniform("sunDirection", m_sunDirection);
 
@@ -92,12 +84,7 @@ void Skydome::Draw(const Camera& camera) {
     m_shader->SetUniform("cameraPosition", camera.GetPosition());
 
 
-    m_perlinSeed->Bind(*m_shader);
-
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
-
-    m_perlinSeed->Unbind();
-
 
     m_shader->Unbind();
 

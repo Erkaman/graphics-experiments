@@ -4,26 +4,21 @@
 
 #include "math/vector3f.hpp"
 
-
 class VBO;
 class ShaderProgram;
 class Camera;
 class Vector4f;
-class ValueNoiseSeed;
 
 class Skydome : public GeometryObject{
 
 private:
 
     unsigned int m_numTriangles;
-    bool m_isWireframe;
 
     VBO* m_vertexBuffer;
     VBO* m_indexBuffer;
 
     ShaderProgram* m_shader;
-
-    ValueNoiseSeed* m_perlinSeed;
 
     float m_delta;
 

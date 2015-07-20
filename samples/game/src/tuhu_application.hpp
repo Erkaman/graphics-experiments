@@ -3,13 +3,8 @@
 #include "application.hpp"
 #include "common.hpp"
 
-class Texture;
-
 class Camera;
 class HeightMap;
-class Tree;
-class FBO;
-class Quad;
 class PerlinSeed;
 class Skydome;
 
@@ -19,12 +14,6 @@ private:
 
     Camera* m_camera;
     HeightMap* m_heightMap;
-
-    FBO* m_fullscreenFbo;
-
-    Quad* m_quad;
-
-    ShaderProgram* m_postShader;
 
     PerlinSeed* m_perlinSeed;
 

@@ -29,16 +29,13 @@
 using namespace std;
 
 
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL),m_fullscreenFbo(NULL),  m_quad(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_skydome(NULL){ }
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL), m_perlinSeed(NULL), m_skydome(NULL){ }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_camera);
     MY_DELETE(m_heightMap);
-    MY_DELETE(m_quad);
     MY_DELETE(m_perlinSeed);
     MY_DELETE(m_skydome);
-    MY_DELETE(m_postShader);
-    MY_DELETE(m_fullscreenFbo);
 }
 
 void TuhuApplication::Init() {
@@ -51,20 +48,6 @@ void TuhuApplication::Init() {
 
     m_heightMap = new HeightMap("img/combined.png");
 
-	LOG_I("making tree");
-
-
-
-
-    LOG_I("done init");
-
-    m_fullscreenFbo = new FBO(9,
-			      GetFramebufferWidth(), GetFramebufferHeight());
-
-    m_quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
-
-    m_postShader = new ShaderProgram("shader/post");
-
 
     m_perlinSeed = new PerlinSeed(1);
 
@@ -73,44 +56,15 @@ void TuhuApplication::Init() {
 }
 
 void TuhuApplication::Render() {
-
-    m_fullscreenFbo->Bind();
-    {
-	SetViewport();
-
-	Clear(0.0f, 1.0f, 1.0f);
-
-	m_skydome->Draw(*m_camera);
-
-
-
-	Vector4f lightPosition(93,10.0f,93, 1.0f);
-	m_heightMap->Draw(*m_camera, lightPosition);
-
-    }
-    m_fullscreenFbo->Unbind();
-
     SetViewport();
-    Clear(1.0f, 1.0f, 1.0f);
+
+    Clear(0.0f, 1.0f, 1.0f);
+
+    m_skydome->Draw(*m_camera);
 
 
-    m_postShader->Bind();
-
-
-    Texture::SetActiveTextureUnit(m_fullscreenFbo->GetTargetTextureUnit());
-
-    m_postShader->SetUniform("tex", (int)m_fullscreenFbo->GetTargetTextureUnit() );
-
-    m_fullscreenFbo->GetRenderTargetTexture().Bind();
-
-    m_quad->Draw();
-
-
-    m_fullscreenFbo->GetRenderTargetTexture().Unbind();
-
-
-    m_postShader->Unbind();
-
+    Vector4f lightPosition(93,10.0f,93, 1.0f);
+    m_heightMap->Draw(*m_camera, lightPosition);
 }
 
 void TuhuApplication::Update(const float delta) {
