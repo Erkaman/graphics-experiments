@@ -1,13 +1,13 @@
 #include "plane.hpp"
-#include "perlin_seed.hpp"
+#include "ewa/perlin_seed.hpp"
 
-#include "gl/shader_program.hpp"
-#include "gl/vbo.hpp"
-#include "gl/texture2d.hpp"
+#include "ewa/gl/shader_program.hpp"
+#include "ewa/gl/vbo.hpp"
+#include "ewa/gl/texture2d.hpp"
 
-#include "math/matrix4f.hpp"
-#include "math/vector2f.hpp"
-#include "math/vector3f.hpp"
+#include "ewa/math/matrix4f.hpp"
+#include "ewa/math/vector2f.hpp"
+#include "ewa/math/vector3f.hpp"
 
 using std::vector;
 

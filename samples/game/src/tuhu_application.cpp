@@ -12,7 +12,6 @@
 #include "height_map.hpp"
 #include "tree.hpp"
 #include "skybox.hpp"
-#include "plane.hpp"
 #include "quad.hpp"
 #include "perlin_seed.hpp"
 #include "keyboard_state.hpp"
@@ -34,13 +33,12 @@ using namespace std;
 
 constexpr int TEXTURE_SIZE = 256;
 
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), camera(NULL), heightMap(NULL),tree(NULL), plane(NULL), fbo(NULL),m_fullscreenFbo(NULL),  quad(NULL), simpleShader(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), camera(NULL), heightMap(NULL),tree(NULL),fbo(NULL),m_fullscreenFbo(NULL),  quad(NULL), simpleShader(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(camera);
     MY_DELETE(heightMap);
     MY_DELETE(tree);
-    MY_DELETE(plane);
     MY_DELETE(fbo);
     MY_DELETE(quad);
     MY_DELETE(simpleShader);
@@ -65,7 +63,6 @@ void TuhuApplication::Init() {
     tree = make_unique<Tree>(Vector3f(0,2,0));
 */
 
-    plane = new Plane(Vector3f(1,4,1), Vector3f(1,1,1));
 
     LOG_I("done init");
 
@@ -98,8 +95,6 @@ void TuhuApplication::Render() {
 
 	Vector4f lightPosition(93,10.0f,93, 1.0f);
 	heightMap->Draw(*camera, lightPosition);
-
-	plane->Draw(*camera, lightPosition);
 
     }
 //    m_fullscreenFbo->Unbind();

@@ -1,7 +1,6 @@
 #pragma once
 
 
-
 class ShaderProgram;
 class VBO;
 class Camera;
@@ -9,8 +8,8 @@ class Texture;
 class Vector4f;
 class Vector3f;
 
-#include "gl/gl_common.hpp"
-#include "geometry_object.hpp"
+#include "ewa/gl/gl_common.hpp"
+#include "ewa/geometry_object.hpp"
 
 class ShaderProgram;
 class VBO;

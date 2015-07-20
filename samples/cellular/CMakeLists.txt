@@ -1,0 +1,5 @@
+
+file(GLOB CELLULAR_SRC src/*.cpp)
+
+ADD_EXECUTABLE(cellular ${CELLULAR_SRC} )
+TARGET_LINK_LIBRARIES(cellular ewa)
