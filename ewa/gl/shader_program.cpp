@@ -2,10 +2,12 @@
 
 #include "uniform_location_store.hpp"
 #include "shader_program_builder.hpp"
+#include "resource_manager.hpp"
 
 #include "camera.hpp"
 #include "log.hpp"
 #include "str.hpp"
+#include "common.hpp"
 
 #include "math/color.hpp"
 #include "math/matrix4f.hpp"
@@ -22,16 +24,19 @@ ShaderProgram::ShaderProgram():m_uniformLocationStore(nullptr) {
 }
 
 ShaderProgram::~ShaderProgram() {
-    delete m_uniformLocationStore;
+    MY_DELETE(m_uniformLocationStore);
 
     glDeleteProgram(m_alreadyBoundProgram);
 }
 
 static std::string GetShaderContents(const std::string& shaderPath) {
-    File f(shaderPath, FileModeReading);
+
+    std::string resourcePath = ResourceManager::GetInstance().FindResource(shaderPath);
+
+    File f(resourcePath, FileModeReading);
 
     if(f.HasError()) {
-	LOG_E("Could not read the shader %s: %s", shaderPath.c_str(), f.GetError().c_str() );
+	LOG_E("Could not read the shader %s: %s", resourcePath.c_str(), f.GetError().c_str() );
     }
 
     return f.GetFileContents();

@@ -4,6 +4,9 @@
 
 #include "lodepng.h"
 
+#include "resource_manager.hpp"
+
+
 using std::vector;
 
 TextureInfo TextureLoader::Load(const std::string& texturePath) {
@@ -12,14 +15,22 @@ TextureInfo TextureLoader::Load(const std::string& texturePath) {
     unsigned int width;
     unsigned int height;
 
+
+
+    std::string resourcePath = ResourceManager::GetInstance().FindResource(texturePath);
+
+
     std::vector<unsigned char> buffer;
-    lodepng::load_file(buffer, texturePath);
+    lodepng::load_file(buffer,
+
+
+		       resourcePath);
 
     lodepng::State state;
     unsigned error = lodepng::decode(textureInfo.imageData, width, height, state, buffer);
 
     if(error != 0){
-	LOG_E("could not load png %s: %s", texturePath.c_str(), lodepng_error_text(error));
+	LOG_E("could not load png %s: %s", resourcePath.c_str(), lodepng_error_text(error));
     }
 
 /*    const LodePNGInfo info = state.info_png;

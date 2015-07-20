@@ -33,9 +33,9 @@ void Application::Start() {
 
     this->SetupOpenGL();
 
-    m_fontShader = new ShaderProgram("shader/font_render");
+    m_fontShader = new ShaderProgram("shader_lib/font_render");
 
-    m_font = new Font("img/font.png",
+    m_font = new Font("img_lib/font.png",
 			     624,624,
 			     39,39,
 			     GetWindowWidth(),GetWindowHeight());

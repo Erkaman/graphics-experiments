@@ -80,7 +80,7 @@ ELSEIF(WIN32)
 ENDIF()
 
 
-include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng")
+include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng" ".")
 
 ADD_LIBRARY(ewa ${ENGINE_SRC})
 TARGET_LINK_LIBRARIES(ewa ${game_libs})

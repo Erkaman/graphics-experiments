@@ -7,7 +7,6 @@ class Texture;
 
 class Camera;
 class HeightMap;
-class Skybox;
 class Tree;
 class Plane;
 class FBO;
@@ -21,7 +20,6 @@ private:
 
     Camera* camera;
     HeightMap* heightMap;
-    Skybox* skybox;
     Tree* tree;
     Plane* plane;
 

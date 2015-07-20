@@ -34,12 +34,11 @@ using namespace std;
 
 constexpr int TEXTURE_SIZE = 256;
 
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), camera(NULL), heightMap(NULL), skybox(NULL), tree(NULL), plane(NULL), fbo(NULL),m_fullscreenFbo(NULL),  quad(NULL), simpleShader(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), camera(NULL), heightMap(NULL),tree(NULL), plane(NULL), fbo(NULL),m_fullscreenFbo(NULL),  quad(NULL), simpleShader(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(camera);
     MY_DELETE(heightMap);
-    MY_DELETE(skybox);
     MY_DELETE(tree);
     MY_DELETE(plane);
     MY_DELETE(fbo);
@@ -65,15 +64,6 @@ void TuhuApplication::Init() {
 
     tree = make_unique<Tree>(Vector3f(0,2,0));
 */
-
-    skybox = new Skybox(
-	"img/bluecloud_ft.png",
-	"img/bluecloud_bk.png",
-	"img/bluecloud_lf.png",
-	"img/bluecloud_rt.png",
-	"img/bluecloud_up.png",
-	"img/bluecloud_dn.png"
-	);
 
     plane = new Plane(Vector3f(1,4,1), Vector3f(1,1,1));
 
