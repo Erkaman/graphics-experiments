@@ -34,6 +34,8 @@ public:
 
     ~FBO();
 
+    GLenum GetTargetTextureUnit();
+
 
     /**
      * This method MUST be called every time the window is resized!
@@ -71,5 +73,7 @@ public:
     Texture& GetRenderTargetTexture() const{
 	return *m_renderTargetTexture;
     }
+
+
 
 };

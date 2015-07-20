@@ -52,4 +52,9 @@ protected:
     void SetViewport();
 
     void SetWindowTitle(const std::string& title);
+
+    int GetFramebufferWidth();
+    int GetFramebufferHeight();
+
+
 };

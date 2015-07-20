@@ -148,6 +148,20 @@ void Application::SetViewport() {
     ::SetViewport(0, 0, width, height);
 }
 
+int Application::GetFramebufferWidth() {
+    int width, height;
+    glfwGetFramebufferSize(m_window, &width, &height);
+
+    return width;
+}
+
+int Application::GetFramebufferHeight() {
+    int width, height;
+    glfwGetFramebufferSize(m_window, &width, &height);
+
+    return height;
+}
+
 void Application::Update_internal(const float delta) {
 
     const KeyboardState& kbs = KeyboardState::GetInstance();

@@ -34,7 +34,7 @@ using namespace std;
 
 constexpr int TEXTURE_SIZE = 256;
 
-TuhuApplication::TuhuApplication(): camera(NULL), heightMap(NULL), skybox(NULL), tree(NULL), plane(NULL), fbo(NULL), quad(NULL), simpleShader(NULL), m_perlinSeed(NULL), m_sphere(NULL) { }
+TuhuApplication::TuhuApplication(): camera(NULL), heightMap(NULL), skybox(NULL), tree(NULL), plane(NULL), fbo(NULL),m_fullscreenFbo(NULL),  quad(NULL), simpleShader(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(camera);
@@ -47,7 +47,8 @@ TuhuApplication::~TuhuApplication() {
     MY_DELETE(simpleShader);
     MY_DELETE(m_perlinSeed);
     MY_DELETE(m_sphere);
-
+    MY_DELETE(m_postShader);
+    MY_DELETE(m_fullscreenFbo);
 }
 
 void TuhuApplication::Init() {
@@ -60,7 +61,7 @@ void TuhuApplication::Init() {
 	LOG_I("making camera");
 
 
-	camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,0.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
+	camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,Vector3f(0,0.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
 
 	LOG_I("making height map");
 
@@ -88,10 +89,15 @@ void TuhuApplication::Init() {
     LOG_I("done init");
 
     fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
+    m_fullscreenFbo = new FBO(9,
+			      GetFramebufferWidth(), GetFramebufferHeight());
 
     quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
 
     simpleShader = new ShaderProgram("shader/simple");
+
+    m_postShader = new ShaderProgram("shader/post");
+
 
     m_perlinSeed = new PerlinSeed(1);
 
@@ -102,22 +108,51 @@ void TuhuApplication::Init() {
 
 void TuhuApplication::Render() {
 
+       m_fullscreenFbo->Bind();
+    {
+	SetViewport();
+
+	Clear(0.0f, 1.0f, 1.0f);
+
+
+
+	m_sphere->Draw(*camera);
+
+
+	Vector4f lightPosition(93,10.0f,93, 1.0f);
+	heightMap->Draw(*camera, lightPosition);
+
+
+
+	plane->Draw(*camera, lightPosition);
+
+    }
+    m_fullscreenFbo->Unbind();
+
+//     m_fullscreenFbo->GetRenderTargetTexture().WriteToFile("out.png");
+//     exit(1);
+
     SetViewport();
-
-    Clear(0.0f, 1.0f, 1.0f);
-
+    Clear(1.0f, 1.0f, 1.0f);
 
 
-    m_sphere->Draw(*camera);
+    m_postShader->Bind();
 
 
-    Vector4f lightPosition(93,10.0f,93, 1.0f);
-    heightMap->Draw(*camera, lightPosition);
+    Texture::SetActiveTextureUnit(m_fullscreenFbo->GetTargetTextureUnit());
+
+    m_postShader->SetUniform("tex", (int)m_fullscreenFbo->GetTargetTextureUnit() );
+
+    m_fullscreenFbo->GetRenderTargetTexture().Bind();
 
 
+    quad->Draw();
 
-    plane->Draw(*camera, lightPosition);
 
+    m_fullscreenFbo->GetRenderTargetTexture().Unbind();
+
+
+    m_postShader->Unbind();
 
 
     //fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);

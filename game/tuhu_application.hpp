@@ -26,9 +26,12 @@ private:
     Plane* plane;
 
     FBO* fbo;
+    FBO* m_fullscreenFbo;
 
     Quad* quad;
+
     ShaderProgram* simpleShader;
+    ShaderProgram* m_postShader;
 
     PerlinSeed* m_perlinSeed;
 

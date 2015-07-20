@@ -75,3 +75,7 @@ FBO::FBO(const GLenum targetTextureUnit, const GLsizei width, const GLsizei heig
     GL_C(glGenFramebuffers(1, &m_fboHandle));
     RecreateBuffers(width, height);
 }
+
+GLenum FBO::GetTargetTextureUnit() {
+    return m_targetTextureUnit;
+}
