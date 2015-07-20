@@ -130,4 +130,9 @@ void main()
 	fragmentColor0.w = logLuminance(fragmentColor0);
 
 	fragmentColor = fragmentColor0;
+
+
+	fragmentColor = vec4(make_clouds(texCoord), 1);// + fragmentColor0;
+
+
 }

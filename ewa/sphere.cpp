@@ -24,7 +24,7 @@ GLushort GenerateVertices(
     VBO* m_indexBuffer
     );
 
-Sphere::Sphere(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0),     m_azimuthAngle(-27.7f), m_elevationAngle(2.74f),m_reileighCoefficient(1.0f),m_mieCoefficient(0.053f), m_mieDirectionalG(0.75f),m_turbidity(1.0f)
+Sphere::Sphere(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0),     m_azimuthAngle(-27.7f), m_elevationAngle(70.74f),m_reileighCoefficient(1.0f),m_mieCoefficient(0.053f), m_mieDirectionalG(0.75f),m_turbidity(1.0f)
  {
 
     /*
@@ -197,6 +197,7 @@ void Sphere::Update(const float delta) {
 	UpdateSunDirection();
     }
 
+    // makes it less bright
     if(kbs.IsPressed(GLFW_KEY_B)) {
 	m_reileighCoefficient += 0.05 * SPEED;
     }

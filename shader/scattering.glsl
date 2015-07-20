@@ -11,10 +11,11 @@ const float pn = 0.035;	// depolatization factor for standard air
 
 // wavelength of used primaries, according to preetham
 const vec3 lambda = vec3(680E-9, 550E-9, 450E-9);
+//const vec3 lambda = vec3(550E-9, 680E-9, 450E-9);
 
 // mie stuff
 // K coefficient for the primaries
-const vec3 K = vec3(0.686f, 0.678f, 0.666f);
+const vec3 K = vec3(0.686f, 0.678f, 0.966f);
 const float v = 4.0f;
 
 
@@ -25,7 +26,7 @@ const float mieZenithLength = 1.25E3;
 const vec3 up = vec3(0, 1, 0);
 
 // sun
-const float E = 1000.0f * 0.008;
+const float E = 1000.0f * 0.01;
 
 // not used anywhere?
 const float sunAngularDiameterCos = 0.999956676946448443553574619906976478926848692873900859324f;
