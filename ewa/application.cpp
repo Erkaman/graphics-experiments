@@ -9,6 +9,7 @@
 #include "font.hpp"
 #include "log.hpp"
 #include "keyboard_state.hpp"
+#include "resource_manager.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +19,13 @@
 
 
 using namespace std;
+
+Application::Application(int argc, char *argv[]) {
+    for(int i = 1; i < argc; ++i) {
+	ResourceManager::GetInstance().AddResourcePath(argv[i]);
+    }
+}
+
 
 void Application::Start() {
 

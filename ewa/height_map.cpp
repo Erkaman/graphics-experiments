@@ -46,20 +46,15 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
 
 HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f) {
 
-
-
     /*
       load the shader
      */
     m_shader = new ShaderProgram("shader/height_map");
 
 
-
     if(! (File::Exists(VERTEX_FILE) && File::Exists(INDEX_FILE) )) {
 	CreateHeightmap(path);
     }
-
-
 
 
     m_vertexBuffer = VBO::CreateInterleaved(

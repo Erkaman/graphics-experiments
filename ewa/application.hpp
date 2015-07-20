@@ -40,6 +40,8 @@ public:
 
 protected:
 
+    Application(int argc, char *argv[]);
+
     Font* m_font;
     ShaderProgram* m_fontShader;
 

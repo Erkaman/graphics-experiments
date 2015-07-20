@@ -2,6 +2,7 @@
 
 #include "file.hpp"
 #include "log.hpp"
+#include "resource_manager.hpp"
 
 #include <vector>
 #include "str.hpp"
@@ -18,17 +19,19 @@ string ParseShader(const std::string& shaderSource, const std::string& path);
 
 
 ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderSource, const string& fragmentShaderSource, const string& geometryShaderSource, const std::string& path) {
+
+
     m_compiledVertexShader = BuildAndCompileShader(vertexShaderSource, GL_VERTEX_SHADER, path);
     m_compiledFragmentShader = BuildAndCompileShader(fragmentShaderSource,  GL_FRAGMENT_SHADER, path);
 
-
-	if(geometryShaderSource != "") {
+    if(geometryShaderSource != "") {
 
 	    m_compiledGeometryShader = BuildAndCompileShader(geometryShaderSource,  GL_GEOMETRY_SHADER, path);
 	m_hasGeometryShader = true;
     } else {
 	m_hasGeometryShader = false;
     }
+
 
     Attach();
 
@@ -38,7 +41,6 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderSource, con
     BindAttribLocation(VBO_COLOR_ATTRIB_INDEX, "colorIn");
 
     Link();
-
 }
 
 GLuint ShaderProgramBuilder::BuildAndCompileShader(const string& shaderSource, const GLenum shaderType, const std::string& path){
@@ -65,11 +67,13 @@ GLuint CreateShaderFromString(const string& str, const GLenum shaderType) {
     GL_C(glShaderSource(shader, 1, &c_str, &len));
     GL_C(glCompileShader(shader));
 
+
     if (!GetCompileStatus(shader)) {
 	// compilation failed
 	LOG_W("Could not compile shader \n%s", /*shaderPath.c_str(),*/ FormatCompilerErrorOutput(shader, str).c_str());
 	exit(1);
     }
+
 
     return shader;
 }
@@ -165,6 +169,16 @@ string GetLogInfo(GLuint shaderProgram) {
     return logInfoStr;
 }
 
+static std::string GetShaderContents(const std::string& shaderPath) {
+    File f(shaderPath, FileModeReading);
+
+    if(f.HasError()) {
+	LOG_E("Could not include the shader %s: %s", shaderPath.c_str(), f.GetError().c_str() );
+    }
+
+    return f.GetFileContents();
+}
+
 string ParseShader(const std::string& shaderSource, const std::string& path) {
 
     string parsedShader = "";
@@ -185,7 +199,15 @@ string ParseShader(const std::string& shaderSource, const std::string& path) {
 		string includePath = line.substr(firstQuoteIndex + 1, secondQuoteIndex - firstQuoteIndex - 1);
 		//string shaderDir = GetFileDirectory(shaderPath);
 
-		string includeStr = File::GetFileContents(AppendPaths(path, includePath));
+		string includeStr;
+
+
+		string defaultPath = AppendPaths(path, includePath);
+		if(File::Exists(defaultPath) ){
+		    includeStr = GetShaderContents(defaultPath);
+		} else {
+		    includeStr = GetShaderContents(ResourceManager::GetInstance().FindResource(includePath));
+		}
 
 		parsedShader += includeStr + "\n";
 	} else {

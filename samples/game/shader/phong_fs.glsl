@@ -1,5 +1,5 @@
 
-#include "lib.glsl"
+#include "shader_lib/lib.glsl"
 
 out vec4 fragmentColor;
 

@@ -34,7 +34,7 @@ using namespace std;
 
 constexpr int TEXTURE_SIZE = 256;
 
-TuhuApplication::TuhuApplication(): camera(NULL), heightMap(NULL), skybox(NULL), tree(NULL), plane(NULL), fbo(NULL),m_fullscreenFbo(NULL),  quad(NULL), simpleShader(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), camera(NULL), heightMap(NULL), skybox(NULL), tree(NULL), plane(NULL), fbo(NULL),m_fullscreenFbo(NULL),  quad(NULL), simpleShader(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(camera);
@@ -62,9 +62,6 @@ void TuhuApplication::Init() {
 
 
 	camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,Vector3f(0,0.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
-
-	LOG_I("making height map");
-
 
     heightMap = new HeightMap("img/combined.png");
 
@@ -108,7 +105,8 @@ void TuhuApplication::Init() {
 
 void TuhuApplication::Render() {
 
-       m_fullscreenFbo->Bind();
+
+//    m_fullscreenFbo->Bind();
     {
 	SetViewport();
 
@@ -118,21 +116,18 @@ void TuhuApplication::Render() {
 
 	m_sphere->Draw(*camera);
 
-
 	Vector4f lightPosition(93,10.0f,93, 1.0f);
 	heightMap->Draw(*camera, lightPosition);
-
-
 
 	plane->Draw(*camera, lightPosition);
 
     }
-    m_fullscreenFbo->Unbind();
+//    m_fullscreenFbo->Unbind();
 
 //     m_fullscreenFbo->GetRenderTargetTexture().WriteToFile("out.png");
 //     exit(1);
 
-    SetViewport();
+/*    SetViewport();
     Clear(1.0f, 1.0f, 1.0f);
 
 
@@ -153,7 +148,7 @@ void TuhuApplication::Render() {
 
 
     m_postShader->Unbind();
-
+*/
 
     //fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
 

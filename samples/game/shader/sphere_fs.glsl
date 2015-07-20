@@ -1,6 +1,5 @@
-#include "value_noise_lib.glsl"
-
-#include "scattering.glsl"
+#include "shader_lib/value_noise_lib.glsl"
+#include "shader_lib/scattering.glsl"
 
 float logLuminance(vec4 c)
 {

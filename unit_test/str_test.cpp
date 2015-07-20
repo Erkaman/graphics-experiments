@@ -22,6 +22,10 @@ static void TestGetFileDirectory() {
 static void TestAppendPaths() {
     AssertEquals(AppendPaths("shader/", "lib.glsl"),  string("shader/lib.glsl"));
     AssertEquals(AppendPaths("shader", "lib.glsl"),  string("shader/lib.glsl"));
+    AssertEquals(AppendPaths("./", "lib.glsl"),  string("./lib.glsl"));
+    AssertEquals(AppendPaths(".", "lib.glsl"),  string("./lib.glsl"));
+
+
 }
 
 void StrTestSuite() {

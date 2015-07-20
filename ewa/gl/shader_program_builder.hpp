@@ -21,7 +21,6 @@ private:
     void Attach();
     void Link();
 
-
 public:
 
     /*

@@ -9,14 +9,16 @@ using namespace std;
 // https://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
 #pragma warning( disable : 4996 )
 
-const char * getError() {
+static const char * getError() {
     return strerror(errno);
 }
 
-File::File(const std::string& filename, const std::string& mode):m_fp(fopen(filename.c_str(), mode.c_str())), m_filename(filename) {
+File::File(const std::string& filename, const FileMode fileMode): m_fp(NULL), m_filename(filename), m_errorMessage("") {
+
+    m_fp = fopen(filename.c_str(), fileMode == FileModeReading ? "rb" : "wb ");
 
     if(!m_fp) {
-	LOG_E("could not open file %s:%s", m_filename.c_str(), getError());
+	m_errorMessage = "could not open the file " + m_filename + ":" + std::string(getError());
     }
 }
 
@@ -52,11 +54,11 @@ string File::GetFileContents() {
     return str;
 }
 
-string File::GetFileContents(const string& filename) {
+/*string File::GetFileContents(const string& filename) {
     File f(filename, "rb");
     string contents = f.GetFileContents();
     return contents;
-}
+    }*/
 
 bool File::Exists(const std::string& filename) {
     FILE* fp = fopen(filename.c_str(), "r");
@@ -74,7 +76,7 @@ void File::WriteArray(const void* data, size_t dataSize) {
 }
 
 void File::WriteArray(const std::string& filename, const void* data, const size_t dataSize) {
-    File(filename, "wb").WriteArray(data, dataSize);
+    File(filename, FileModeWriting).WriteArray(data, dataSize);
 }
 
 void* File::ReadArray(const size_t& dataSize) {
@@ -86,7 +88,16 @@ void* File::ReadArray(const size_t& dataSize) {
 
 
 void* File::ReadArray(const std::string& filename, size_t& dataSize) {
-    File file(filename, "rb");
+    File file(filename, FileModeReading);
     dataSize = file.GetFileSize();
     return file.ReadArray(dataSize);
+}
+
+bool File::HasError()const {
+    return m_errorMessage != "";
+}
+
+
+std::string File::GetError()const {
+    return m_errorMessage;
 }

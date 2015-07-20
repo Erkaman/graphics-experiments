@@ -1,4 +1,4 @@
-#include "perlin_noise_lib.glsl"
+#include "shader_lib/perlin_noise_lib.glsl"
 
 out vec4 fragmentColor;
 in vec2 texCoord;

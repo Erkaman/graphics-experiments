@@ -1,8 +1,8 @@
 
-#include "lib.glsl"
+#include "shader_lib/lib.glsl"
 
 
-#include "cellular.glsl"
+#include "shader_lib/cellular.glsl"
 
 out vec4 fragmentColor;
 

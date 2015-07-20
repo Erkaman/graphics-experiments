@@ -27,10 +27,19 @@ ShaderProgram::~ShaderProgram() {
     glDeleteProgram(m_alreadyBoundProgram);
 }
 
+static std::string GetShaderContents(const std::string& shaderPath) {
+    File f(shaderPath, FileModeReading);
 
+    if(f.HasError()) {
+	LOG_E("Could not read the shader %s: %s", shaderPath.c_str(), f.GetError().c_str() );
+    }
+
+    return f.GetFileContents();
+}
 
 
 ShaderProgram::ShaderProgram(const std::string& shaderName){
+
 
     m_alreadyBoundProgram = false;
 
@@ -39,15 +48,20 @@ ShaderProgram::ShaderProgram(const std::string& shaderName){
     if(	!File::Exists(geometryShaderSource)) {
 	geometryShaderSource = ""; // do not load a geometry shader, because it does not exist.
     } else {
-	geometryShaderSource = File::GetFileContents(geometryShaderPath);
+
+
+
+	geometryShaderSource = GetShaderContents(geometryShaderPath);
     }
 
     CompileShaderProgram(
 
-	File::GetFileContents(shaderName + "_vs.glsl"),
-	File::GetFileContents(shaderName + "_fs.glsl"),
+	GetShaderContents(shaderName + "_vs.glsl"),
+	GetShaderContents(shaderName + "_fs.glsl"),
 	geometryShaderSource,
 	GetFileDirectory(shaderName + "_vs.glsl"));
+
+
 }
 
 ShaderProgram::ShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource) {
@@ -67,6 +81,8 @@ void ShaderProgram::CompileShaderProgram(const string& vertexShaderSource, const
     m_shaderProgram = shaderBuilder.GetLinkedShaderProgram();
 
     m_uniformLocationStore = new UniformLocationStore(m_shaderProgram);
+
+
 }
 
 void ShaderProgram::Bind() {

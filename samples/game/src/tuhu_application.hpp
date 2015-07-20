@@ -40,7 +40,7 @@ private:
 
 public:
 
-    TuhuApplication();
+    TuhuApplication(int argc, char *argv[]);
     ~TuhuApplication();
 
     void Init() override;
