@@ -1,0 +1,5 @@
+
+file(GLOB TREE_SRC src/*.cpp)
+
+ADD_EXECUTABLE(tree ${TREE_SRC} )
+TARGET_LINK_LIBRARIES(tree ewa)

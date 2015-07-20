@@ -10,7 +10,6 @@
 
 #include "camera.hpp"
 #include "height_map.hpp"
-#include "tree.hpp"
 #include "skybox.hpp"
 #include "quad.hpp"
 #include "perlin_seed.hpp"
@@ -31,12 +30,11 @@
 using namespace std;
 
 
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), camera(NULL), heightMap(NULL),tree(NULL),m_fullscreenFbo(NULL),  quad(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), camera(NULL), heightMap(NULL),m_fullscreenFbo(NULL),  quad(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(camera);
     MY_DELETE(heightMap);
-    MY_DELETE(tree);
     MY_DELETE(quad);
     MY_DELETE(m_perlinSeed);
     MY_DELETE(m_sphere);
@@ -54,10 +52,9 @@ void TuhuApplication::Init() {
 
     heightMap = new HeightMap("img/combined.png");
 
-/*	LOG_I("making tree");
+	LOG_I("making tree");
 
-    tree = make_unique<Tree>(Vector3f(0,2,0));
-*/
+
 
 
     LOG_I("done init");
@@ -85,6 +82,8 @@ void TuhuApplication::Render() {
 	Clear(0.0f, 1.0f, 1.0f);
 
 	m_sphere->Draw(*camera);
+
+
 
 	Vector4f lightPosition(93,10.0f,93, 1.0f);
 	heightMap->Draw(*camera, lightPosition);

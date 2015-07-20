@@ -1,6 +1,6 @@
 #include "colonization.hpp"
 
-#include "random.hpp"
+#include "ewa/random.hpp"
 
 #include <assert.h>
 

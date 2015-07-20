@@ -1,7 +1,7 @@
 #pragma once
 
-#include "math/vector3f.hpp"
-#include "random.hpp"
+#include "ewa/math/vector3f.hpp"
+#include "ewa/random.hpp"
 
 const float TWIG_AREA = 0.1f*0.1f;
 

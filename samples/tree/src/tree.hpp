@@ -1,7 +1,7 @@
 #pragma once
 
-#include "gl/gl_common.hpp"
-#include "math/vector3f.hpp"
+#include "ewa/gl/gl_common.hpp"
+#include "ewa/math/vector3f.hpp"
 #include "colonization.hpp"
 
 class ShaderProgram;

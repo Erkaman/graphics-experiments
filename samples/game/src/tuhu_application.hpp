@@ -8,7 +8,6 @@ class Texture;
 class Camera;
 class HeightMap;
 class Tree;
-class Plane;
 class FBO;
 class Quad;
 class PerlinSeed;
@@ -20,8 +19,6 @@ private:
 
     Camera* camera;
     HeightMap* heightMap;
-    Tree* tree;
-    Plane* plane;
 
     FBO* m_fullscreenFbo;
 

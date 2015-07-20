@@ -1,16 +1,16 @@
 #include "tree.hpp"
 
-#include "camera.hpp"
+#include "ewa/camera.hpp"
 #include "colonization.hpp"
 
-#include "gl/shader_program.hpp"
-#include "gl/vbo.hpp"
-#include "gl/texture2d.hpp"
+#include "ewa/gl/shader_program.hpp"
+#include "ewa/gl/vbo.hpp"
+#include "ewa/gl/texture2d.hpp"
 
-#include "math/matrix4f.hpp"
-#include "math/vector4f.hpp"
+#include "ewa/math/matrix4f.hpp"
+#include "ewa/math/vector4f.hpp"
 
-#include "common.hpp"
+#include "ewa/common.hpp"
 
 using std::vector;
 
