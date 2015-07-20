@@ -123,23 +123,11 @@ void main()
 	vec3 L0 = vec3(0,0,0);
 
 	// composition + solar disc
-//	if (cosTheta > sunAngularDiameterCos)
-//		L0 += sunE * Fex;
+	if (cosTheta > sunAngularDiameterCos)
+		L0 += sunE * Fex;
 
 	vec4 fragmentColor0 = vec4(L0 + Lin, 1);
 	fragmentColor0.w = logLuminance(fragmentColor0);
 
-//	float a = acos(dot(sunDirection, vec3(0.0f, 1.0f, 0.0f)));
-
-	vec3 n = totalRayleigh(lambda);
-
-
-    fragmentColor = vec4(
-
-//	vec3(normalize(abs(worldSpacePosition - cameraPosition)))
-
-	0.01 * Lin
-//	vec3(Fex)
-//	vec3(1,0,0)
-	, 1.0);
+	fragmentColor = fragmentColor0;
 }

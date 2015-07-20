@@ -227,9 +227,6 @@ void Sphere::Update(const float delta) {
 	m_turbidity -= 0.01 * SPEED;
     }
 
-
-
-
 }
 
 void Sphere::UpdateSunDirection() {
