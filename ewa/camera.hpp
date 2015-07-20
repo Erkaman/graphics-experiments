@@ -39,6 +39,6 @@ public:
     void Stride(const float amount);
     void Fly(const float amount);
 
-    void HandleInput();
+    void HandleInput(const float delta);
 
 };

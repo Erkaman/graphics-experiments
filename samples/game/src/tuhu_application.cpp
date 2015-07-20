@@ -53,15 +53,11 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
-    LOG_I("init");
+    ::SetDepthTest(true);
 
-    GL_C(glEnable (GL_DEPTH_TEST)); // enable depth-testing
-    GL_C(glEnable (GL_CULL_FACE)); // enable depth-testing
+    ::SetCullFace(true);
 
-	LOG_I("making camera");
-
-
-	camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,Vector3f(0,0.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
+    camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,Vector3f(0,0.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
 
     heightMap = new HeightMap("img/combined.png");
 
@@ -78,8 +74,6 @@ void TuhuApplication::Init() {
 	"img/bluecloud_up.png",
 	"img/bluecloud_dn.png"
 	);
-
-
 
     plane = new Plane(Vector3f(1,4,1), Vector3f(1,1,1));
 
@@ -100,19 +94,15 @@ void TuhuApplication::Init() {
 
     //                    128000
     m_sphere = new Sphere(1, 10, 10);
-
 }
 
 void TuhuApplication::Render() {
-
 
 //    m_fullscreenFbo->Bind();
     {
 	SetViewport();
 
 	Clear(0.0f, 1.0f, 1.0f);
-
-
 
 	m_sphere->Draw(*camera);
 
@@ -175,57 +165,14 @@ void TuhuApplication::Render() {
     fbo->Unbind();
     fbo->GetRenderTargetTexture().WriteToFile("out.png");
     exit(1);*/
-
 }
 
 void TuhuApplication::Update(const float delta) {
-    static float speed = 1.0f;
-
-    const KeyboardState& kbs = KeyboardState::GetInstance();
-
-
-    if( kbs.IsPressed(GLFW_KEY_W) ) {
-	camera->Walk(delta * speed);
-    }  else if(kbs.IsPressed(GLFW_KEY_S) ) {
-	camera->Walk(-delta * speed);
-    }
-
-    if(kbs.IsPressed(GLFW_KEY_A) ) {
-	camera->Stride(-delta * speed);
-    }else if( kbs.IsPressed(GLFW_KEY_D) ) {
-	camera->Stride(+delta * speed);
-    }
-
-    if(   kbs.IsPressed(GLFW_KEY_O) ) {
-	camera->Fly(+delta * speed);
-    }else if(   kbs.IsPressed(GLFW_KEY_L) ) {
-	camera->Fly(-delta * speed);
-    }
-
-    if(   kbs.IsPressed(GLFW_KEY_M)  ) {
-	speed = 5.0f;
-    }else {
-	speed = 1.0f;
-    }
-
-    camera->HandleInput();
+    camera->HandleInput(delta);
 
     m_sphere->Update(delta);
 }
 
 void TuhuApplication::RenderText()  {
-
-/*
-
-    GL_C(glViewport(0, 0, 100, 100));
-    GL_C(glClearColor(0.0f, 0.0f, 1.0f, 1.0f));
-    GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
-    fbo->Unbind();
-
-    fbo->GetRenderTargetTexture().WriteToFile("out.png");
-    exit(2);*/
-
     m_font->DrawString(*m_fontShader, 600,150, "hello world" );
-
 }

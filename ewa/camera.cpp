@@ -6,6 +6,9 @@
 #include "mouse.hpp"
 #include "math/math_common.hpp"
 
+#include "keyboard_state.hpp"
+#include "gl/gl_common.hpp"
+
 using std::string;
 
 constexpr float NEAR = 0.1f;
@@ -61,7 +64,7 @@ void Camera::Fly(const float amount) {
     ComputeViewMatrix();
 }
 
-void Camera::HandleInput() {
+void Camera::HandleInput(const float delta) {
 
 
 
@@ -83,6 +86,33 @@ void Camera::HandleInput() {
 	m_right = Vector3f::Cross(m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
 	m_up = Vector3f(0.0f,1.0f,0.0f);//Vector3f::Cross(m_right, m_viewDir).Normalize();
 	ComputeViewMatrix();
+    }
+
+    const KeyboardState& kbs = KeyboardState::GetInstance();
+    static float cameraSpeed = 1.0f;
+
+    if( kbs.IsPressed(GLFW_KEY_W) ) {
+	Walk(delta * cameraSpeed);
+    }  else if(kbs.IsPressed(GLFW_KEY_S) ) {
+	Walk(-delta * cameraSpeed);
+    }
+
+    if(kbs.IsPressed(GLFW_KEY_A) ) {
+	Stride(-delta * cameraSpeed);
+    }else if( kbs.IsPressed(GLFW_KEY_D) ) {
+	Stride(+delta * cameraSpeed);
+    }
+
+    if(   kbs.IsPressed(GLFW_KEY_O) ) {
+	Fly(+delta * cameraSpeed);
+    }else if(   kbs.IsPressed(GLFW_KEY_L) ) {
+	Fly(-delta * cameraSpeed);
+    }
+
+    if(   kbs.IsPressed(GLFW_KEY_M)  ) {
+	cameraSpeed = 5.0f;
+    }else {
+	cameraSpeed = 1.0f;
     }
 }
 

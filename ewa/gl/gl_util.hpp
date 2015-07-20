@@ -21,7 +21,10 @@ void ClearOpenGLError();
 void setupGLDebugMessages();
 
 void SetDepthTest(bool enable);
+void SetCullFace(const bool enable);
 
 void SetViewport(GLint x, GLint y, GLsizei width, GLsizei height);
+
+
 
 void Clear(GLclampf red, GLclampf green, GLclampf blue, GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

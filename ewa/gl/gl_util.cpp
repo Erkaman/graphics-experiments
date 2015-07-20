@@ -132,12 +132,21 @@ void ClearOpenGLError() {
 }
 
 void SetDepthTest(bool enable) {
-	if (enable) {
-		GL_C(glEnable(GL_DEPTH_TEST));
-	} else {
-		GL_C(glDisable(GL_DEPTH_TEST));
-	}
+    if (enable) {
+	GL_C(glEnable(GL_DEPTH_TEST));
+    } else {
+	GL_C(glDisable(GL_DEPTH_TEST));
+    }
 }
+
+void SetCullFace(const bool enable) {
+    if (enable) {
+	GL_C(glEnable(GL_CULL_FACE));
+    } else {
+	GL_C(glDisable(GL_CULL_FACE));
+    }
+}
+
 
 void SetViewport(GLint x, GLint y, GLsizei width, GLsizei height) {
     GL_C(glViewport(x, y, width, height));
