@@ -20,7 +20,6 @@
 
 #include "font.hpp"
 
-
 #include "common.hpp"
 
 #include "sphere.hpp"
@@ -31,17 +30,14 @@
 
 using namespace std;
 
-constexpr int TEXTURE_SIZE = 256;
 
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), camera(NULL), heightMap(NULL),tree(NULL),fbo(NULL),m_fullscreenFbo(NULL),  quad(NULL), simpleShader(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), camera(NULL), heightMap(NULL),tree(NULL),m_fullscreenFbo(NULL),  quad(NULL), m_postShader(NULL), m_perlinSeed(NULL), m_sphere(NULL){ }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(camera);
     MY_DELETE(heightMap);
     MY_DELETE(tree);
-    MY_DELETE(fbo);
     MY_DELETE(quad);
-    MY_DELETE(simpleShader);
     MY_DELETE(m_perlinSeed);
     MY_DELETE(m_sphere);
     MY_DELETE(m_postShader);
@@ -66,13 +62,10 @@ void TuhuApplication::Init() {
 
     LOG_I("done init");
 
-    fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
     m_fullscreenFbo = new FBO(9,
 			      GetFramebufferWidth(), GetFramebufferHeight());
 
     quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
-
-    simpleShader = new ShaderProgram("shader/simple");
 
     m_postShader = new ShaderProgram("shader/post");
 
@@ -124,32 +117,6 @@ void TuhuApplication::Render() {
 
     m_postShader->Unbind();
 */
-
-    //fbo = new FBO(10, TEXTURE_SIZE,TEXTURE_SIZE);
-
-    //quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
-
-/*
-    fbo->Bind();
-
-    ::SetViewport(0,0,TEXTURE_SIZE,TEXTURE_SIZE);
-
-    Clear(0.0f, 0.0f, 1.0f);
-
-    simpleShader->Bind();
-
-    m_perlinSeed->Bind(*simpleShader);
-
-    quad->Draw();
-
-    m_perlinSeed->Unbind();
-
-    simpleShader->Unbind();
-
-
-    fbo->Unbind();
-    fbo->GetRenderTargetTexture().WriteToFile("out.png");
-    exit(1);*/
 }
 
 void TuhuApplication::Update(const float delta) {
