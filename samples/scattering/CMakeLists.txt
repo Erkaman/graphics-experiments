@@ -1,0 +1,5 @@
+
+file(GLOB SCATTERING_SRC src/*.cpp)
+
+ADD_EXECUTABLE(scattering ${SCATTERING_SRC} )
+TARGET_LINK_LIBRARIES(scattering ewa)
