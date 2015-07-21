@@ -57,7 +57,7 @@ void Colonization::addBranch(const Vector3f& position,
     Branch* branch = new Branch(position, parent);
 
     m_branches.push_back(branch);
-    int index = m_branches.size();  // branch index +1
+//    int index = m_branches.size();  // branch index +1
 
 
 }

@@ -25,9 +25,6 @@ Quad::Quad(const Vector2f c1, const Vector2f& c2) {
     FloatVector vertices;
     UshortVector indices;
 
-    const float SCALE = 1.0f;
-
-
     c1.Add(vertices);
     Vector2f(0.0f,0.0f).Add(vertices);
 
