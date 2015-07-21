@@ -29,35 +29,36 @@ Skydome::Skydome(const float radius, const int slices, const int stacks): Geomet
       load the shader
     */
 
-    m_shader = new ShaderProgram("shader/sphere");
+    m_domeShader = new ShaderProgram("shader/sphere");
 
-    m_vertexBuffer = VBO::CreateInterleaved(
+    m_domeVertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{
 	    VBO_POSITION_ATTRIB_INDEX,
 		VBO_TEX_COORD_ATTRIB_INDEX },
 	vector<GLuint>{3,3}
 	);
-
-    m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
-
-    m_numTriangles = GenerateVertices(radius, slices, stacks, m_vertexBuffer, m_indexBuffer);
+    m_domeIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
+    m_domeNumTriangles = GenerateVertices(radius, slices, stacks, m_domeVertexBuffer, m_domeIndexBuffer);
 
     m_perlinSeed = new ValueNoiseSeed(2);
 }
 
 
+void MakeSun() {
+
+}
 
 Skydome::~Skydome() {
-    MY_DELETE(m_shader);
-    MY_DELETE(m_vertexBuffer);
-    MY_DELETE(m_indexBuffer);
+    MY_DELETE(m_domeShader);
+    MY_DELETE(m_domeVertexBuffer);
+    MY_DELETE(m_domeIndexBuffer);
     MY_DELETE(m_perlinSeed);
 
 }
 
 void Skydome::Draw(const Camera& camera) {
 
-    m_shader->Bind();
+    m_domeShader->Bind();
 
     SetDepthTest(false);
 
@@ -68,21 +69,18 @@ void Skydome::Draw(const Camera& camera) {
 
     Matrix4f mvp = camera.GetProjectionMatrix() * modelView;
 
-    m_shader->SetUniform("mvp", mvp);
-//    m_shader->SetUniform("sampler", 0);
-    m_shader->SetUniform("delta", m_delta);
+    m_domeShader->SetUniform("mvp", mvp);
+    m_domeShader->SetUniform("delta", m_delta);
 
-    m_perlinSeed->Bind(*m_shader);
+    m_perlinSeed->Bind(*m_domeShader);
 
-    VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
+    VBO::DrawIndices(*m_domeVertexBuffer, *m_domeIndexBuffer, GL_TRIANGLES, (m_domeNumTriangles)*3);
 
     m_perlinSeed->Unbind();
 
-
-    m_shader->Unbind();
+    m_domeShader->Unbind();
 
     SetDepthTest(true);
-
 }
 
 void Skydome::Update(const float delta) {

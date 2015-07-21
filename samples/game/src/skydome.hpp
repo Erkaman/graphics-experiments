@@ -12,17 +12,22 @@ class Skydome : public GeometryObject{
 
 private:
 
-    unsigned int m_numTriangles;
-    bool m_isWireframe;
+    /*
+      There variables are used to draw the dome:
+     */
 
-    VBO* m_vertexBuffer;
-    VBO* m_indexBuffer;
+    unsigned int m_domeNumTriangles;
+    VBO* m_domeVertexBuffer;
+    VBO* m_domeIndexBuffer;
+    ShaderProgram* m_domeShader;
 
-    ShaderProgram* m_shader;
+    float m_delta;
 
     ValueNoiseSeed* m_perlinSeed;
 
-    float m_delta;
+    /*
+      These are used to draw the sun:
+     */
 
 public:
 
@@ -32,5 +37,7 @@ public:
 
     void Draw(const Camera& camera);
     void Update(const float delta);
+
+    void MakeSun();
 
 };
