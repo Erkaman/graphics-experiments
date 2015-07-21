@@ -1,2 +1,2 @@
 all:
-	make -C samples/game
+	make -C samples/cloud_gen

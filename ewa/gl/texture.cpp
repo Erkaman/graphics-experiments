@@ -168,10 +168,16 @@ void Texture::WriteToFile(const std::string& filename) {
 
     unsigned char* charPixels = (unsigned char*)intPixels;
 
-    //Encode the image
-    unsigned error = lodepng::encode(filename, charPixels, m_width, m_height);
+    WriteToFile(charPixels, m_width, m_height, filename);
 
     delete pixels;
+}
+
+void Texture::WriteToFile(unsigned char* pixels, const size_t width, const size_t height, const std::string& filename) {
+
+    //Encode the image
+    unsigned error = lodepng::encode(filename, pixels, width, height);
+
 
   //if there's an error, display it
     if(error)

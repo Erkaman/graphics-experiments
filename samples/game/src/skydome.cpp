@@ -151,7 +151,7 @@ void Skydome::Draw(const Camera& camera) {
 
     m_domeShader->Unbind();
 
-    const Vector3f sunDir(0,0.25,1);
+    const Vector3f sunDir(0,0.5,1);
 
     const Vector3f taxis(sunDir.z, 0, -sunDir.x);
     const Vector3f yaxis = Vector3f::Cross(sunDir, taxis).Normalize(); //yaxis.cross(taxis);

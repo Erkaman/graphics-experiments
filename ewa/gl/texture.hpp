@@ -85,6 +85,7 @@ public:
      */
     void WriteToFile(const std::string& filename);
 
+    static void WriteToFile(unsigned char* pixels, const size_t width, const size_t height, const std::string& filename);
 
     /*
       String conversion operator.

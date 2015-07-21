@@ -22,6 +22,7 @@ public:
     ~ValueNoiseSeed();
 
     void Bind(ShaderProgram& shader);
-
     void Unbind();
+
+
 };
