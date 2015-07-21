@@ -23,10 +23,9 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
     m_projectionMatrix =
 	usePerspectiveProjection ?
 	Matrix4f::CreatePerspective (45.0f, (float)windowWidth/(float)windowHeight, NEAR, FAR) :
-	Matrix4f::CreateOrthographic(-windowWidth,+windowWidth, -windowHeight, +windowHeight, -1, 1);
+	Matrix4f::CreateOrthographic(-windowWidth,+windowWidth, -windowHeight, +windowHeight, -1.0f, 1.0f);
 
     ComputeViewMatrix();
-
 }
 
 

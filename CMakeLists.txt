@@ -82,6 +82,10 @@ ENDIF()
 
 include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng" ".")
 
+set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake) 
+
+include(CreateLaunchers)	
+
 ADD_LIBRARY(ewa ${ENGINE_SRC})
 TARGET_LINK_LIBRARIES(ewa ${game_libs})
 

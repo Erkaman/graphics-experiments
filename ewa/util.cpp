@@ -41,13 +41,13 @@ GLushort GenerateVertices(
     // Calc The Index Positions
     for (int i = 0; i < slices * stacks + slices; ++i){
 
-	indices.push_back (i + slices);
-	indices.push_back (i + slices + 1);
-	indices.push_back (i);
+	indices.push_back (GLushort(i + slices));
+	indices.push_back (GLushort(i + slices + 1));
+	indices.push_back (GLushort(i));
 
-	indices.push_back (i + 1);
-	indices.push_back (i);
-	indices.push_back (i + slices + 1);
+	indices.push_back (GLushort(i + 1));
+	indices.push_back (GLushort(i));
+	indices.push_back (GLushort(i + slices + 1));
     }
 
     m_vertexBuffer->Bind();

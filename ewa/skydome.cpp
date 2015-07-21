@@ -138,33 +138,33 @@ void Skydome::Update(const float delta) {
 
     // makes it less bright
     if(kbs.IsPressed(GLFW_KEY_B)) {
-	m_reileighCoefficient += 0.05 * SPEED;
+	m_reileighCoefficient += 0.05f * SPEED;
     }
     if(kbs.IsPressed(GLFW_KEY_N)) {
-	m_reileighCoefficient -= 0.05 * SPEED;
+	m_reileighCoefficient -= 0.05f * SPEED;
     }
 
 
     if(kbs.IsPressed(GLFW_KEY_C)) {
-	m_mieCoefficient += 0.001 * SPEED;
+	m_mieCoefficient += 0.001f * SPEED;
     }
     if(kbs.IsPressed(GLFW_KEY_V)) {
-	m_mieCoefficient -= 0.001 * SPEED;
+	m_mieCoefficient -= 0.001f * SPEED;
     }
 
     if(kbs.IsPressed(GLFW_KEY_Z)) {
-	m_mieDirectionalG += 0.01 * SPEED;
+	m_mieDirectionalG += 0.01f * SPEED;
     }
     if(kbs.IsPressed(GLFW_KEY_X)) {
-	m_mieDirectionalG -= 0.01 * SPEED;
+	m_mieDirectionalG -= 0.01f * SPEED;
     }
 
 
     if(kbs.IsPressed(GLFW_KEY_1)) {
-	m_turbidity += 0.01 * SPEED;
+	m_turbidity += 0.01f * SPEED;
     }
     if(kbs.IsPressed(GLFW_KEY_2)) {
-	m_turbidity -= 0.01 * SPEED;
+	m_turbidity -= 0.01f * SPEED;
     }
 
 }

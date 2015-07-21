@@ -302,7 +302,7 @@ static void TestCreateRotate() {
 
     AssertEquals(
 	Matrix4f::CreateRotate(45, Vector3f(0,0,1) ) * Vector4f(1,0,0,1),
-	Vector4f(0.707107,0.707107,0,1));
+	Vector4f(0.707107f,0.707107f,0.0f,1.0f));
 
 
 }
