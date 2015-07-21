@@ -18,6 +18,12 @@ public:
     // random float in range [low,high]
     float RandomFloat(const float low, const float high);
 
+    // random int in range [low,high]
+    int RandomInt(const int low, const int high);
+
+    // a random int.
+    int RandomInt();
+
     unsigned long long Next();
 
 };

@@ -29,3 +29,12 @@ float Random::RandomFloat() {
 float Random::RandomFloat(const float low, const float high) {
     return low + RandomFloat() * (high-low);
 }
+
+int Random::RandomInt() {
+    return (int)Next();
+}
+
+int Random::RandomInt(const int low, const int high) {
+    return
+	low + (int)(RandomFloat() * ((high - low + 1)));
+}

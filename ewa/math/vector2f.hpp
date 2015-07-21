@@ -51,6 +51,16 @@ public:
 
 };
 
+// hashcode
+namespace std {
+template <> struct hash<Vector2f> {
+    size_t operator()(const Vector2f& v) const{
+	return 997 * ((int)v.x) ^ 991 * ((int)v.y);
+    }
+};
+}
+
+
 /*
   OPERATOR DEFINITIONS
  */
