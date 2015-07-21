@@ -1,28 +1,12 @@
 #include "tuhu_application.hpp"
-#include "gl/shader_program.hpp"
-#include "gl/vbo.hpp"
-#include "gl/vao.hpp"
 
-#include "math/matrix4f.hpp"
-
-#include "gl/texture2d.hpp"
-#include "gl/fbo.hpp"
-
-#include "camera.hpp"
-#include "height_map.hpp"
-#include "quad.hpp"
-#include "perlin_seed.hpp"
-#include "keyboard_state.hpp"
-
-#include "worley_seed.hpp"
-
-#include "font.hpp"
-
-#include "common.hpp"
+#include "ewa/camera.hpp"
+#include "ewa/height_map.hpp"
+#include "ewa/perlin_seed.hpp"
+#include "ewa/common.hpp"
+#include "ewa/font.hpp"
 
 #include "skydome.hpp"
-
-#include "value_noise_seed.hpp"
 
 
 
@@ -61,7 +45,6 @@ void TuhuApplication::Render() {
     Clear(0.0f, 1.0f, 1.0f);
 
     m_skydome->Draw(*m_camera);
-
 
     Vector4f lightPosition(93,10.0f,93, 1.0f);
     m_heightMap->Draw(*m_camera, lightPosition);

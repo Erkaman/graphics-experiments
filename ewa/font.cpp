@@ -75,7 +75,7 @@ void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, c
     float totalHeight = 0;
 
     Texture::SetActiveTextureUnit(0);
-    fontShader.SetUniform("tex", 0);
+    fontShader.SetUniform("font_tex", 0);
 
     m_fontTexture->Bind();
     {

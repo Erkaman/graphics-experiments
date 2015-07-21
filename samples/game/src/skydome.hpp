@@ -1,12 +1,13 @@
 #pragma once
 
-#include "geometry_object.hpp"
-
+#include "ewa/geometry_object.hpp"
 
 class VBO;
 class ShaderProgram;
 class Camera;
 class ValueNoiseSeed;
+class ValueNoiseSeed;
+class Texture;
 
 class Skydome : public GeometryObject{
 
@@ -26,8 +27,14 @@ private:
     ValueNoiseSeed* m_perlinSeed;
 
     /*
-      These are used to draw the sun:
+      These are used to draw the billboard sun:
      */
+    unsigned int m_sunNumTriangles;
+    VBO* m_sunVertexBuffer;
+    VBO* m_sunIndexBuffer;
+    ShaderProgram* m_sunShader;
+
+    Texture* m_sunTexture;
 
 public:
 
@@ -37,6 +44,9 @@ public:
 
     void Draw(const Camera& camera);
     void Update(const float delta);
+
+
+    void MakeSky(const float radius, const int slices, const int stacks);
 
     void MakeSun();
 

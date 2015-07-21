@@ -6,8 +6,6 @@ in vec3 texCoord;
 
 uniform float delta;
 
-
-
 // return 1 when x > 0, otherwise return 0.
 float when_positive(float x) {
     return max(sign(x), 0);
@@ -46,10 +44,6 @@ vec3 make_clouds(vec3 tc) {
     return mix(sky, clouds, alpha);
 }
 
-void main()
-{
-
+void main(){
     fragmentColor = vec4(make_clouds(texCoord), 1);
-
-
 }

@@ -1,12 +1,12 @@
 in vec2 texCoord;
-uniform sampler2D tex;
+uniform sampler2D font_tex;
 uniform vec3 color;
 
 out vec4 fragmentColor;
 
 void main(void) {
 
-    vec4 sample  = texture(tex, texCoord).rgba;
+    vec4 sample  = texture(font_tex, texCoord).rgba;
 
     float a = sample.a;
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "application.hpp"
-#include "common.hpp"
+#include "ewa/application.hpp"
+#include "ewa/common.hpp"
 
 class Camera;
 class HeightMap;
