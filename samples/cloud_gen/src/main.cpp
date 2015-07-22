@@ -22,6 +22,7 @@ constexpr int CLOUD_MAX_SIZE=100;
 static const string outFile = "small.png";
 constexpr float EPSILON = 0.0001f;
 constexpr int SEED = 2;
+constexpr unsigned char CLOUD_ALPHA = 150;
 
 const ValueNoise noise(SEED);
 Random rng(SEED);
@@ -176,7 +177,9 @@ void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, 
 		(y)/scale + ymin);
 	    const float sample =  SampleNoise(p);
 
-	    unsigned char alpha = sample < EPSILON ? 0 : 255;
+
+
+	    unsigned char alpha = sample < EPSILON ? 0 : CLOUD_ALPHA;
 	    unsigned char val = (unsigned char)((sample) * 255.0f);
 
 	    pixels[i++] = val;
