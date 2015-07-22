@@ -2,10 +2,13 @@
 
 #include "ewa/geometry_object.hpp"
 
+#include <vector>
+
 class VBO;
 class ShaderProgram;
 class Camera;
 class Texture;
+class CloudGroup;
 
 class Skydome : public GeometryObject{
 
@@ -31,7 +34,15 @@ private:
     Texture* m_sunTexture;
 
 
+
+    /*
+      Used for drawing billboards:
+     */
+
     ShaderProgram* m_billboardShader;
+
+
+    std::vector<CloudGroup*> m_clouds;
 
 
     /*
@@ -39,6 +50,7 @@ private:
      */
     void DrawDome(const Camera& camera);
     void DrawSun(const Camera& camera);
+    void DrawClouds(const Camera& camera);
 
 
     /*
@@ -46,6 +58,11 @@ private:
      */
     void DrawBillboard(const Camera& camera, VBO* m_vertexBuffer, VBO* m_indexBuffer,
 		       const float orientation, const float elevation, const float rotation);
+
+    void MakeSky(const float radius, const int slices, const int stacks);
+    void MakeSun();
+    void MakeClouds();
+
 
 public:
 
@@ -56,7 +73,4 @@ public:
     void Update(const float delta);
 
 
-    void MakeSky(const float radius, const int slices, const int stacks);
-
-    void MakeSun();
 };

@@ -23,15 +23,19 @@ constexpr GLushort NUM_BILLBOARD_TRIANGLES = 2;
 struct CloudInfo {
 public:
 
-    float m_elevationAngle;
-    float m_azimuthAngle;
+    float m_orientation;
+    float m_elevation;
+    float m_rotation;
+
+    VBO* m_vertexBuffer;
+    VBO* m_indexBuffer;
 };
 
-struct CloudTexture{
+struct CloudGroup{
 public:
 
     Texture* m_cloudTexture;
-    vector<CloudInfo> clouds;
+    vector<CloudInfo> m_clouds;
 };
 
 
@@ -45,14 +49,7 @@ Skydome::Skydome(const float radius, const int slices, const int stacks): Geomet
 
     MakeSky(radius, slices, stacks);
     MakeSun();
-
-    m_sunTexture = new Texture2D("img/sun.png");
-
-    m_sunTexture->Bind();
-    m_sunTexture->SetTextureClamping();
-    m_sunTexture->SetMinFilter(GL_LINEAR);
-    m_sunTexture->SetMagFilter(GL_NEAREST);
-    m_sunTexture->Unbind();
+    MakeClouds();
 
 }
 
@@ -67,6 +64,42 @@ void Skydome::MakeSky(const float radius, const int slices, const int stacks) {
 	);
     m_domeIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
     m_domeNumTriangles = GenerateSphereVertices(radius, slices, stacks, m_domeVertexBuffer, m_domeIndexBuffer);
+
+}
+
+void Skydome::MakeClouds() {
+
+
+    CloudGroup* cloudGroup = new CloudGroup();
+
+    Texture* cloudTexture= new Texture2D("img/cloud1.png");
+    cloudTexture->Bind();
+    cloudTexture->SetTextureClamping();
+    cloudTexture->SetMinFilter(GL_LINEAR);
+    cloudTexture->SetMagFilter(GL_NEAREST);
+    cloudTexture->Unbind();
+
+    cloudGroup->m_cloudTexture= cloudTexture;
+
+    CloudInfo cloudInfo;
+
+    cloudInfo.m_vertexBuffer = VBO::CreateInterleaved(
+	vector<GLuint>{
+	    VBO_POSITION_ATTRIB_INDEX,
+		VBO_TEX_COORD_ATTRIB_INDEX },
+	vector<GLuint>{3,3}
+	);
+    cloudInfo.m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
+    GenerateBillboardVertices(cloudInfo.m_vertexBuffer, cloudInfo.m_indexBuffer, 0.06);
+
+    cloudInfo.m_elevation = 5;
+    cloudInfo.m_rotation = 0;
+    cloudInfo.m_orientation = 0;
+
+    cloudGroup->m_clouds.push_back(cloudInfo);
+
+    m_clouds.push_back(cloudGroup);
+
 }
 
 void Skydome::MakeSun() {
@@ -83,6 +116,15 @@ void Skydome::MakeSun() {
     m_sunIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
     GenerateBillboardVertices(m_sunVertexBuffer, m_sunIndexBuffer, 0.06);
+
+    m_sunTexture = new Texture2D("img/sun.png");
+
+    m_sunTexture->Bind();
+    m_sunTexture->SetTextureClamping();
+    m_sunTexture->SetMinFilter(GL_LINEAR);
+    m_sunTexture->SetMagFilter(GL_NEAREST);
+    m_sunTexture->Unbind();
+
 }
 
 Skydome::~Skydome() {
@@ -113,6 +155,9 @@ void Skydome::Draw(const Camera& camera) {
 
     DrawSun(camera);
 
+    DrawClouds(camera);
+
+
 
     // done drawing billboards.
     GL_C(glDisable(GL_BLEND));
@@ -124,7 +169,6 @@ void Skydome::Draw(const Camera& camera) {
 
 void Skydome::Update(const float delta) {
     m_delta += delta;
-
 }
 
 void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const double hsize) {
@@ -192,10 +236,9 @@ void Skydome::DrawSun(const Camera& camera) {
 
     m_sunTexture->Bind();
 
-    DrawBillboard(camera, m_sunVertexBuffer, m_sunIndexBuffer, -10.0f,-5.0f,0.0f);
+    DrawBillboard(camera, m_sunVertexBuffer, m_sunIndexBuffer, -10.0f,5.0f,0.0f);
 
     m_sunTexture->Unbind();
-
 }
 
 
@@ -204,7 +247,7 @@ void Skydome::DrawBillboard(const Camera& camera, VBO* m_vertexBuffer, VBO* m_in
 
 
     const Matrix4f orientationMatrix =Matrix4f::CreateRotate(orientation, Vector3f(0,0,1) );
-    const Matrix4f elevationMatrix =Matrix4f::CreateRotate(elevation, Vector3f(1,0,0) );
+    const Matrix4f elevationMatrix =Matrix4f::CreateRotate(-elevation, Vector3f(1,0,0) );
     const Matrix4f rotationMatrix = Matrix4f::CreateRotate(rotation, Vector3f(0,1,0) );
 
     const Matrix4f sunModelView = rotationMatrix * elevationMatrix * orientationMatrix;
@@ -226,4 +269,32 @@ void Skydome::DrawBillboard(const Camera& camera, VBO* m_vertexBuffer, VBO* m_in
 
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (NUM_BILLBOARD_TRIANGLES)*3);
 
+}
+
+void Skydome::DrawClouds(const Camera& camera) {
+
+
+    for(const CloudGroup* cloudGroup : m_clouds ) {
+
+	cloudGroup->m_cloudTexture->Bind();
+
+	for(const CloudInfo& cloud : cloudGroup->m_clouds) {
+
+
+	    DrawBillboard(camera, m_sunVertexBuffer, m_sunIndexBuffer,
+			  cloud.m_rotation, cloud.m_elevation, cloud.m_rotation);
+
+
+	}
+
+	cloudGroup->m_cloudTexture->Unbind();
+
+
+    }
+
+/*    m_sunTexture->Bind();
+
+    DrawBillboard(camera, m_sunVertexBuffer, m_sunIndexBuffer, -10.0f,5.0f,0.0f);
+
+    m_sunTexture->Unbind();*/
 }
