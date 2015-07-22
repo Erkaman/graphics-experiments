@@ -21,7 +21,7 @@ constexpr int SIZE = 256;
 constexpr int CLOUD_MAX_SIZE=100;
 static const string outFile = "small.png";
 constexpr float EPSILON = 0.0001f;
-constexpr int SEED = 5;
+constexpr int SEED = 2;
 
 const ValueNoise noise(SEED);
 Random rng(SEED);
@@ -32,8 +32,7 @@ float SampleNoise(const Vector2f& p);
 
 void FindCloudFloodfill(int x, int y, int& xmin,int& xmax, int& ymin, int& ymax, unordered_set<Vector2f>& visitedPixels,bool& tooBig);
 
-void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, const string& filename);
-
+void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, const float scale, const string& filename);
 
 int main (int argc, char *argv[]) {
 
@@ -44,13 +43,15 @@ int main (int argc, char *argv[]) {
     int ymin;
     int ymax;
 
+    unordered_set<Vector2f> visitedPixels;
     FindCloud(xmin,xmax, ymin, ymax);
     string cloudfile = "cloud.png";
 
-    SaveNoise(xmin,xmax, ymin, ymax, cloudfile);
+    const int FRAME = 2;
 
+    SaveNoise(xmin-FRAME,xmax+FRAME, ymin-FRAME, ymax+FRAME, 10.0f, cloudfile);
 
-    SaveNoise(0, SIZE-1, 0, SIZE-1, outFile);
+    SaveNoise(0, SIZE-1, 0, SIZE-1, 1.0f, outFile);
 
     string command = "open " + cloudfile;
     system(command.c_str());
@@ -84,8 +85,6 @@ void FindCloud( int& xmin,int& xmax, int& ymin, int& ymax) {
 	int y = rng.RandomInt(0,SIZE);
 
 	if(SampleNoise(Vector2f(x,y)) > EPSILON) {
-
-
 	    xmin = x;
 	    xmax = x;
 
@@ -94,10 +93,10 @@ void FindCloud( int& xmin,int& xmax, int& ymin, int& ymax) {
 
 	    bool tooBig = false;
 
-	    unordered_set<Vector2f> visitedPixels;
 
 	    //LOG_I("found cloud at: %d, %d", x,y );
 
+	    unordered_set<Vector2f> visitedPixels;
 	    FindCloudFloodfill(x,y, xmin,xmax, ymin, ymax, visitedPixels, tooBig);
 
 	    if(tooBig) {
@@ -116,9 +115,6 @@ void FindCloud( int& xmin,int& xmax, int& ymin, int& ymax) {
 
 // if true is returned the
 void FindCloudFloodfill(int x, int y, int& xmin,int& xmax, int& ymin, int& ymax, unordered_set<Vector2f>& visitedPixels, bool& tooBig) {
-
-    //  LOG_I("x, y: %d %d", x,y);
-
     Vector2f p(x,y);
 
     if(tooBig) {
@@ -136,13 +132,10 @@ void FindCloudFloodfill(int x, int y, int& xmin,int& xmax, int& ymin, int& ymax,
 	visitedPixels.find(p) != visitedPixels.end() // already visited pixel
 	) {
 	// no longer a cloud. stop recursion.
-//	LOG_I("return: %d %d",x,y);
 	return;
     }
 
     visitedPixels.insert(p);
-
-//    LOG_I("visit: %s = %f", string(p).c_str(),  sample);
 
     // update min and max.
 
@@ -166,9 +159,7 @@ void FindCloudFloodfill(int x, int y, int& xmin,int& xmax, int& ymin, int& ymax,
     FindCloudFloodfill(x,y-1,xmin,xmax, ymin, ymax,visitedPixels, tooBig);
 }
 
-void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, const string& filename) {
-
-    const float scale = 2.0f;
+void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, const float scale, const string& filename) {
 
     const size_t height = (ymax - ymin) * scale + 1;
     const size_t width =(xmax - xmin) * scale + 1;
