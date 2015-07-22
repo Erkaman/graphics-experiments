@@ -168,39 +168,24 @@ void FindCloudFloodfill(int x, int y, int& xmin,int& xmax, int& ymin, int& ymax,
 
 void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, const string& filename) {
 
+    const float scale = 2.0f;
 
-    const float scale = 1.0f;
-
-    const size_t height = (ymax - ymin + 1) * scale;
-//    LOG_I("height: %ld", height);
-    const size_t width =(xmax - xmin + 1) * scale;
+    const size_t height = (ymax - ymin) * scale + 1;
+    const size_t width =(xmax - xmin) * scale + 1;
 
     unsigned char* pixels = new unsigned char[4 * height * width];
 
     int i = 0;
 
-    //   const float step = 1.0f / scale;
+    for(size_t y = 0; y < height; y += 1) {
+	for(size_t x = 0; x < width; x += 1) {
 
-    for(float y = ymin; y <= ymax; y += 1) {
-	for(float x = xmin; x <= xmax; x += 1) {
-
-
-//	    LOG_I("y: %f", y);
-
-
-	    const Vector2f p(x,y);
+	    const Vector2f p(
+		(x)/scale + xmin,
+		(y)/scale + ymin);
 	    const float sample =  SampleNoise(p);
 
-/*	    if(x == 125 && y == 36) {
-		LOG_I("%f", sample);
-		}*/
-
 	    unsigned char alpha = sample < EPSILON ? 0 : 255;
-
-/*	    if(x == 125) {
-		LOG_I("visit: %s = %f", string(p).c_str(),  sample);
-	    }*/
-
 	    unsigned char val = (unsigned char)((sample) * 255.0f);
 
 	    pixels[i++] = val;
