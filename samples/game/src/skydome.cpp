@@ -54,8 +54,6 @@ void Skydome::MakeSky(const float radius, const int slices, const int stacks) {
 	);
     m_domeIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
     m_domeNumTriangles = GenerateVertices(radius, slices, stacks, m_domeVertexBuffer, m_domeIndexBuffer);
-
-    m_perlinSeed = new ValueNoiseSeed(2);
 }
 
 void Skydome::MakeSun() {
@@ -118,7 +116,6 @@ Skydome::~Skydome() {
     MY_DELETE(m_domeShader);
     MY_DELETE(m_domeVertexBuffer);
     MY_DELETE(m_domeIndexBuffer);
-    MY_DELETE(m_perlinSeed);
 
     MY_DELETE(m_sunShader);
     MY_DELETE(m_sunVertexBuffer);
@@ -143,11 +140,7 @@ void Skydome::Draw(const Camera& camera) {
     m_domeShader->SetUniform("mvp", mvp);
     m_domeShader->SetUniform("delta", m_delta);
 
-    m_perlinSeed->Bind(*m_domeShader);
-
     VBO::DrawIndices(*m_domeVertexBuffer, *m_domeIndexBuffer, GL_TRIANGLES, (m_domeNumTriangles)*3);
-
-    m_perlinSeed->Unbind();
 
     m_domeShader->Unbind();
 

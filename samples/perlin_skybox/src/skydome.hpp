@@ -5,7 +5,7 @@
 class VBO;
 class ShaderProgram;
 class Camera;
-class Texture;
+class ValueNoiseSeed;
 
 class Skydome : public GeometryObject{
 
@@ -22,28 +22,15 @@ private:
 
     float m_delta;
 
-    /*
-      These are used to draw the billboard sun:
-     */
-    unsigned int m_sunNumTriangles;
-    VBO* m_sunVertexBuffer;
-    VBO* m_sunIndexBuffer;
-    ShaderProgram* m_sunShader;
-
-    Texture* m_sunTexture;
+    ValueNoiseSeed* m_perlinSeed;
 
 public:
 
     Skydome(const float radius, const int slices, const int stacks);
     ~Skydome();
 
-
     void Draw(const Camera& camera);
     void Update(const float delta);
 
-
     void MakeSky(const float radius, const int slices, const int stacks);
-
-    void MakeSun();
-
 };
