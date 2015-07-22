@@ -15,7 +15,6 @@
 #include "ewa/common.hpp"
 #include "ewa/util.hpp"
 
-
 using std::vector;
 
 constexpr GLushort NUM_BILLBOARD_TRIANGLES = 2;
@@ -47,7 +46,11 @@ Skydome::Skydome(const float radius, const int slices, const int stacks): Geomet
       Create the skydome.
     */
 
+
     MakeSky(radius, slices, stacks);
+
+    m_billboardShader = new ShaderProgram("shader/billboard");
+
     MakeSun();
     MakeClouds();
 
@@ -68,8 +71,6 @@ void Skydome::MakeSky(const float radius, const int slices, const int stacks) {
 }
 
 void Skydome::MakeClouds() {
-
-
     CloudGroup* cloudGroup = new CloudGroup();
 
     Texture* cloudTexture= new Texture2D("img/cloud1.png");
@@ -87,12 +88,13 @@ void Skydome::MakeClouds() {
 	vector<GLuint>{
 	    VBO_POSITION_ATTRIB_INDEX,
 		VBO_TEX_COORD_ATTRIB_INDEX },
-	vector<GLuint>{3,3}
+	vector<GLuint>{3,2}
 	);
-    cloudInfo.m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
-    GenerateBillboardVertices(cloudInfo.m_vertexBuffer, cloudInfo.m_indexBuffer, 0.06);
 
-    cloudInfo.m_elevation = 5;
+    cloudInfo.m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
+    GenerateBillboardVertices(cloudInfo.m_vertexBuffer, cloudInfo.m_indexBuffer, 0.1);
+
+    cloudInfo.m_elevation = 4;
     cloudInfo.m_rotation = 0;
     cloudInfo.m_orientation = 0;
 
@@ -104,7 +106,6 @@ void Skydome::MakeClouds() {
 
 void Skydome::MakeSun() {
 
-    m_billboardShader = new ShaderProgram("shader/billboard");
 
     m_sunVertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{
@@ -155,9 +156,8 @@ void Skydome::Draw(const Camera& camera) {
 
     DrawSun(camera);
 
+
     DrawClouds(camera);
-
-
 
     // done drawing billboards.
     GL_C(glDisable(GL_BLEND));
@@ -179,9 +179,6 @@ void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const do
     Vector3f sunPoint(0, 0, 1);
     Vector3f xaxis(1, 0, 0);
     Vector3f yaxis(0, 1, 0);
-
-//    double hsize = 0.06; // 0.3
-
 
     (sunPoint - hsize * xaxis + hsize * yaxis).Add(vertices);
     Vector2f(0.0f,1.0f).Add(vertices);
@@ -243,17 +240,17 @@ void Skydome::DrawSun(const Camera& camera) {
 
 
 void Skydome::DrawBillboard(const Camera& camera, VBO* m_vertexBuffer, VBO* m_indexBuffer,
-		   const float orientation, const float elevation, const float rotation) {
+			    const float orientation, const float elevation, const float rotation) {
 
 
     const Matrix4f orientationMatrix =Matrix4f::CreateRotate(orientation, Vector3f(0,0,1) );
     const Matrix4f elevationMatrix =Matrix4f::CreateRotate(-elevation, Vector3f(1,0,0) );
     const Matrix4f rotationMatrix = Matrix4f::CreateRotate(rotation, Vector3f(0,1,0) );
 
-    const Matrix4f sunModelView = rotationMatrix * elevationMatrix * orientationMatrix;
+    const Matrix4f model = rotationMatrix * elevationMatrix * orientationMatrix;
 
 
-    Matrix4f modelView =  camera.GetModelViewMatrix(sunModelView);
+    Matrix4f modelView =  camera.GetModelViewMatrix(model);
     modelView.m03 = 0;
     modelView.m13 = 0;
     modelView.m23 = 0;
@@ -264,8 +261,6 @@ void Skydome::DrawBillboard(const Camera& camera, VBO* m_vertexBuffer, VBO* m_in
 
     m_billboardShader->SetUniform("tex", 0);
     Texture::SetActiveTextureUnit(0);
-
-    // the texture format is somehow corrupt?
 
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (NUM_BILLBOARD_TRIANGLES)*3);
 
@@ -280,21 +275,11 @@ void Skydome::DrawClouds(const Camera& camera) {
 
 	for(const CloudInfo& cloud : cloudGroup->m_clouds) {
 
-
-	    DrawBillboard(camera, m_sunVertexBuffer, m_sunIndexBuffer,
+	    DrawBillboard(camera, cloud.m_vertexBuffer, cloud.m_indexBuffer,
 			  cloud.m_rotation, cloud.m_elevation, cloud.m_rotation);
-
 
 	}
 
 	cloudGroup->m_cloudTexture->Unbind();
-
-
     }
-
-/*    m_sunTexture->Bind();
-
-    DrawBillboard(camera, m_sunVertexBuffer, m_sunIndexBuffer, -10.0f,5.0f,0.0f);
-
-    m_sunTexture->Unbind();*/
 }

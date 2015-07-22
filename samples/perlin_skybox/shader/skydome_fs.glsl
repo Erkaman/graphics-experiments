@@ -22,6 +22,7 @@ vec3 make_clouds(vec3 tc) {
 
 #define CLOUD_SPEED 0.002
 
+
     float noise = value_noise_turbulence(7,
 
 					 vec3(tc.x+delta*CLOUD_SPEED*1.5,
@@ -37,9 +38,12 @@ vec3 make_clouds(vec3 tc) {
 
     noise = 1 - ( pow(0.1,noise)  * 1 );
 
+
+
     vec3 clouds = vec3(noise);
 
     float alpha = 0.3;
+
 
     return mix(sky, clouds, alpha);
 }

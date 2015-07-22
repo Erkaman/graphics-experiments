@@ -3,6 +3,7 @@
 #include "ewa/value_noise.hpp"
 #include "ewa/gl/texture.hpp"
 #include "ewa/math/vector2f.hpp"
+#include "ewa/math/color.hpp"
 #include "ewa/random.hpp"
 
 
@@ -22,7 +23,7 @@ constexpr int CLOUD_MAX_SIZE=100;
 static const string outFile = "small.png";
 constexpr float EPSILON = 0.0001f;
 constexpr int SEED = 2;
-constexpr unsigned char CLOUD_ALPHA = 150;
+constexpr unsigned char CLOUD_ALPHA = 200;
 
 const ValueNoise noise(SEED);
 Random rng(SEED);
@@ -178,13 +179,18 @@ void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, 
 	    const float sample =  SampleNoise(p);
 
 
+	    Color sky(1.00f, 1.00f, 1.00f);
+	    Color clouds(sample,sample,sample);
+
 
 	    unsigned char alpha = sample < EPSILON ? 0 : CLOUD_ALPHA;
-	    unsigned char val = (unsigned char)((sample) * 255.0f);
+//	    unsigned char val = (unsigned char)((sample) * 255.0f);
 
-	    pixels[i++] = val;
-	    pixels[i++] = val;
-	    pixels[i++] = val;
+	    Color l = Color::Lerp(sky, clouds, 0.3f);
+
+	    pixels[i++] = (unsigned char)((l.r) * 255.0f);
+	    pixels[i++] = (unsigned char)((l.g) * 255.0f);
+	    pixels[i++] =(unsigned char)((l.b) * 255.0f);
 	    pixels[i++] = alpha;
 
 	}
