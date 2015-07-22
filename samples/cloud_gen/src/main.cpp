@@ -21,7 +21,7 @@ constexpr int SIZE = 256;
 constexpr int CLOUD_MAX_SIZE=100;
 static const string outFile = "small.png";
 constexpr float EPSILON = 0.0001f;
-constexpr int SEED = 2;
+constexpr int SEED = 5;
 
 const ValueNoise noise(SEED);
 Random rng(SEED);
@@ -45,8 +45,6 @@ int main (int argc, char *argv[]) {
     int ymax;
 
     FindCloud(xmin,xmax, ymin, ymax);
-
-
     string cloudfile = "cloud.png";
 
     SaveNoise(xmin,xmax, ymin, ymax, cloudfile);
@@ -170,17 +168,25 @@ void FindCloudFloodfill(int x, int y, int& xmin,int& xmax, int& ymin, int& ymax,
 
 void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, const string& filename) {
 
-    const size_t height = (ymax - ymin + 1);
-    const size_t width =(xmax - xmin + 1);
+
+    const float scale = 1.0f;
+
+    const size_t height = (ymax - ymin + 1) * scale;
+//    LOG_I("height: %ld", height);
+    const size_t width =(xmax - xmin + 1) * scale;
 
     unsigned char* pixels = new unsigned char[4 * height * width];
 
     int i = 0;
 
-    for(int y = ymin; y <= ymax; ++y) {
-	for(int x = xmin; x <= xmax; ++x) {
+    //   const float step = 1.0f / scale;
 
-//INFO: /Users/eric/tuhu/samples/cloud_gen/src/main.cpp:124:FindCloudFloodfill:visit: (125.000000, 36.000000) = 0.669835
+    for(float y = ymin; y <= ymax; y += 1) {
+	for(float x = xmin; x <= xmax; x += 1) {
+
+
+//	    LOG_I("y: %f", y);
+
 
 	    const Vector2f p(x,y);
 	    const float sample =  SampleNoise(p);
