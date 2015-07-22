@@ -15,17 +15,10 @@
 
 #include "gl/gl_common.hpp"
 
-#include "util.hpp"
+#include "ewa/util.hpp"
 
 
 using std::vector;
-
-GLushort GenerateVertices(
-    const float radius, const int slices, const int stacks,
-
-    VBO* m_vertexBuffer,
-    VBO* m_indexBuffer
-    );
 
 Skydome::Skydome(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0),     m_azimuthAngle(-27.7f), m_elevationAngle(70.74f),m_reileighCoefficient(1.0f),m_mieCoefficient(0.053f), m_mieDirectionalG(0.75f),m_turbidity(1.0f)
  {
@@ -45,7 +38,7 @@ Skydome::Skydome(const float radius, const int slices, const int stacks): Geomet
 
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
-    m_numTriangles = GenerateVertices(radius, slices, stacks, m_vertexBuffer, m_indexBuffer);
+    m_numTriangles = GenerateSphereVertices(radius, slices, stacks, m_vertexBuffer, m_indexBuffer);
 
     UpdateSunDirection();
 }

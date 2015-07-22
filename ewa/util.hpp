@@ -16,7 +16,7 @@ void Shuffle(Random& random, RandomAccessIterator begin, RandomAccessIterator en
 
 class VBO;
 
-GLushort GenerateVertices(
+GLushort GenerateSphereVertices(
     const float radius, const int slices, const int stacks,
 
     VBO* m_vertexBuffer,

@@ -3,7 +3,7 @@
 #include "vbo.hpp"
 #include "math/vector3f.hpp"
 
-GLushort GenerateVertices(
+GLushort GenerateSphereVertices(
     const float radius, const int slices, const int stacks,
 
     VBO* m_vertexBuffer,
@@ -59,4 +59,5 @@ GLushort GenerateVertices(
     m_indexBuffer->Unbind();
 
     return indices.size();
+
 }

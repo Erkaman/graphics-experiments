@@ -25,18 +25,32 @@ private:
     /*
       These are used to draw the billboard sun:
      */
-    unsigned int m_sunNumTriangles;
     VBO* m_sunVertexBuffer;
     VBO* m_sunIndexBuffer;
-    ShaderProgram* m_sunShader;
 
     Texture* m_sunTexture;
+
+
+    ShaderProgram* m_billboardShader;
+
+
+    /*
+      PRIVATE INSTANCE METHODS
+     */
+    void DrawDome(const Camera& camera);
+    void DrawSun(const Camera& camera);
+
+
+    /*
+      orientation, elevation and rotation are all angles measured in degrees.
+     */
+    void DrawBillboard(const Camera& camera, VBO* m_vertexBuffer, VBO* m_indexBuffer,
+		       const float orientation, const float elevation, const float rotation);
 
 public:
 
     Skydome(const float radius, const int slices, const int stacks);
     ~Skydome();
-
 
     void Draw(const Camera& camera);
     void Update(const float delta);
@@ -45,5 +59,4 @@ public:
     void MakeSky(const float radius, const int slices, const int stacks);
 
     void MakeSun();
-
 };

@@ -14,16 +14,10 @@
 #include "ewa/camera.hpp"
 
 #include "ewa/common.hpp"
+#include "ewa/util.hpp"
 
 
 using std::vector;
-
-GLushort GenerateVertices(
-    const float radius, const int slices, const int stacks,
-
-    VBO* m_vertexBuffer,
-    VBO* m_indexBuffer
-    );
 
 Skydome::Skydome(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0) {
 
@@ -44,7 +38,7 @@ void Skydome::MakeSky(const float radius, const int slices, const int stacks) {
 	vector<GLuint>{3,3}
 	);
     m_domeIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
-    m_domeNumTriangles = GenerateVertices(radius, slices, stacks, m_domeVertexBuffer, m_domeIndexBuffer);
+    m_domeNumTriangles = GenerateSphereVertices(radius, slices, stacks, m_domeVertexBuffer, m_domeIndexBuffer);
 
     m_perlinSeed = new ValueNoiseSeed(2);
 }

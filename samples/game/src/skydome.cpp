@@ -13,16 +13,29 @@
 #include "ewa/camera.hpp"
 
 #include "ewa/common.hpp"
+#include "ewa/util.hpp"
 
 
 using std::vector;
 
-GLushort GenerateVertices(
-    const float radius, const int slices, const int stacks,
+constexpr GLushort NUM_BILLBOARD_TRIANGLES = 2;
 
-    VBO* m_vertexBuffer,
-    VBO* m_indexBuffer
-    );
+struct CloudInfo {
+public:
+
+    float m_elevationAngle;
+    float m_azimuthAngle;
+};
+
+struct CloudTexture{
+public:
+
+    Texture* m_cloudTexture;
+    vector<CloudInfo> clouds;
+};
+
+
+void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const double hsize);
 
 Skydome::Skydome(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0) {
 
@@ -53,12 +66,12 @@ void Skydome::MakeSky(const float radius, const int slices, const int stacks) {
 	vector<GLuint>{3,3}
 	);
     m_domeIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
-    m_domeNumTriangles = GenerateVertices(radius, slices, stacks, m_domeVertexBuffer, m_domeIndexBuffer);
+    m_domeNumTriangles = GenerateSphereVertices(radius, slices, stacks, m_domeVertexBuffer, m_domeIndexBuffer);
 }
 
 void Skydome::MakeSun() {
 
-    m_sunShader = new ShaderProgram("shader/sun");
+    m_billboardShader = new ShaderProgram("shader/billboard");
 
     m_sunVertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{
@@ -69,9 +82,52 @@ void Skydome::MakeSun() {
 
     m_sunIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
+    GenerateBillboardVertices(m_sunVertexBuffer, m_sunIndexBuffer, 0.06);
+}
 
-    // three points times two triangles
-    m_sunNumTriangles = 2;
+Skydome::~Skydome() {
+    MY_DELETE(m_domeShader);
+    MY_DELETE(m_domeVertexBuffer);
+    MY_DELETE(m_domeIndexBuffer);
+
+    MY_DELETE(m_billboardShader);
+    MY_DELETE(m_sunVertexBuffer);
+    MY_DELETE(m_sunIndexBuffer);
+    MY_DELETE(m_sunTexture);
+
+}
+
+void Skydome::Draw(const Camera& camera) {
+
+    SetDepthTest(false);
+
+
+    DrawDome(camera);
+
+
+    // next we'll draw all the billboards:
+
+    m_billboardShader->Bind();
+    GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
+    GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+    DrawSun(camera);
+
+
+    // done drawing billboards.
+    GL_C(glDisable(GL_BLEND));
+    m_billboardShader->Unbind();
+
+
+    SetDepthTest(true);
+}
+
+void Skydome::Update(const float delta) {
+    m_delta += delta;
+
+}
+
+void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const double hsize) {
 
     FloatVector vertices;
     UshortVector indices;
@@ -80,7 +136,7 @@ void Skydome::MakeSun() {
     Vector3f xaxis(1, 0, 0);
     Vector3f yaxis(0, 1, 0);
 
-    double hsize = 0.06; // 0.3
+//    double hsize = 0.06; // 0.3
 
 
     (sunPoint - hsize * xaxis + hsize * yaxis).Add(vertices);
@@ -103,31 +159,16 @@ void Skydome::MakeSun() {
     indices.push_back(3);
     indices.push_back(2);
 
-    m_sunVertexBuffer->Bind();
-    m_sunVertexBuffer->SetBufferData(vertices);
-    m_sunVertexBuffer->Unbind();
+    m_vertexBuffer->Bind();
+    m_vertexBuffer->SetBufferData(vertices);
+    m_vertexBuffer->Unbind();
 
-    m_sunIndexBuffer->Bind();
-    m_sunIndexBuffer->SetBufferData(indices);
-    m_sunIndexBuffer->Unbind();
+    m_indexBuffer->Bind();
+    m_indexBuffer->SetBufferData(indices);
+    m_indexBuffer->Unbind();
 }
 
-Skydome::~Skydome() {
-    MY_DELETE(m_domeShader);
-    MY_DELETE(m_domeVertexBuffer);
-    MY_DELETE(m_domeIndexBuffer);
-
-    MY_DELETE(m_sunShader);
-    MY_DELETE(m_sunVertexBuffer);
-    MY_DELETE(m_sunIndexBuffer);
-    MY_DELETE(m_sunTexture);
-
-}
-
-void Skydome::Draw(const Camera& camera) {
-
-    SetDepthTest(false);
-
+void Skydome::DrawDome(const Camera& camera) {
     m_domeShader->Bind();
 
     Matrix4f modelView =  camera.GetViewMatrix();
@@ -144,50 +185,45 @@ void Skydome::Draw(const Camera& camera) {
 
     m_domeShader->Unbind();
 
-    const Vector3f sunDir(0,0.5,1);
 
-    const Vector3f taxis(sunDir.z, 0, -sunDir.x);
-    const Vector3f yaxis = Vector3f::Cross(sunDir, taxis).Normalize(); //yaxis.cross(taxis);
-    const Vector3f xaxis = Vector3f::Cross(yaxis, sunDir).Normalize();
+}
 
-    Matrix4f sunModelView(
-	xaxis.x, yaxis.x, sunDir.x, 0,
-	xaxis.y, yaxis.y, sunDir.y, 0,
-	xaxis.z, yaxis.z, sunDir.z, 0,
-	0      , 0      , 0       , 1
-	);
+void Skydome::DrawSun(const Camera& camera) {
 
-    m_sunShader->Bind();
+    m_sunTexture->Bind();
 
-    GL_C(glEnable(GL_BLEND));
-    GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    DrawBillboard(camera, m_sunVertexBuffer, m_sunIndexBuffer, -10.0f,-5.0f,0.0f);
 
-    modelView =  camera.GetModelViewMatrix(sunModelView);
+    m_sunTexture->Unbind();
+
+}
+
+
+void Skydome::DrawBillboard(const Camera& camera, VBO* m_vertexBuffer, VBO* m_indexBuffer,
+		   const float orientation, const float elevation, const float rotation) {
+
+
+    const Matrix4f orientationMatrix =Matrix4f::CreateRotate(orientation, Vector3f(0,0,1) );
+    const Matrix4f elevationMatrix =Matrix4f::CreateRotate(elevation, Vector3f(1,0,0) );
+    const Matrix4f rotationMatrix = Matrix4f::CreateRotate(rotation, Vector3f(0,1,0) );
+
+    const Matrix4f sunModelView = rotationMatrix * elevationMatrix * orientationMatrix;
+
+
+    Matrix4f modelView =  camera.GetModelViewMatrix(sunModelView);
     modelView.m03 = 0;
     modelView.m13 = 0;
     modelView.m23 = 0;
 
-    mvp = camera.GetProjectionMatrix() * modelView;
+    const Matrix4f mvp = camera.GetProjectionMatrix() * modelView;
 
-    m_sunShader->SetUniform("mvp", mvp);
+    m_billboardShader->SetUniform("mvp", mvp);
 
-    m_sunShader->SetUniform("tex", 0);
+    m_billboardShader->SetUniform("tex", 0);
     Texture::SetActiveTextureUnit(0);
-    m_sunTexture->Bind();
 
     // the texture format is somehow corrupt?
 
-    VBO::DrawIndices(*m_sunVertexBuffer, *m_sunIndexBuffer, GL_TRIANGLES, (m_sunNumTriangles)*3);
+    VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (NUM_BILLBOARD_TRIANGLES)*3);
 
-    m_sunTexture->Unbind();
-
-    GL_C(glDisable(GL_BLEND));
-
-    m_sunShader->Unbind();
-
-    SetDepthTest(true);
-}
-
-void Skydome::Update(const float delta) {
-    m_delta += delta;
 }
