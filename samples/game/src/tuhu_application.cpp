@@ -1,11 +1,11 @@
 #include "tuhu_application.hpp"
 
 #include "ewa/camera.hpp"
-#include "ewa/height_map.hpp"
 #include "ewa/common.hpp"
 #include "ewa/font.hpp"
 
 #include "skydome.hpp"
+#include "height_map.hpp"
 
 
 

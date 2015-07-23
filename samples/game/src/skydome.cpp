@@ -23,7 +23,7 @@ using std::vector;
 using std::string;
 
 constexpr GLushort NUM_BILLBOARD_TRIANGLES = 2;
-constexpr int NUM_CLOUD_TEXTURES = 9;
+constexpr int NUM_CLOUD_TEXTURES = 1; // 9
 
 constexpr int CLOUD_GRID_X_SIZE = 20;
 constexpr int CLOUD_GRID_Y_SIZE = 20;
@@ -61,7 +61,7 @@ public:
 
 void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const float width, const float height);
 
-Skydome::Skydome(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0), m_rng(new Random(3)) {
+Skydome::Skydome(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)),m_rng(new Random(3)) {
 
     /*
       Create the skydome.
@@ -341,7 +341,6 @@ void Skydome::DrawDome(const Camera& camera) {
     Matrix4f mvp = camera.GetProjectionMatrix() * modelView;
 
     m_domeShader->SetUniform("mvp", mvp);
-    m_domeShader->SetUniform("delta", m_delta);
 
     VBO::DrawIndices(*m_domeVertexBuffer, *m_domeIndexBuffer, GL_TRIANGLES, (m_domeNumTriangles)*3);
 

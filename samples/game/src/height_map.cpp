@@ -31,7 +31,7 @@ constexpr char INDEX_FILE[] = "dat/indx.dat";
 struct Cell {
     Vector3f position;
     Vector3f normal;
-    Color color;
+//    Color color;
     Vector2f texCoord;
 };
 
@@ -45,6 +45,36 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
 }
 
 HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f) {
+
+    m_grassTexture = new Texture2D("img/grass.png");
+
+    m_grassTexture->Bind();
+    m_grassTexture->SetTextureRepeat();
+    m_grassTexture->GenerateMipmap();
+    m_grassTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    m_grassTexture->SetMagFilter(GL_LINEAR);
+    m_grassTexture->Unbind();
+
+    m_sandTexture = new Texture2D("img/sand.png");
+
+    m_sandTexture->Bind();
+    m_sandTexture->SetTextureRepeat();
+    m_sandTexture->GenerateMipmap();
+    m_sandTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    m_sandTexture->SetMagFilter(GL_LINEAR);
+    m_sandTexture->Unbind();
+
+
+
+    m_snowTexture = new Texture2D("img/snow.png");
+
+    m_snowTexture->Bind();
+    m_snowTexture->SetTextureRepeat();
+    m_snowTexture->GenerateMipmap();
+    m_snowTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    m_snowTexture->SetMagFilter(GL_LINEAR);
+    m_snowTexture->Unbind();
+
 
     /*
       load the shader
@@ -61,9 +91,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 				       vector<GLuint>{
 					   VBO_POSITION_ATTRIB_INDEX,
 					       VBO_NORMAL_ATTRIB_INDEX,
-					       VBO_COLOR_ATTRIB_INDEX,
 					       VBO_TEX_COORD_ATTRIB_INDEX},
-				       vector<GLuint>{3,3,4,2}
+				       vector<GLuint>{3,3,2}
 				       );
 
     size_t dataSize;
@@ -84,30 +113,37 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     m_indexBuffer->SetBufferData(dataSize, indexData);
     m_indexBuffer->Unbind();
     free(indexData);
-
-    m_perlinSeed = new PerlinSeed(1);
-
 }
 
 HeightMap::~HeightMap() {
     MY_DELETE(m_shader);
     MY_DELETE(m_indexBuffer);
     MY_DELETE(m_vertexBuffer);
+    MY_DELETE(m_grassTexture);
 
-    MY_DELETE(m_perlinSeed);
 }
+
 
 void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_shader->Bind();
 
-
-    m_perlinSeed->Bind(*m_shader);
-
-
     m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition);
 
-    m_shader->SetUniform("cameraPos", camera.GetPosition() );
+    m_shader->SetUniform("grass", 0);
+    Texture::SetActiveTextureUnit(0);
+    m_grassTexture->Bind();
+
+
+    m_shader->SetUniform("sand", 1);
+    Texture::SetActiveTextureUnit(1);
+    m_sandTexture->Bind();
+
+    m_shader->SetUniform("snow", 2);
+    Texture::SetActiveTextureUnit(2);
+    m_snowTexture->Bind();
+
+
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -126,10 +162,13 @@ void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
 
+
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
-    m_perlinSeed->Unbind();
+    m_grassTexture->Unbind();
+    m_sandTexture->Unbind();
+    m_snowTexture->Unbind();
 
 
     m_shader->Unbind();
@@ -253,6 +292,9 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 	}
     }
 
+    float miny = 9999;
+    float maxy = -9999;
+
 
     for(size_t x = 0; x < width; ++x) {
 	for(size_t z = 0; z < depth; ++z) {
@@ -266,14 +308,29 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 		map.GetWrap(x+1,z).position.y,
 		map.GetWrap(x-1,z).position.y);
 
-	    c.color = VertexColoring(c.position.y);
+//	    c.color = VertexColoring(c.position.y);
 
-	    c.texCoord.x = (float)x;
-	    c.texCoord.y = (float)z;
+//	    LOG_I("pos: %f", c.position.y);
+
+	    c.texCoord.x = (float)x/5.0f;
+	    c.texCoord.y = (float)z/5.0f;
+
+
+	    float y = c.position.y;
+
+	    if(y > maxy) {
+		maxy = y;
+	    }
+
+	    if(y < miny) {
+		miny = y;
+	    }
 
 
 	}
     }
+
+//    LOG_I("min max %f, %f", miny, maxy);
 
 
     File::WriteArray(VERTEX_FILE, reinterpret_cast<void *>(map.GetData()), map.GetTotalsize() * sizeof(Cell) );

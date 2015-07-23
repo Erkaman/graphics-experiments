@@ -9,6 +9,7 @@ class ShaderProgram;
 class Camera;
 class Texture;
 class PerlinSeed;
+class Texture;
 
 class HeightMap {
 
@@ -25,7 +26,9 @@ private:
 
     float m_movement;
 
-    PerlinSeed* m_perlinSeed;
+    Texture* m_grassTexture;
+    Texture* m_sandTexture;
+    Texture* m_snowTexture;
 
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);

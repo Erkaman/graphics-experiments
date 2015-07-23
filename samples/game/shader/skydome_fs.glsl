@@ -2,8 +2,6 @@ out vec4 fragmentColor;
 
 in vec3 texCoord;
 
-uniform float delta;
-
 // return 1 when x > 0, otherwise return 0.
 float when_positive(float x) {
     return max(sign(x), 0);

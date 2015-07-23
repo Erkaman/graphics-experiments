@@ -24,8 +24,6 @@ private:
     VBO* m_domeIndexBuffer;
     ShaderProgram* m_domeShader;
 
-    float m_delta;
-
     /*
       These are used to draw the billboard sun:
      */

@@ -1,6 +1,6 @@
 in  vec3 positionIn;
 in  vec3 normalIn;
-in  vec4 colorIn;
+//in  vec4 colorIn;
 
 in vec2 texCoordIn;
 
@@ -10,7 +10,7 @@ uniform mat4 normalMatrix;
 
 out vec3 viewSpaceNormal;
 out vec3 viewSpacePosition;
-out vec3 vertexColor;
+//out vec3 vertexColor;
 out vec2 texCoord;
 
 out vec3 position;
@@ -24,7 +24,7 @@ void main()
 
     viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
-    vertexColor = colorIn.rgb;
+//    vertexColor = colorIn.rgb;
 
     texCoord = texCoordIn;
 
