@@ -1,5 +1,7 @@
 #include "plane.hpp"
+
 #include "ewa/perlin_seed.hpp"
+#include "ewa/common.hpp"
 
 #include "ewa/gl/shader_program.hpp"
 #include "ewa/gl/vbo.hpp"
@@ -11,9 +13,10 @@
 
 using std::vector;
 
-Plane::Plane(const Vector3f& position, const Vector3f& scale ): GeometryObject(position, scale){
+Plane::Plane(const Vector3f& position, const Vector3f& scale,const bool isCellular ): GeometryObject(position, scale){
 
-    m_noiseShader = new ShaderProgram("shader/noise");
+    m_shader = isCellular ? new ShaderProgram("shader/cellular") : new ShaderProgram("shader/perlin");
+
 
     m_vertexBuffer = VBO::CreateInterleaved(
 						    vector<GLuint>{
@@ -68,14 +71,18 @@ Plane::Plane(const Vector3f& position, const Vector3f& scale ): GeometryObject(p
 
     m_numTriangles = 2;
 
-    m_perlinSeed = new PerlinSeed(9);
+    m_perlinSeed = new PerlinSeed(1);
+
 }
 
 void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
-    m_noiseShader->Bind();
+    m_shader->Bind();
 
-    m_noiseShader->SetPhongUniforms(
+    m_perlinSeed->Bind(*m_shader);
+
+
+    m_shader->SetPhongUniforms(
 
 	GetModelMatrix()
 	 , camera, lightPosition);
@@ -83,12 +90,15 @@ void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
 
-    m_noiseShader->Unbind();
+    m_perlinSeed->Unbind();
+
+
+    m_shader->Unbind();
 }
 
 Plane::~Plane() {
-    delete m_perlinSeed;
-    delete m_vertexBuffer;
-    delete m_indexBuffer;
-    delete m_noiseShader;
+    MY_DELETE(m_vertexBuffer);
+    MY_DELETE(m_indexBuffer);
+    MY_DELETE(m_shader);
+    MY_DELETE(m_perlinSeed);
 }

@@ -2,7 +2,6 @@
 
 #include "ewa/camera.hpp"
 #include "ewa/height_map.hpp"
-#include "ewa/perlin_seed.hpp"
 #include "ewa/common.hpp"
 #include "ewa/font.hpp"
 
@@ -13,12 +12,11 @@
 using namespace std;
 
 
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL), m_perlinSeed(NULL), m_skydome(NULL){ }
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL),m_skydome(NULL){ }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_camera);
     MY_DELETE(m_heightMap);
-    MY_DELETE(m_perlinSeed);
     MY_DELETE(m_skydome);
 }
 
@@ -33,13 +31,13 @@ void TuhuApplication::Init() {
     m_heightMap = new HeightMap("img/combined.png");
 
 
-    m_perlinSeed = new PerlinSeed(1);
 
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 }
 
 void TuhuApplication::Render() {
+
     SetViewport();
 
     Clear(0.0f, 1.0f, 1.0f);
@@ -53,7 +51,7 @@ void TuhuApplication::Render() {
 void TuhuApplication::Update(const float delta) {
     m_camera->HandleInput(delta);
 
-    m_skydome->Update(delta);
+    //  m_skydome->Update(delta);
 }
 
 void TuhuApplication::RenderText()  {

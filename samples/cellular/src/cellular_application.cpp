@@ -10,11 +10,12 @@
 
 using namespace std;
 
-CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_plane(NULL){ }
+CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL) { }
 
 CellularApplication::~CellularApplication() {
     MY_DELETE(m_camera);
-    MY_DELETE(m_plane);
+    MY_DELETE(m_cellularPlane);
+    MY_DELETE(m_perlinPlane);
 }
 
 void CellularApplication::Init() {
@@ -24,7 +25,8 @@ void CellularApplication::Init() {
 
     m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,7.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
 
-    m_plane = new Plane(Vector3f(1,4,1), Vector3f(1,1,1));
+    m_cellularPlane = new Plane(Vector3f(1,4,1), Vector3f(1,1,1), true);
+    m_perlinPlane = new Plane(Vector3f(20,4,1), Vector3f(1,1,1), false);
 
 }
 
@@ -34,8 +36,10 @@ void CellularApplication::Render() {
     Clear(0.0f, 1.0f, 1.0f);
 
     const Vector4f lightPosition(93,10.0f,93, 1.0f);
-    m_plane->Draw(*m_camera, lightPosition);
+    m_cellularPlane->Draw(*m_camera, lightPosition);
 
+
+    m_perlinPlane->Draw(*m_camera, lightPosition);
 
 }
 

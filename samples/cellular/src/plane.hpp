@@ -25,17 +25,17 @@ class Plane : public GeometryObject{
 
     GLushort m_numTriangles;
 
-    ShaderProgram* m_noiseShader;
+    ShaderProgram* m_shader;
 
     VBO* m_vertexBuffer;
     VBO* m_indexBuffer;
 
     PerlinSeed* m_perlinSeed;
 
-
 public:
 
-    Plane(const Vector3f& position, const Vector3f& scale);
+    //
+    Plane(const Vector3f& position, const Vector3f& scale, const bool isCellular);
     ~Plane();
 
     void Draw(const Camera& camera, const Vector4f& lightPosition);

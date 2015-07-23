@@ -5,7 +5,6 @@
 
 class Camera;
 class HeightMap;
-class PerlinSeed;
 class Skydome;
 
 class TuhuApplication : public Application{
@@ -14,8 +13,6 @@ private:
 
     Camera* m_camera;
     HeightMap* m_heightMap;
-
-    PerlinSeed* m_perlinSeed;
 
     Skydome* m_skydome;
 

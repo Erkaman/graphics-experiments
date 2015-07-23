@@ -11,7 +11,8 @@ class CellularApplication : public Application{
 private:
 
     Camera* m_camera;
-    Plane* m_plane;
+    Plane* m_cellularPlane;
+    Plane* m_perlinPlane;
 
 public:
 
