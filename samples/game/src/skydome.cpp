@@ -14,10 +14,13 @@
 
 #include "ewa/common.hpp"
 #include "ewa/util.hpp"
+#include "ewa/random.hpp"
 
 using std::vector;
+using std::string;
 
 constexpr GLushort NUM_BILLBOARD_TRIANGLES = 2;
+constexpr int NUM_CLOUD_TEXTURES = 5;
 
 struct CloudInfo {
 public:
@@ -38,9 +41,11 @@ public:
 };
 
 
+
+
 void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const double hsize);
 
-Skydome::Skydome(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0) {
+Skydome::Skydome(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0), m_rng(new Random(3)) {
 
     /*
       Create the skydome.
@@ -71,36 +76,57 @@ void Skydome::MakeSky(const float radius, const int slices, const int stacks) {
 }
 
 void Skydome::MakeClouds() {
-    CloudGroup* cloudGroup = new CloudGroup();
 
-    Texture* cloudTexture= new Texture2D("img/cloud1.png");
-    cloudTexture->Bind();
-    cloudTexture->SetTextureClamping();
-    cloudTexture->SetMinFilter(GL_LINEAR);
-    cloudTexture->SetMagFilter(GL_NEAREST);
-    cloudTexture->Unbind();
 
-    cloudGroup->m_cloudTexture= cloudTexture;
+    /*
+      First we load all texture.
+     */
 
-    CloudInfo cloudInfo;
+    for(int i = 0; i < NUM_CLOUD_TEXTURES; ++i) {
 
-    cloudInfo.m_vertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{
-	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX },
-	vector<GLuint>{3,2}
-	);
+	CloudGroup* cloudGroup = new CloudGroup();
 
-    cloudInfo.m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
-    GenerateBillboardVertices(cloudInfo.m_vertexBuffer, cloudInfo.m_indexBuffer, 0.1);
+	string textureFilename = string("img/cloud") + std::to_string(i) + string(".png");
+	Texture* cloudTexture= new Texture2D(textureFilename);
+	cloudTexture->Bind();
+	cloudTexture->SetTextureClamping();
+	cloudTexture->SetMinFilter(GL_LINEAR);
+	cloudTexture->SetMagFilter(GL_NEAREST);
+	cloudTexture->Unbind();
 
-    cloudInfo.m_elevation = 4;
-    cloudInfo.m_rotation = 0;
-    cloudInfo.m_orientation = 0;
+	cloudGroup->m_cloudTexture= cloudTexture;
 
-    cloudGroup->m_clouds.push_back(cloudInfo);
+	m_clouds.push_back(cloudGroup);
 
-    m_clouds.push_back(cloudGroup);
+    }
+
+    /*
+      Next we place out the clouds.
+     */
+
+    const int numClouds = m_rng->RandomInt(20,30);
+
+    for(int i = 0; i < numClouds; ++i) {
+
+	CloudInfo cloudInfo;
+
+	cloudInfo.m_vertexBuffer = VBO::CreateInterleaved(
+	    vector<GLuint>{
+		VBO_POSITION_ATTRIB_INDEX,
+		    VBO_TEX_COORD_ATTRIB_INDEX },
+	    vector<GLuint>{3,2}
+	    );
+
+	cloudInfo.m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
+	GenerateBillboardVertices(cloudInfo.m_vertexBuffer, cloudInfo.m_indexBuffer, 0.1);
+
+	cloudInfo.m_elevation = m_rng->RandomFloat(0.0f,180.0f);
+	cloudInfo.m_rotation =m_rng->RandomFloat(0.0f,360.0f);
+	cloudInfo.m_orientation = m_rng->RandomFloat(0.0f,360.0f);
+
+	m_clouds[m_rng->RandomInt(0, NUM_CLOUD_TEXTURES-1)]->m_clouds.push_back(cloudInfo);
+
+    }
 
 }
 
@@ -137,7 +163,7 @@ Skydome::~Skydome() {
     MY_DELETE(m_sunVertexBuffer);
     MY_DELETE(m_sunIndexBuffer);
     MY_DELETE(m_sunTexture);
-
+    MY_DELETE(m_rng)
 }
 
 void Skydome::Draw(const Camera& camera) {
@@ -276,7 +302,7 @@ void Skydome::DrawClouds(const Camera& camera) {
 	for(const CloudInfo& cloud : cloudGroup->m_clouds) {
 
 	    DrawBillboard(camera, cloud.m_vertexBuffer, cloud.m_indexBuffer,
-			  cloud.m_rotation, cloud.m_elevation, cloud.m_rotation);
+			  cloud.m_orientation, cloud.m_elevation, cloud.m_rotation);
 
 	}
 

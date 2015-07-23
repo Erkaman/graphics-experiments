@@ -9,6 +9,7 @@ class ShaderProgram;
 class Camera;
 class Texture;
 class CloudGroup;
+class Random;
 
 class Skydome : public GeometryObject{
 
@@ -43,6 +44,8 @@ private:
 
 
     std::vector<CloudGroup*> m_clouds;
+
+    Random* m_rng;
 
 
     /*

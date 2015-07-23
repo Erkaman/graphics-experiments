@@ -20,9 +20,10 @@ using std::unordered_set;
 
 constexpr int SIZE = 256;
 constexpr int CLOUD_MAX_SIZE=100;
+constexpr int CLOUD_MIN_SIZE=20;
 static const string outFile = "small.png";
 constexpr float EPSILON = 0.0001f;
-constexpr int SEED = 2;
+constexpr int SEED = 6;
 constexpr unsigned char CLOUD_ALPHA = 200;
 
 const ValueNoise noise(SEED);
@@ -45,18 +46,18 @@ int main (int argc, char *argv[]) {
     int ymin;
     int ymax;
 
-    unordered_set<Vector2f> visitedPixels;
-    FindCloud(xmin,xmax, ymin, ymax);
-    string cloudfile = "cloud.png";
+    for(int i = 0; i < 20; ++i) {
+	FindCloud(xmin,xmax, ymin, ymax);
+	string cloudfile = string("cloud") + std::to_string(i) + string(".png");
 
-    const int FRAME = 2;
+	const int FRAME = 2;
 
-    SaveNoise(xmin-FRAME,xmax+FRAME, ymin-FRAME, ymax+FRAME, 10.0f, cloudfile);
+	SaveNoise(xmin-FRAME,xmax+FRAME, ymin-FRAME, ymax+FRAME, 10.0f, cloudfile);
+    }
 
-    SaveNoise(0, SIZE-1, 0, SIZE-1, 1.0f, outFile);
 
-    string command = "open " + cloudfile;
-    system(command.c_str());
+//    string command = "open " + cloudfile;
+//    system(command.c_str());
 
     LogDispose();
 
@@ -83,8 +84,8 @@ void FindCloud( int& xmin,int& xmax, int& ymin, int& ymax) {
 
     while(true) {
 
-	int x = rng.RandomInt(0,SIZE);
-	int y = rng.RandomInt(0,SIZE);
+	int x = rng.RandomInt(-1000000,+1000000);
+	int y = rng.RandomInt(-1000000,+1000000);
 
 	if(SampleNoise(Vector2f(x,y)) > EPSILON) {
 	    xmin = x;
@@ -102,13 +103,16 @@ void FindCloud( int& xmin,int& xmax, int& ymin, int& ymax) {
 	    FindCloudFloodfill(x,y, xmin,xmax, ymin, ymax, visitedPixels, tooBig);
 
 	    if(tooBig) {
-
 		LOG_I("too big, try again");
-
 		continue; // find another cloud
 	    }
 
-	    LOG_I("minmax: %d %d %d %d", xmin, xmax, ymin, ymax);
+	    if( abs(xmax - xmin) < CLOUD_MIN_SIZE || abs(ymax - ymin) < CLOUD_MIN_SIZE) {
+		LOG_I("too small, try again");
+		continue;
+	    }
+
+	    LOG_I("found cloud: %d %d %d %d", xmin, xmax, ymin, ymax);
 
 	    return;
 	}
