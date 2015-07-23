@@ -48,6 +48,7 @@ private:
     Random* m_rng;
 
 
+
     /*
       PRIVATE INSTANCE METHODS
      */

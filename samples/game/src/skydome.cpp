@@ -1,4 +1,5 @@
 #include "skydome.hpp"
+#include "biased_random.hpp"
 
 #include "ewa/gl/vbo.hpp"
 #include "ewa/gl/texture2d.hpp"
@@ -15,12 +16,22 @@
 #include "ewa/common.hpp"
 #include "ewa/util.hpp"
 #include "ewa/random.hpp"
+#include "ewa/mult_array.hpp"
+
 
 using std::vector;
 using std::string;
 
 constexpr GLushort NUM_BILLBOARD_TRIANGLES = 2;
-constexpr int NUM_CLOUD_TEXTURES = 5;
+constexpr int NUM_CLOUD_TEXTURES = 9;
+
+constexpr int CLOUD_GRID_X_SIZE = 20;
+constexpr int CLOUD_GRID_Y_SIZE = 20;
+
+// elevation
+constexpr int CLOUD_GRID_X_COUNT = (180 / CLOUD_GRID_X_SIZE); // = 9
+// rotation
+constexpr int CLOUD_GRID_Y_COUNT = (360 / CLOUD_GRID_Y_SIZE); // = 9
 
 struct CloudInfo {
 public:
@@ -111,14 +122,42 @@ void Skydome::MakeClouds() {
       Next we place out the clouds.
      */
 
-    const int numClouds = m_rng->RandomInt(20,30);
+    MultArray<bool> cloudGrid(CLOUD_GRID_X_COUNT, CLOUD_GRID_Y_COUNT, false);
 
+    const int numClouds = 90;//m_rng->RandomInt(30,40);
+
+    vector<int> items;
+    vector<float> weights;
+
+    int middleX = (CLOUD_GRID_X_COUNT-1)/2;
+
+    for(int x = 0; x <= (CLOUD_GRID_X_COUNT-1); ++x) {
+
+	float weight = abs(middleX -x);
+	weights.push_back(weight);
+	items.push_back(x);
+    }
+
+    // make sure the clouds don't gather at the top.
+
+    for(int y = 0; y < CLOUD_GRID_Y_COUNT; ++y) {
+
+	constexpr int S = 0;
+	for(int x = (middleX-S); x <= (middleX+S); ++x) {
+	    cloudGrid(x,y) = true;
+	}
+    }
+
+
+    BiasedRandom<int> bias(m_rng, items, weights);
+
+    //  LOG_I("cloud grid: %s", std::string(cloudGrid).c_str());
     for(int i = 0; i < numClouds; ++i) {
 
 	CloudInfo cloudInfo;
 
 	// randomize cloud group.
-	CloudGroup* cloudGroup = m_clouds[m_rng->RandomInt(0, NUM_CLOUD_TEXTURES-1)];
+	CloudGroup* cloudGroup = m_clouds[/*8*/ m_rng->RandomInt(0, NUM_CLOUD_TEXTURES-1)];
 
 	cloudInfo.m_vertexBuffer = VBO::CreateInterleaved(
 	    vector<GLuint>{
@@ -132,15 +171,56 @@ void Skydome::MakeClouds() {
 	const float cloudWidth = 0.1 + cloudGroup->m_width / 10000.0f;
 	const float cloudHeight = 0.1 + cloudGroup->m_height / 10000.0f;
 
+//	LOG_I("w,h = %f,%f", cloudWidth, cloudHeight);
+
 	GenerateBillboardVertices(cloudInfo.m_vertexBuffer, cloudInfo.m_indexBuffer,  cloudWidth, cloudHeight);
 
-	cloudInfo.m_elevation = m_rng->RandomFloat(0.0f,180.0f);
-	cloudInfo.m_rotation =m_rng->RandomFloat(0.0f,360.0f);
+	// now place out the cloud in the cloud grid.
+
+	// first we find an empty grid.
+	int gridX;
+	int gridY;
+	while(true) {
+
+	    gridX = /*bias.GetRandomItem();*/ m_rng->RandomInt(0, CLOUD_GRID_X_COUNT-1);
+	    gridY = m_rng->RandomInt(0, CLOUD_GRID_Y_COUNT-1);
+
+
+	    if(cloudGrid(gridX, gridY) == false) {
+	    	cloudGrid(gridX,gridY) = true;
+		break; // found an empty grid position.
+	    }
+	}
+
+	cloudInfo.m_elevation =
+	    CLOUD_GRID_X_SIZE * gridX +
+	    m_rng->RandomFloat(-CLOUD_GRID_X_SIZE/2, CLOUD_GRID_X_SIZE/2);
+	cloudInfo.m_rotation =
+	    CLOUD_GRID_Y_SIZE * gridY +
+	    m_rng->RandomFloat(-CLOUD_GRID_Y_SIZE/2, CLOUD_GRID_Y_SIZE/2);
 	cloudInfo.m_orientation = m_rng->RandomFloat(0.0f,360.0f);
 
 	cloudGroup->m_clouds.push_back(cloudInfo);
 
     }
+
+    //   LOG_I("cloud grid: %s", std::string(cloudGrid).c_str());
+
+/*    vector<int> items;
+    items.push_back(1);
+    items.push_back(2);
+    items.push_back(3);
+
+    vector<float> weights;
+    weights.push_back(1);
+    weights.push_back(10);
+    weights.push_back(50);
+
+    BiasedRandom<int> bias(m_rng, items, weights);
+
+    for(int i = 0 ; i < 100; ++i) {
+	LOG_I("bias: %d", bias.GetRandomItem() );
+    }*/
 
 }
 

@@ -1,5 +1,6 @@
 #include "vector3f_test.hpp"
 #include "vector3i_test.hpp"
+#include "vector2i_test.hpp"
 #include "vector2f_test.hpp"
 #include "vector4f_test.hpp"
 #include "matrix4f_test.hpp"
@@ -16,6 +17,7 @@ int main() {
     Vector2fTestSuite();
     Vector3fTestSuite();
     Vector3iTestSuite();
+    Vector2iTestSuite();
     Vector4fTestSuite();
     Matrix4fTestSuite();
     ColorTestSuite();

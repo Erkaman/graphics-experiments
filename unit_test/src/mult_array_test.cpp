@@ -98,6 +98,19 @@ static void TestGetWrap() {
     AssertEqualsInt(m1.GetWrap(2,2),6);
 }
 
+static void TestConstructor() {
+    IMultArray m(2,3, 8);
+
+    AssertEqualsInt(m(0,0),8);
+
+    AssertEqualsInt(m(1,0),8);
+    AssertEqualsInt(m(0,1),8);
+
+    AssertEqualsInt(m(1,1),8);
+    AssertEqualsInt(m(0,2),8);
+    AssertEqualsInt(m(1,2),8);
+}
+
 void MultArrayTestSuite() {
 
     TestSuite suite;
@@ -107,6 +120,7 @@ void MultArrayTestSuite() {
     suite.emplace_back(TestAssignment, "TestAssignment");
     suite.emplace_back(TestIterator, "TestIterator");
     suite.emplace_back(TestGetWrap, "TestGetWrap");
+    suite.emplace_back(TestConstructor, "TestConstructor");
 
     RunSuite(suite, "MultArray");
 }

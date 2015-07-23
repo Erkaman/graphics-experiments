@@ -1,6 +1,7 @@
 #include "ewa/log.hpp"
 
 #include "ewa/value_noise.hpp"
+#include "ewa/math/math_common.hpp"
 #include "ewa/gl/texture.hpp"
 #include "ewa/math/vector2f.hpp"
 #include "ewa/math/color.hpp"
@@ -23,8 +24,8 @@ constexpr int CLOUD_MAX_SIZE=100;
 constexpr int CLOUD_MIN_SIZE=20;
 static const string outFile = "small.png";
 constexpr float EPSILON = 0.0001f;
-constexpr int SEED = 6;
-constexpr unsigned char CLOUD_ALPHA = 200;
+constexpr int SEED = 7;
+constexpr unsigned char CLOUD_ALPHA = 150;
 
 const ValueNoise noise(SEED);
 Random rng(SEED);
@@ -46,9 +47,11 @@ int main (int argc, char *argv[]) {
     int ymin;
     int ymax;
 
+    string cloudfile;
+
     for(int i = 0; i < 20; ++i) {
 	FindCloud(xmin,xmax, ymin, ymax);
-	string cloudfile = string("cloud") + std::to_string(i) + string(".png");
+	cloudfile = string("cloud") + std::to_string(i) + string(".png");
 
 	const int FRAME = 2;
 
@@ -182,10 +185,8 @@ void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, 
 		(y)/scale + ymin);
 	    const float sample =  SampleNoise(p);
 
-
-	    Color sky(1.00f, 1.00f, 1.00f);
+	    Color sky(1.0f, 1.0f, 1.0f);
 	    Color clouds(sample,sample,sample);
-
 
 	    unsigned char alpha = sample < EPSILON ? 0 : CLOUD_ALPHA;
 //	    unsigned char val = (unsigned char)((sample) * 255.0f);
@@ -195,8 +196,7 @@ void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, 
 	    pixels[i++] = (unsigned char)((l.r) * 255.0f);
 	    pixels[i++] = (unsigned char)((l.g) * 255.0f);
 	    pixels[i++] =(unsigned char)((l.b) * 255.0f);
-	    pixels[i++] = alpha;
-
+	    pixels[i++] = (unsigned char)(( Clamp(sample-0.1f, 0.0f,1.0f) ) * 255.0f);
 	}
     }
 

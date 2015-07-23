@@ -32,7 +32,13 @@ public:
     MultArray(const signed int xsize, const signed int ysize):
 	m_xsize(xsize), m_ysize(ysize), m_totalsize(m_xsize*m_ysize),
 	m_data(new T[m_totalsize]){
+    }
 
+    MultArray(const signed int xsize, const signed int ysize, const T& defaultValue): MultArray(xsize, ysize) {
+
+	for(iterator it = Begin(); it < End(); ++it) {
+	    *it = defaultValue;
+	}
     }
 
     /*
