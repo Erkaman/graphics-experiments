@@ -38,12 +38,12 @@ public:
 
     Texture* m_cloudTexture;
     vector<CloudInfo> m_clouds;
+    GLsizei m_width;
+    GLsizei m_height;
+
 };
 
-
-
-
-void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const double hsize);
+void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const float width, const float height);
 
 Skydome::Skydome(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0), m_rng(new Random(3)) {
 
@@ -88,6 +88,13 @@ void Skydome::MakeClouds() {
 
 	string textureFilename = string("img/cloud") + std::to_string(i) + string(".png");
 	Texture* cloudTexture= new Texture2D(textureFilename);
+
+	cloudGroup->m_width = cloudTexture->GetWidth();
+	cloudGroup->m_height = cloudTexture->GetHeight();
+
+
+//	LOG_I("width, height = %ld,%ld", cloudTexture->GetWidth(), cloudTexture->GetHeight());
+
 	cloudTexture->Bind();
 	cloudTexture->SetTextureClamping();
 	cloudTexture->SetMinFilter(GL_LINEAR);
@@ -110,6 +117,9 @@ void Skydome::MakeClouds() {
 
 	CloudInfo cloudInfo;
 
+	// randomize cloud group.
+	CloudGroup* cloudGroup = m_clouds[m_rng->RandomInt(0, NUM_CLOUD_TEXTURES-1)];
+
 	cloudInfo.m_vertexBuffer = VBO::CreateInterleaved(
 	    vector<GLuint>{
 		VBO_POSITION_ATTRIB_INDEX,
@@ -118,20 +128,23 @@ void Skydome::MakeClouds() {
 	    );
 
 	cloudInfo.m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
-	GenerateBillboardVertices(cloudInfo.m_vertexBuffer, cloudInfo.m_indexBuffer, 0.1);
+
+	const float cloudWidth = 0.1 + cloudGroup->m_width / 10000.0f;
+	const float cloudHeight = 0.1 + cloudGroup->m_height / 10000.0f;
+
+	GenerateBillboardVertices(cloudInfo.m_vertexBuffer, cloudInfo.m_indexBuffer,  cloudWidth, cloudHeight);
 
 	cloudInfo.m_elevation = m_rng->RandomFloat(0.0f,180.0f);
 	cloudInfo.m_rotation =m_rng->RandomFloat(0.0f,360.0f);
 	cloudInfo.m_orientation = m_rng->RandomFloat(0.0f,360.0f);
 
-	m_clouds[m_rng->RandomInt(0, NUM_CLOUD_TEXTURES-1)]->m_clouds.push_back(cloudInfo);
+	cloudGroup->m_clouds.push_back(cloudInfo);
 
     }
 
 }
 
 void Skydome::MakeSun() {
-
 
     m_sunVertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{
@@ -142,7 +155,7 @@ void Skydome::MakeSun() {
 
     m_sunIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
-    GenerateBillboardVertices(m_sunVertexBuffer, m_sunIndexBuffer, 0.06);
+    GenerateBillboardVertices(m_sunVertexBuffer, m_sunIndexBuffer, 0.06f, 0.06f);
 
     m_sunTexture = new Texture2D("img/sun.png");
 
@@ -197,7 +210,7 @@ void Skydome::Update(const float delta) {
     m_delta += delta;
 }
 
-void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const double hsize) {
+void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const float width, const float height) {
 
     FloatVector vertices;
     UshortVector indices;
@@ -206,16 +219,16 @@ void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const do
     Vector3f xaxis(1, 0, 0);
     Vector3f yaxis(0, 1, 0);
 
-    (sunPoint - hsize * xaxis + hsize * yaxis).Add(vertices);
+    (sunPoint - width * xaxis + height * yaxis).Add(vertices);
     Vector2f(0.0f,1.0f).Add(vertices);
 
-    (sunPoint + hsize * xaxis + hsize * yaxis).Add(vertices);
+    (sunPoint + width * xaxis + height * yaxis).Add(vertices);
     Vector2f(1.0f,1.0f).Add(vertices);
 
-    (sunPoint - hsize * xaxis - hsize * yaxis).Add(vertices);
+    (sunPoint - width * xaxis - height * yaxis).Add(vertices);
     Vector2f(0.0f,0.0f).Add(vertices);
 
-    (sunPoint + hsize * xaxis - hsize * yaxis).Add(vertices);
+    (sunPoint + width * xaxis - height * yaxis).Add(vertices);
     Vector2f(1.0f,0.0f).Add(vertices);
 
     indices.push_back(0);
