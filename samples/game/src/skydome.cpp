@@ -40,6 +40,11 @@ public:
     float m_elevation;
     float m_rotation;
 
+    float m_orientationVelocity;
+    float m_elevationVelocity;
+    float m_rotationVelocity;
+
+
     VBO* m_vertexBuffer;
     VBO* m_indexBuffer;
 };
@@ -137,7 +142,6 @@ void Skydome::MakeClouds() {
 	weights.push_back(weight);
 	items.push_back(x);
     }
-
     // make sure the clouds don't gather at the top.
 
     for(int y = 0; y < CLOUD_GRID_Y_COUNT; ++y) {
@@ -149,9 +153,8 @@ void Skydome::MakeClouds() {
     }
 
 
-    BiasedRandom<int> bias(m_rng, items, weights);
+//    BiasedRandom<int> bias(m_rng, items, weights);
 
-    //  LOG_I("cloud grid: %s", std::string(cloudGrid).c_str());
     for(int i = 0; i < numClouds; ++i) {
 
 	CloudInfo cloudInfo;
@@ -170,8 +173,6 @@ void Skydome::MakeClouds() {
 
 	const float cloudWidth = 0.1 + cloudGroup->m_width / 10000.0f;
 	const float cloudHeight = 0.1 + cloudGroup->m_height / 10000.0f;
-
-//	LOG_I("w,h = %f,%f", cloudWidth, cloudHeight);
 
 	GenerateBillboardVertices(cloudInfo.m_vertexBuffer, cloudInfo.m_indexBuffer,  cloudWidth, cloudHeight);
 
@@ -200,28 +201,14 @@ void Skydome::MakeClouds() {
 	    m_rng->RandomFloat(-CLOUD_GRID_Y_SIZE/2, CLOUD_GRID_Y_SIZE/2);
 	cloudInfo.m_orientation = m_rng->RandomFloat(0.0f,360.0f);
 
+	cloudInfo.m_elevationVelocity = m_rng->RandomFloat(-0.1,+0.1);
+	cloudInfo.m_rotationVelocity = 0.2f  +  m_rng->RandomFloat(-0.1,+0.1);
+	cloudInfo.m_orientationVelocity = m_rng->RandomFloat(-1.5,+1.5);
+
+
 	cloudGroup->m_clouds.push_back(cloudInfo);
 
     }
-
-    //   LOG_I("cloud grid: %s", std::string(cloudGrid).c_str());
-
-/*    vector<int> items;
-    items.push_back(1);
-    items.push_back(2);
-    items.push_back(3);
-
-    vector<float> weights;
-    weights.push_back(1);
-    weights.push_back(10);
-    weights.push_back(50);
-
-    BiasedRandom<int> bias(m_rng, items, weights);
-
-    for(int i = 0 ; i < 100; ++i) {
-	LOG_I("bias: %d", bias.GetRandomItem() );
-    }*/
-
 }
 
 void Skydome::MakeSun() {
@@ -287,7 +274,22 @@ void Skydome::Draw(const Camera& camera) {
 }
 
 void Skydome::Update(const float delta) {
-    m_delta += delta;
+
+    for(CloudGroup* cloudGroup : m_clouds ) {
+
+	for(CloudInfo& cloud : cloudGroup->m_clouds) {
+
+	    // update a single cloud.
+
+	    cloud.m_orientation += cloud.m_orientationVelocity * delta;
+	    cloud.m_rotation += cloud.m_rotationVelocity * delta;
+	    cloud.m_elevation += cloud.m_elevationVelocity * delta;
+
+
+	}
+
+	cloudGroup->m_cloudTexture->Unbind();
+    }
 }
 
 void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const float width, const float height) {
