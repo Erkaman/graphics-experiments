@@ -10,11 +10,11 @@
 
 using namespace std;
 
-GrassApplication::GrassApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_perlinPlane(NULL) { }
+GrassApplication::GrassApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_plane(NULL) { }
 
 GrassApplication::~GrassApplication() {
     MY_DELETE(m_camera);
-    MY_DELETE(m_perlinPlane);
+    MY_DELETE(m_plane);
 }
 
 void GrassApplication::Init() {
@@ -24,7 +24,7 @@ void GrassApplication::Init() {
 
     m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,7.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
 
-    m_perlinPlane = new Plane(Vector3f(20,4,1), Vector3f(1,1,1));
+    m_plane = new Plane(Vector3f(20,4,1), Vector3f(1,1,1));
 
 }
 
@@ -35,7 +35,7 @@ void GrassApplication::Render() {
 
     const Vector4f lightPosition(93,10.0f,93, 1.0f);
 
-    m_perlinPlane->Draw(*m_camera, lightPosition);
+    m_plane->Draw(*m_camera, lightPosition);
 
 }
 

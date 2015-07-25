@@ -59,8 +59,5 @@ vec3 sampleDiffuseTexture() {
 void main()
 {
     vec3 shading = phongVertex(sampleDiffuseTexture(), viewSpaceNormal, viewSpaceLightPosition, viewSpacePosition);
-
-    // this is our height map color.
-
     fragmentColor = vec4(shading, 1.0);
 }

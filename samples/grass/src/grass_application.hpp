@@ -11,7 +11,7 @@ class GrassApplication : public Application{
 private:
 
     Camera* m_camera;
-    Plane* m_perlinPlane;
+    Plane* m_plane;
 
 public:
 
