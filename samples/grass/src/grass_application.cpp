@@ -7,6 +7,7 @@
 
 
 #include "plane.hpp"
+#include "grass.hpp"
 
 using namespace std;
 
@@ -26,6 +27,7 @@ void GrassApplication::Init() {
 
     m_plane = new Plane(Vector3f(20,4,1), Vector3f(1,1,1));
 
+    m_grass = new Grass();
 }
 
 void GrassApplication::Render() {
@@ -36,6 +38,9 @@ void GrassApplication::Render() {
     const Vector4f lightPosition(93,10.0f,93, 1.0f);
 
     m_plane->Draw(*m_camera, lightPosition);
+
+    m_grass->Draw(*m_camera, lightPosition);
+
 
 }
 

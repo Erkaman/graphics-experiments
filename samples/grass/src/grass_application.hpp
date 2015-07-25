@@ -5,6 +5,7 @@
 
 class Camera;
 class Plane;
+class Grass;
 
 class GrassApplication : public Application{
 
@@ -12,6 +13,7 @@ private:
 
     Camera* m_camera;
     Plane* m_plane;
+    Grass* m_grass;
 
 public:
 
