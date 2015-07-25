@@ -34,6 +34,7 @@ public:
     Matrix4f CreateProjectionMatrix(const float fov, const float aspectRatio, const float near, const float far)const;
 
     Vector3f GetPosition() const;
+    Vector3f GetViewDir() const;
 
     void Walk(const float amount);
     void Stride(const float amount);

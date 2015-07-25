@@ -23,9 +23,9 @@ void GrassApplication::Init() {
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
-    m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,7.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
+    m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(-1.14f, 6.28f, -0.71), Vector3f(0.89, 0.20, 0.39), true);
 
-    m_plane = new Plane(Vector3f(20,4,1), Vector3f(1,1,1));
+    m_plane = new Plane(Vector3f(5,4,1), Vector3f(1,1,1));
 
     m_grass = new Grass();
 }
@@ -33,7 +33,7 @@ void GrassApplication::Init() {
 void GrassApplication::Render() {
 
     SetViewport();
-    Clear(0.0f, 1.0f, 1.0f);
+    Clear(0.0f, 0.0f, 0.0f);
 
     const Vector4f lightPosition(93,10.0f,93, 1.0f);
 
@@ -49,5 +49,9 @@ void GrassApplication::Update(const float delta) {
 }
 
 void GrassApplication::RenderText()  {
-    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
+//    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
+
+//    m_font->DrawString(*m_fontShader, 100,150, tos(m_camera->GetPosition()).c_str() );
+//    m_font->DrawString(*m_fontShader, 100,250, tos(m_camera->GetViewDir()).c_str() );
+
 }

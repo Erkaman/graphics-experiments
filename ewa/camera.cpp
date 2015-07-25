@@ -141,3 +141,7 @@ Matrix4f Camera::GetModelViewMatrix(const Matrix4f& modelMatrix) const {
 
     return ret;
 }
+
+Vector3f Camera::GetViewDir() const {
+    return m_viewDir;
+}

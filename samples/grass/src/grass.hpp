@@ -22,6 +22,12 @@ class Grass{
     VBO* m_vertexBuffer;
     VBO* m_indexBuffer;
 
+    void AddQuad(FloatVector& vertices, UshortVector& indices,
+	     const Vector3f& bottomLeft, const Vector3f& bottomRight,
+		 const Vector3f& topLeft, const Vector3f& topRight);
+
+    void MakeGrass();
+
 public:
 
     //

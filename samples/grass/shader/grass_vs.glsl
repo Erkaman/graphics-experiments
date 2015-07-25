@@ -12,6 +12,7 @@ out vec3 viewSpacePosition;
 out vec2 texCoord;
 
 out vec3 position;
+out vec3 normal;
 
 
 void main()
@@ -19,6 +20,8 @@ void main()
     gl_Position = mvp * vec4(positionIn,1);
 
     viewSpaceNormal = normalize((normalMatrix * vec4(normalize(normalIn),0.0)).xyz);
+
+    normal = normalIn;
 
     viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
