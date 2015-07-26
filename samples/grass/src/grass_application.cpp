@@ -33,9 +33,9 @@ void GrassApplication::Init() {
 void GrassApplication::Render() {
 
     SetViewport();
-    Clear(0.0f, 0.0f, 0.0f);
+    Clear(1.0f, 1.0f, 1.0f);
 
-    const Vector4f lightPosition(93,10.0f,93, 1.0f);
+    const Vector4f lightPosition(0,0.0f,0, 1.0f);
 
     m_plane->Draw(*m_camera, lightPosition);
 

@@ -78,22 +78,22 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
     /*
       load the shader
-     */
+    */
     m_shader = new ShaderProgram("shader/height_map");
 
 
-    if(! (File::Exists(VERTEX_FILE) && File::Exists(INDEX_FILE) )) {
+//    if(! (File::Exists(VERTEX_FILE) && File::Exists(INDEX_FILE) )) {
 	CreateHeightmap(path);
-    }
+//    }
 
 
     m_vertexBuffer = VBO::CreateInterleaved(
-				       vector<GLuint>{
-					   VBO_POSITION_ATTRIB_INDEX,
-					       VBO_NORMAL_ATTRIB_INDEX,
-					       VBO_TEX_COORD_ATTRIB_INDEX},
-				       vector<GLuint>{3,3,2}
-				       );
+	vector<GLuint>{
+	    VBO_POSITION_ATTRIB_INDEX,
+		VBO_NORMAL_ATTRIB_INDEX,
+		VBO_TEX_COORD_ATTRIB_INDEX},
+	vector<GLuint>{3,3,2}
+	);
 
     size_t dataSize;
     void* vertexData = File::ReadArray(VERTEX_FILE, dataSize);
@@ -190,7 +190,7 @@ const float HeightMap::ScaleXZ(const int x) {
 
 const Color HeightMap::VertexColoring(const float y) {
 
-   if(y < 1.7f) {
+    if(y < 1.7f) {
 	Color lower = Color::FromInt(237, 201, 175);
 	Color higher = Color::FromInt(0x76, 0xa9, 0x12);
 	return Color::Lerp(lower, higher, y / 1.7f);
@@ -199,7 +199,7 @@ const Color HeightMap::VertexColoring(const float y) {
 	Color higher = Color::FromInt(255, 255 , 255);
 
 	return Color::Lerp(lower, higher, (y-1.7f) / 1.2f);
-   }
+    }
 
 }
 
@@ -208,7 +208,7 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
     /*
       Load the heightmap data.
-     */
+    */
 
     std::vector<unsigned char> buffer;
     lodepng::load_file(buffer, path);
@@ -228,7 +228,7 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
     /*
       Next we create the vertex buffer.
-     */
+    */
 
 
     MultArray<Cell> map(width, depth);

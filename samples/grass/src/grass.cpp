@@ -17,7 +17,7 @@ void Grass::AddQuad(FloatVector& vertices, UshortVector& indices,
 
     const Vector3f n = Vector3f::Cross(topRight - bottomRight,bottomRight - bottomLeft).Normalize();
 
-    LOG_I("normal %s", tos(n).c_str());
+    // LOG_I("normal %s", tos(n).c_str());
 
     bottomLeft.Add(vertices);
     n.Add(vertices);
@@ -122,16 +122,16 @@ void Grass::MakeGrass() {
 
 	const Vector2f partBeg = pos;
 
-	const Vector2f partEnd = pos + growingDir * 1;
+	const Vector2f partEnd = pos + growingDir * 0.05;
 
 //	LOG_I("partbeg: %s", tos(partBeg).c_str() );
 //	LOG_I("growingDir: %s", tos(growingDir).c_str() );
 
 	AddQuad(vertices,indices,
 		Vector3f(partBeg.x,partBeg.y,0),
-		Vector3f(partBeg.x,partBeg.y,1),
+		Vector3f(partBeg.x,partBeg.y,0.1f),
 		Vector3f(partEnd.x, partEnd.y,0),
-		Vector3f(partEnd.x, partEnd.y,1)
+		Vector3f(partEnd.x, partEnd.y,0.1f)
 	    );
 
 /*
