@@ -51,9 +51,6 @@ Grass::Grass( ){
 
     m_shader = new ShaderProgram("shader/grass");
 
-     new ShaderProgram("shader/draw_normals");
-
-
     m_vertexBuffer = VBO::CreateInterleaved(
 						    vector<GLuint>{
 							VBO_POSITION_ATTRIB_INDEX,
@@ -67,7 +64,21 @@ Grass::Grass( ){
 
     MakeGrass();
 
+    m_pointsVertexBuffer = VBO::CreateInterleaved(
+	vector<GLuint>{
+	    VBO_POSITION_ATTRIB_INDEX,
+		VBO_NORMAL_ATTRIB_INDEX},
+	vector<GLuint>{3,3}
+	);
 
+    FloatVector grassVertices;
+
+    Vector3f(0,0,0).Add(grassVertices);
+    Vector3f(0,1,0).Add(grassVertices);
+
+    m_pointsVertexBuffer->Bind();
+    m_pointsVertexBuffer->SetBufferData(grassVertices);
+    m_pointsVertexBuffer->Unbind();
 }
 
 void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
@@ -91,13 +102,23 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
     m_shader->Unbind();
 
 
+
+
+
+    m_pointsVertexBuffer->EnableVertexAttribInterleavedWithBind();
+
+    m_pointsVertexBuffer->DrawVertices(GL_POINTS, 1);
+
+//    indexBuffer.DrawIndices(mode, count);
+
+    m_pointsVertexBuffer->DisableVertexAttribInterleavedWithBind();
+
     // glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
 
     SetCullFace(true);
 
 }
-
 Grass::~Grass() {
     MY_DELETE(m_vertexBuffer);
     MY_DELETE(m_indexBuffer);
