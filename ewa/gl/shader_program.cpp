@@ -49,13 +49,12 @@ ShaderProgram::ShaderProgram(const std::string& shaderName){
     m_alreadyBoundProgram = false;
 
     string geometryShaderPath = shaderName + "_gs.glsl";
+
     string geometryShaderSource;
-    if(	!File::Exists(geometryShaderSource)) {
+
+    if(	!ResourceManager::GetInstance().ResourceExists(geometryShaderPath)) {
 	geometryShaderSource = ""; // do not load a geometry shader, because it does not exist.
     } else {
-
-
-
 	geometryShaderSource = GetShaderContents(geometryShaderPath);
     }
 
@@ -82,6 +81,7 @@ ShaderProgram::ShaderProgram(const std::string& vertexShaderSource, const std::s
 
 void ShaderProgram::CompileShaderProgram(const string& vertexShaderSource, const string& fragmentShaderSource,const string& geometryShaderSource, const std::string& path) {
     // link shader program.
+
     ShaderProgramBuilder shaderBuilder(vertexShaderSource, fragmentShaderSource, geometryShaderSource, path);
     m_shaderProgram = shaderBuilder.GetLinkedShaderProgram();
 

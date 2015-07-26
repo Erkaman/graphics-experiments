@@ -22,14 +22,32 @@ void ResourceManager::AddResourcePath(const std::string& path) {
 
 std::string ResourceManager::FindResource(const std::string& resourceName) {
 
+    std::string foundResource;
+    if(!ResourceExists(resourceName, foundResource)) {
+	LOG_E("The resource %s could not be found", resourceName.c_str());
+    } else {
+	return foundResource;
+    }
+}
+
+bool ResourceManager::ResourceExists(const std::string& resourceName, std::string& foundResource) {
+
     for(const std::string& path : resourcePaths ) {
+
 	std::string resourcePath = AppendPaths(path, resourceName);
 
 	if(File::Exists(resourcePath)) {
-	    return resourcePath;
+	    foundResource = resourcePath;
+
+	    return true;
 	}
     }
 
-    LOG_E("The resource %s could not be found", resourceName.c_str());
+    foundResource = "";
+    return false;
+}
 
+bool ResourceManager::ResourceExists(const std::string& resourceName) {
+    std::string placeHolder;
+    return ResourceExists(resourceName, placeHolder);
 }

@@ -1,2 +1,2 @@
 ll:
-	make -C samples/game
+	make -C samples/grass

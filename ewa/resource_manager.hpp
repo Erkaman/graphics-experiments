@@ -22,4 +22,8 @@ public:
 
 
     std::string FindResource(const std::string& resourceName);
+    bool ResourceExists(const std::string& resourceName, std::string& foundResource);
+
+    bool ResourceExists(const std::string& resourceName);
+
 };

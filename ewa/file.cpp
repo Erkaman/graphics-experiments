@@ -1,7 +1,10 @@
 #include "file.hpp"
 
-#include <errno.h>
+#include "resource_manager.hpp"
 #include "log.hpp"
+
+
+#include <errno.h>
 #include <string.h>
 
 using namespace std;
@@ -60,8 +63,10 @@ string File::GetFileContents() {
     return contents;
     }*/
 
+
+// ResourceManager::GetInstance().FindResource(filename).c_str()
 bool File::Exists(const std::string& filename) {
-    FILE* fp = fopen(filename.c_str(), "r");
+    FILE* fp = fopen(filename.c_str(), "rb");
     if (fp != NULL)
     {
 	fclose(fp);

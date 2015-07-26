@@ -51,6 +51,8 @@ Grass::Grass( ){
 
     m_shader = new ShaderProgram("shader/grass");
 
+     new ShaderProgram("shader/draw_normals");
+
 
     m_vertexBuffer = VBO::CreateInterleaved(
 						    vector<GLuint>{
