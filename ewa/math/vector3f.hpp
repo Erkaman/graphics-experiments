@@ -40,6 +40,8 @@ public:
     friend bool operator==(const Vector3f& v1, const Vector3f& v2);
     friend bool operator!=(const Vector3f& v1, const Vector3f& v2);
     friend Vector3f operator*(const float scale, const Vector3f& v);
+    friend Vector3f operator*(const Vector3f& v1, const Vector3f& v2);
+
     Vector3f& operator += (const Vector3f& that);
     Vector3f& operator *= (const float scale);
     Vector3f& operator -= (const Vector3f& that);
@@ -57,6 +59,9 @@ public:
     Vector3f& Normalize();
     Vector3f Normalize()const;
 
+
+
+
     /*
       Rotate this vector around the axis.
      */
@@ -72,6 +77,11 @@ public:
      */
 
     static Vector3f Cross(const Vector3f& v1, const Vector3f& v2);
+
+    static float Dot(const Vector3f& v1, const Vector3f& v2);
+
+    static Vector3f Normalize(const Vector3f& v);
+
 
 };
 
@@ -123,4 +133,11 @@ inline Vector3f Vector3f::operator-() const {
 inline Vector3f& Vector3f::operator *= (const float scale) {
     *this = scale * (*this);
     return (*this);
+}
+
+inline Vector3f operator*(const Vector3f& v1, const Vector3f& v2) {
+    return Vector3f(
+	v1.x * v2.x,
+	v1.y * v2.y,
+	v1.z * v2.z);
 }

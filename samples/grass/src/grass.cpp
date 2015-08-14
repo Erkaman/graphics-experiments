@@ -12,8 +12,8 @@
 using std::vector;
 
 void Grass::AddQuad(FloatVector& vertices, UshortVector& indices,
-	     const Vector3f& bottomLeft, const Vector3f& bottomRight,
-	     const Vector3f& topLeft, const Vector3f& topRight) {
+		    const Vector3f& bottomLeft, const Vector3f& bottomRight,
+		    const Vector3f& topLeft, const Vector3f& topRight) {
 
     const Vector3f n = Vector3f::Cross(topRight - bottomRight,bottomRight - bottomLeft).Normalize();
 
@@ -52,11 +52,12 @@ Grass::Grass( ){
     m_shader = new ShaderProgram("shader/grass");
 
     m_vertexBuffer = VBO::CreateInterleaved(
-						    vector<GLuint>{
-							VBO_POSITION_ATTRIB_INDEX,
-							    VBO_NORMAL_ATTRIB_INDEX},
-						    vector<GLuint>{3,3}
-			  );
+	vector<GLuint>{
+	    VBO_POSITION_ATTRIB_INDEX,
+		VBO_NORMAL_ATTRIB_INDEX,
+		VBO_TEX_COORD_ATTRIB_INDEX},
+	vector<GLuint>{3,3,2}
+	);
 
 
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
@@ -79,16 +80,12 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
     m_shader->SetPhongUniforms(
 
 	Matrix4f::CreateIdentity()
-	 , camera, lightPosition);
+	, camera, lightPosition);
 
 
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
 
     m_shader->Unbind();
-
-
-
-
 
     // glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
@@ -107,46 +104,109 @@ void Grass::MakeGrass() {
     UshortVector indices;
     m_numTriangles = 0;
 
-    const Vector2f grassBeg(2,6); // x,y
-    const Vector2f grassEnd(30,33); // x,y.
+    Vector3f vertexNormal(0,1,0);
+    Vector3f vertexPosition(0,0,0);
 
-    Vector2f pos(grassBeg);
-    Vector2f growingDir(0,1);
-    growingDir.Normalize();
+    if (Vector3f::Dot(vertexNormal, Vector3f(0, 1, 0)) < 0) return;
 
-    while(true) {
+    Vector3f startPoint, endPoint, startTopPoint, endTopPoint, normal;
 
-	if(pos.x >= grassEnd.x || pos.y >= grassEnd.y) {
-	    break;
-	}
+    Vector3f normalPos = Vector3f::Normalize(vertexPosition);
+    float grassHeight = 5;
 
-	const Vector2f partBeg = pos;
+    Vector3f windDirection = Vector3f(0.2f); //random offset
 
-	const Vector2f partEnd = pos + growingDir * 0.05;
+    float m_GrassWidth = 4;
 
-//	LOG_I("partbeg: %s", tos(partBeg).c_str() );
-//	LOG_I("growingDir: %s", tos(growingDir).c_str() );
+    startPoint = vertexPosition;
+    startPoint.x = vertexPosition.x - m_GrassWidth/4;
+    endPoint = startPoint;
+    endPoint.x += m_GrassWidth/2;
 
-	AddQuad(vertices,indices,
-		Vector3f(partBeg.x,partBeg.y,0),
-		Vector3f(partBeg.x,partBeg.y,0.1f),
-		Vector3f(partEnd.x, partEnd.y,0),
-		Vector3f(partEnd.x, partEnd.y,0.1f)
-	    );
-
-/*
-  AddQuad(vertices,indices,
-	    Vector3f(2,6,0),
-	    Vector3f(2,6,1),
-	    Vector3f(2,7,0),
-	    Vector3f(2,7,1)
-	    );*/
+    int lod = 1;
+    constexpr int MAX_LOD = 10;
 
 
-	pos = partEnd;
-	growingDir += (grassEnd - partEnd).Normalize() * 0.1;
-	growingDir.Normalize();
+    // http://outerra.blogspot.se/2012/05/procedural-grass-rendering.html
+    // http://stijndelaruelle.com/pdf/grass.pdf
+    // file:///Users/eric/Dropbox/LeeRealtimeGrassThesis.pdf
+    for (int i = 0; i < lod; ++i)
+    {
+	startTopPoint = startPoint + (Vector3f(grassHeight/lod, grassHeight/lod, grassHeight/lod) *
+				      vertexNormal);
+	endTopPoint = endPoint + (Vector3f(grassHeight/lod, grassHeight/lod, grassHeight/lod) *
+				  vertexNormal);
 
+	Vector3f windDirection(0.2f, 0.2f, 0.2f);
+
+	startTopPoint.x += windDirection.x;
+	startTopPoint.z += windDirection.z;
+
+	endTopPoint.x += windDirection.x;
+	endTopPoint.z += windDirection.z;
+
+
+	Vector3f edgeDirection = startTopPoint - startPoint;
+	float edgeLength = edgeDirection.Length();
+	float deltaY = edgeLength - (grassHeight/lod);
+	edgeDirection.Normalize(); //normalize here as we use it to calculate the lenght above
+
+	startTopPoint -= edgeDirection * deltaY;
+	endTopPoint -= edgeDirection * deltaY;
+
+	normal = vertexNormal;
+
+	float bottomY = 1.0f - (i * (1/lod));
+
+	startPoint.Add(vertices);
+	normal.Add(vertices);
+	Vector2f(0.0f,bottomY).Add(vertices);
+
+
+	endPoint.Add(vertices);
+	normal.Add(vertices);
+	Vector2f(1.0f,bottomY).Add(vertices);
+
+
+	startTopPoint.Add(vertices);
+	normal.Add(vertices);
+	Vector2f(0.0f,bottomY - (1/lod)).Add(vertices);
+
+	endTopPoint.Add(vertices);
+	normal.Add(vertices);
+	Vector2f(1.0f,bottomY - (1/lod)).Add(vertices);
+
+
+	indices.push_back(2);
+	indices.push_back(1);
+	indices.push_back(0);
+
+
+	indices.push_back(0);
+	indices.push_back(3);
+	indices.push_back(2);
+
+
+
+	/*
+	  CreateVertex(triStream,
+	  startPoint, // pos
+	  normal, // normal
+	  float2(0.0f, bottomY), // texture coordinate.
+	  vertex[0].Position);
+
+	  CreateVertex(triStream, endPoint, normal, float2(1.0f, bottomY), vertex[0].Position);
+
+	  CreateVertex(triStream, startTopPoint, normal, float2(0.0f, bottomY - (1/lod)),
+	  vertex[0].Position);
+
+	  CreateVertex(triStream, endTopPoint, normal, float2(1.0f, bottomY - (1/lod)),
+	  vertex[0].Position);
+
+	*/
+
+	startPoint = startTopPoint;
+	endPoint = endTopPoint;
 
     }
 

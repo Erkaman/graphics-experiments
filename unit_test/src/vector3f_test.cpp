@@ -44,6 +44,16 @@ static void TestNormalize() {
     v = Vector3f(3,1,2);
     v.Normalize();
     AssertEquals(v,Vector3f(.80178f,.26726f,.53452f));
+
+
+
+    const Vector3f v2(2.5f,0.0f,0.0f);
+    AssertEquals(v2.Normalize(),Vector3f(1.0f,0.0f,0.0f));
+    AssertEquals(v2,Vector3f(2.5f,0,0));
+    AssertEquals(Vector3f::Normalize(v2),Vector3f(1.0f,0.0f,0.0f));
+
+
+
 }
 
 static void TestEquals() {
@@ -64,6 +74,13 @@ static void TestCross() {
     Vector3f b(5,6,7);
 
     AssertEquals(Vector3f::Cross(a,b),Vector3f(-3,6,-3));
+}
+
+static void TestDot() {
+    Vector3f a(1,3,-5);
+    Vector3f b(4,-2,-1);
+
+    AssertEqualsFloat(Vector3f::Dot(a,b),3.0f);
 }
 
 static void TestScale() {
@@ -103,6 +120,14 @@ static void TestMinusEquals() {
     AssertEquals(a,Vector3f(-2,-2,-3));
 }
 
+static void TestMult() {
+    Vector3f a(1.0f,1.2f,2.0f);
+    Vector3f b(0.0f,2.0f,9.0f);
+
+    AssertEquals(a*b,Vector3f(0.0f, 2.4f, 18.0f));
+    AssertEquals(b*a,Vector3f(0.0f, 2.4f, 18.0f));
+
+}
 
 void Vector3fTestSuite() {
 
@@ -115,10 +140,12 @@ void Vector3fTestSuite() {
     suite.emplace_back(TestLength, "TestLength");
     suite.emplace_back(TestNormalize, "TestNormalize");
     suite.emplace_back(TestCross, "TestCross");
+    suite.emplace_back(TestDot, "TestDot");
     suite.emplace_back(TestScale, "TestScale");
     suite.emplace_back(TestPlusEquals, "TestPlusEquals");
     suite.emplace_back(TestRotate, "TestRotate");
     suite.emplace_back(TestMinusEquals, "TestMinusEquals");
+    suite.emplace_back(TestMult, "TestMult");
 
     RunSuite(suite, "Vector3f");
 }

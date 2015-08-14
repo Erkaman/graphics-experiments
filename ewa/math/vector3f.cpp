@@ -58,6 +58,10 @@ Vector3f Vector3f::Normalize()const {
 }
 
 
+Vector3f Vector3f::Normalize(const Vector3f& v){
+    return v.Normalize();
+}
+
 Vector3f Vector3f::Cross(const Vector3f& v1, const Vector3f& v2) {
     return Vector3f(
 	v1.y * v2.z - v1.z * v2.y,
@@ -65,6 +69,11 @@ Vector3f Vector3f::Cross(const Vector3f& v1, const Vector3f& v2) {
 	v1.x * v2.y - v1.y * v2.x
 	);
 }
+
+float Vector3f::Dot(const Vector3f& v1, const Vector3f& v2) {
+    return (v1.x*v2.x + v1.y*v2.y + v1.z*v2.z);
+}
+
 
 bool operator==(const Vector3f& v1, const Vector3f& v2) {
     constexpr static float EPSILON = 0.0001f;
