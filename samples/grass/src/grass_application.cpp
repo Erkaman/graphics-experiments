@@ -71,8 +71,8 @@ void GrassApplication::Update(const float delta) {
 
 void GrassApplication::RenderText()  {
 //    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
-
+/*
     m_font->DrawString(*m_fontShader, 100,150, tos(m_camera->GetPosition()).c_str() );
     m_font->DrawString(*m_fontShader, 100,250, tos(m_camera->GetViewDir()).c_str() );
-
+*/
 }

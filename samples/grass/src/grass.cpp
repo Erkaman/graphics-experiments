@@ -111,7 +111,7 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_shader->Unbind();
 
-    // glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    //   glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
 
     SetCullFace(true);
@@ -132,13 +132,10 @@ void Grass::MakeGrass() {
     Vector3f vertexNormal(0,1,0);
     Vector3f vertexPosition(7,4,5);
 
-    if (Vector3f::Dot(vertexNormal, Vector3f(0, 1, 0)) < 0) return;
 
     Vector3f startPoint, endPoint, startTopPoint, endTopPoint, normal;
 
-    Vector3f normalPos = Vector3f::Normalize(vertexPosition);
     float grassHeight = 4.0f / 4.0f;
-
 
     float m_GrassWidth = 2.0f / 4.0f; // the double grass width.
 
@@ -147,21 +144,40 @@ void Grass::MakeGrass() {
     endPoint = startPoint;
     endPoint.x += m_GrassWidth/2;
 
-    int lod = 1;
-    constexpr int MAX_LOD = 10;
+    constexpr int lod = 2;
 
+
+/*
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:206:MakeGrass:start: (6.875000, 4.000000, 5.000000)
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:207:MakeGrass:end: (7.125000, 4.000000, 5.000000)
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:208:MakeGrass:start top: (6.875000, 4.500000, 5.000000)
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:209:MakeGrass:end top: (7.125000, 4.500000, 5.000000)
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:206:MakeGrass:start: (6.875000, 4.500000, 5.000000)
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:207:MakeGrass:end: (7.125000, 4.500000, 5.000000)
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:208:MakeGrass:start top: (6.875000, 5.000000, 5.000000)
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:209:MakeGrass:end top: (7.125000, 5.000000, 5.000000)
+
+ */
+
+
+/*
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:196:MakeGrass:start: (6.875000, 4.000000, 5.000000)
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:197:MakeGrass:end: (7.125000, 4.000000, 5.000000)
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:198:MakeGrass:start top: (6.875000, 5.000000, 5.000000)
+INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:199:MakeGrass:end top: (7.125000, 5.000000, 5.000000)
+
+ */
 
     // http://outerra.blogspot.se/2012/05/procedural-grass-rendering.html
     // http://stijndelaruelle.com/pdf/grass.pdf
     // file:///Users/eric/Dropbox/LeeRealtimeGrassThesis.pdf
-    for (int i = 0; i < lod; ++i)
-    {
+    for (int i = 0; i < lod; ++i) {
 	startTopPoint = startPoint + (Vector3f(grassHeight/lod, grassHeight/lod, grassHeight/lod) *
 				      vertexNormal);
 	endTopPoint = endPoint + (Vector3f(grassHeight/lod, grassHeight/lod, grassHeight/lod) *
 				  vertexNormal);
 
-	Vector3f windDirection(0.2f);
+	Vector3f windDirection(0.2f,0,0);
 
 	startTopPoint.x += windDirection.x;
 	startTopPoint.z += windDirection.z;
@@ -173,6 +189,8 @@ void Grass::MakeGrass() {
 	Vector3f edgeDirection = startTopPoint - startPoint;
 	float edgeLength = edgeDirection.Length();
 	float deltaY = edgeLength - (grassHeight/lod);
+//	LOG_I("delta y: %f", deltaY );
+
 	edgeDirection.Normalize(); //normalize here as we use it to calculate the lenght above
 
 	startTopPoint -= edgeDirection * deltaY;
@@ -180,7 +198,10 @@ void Grass::MakeGrass() {
 
 	normal = vertexNormal;
 
-	float bottomY = 1.0f - (i * (1/lod));
+	float bottomY = 1.0f - (i * (1.0f/lod));
+
+	GLushort baseIndex = vertices.size() / (3+3+2);
+
 
 	startPoint.Add(vertices);
 	normal.Add(vertices);
@@ -192,24 +213,29 @@ void Grass::MakeGrass() {
 
 	startTopPoint.Add(vertices);
 	normal.Add(vertices);
-	Vector2f(0.0f,bottomY - (1/lod)).Add(vertices);
+	Vector2f(0.0f,bottomY - (1.0f/lod)).Add(vertices);
 
 	endTopPoint.Add(vertices);
 	normal.Add(vertices);
-	Vector2f(1.0f,bottomY - (1/lod)).Add(vertices);
+	Vector2f(1.0f,bottomY - (1.0f/lod)).Add(vertices);
 
+
+//	LOG_I("bottomY: %f", bottomY );
+
+/*
 	LOG_I("start: %s", ((string)startPoint).c_str() );
 	LOG_I("end: %s", ((string)endPoint).c_str() );
 	LOG_I("start top: %s", ((string)startTopPoint).c_str() );
 	LOG_I("end top: %s", ((string)endTopPoint).c_str() );
+*/
 
-	indices.push_back(0);
-	indices.push_back(1);
-	indices.push_back(2);
+	indices.push_back(baseIndex+0);
+	indices.push_back(baseIndex+1);
+	indices.push_back(baseIndex+2);
 
-	indices.push_back(3);
-	indices.push_back(2);
-	indices.push_back(1);
+	indices.push_back(baseIndex+3);
+	indices.push_back(baseIndex+2);
+	indices.push_back(baseIndex+1);
 
 	startPoint = startTopPoint;
 	endPoint = endTopPoint;
