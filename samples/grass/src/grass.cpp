@@ -4,12 +4,14 @@
 
 #include "ewa/gl/shader_program.hpp"
 #include "ewa/gl/vbo.hpp"
+#include "ewa/gl/texture2d.hpp"
 
 #include "ewa/math/matrix4f.hpp"
 #include "ewa/math/vector2f.hpp"
 #include "ewa/math/vector3f.hpp"
 
 using std::vector;
+using std::string;
 
 void Grass::AddQuad(FloatVector& vertices, UshortVector& indices,
 		    const Vector3f& bottomLeft, const Vector3f& bottomRight,
@@ -46,7 +48,6 @@ void Grass::AddQuad(FloatVector& vertices, UshortVector& indices,
 
 }
 
-
 Grass::Grass( ){
 
     m_shader = new ShaderProgram("shader/grass");
@@ -60,8 +61,17 @@ Grass::Grass( ){
 	);
 
 
+
+
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
+    m_grassTexture = new Texture2D("img/grass.png");
+
+    m_grassTexture->Bind();
+    m_grassTexture->SetTextureClamping();
+    m_grassTexture->SetMinFilter(GL_LINEAR);
+    m_grassTexture->SetMagFilter(GL_NEAREST);
+    m_grassTexture->Unbind();
 
     MakeGrass();
 
@@ -77,13 +87,27 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_shader->Bind();
 
+    m_shader->SetUniform("grass", 0);
+    Texture::SetActiveTextureUnit(0);
+    m_grassTexture->Bind();
+
     m_shader->SetPhongUniforms(
 
 	Matrix4f::CreateIdentity()
 	, camera, lightPosition);
 
+    GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
+    GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+
 
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
+
+    GL_C(glDisable(GL_BLEND));
+
+
+    m_grassTexture->Unbind();
+
 
     m_shader->Unbind();
 
@@ -97,6 +121,7 @@ Grass::~Grass() {
     MY_DELETE(m_vertexBuffer);
     MY_DELETE(m_indexBuffer);
     MY_DELETE(m_shader);
+    MY_DELETE(m_grassTexture);
 }
 
 void Grass::MakeGrass() {
@@ -105,18 +130,17 @@ void Grass::MakeGrass() {
     m_numTriangles = 0;
 
     Vector3f vertexNormal(0,1,0);
-    Vector3f vertexPosition(0,0,0);
+    Vector3f vertexPosition(7,4,5);
 
     if (Vector3f::Dot(vertexNormal, Vector3f(0, 1, 0)) < 0) return;
 
     Vector3f startPoint, endPoint, startTopPoint, endTopPoint, normal;
 
     Vector3f normalPos = Vector3f::Normalize(vertexPosition);
-    float grassHeight = 5;
+    float grassHeight = 4.0f / 4.0f;
 
-    Vector3f windDirection = Vector3f(0.2f); //random offset
 
-    float m_GrassWidth = 4;
+    float m_GrassWidth = 2.0f / 4.0f; // the double grass width.
 
     startPoint = vertexPosition;
     startPoint.x = vertexPosition.x - m_GrassWidth/4;
@@ -137,7 +161,7 @@ void Grass::MakeGrass() {
 	endTopPoint = endPoint + (Vector3f(grassHeight/lod, grassHeight/lod, grassHeight/lod) *
 				  vertexNormal);
 
-	Vector3f windDirection(0.2f, 0.2f, 0.2f);
+	Vector3f windDirection(0.2f);
 
 	startTopPoint.x += windDirection.x;
 	startTopPoint.z += windDirection.z;
@@ -162,11 +186,9 @@ void Grass::MakeGrass() {
 	normal.Add(vertices);
 	Vector2f(0.0f,bottomY).Add(vertices);
 
-
 	endPoint.Add(vertices);
 	normal.Add(vertices);
 	Vector2f(1.0f,bottomY).Add(vertices);
-
 
 	startTopPoint.Add(vertices);
 	normal.Add(vertices);
@@ -176,40 +198,26 @@ void Grass::MakeGrass() {
 	normal.Add(vertices);
 	Vector2f(1.0f,bottomY - (1/lod)).Add(vertices);
 
+	LOG_I("start: %s", ((string)startPoint).c_str() );
+	LOG_I("end: %s", ((string)endPoint).c_str() );
+	LOG_I("start top: %s", ((string)startTopPoint).c_str() );
+	LOG_I("end top: %s", ((string)endTopPoint).c_str() );
 
-	indices.push_back(2);
+	indices.push_back(0);
 	indices.push_back(1);
-	indices.push_back(0);
+	indices.push_back(2);
 
-
-	indices.push_back(0);
 	indices.push_back(3);
 	indices.push_back(2);
-
-
-
-	/*
-	  CreateVertex(triStream,
-	  startPoint, // pos
-	  normal, // normal
-	  float2(0.0f, bottomY), // texture coordinate.
-	  vertex[0].Position);
-
-	  CreateVertex(triStream, endPoint, normal, float2(1.0f, bottomY), vertex[0].Position);
-
-	  CreateVertex(triStream, startTopPoint, normal, float2(0.0f, bottomY - (1/lod)),
-	  vertex[0].Position);
-
-	  CreateVertex(triStream, endTopPoint, normal, float2(1.0f, bottomY - (1/lod)),
-	  vertex[0].Position);
-
-	*/
+	indices.push_back(1);
 
 	startPoint = startTopPoint;
 	endPoint = endTopPoint;
 
-    }
+	m_numTriangles += 2;
 
+
+    }
 
     m_vertexBuffer->Bind();
     m_vertexBuffer->SetBufferData(vertices);

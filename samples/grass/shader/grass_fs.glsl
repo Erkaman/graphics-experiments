@@ -52,6 +52,8 @@ in vec2 texCoord;
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
 
+uniform sampler2D grass;
+
 vec3 sampleDiffuseTexture() {
     return vec3(0,1,0);
 }
@@ -59,5 +61,5 @@ vec3 sampleDiffuseTexture() {
 void main()
 {
     vec3 shading = phongVertex(sampleDiffuseTexture(), viewSpaceNormal, viewSpaceLightPosition, viewSpacePosition);
-    fragmentColor = vec4(shading, 1.0);
+    fragmentColor = texture(grass, texCoord);
 }

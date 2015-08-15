@@ -3,6 +3,7 @@
 class ShaderProgram;
 class VBO;
 class Camera;
+class Texture;
 
 #include "ewa/gl/gl_common.hpp"
 #include "ewa/geometry_object.hpp"
@@ -21,6 +22,8 @@ class Grass{
 
     VBO* m_vertexBuffer;
     VBO* m_indexBuffer;
+
+    Texture* m_grassTexture;
 
     void AddQuad(FloatVector& vertices, UshortVector& indices,
 	     const Vector3f& bottomLeft, const Vector3f& bottomRight,
