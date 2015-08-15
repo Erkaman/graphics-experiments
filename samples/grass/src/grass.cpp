@@ -179,22 +179,26 @@ void Grass::MakeGrassBlade(FloatVector& vertices, UshortVector& indices,
 
 	GLushort baseIndex = vertices.size() / (3+3+2);
 
+	Vector3f n(0,1,0);
+
+//	const Vector3f n = Vector3f::Cross(endPoint - startPoint,startTopPoint - startPoint).Normalize();
+
+
 	startPoint.Add(vertices);
-	normal.Add(vertices);
+	n.Add(vertices);
 	Vector2f(0.0f,bottomY).Add(vertices);
 
 	endPoint.Add(vertices);
-	normal.Add(vertices);
+	n.Add(vertices);
 	Vector2f(1.0f,bottomY).Add(vertices);
 
 	startTopPoint.Add(vertices);
-	normal.Add(vertices);
+	n.Add(vertices);
 	Vector2f(0.0f,bottomY - (1.0f/lod)).Add(vertices);
 
 	endTopPoint.Add(vertices);
-	normal.Add(vertices);
+	n.Add(vertices);
 	Vector2f(1.0f,bottomY - (1.0f/lod)).Add(vertices);
-
 
 	indices.push_back(baseIndex+0);
 	indices.push_back(baseIndex+1);
@@ -242,7 +246,7 @@ void Grass::MakeGrass() {
 
 	blade.grassHeight = rng.RandomFloat(0.8f, 1.2f);
 	blade.grassWidth = rng.RandomFloat(0.08f, 0.12f);
-	blade.windDirection = Vector3f(rng.RandomFloat(-0.15f, +0.15f),0,0.0f);
+	blade.windDirection = Vector3f(rng.RandomFloat(-0.15f, +0.15f),0,0*rng.RandomFloat(-0.15f, +0.15f));
 
 	blades.push_back(blade);
     }
