@@ -12,7 +12,7 @@
 using std::string;
 
 constexpr float NEAR = 0.1f;
-constexpr float FAR = 10000.0f;
+constexpr float FAR = 100000.0f;
 
 Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir,bool usePerspectiveProjection): m_position(position), m_viewDir(viewDir){
 

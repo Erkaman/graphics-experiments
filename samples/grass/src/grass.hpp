@@ -31,6 +31,15 @@ class Grass{
 
     void MakeGrass();
 
+    void MakeGrassBlade(FloatVector& vertices, UshortVector& indices,
+			const Vector3f& vertexPosition,
+			const int lod,
+			const float grassHeight, const float grassWidth,
+			const Vector3f& windDirection
+
+	);
+
+
 public:
 
     //

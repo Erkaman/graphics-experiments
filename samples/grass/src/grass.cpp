@@ -9,6 +9,9 @@
 #include "ewa/math/matrix4f.hpp"
 #include "ewa/math/vector2f.hpp"
 #include "ewa/math/vector3f.hpp"
+#include "ewa/random.hpp"
+
+#include <algorithm>
 
 using std::vector;
 using std::string;
@@ -93,7 +96,7 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_shader->SetPhongUniforms(
 
-	Matrix4f::CreateIdentity()
+	Matrix4f::CreateTranslation(7,4,5)
 	, camera, lightPosition);
 
     GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
@@ -124,27 +127,24 @@ Grass::~Grass() {
     MY_DELETE(m_grassTexture);
 }
 
-void Grass::MakeGrass() {
-    FloatVector vertices;
-    UshortVector indices;
-    m_numTriangles = 0;
 
-    Vector3f vertexNormal(0,1,0);
-    Vector3f vertexPosition(7,4,5);
+void Grass::MakeGrassBlade(FloatVector& vertices, UshortVector& indices,
+			   const Vector3f& vertexPosition,
+			   const int lod,
+			   const float grassHeight, const float grassWidth,
+			   const Vector3f& windDirection
 
+    ) {
 
     Vector3f startPoint, endPoint, startTopPoint, endTopPoint, normal;
 
-    float grassHeight = 4.0f / 4.0f;
+    Vector3f vertexNormal(0,1,0);
 
-    float m_GrassWidth = 2.0f / 4.0f; // the double grass width.
 
     startPoint = vertexPosition;
-    startPoint.x = vertexPosition.x - m_GrassWidth/4;
+    startPoint.x = vertexPosition.x - 2.0f*grassWidth/4.0f;
     endPoint = startPoint;
-    endPoint.x += m_GrassWidth/2;
-
-    constexpr int lod =5;
+    endPoint.x += 2.0f * grassWidth/2.0f;
 
     // http://outerra.blogspot.se/2012/05/procedural-grass-rendering.html
     // http://stijndelaruelle.com/pdf/grass.pdf
@@ -155,21 +155,18 @@ void Grass::MakeGrass() {
 	endTopPoint = endPoint + (Vector3f(grassHeight/lod, grassHeight/lod, grassHeight/lod) *
 				  vertexNormal);
 
-	Vector3f windDirection(0.2f,0,0);
 
-	float windCoeff = 1.0f;
-
-	windCoeff = (float)i / (float)lod;
+	float windCoeff = (float)(i+1) / (float)lod;
 
 	startTopPoint.x += windDirection.x* windCoeff;
+	startTopPoint.z += windDirection.z* windCoeff;
 
 	endTopPoint.x += windDirection.x * windCoeff;
-
+	endTopPoint.z += windDirection.z * windCoeff;
 
 	Vector3f edgeDirection = startTopPoint - startPoint;
 	float edgeLength = edgeDirection.Length();
-	float deltaY = edgeLength - (grassHeight/lod);
-//	LOG_I("delta y: %f", deltaY );
+	float deltaY = edgeLength - (grassHeight/(float)lod);
 
 	edgeDirection.Normalize(); //normalize here as we use it to calculate the lenght above
 
@@ -181,7 +178,6 @@ void Grass::MakeGrass() {
 	float bottomY = 1.0f - (i * (1.0f/lod));
 
 	GLushort baseIndex = vertices.size() / (3+3+2);
-
 
 	startPoint.Add(vertices);
 	normal.Add(vertices);
@@ -200,15 +196,6 @@ void Grass::MakeGrass() {
 	Vector2f(1.0f,bottomY - (1.0f/lod)).Add(vertices);
 
 
-//	LOG_I("bottomY: %f", bottomY );
-
-/*
-	LOG_I("start: %s", ((string)startPoint).c_str() );
-	LOG_I("end: %s", ((string)endPoint).c_str() );
-	LOG_I("start top: %s", ((string)startTopPoint).c_str() );
-	LOG_I("end top: %s", ((string)endTopPoint).c_str() );
-*/
-
 	indices.push_back(baseIndex+0);
 	indices.push_back(baseIndex+1);
 	indices.push_back(baseIndex+2);
@@ -221,9 +208,56 @@ void Grass::MakeGrass() {
 	endPoint = endTopPoint;
 
 	m_numTriangles += 2;
+    }
+}
 
+void Grass::MakeGrass() {
+    FloatVector vertices;
+    UshortVector indices;
+    m_numTriangles = 0;
+
+    constexpr int LOD =5;
+    constexpr int BLADES =30;
+
+    const float width = 0.10f;
+
+    Random rng(10);
+
+//	;->RandomInt(0, NUM_CLOUD_TEXTURES-1)];
+
+    struct GrassBlade {
+	Vector3f vertexPosition;
+	float grassHeight;
+	float grassWidth;
+	Vector3f windDirection;
+    };
+
+    vector<GrassBlade> blades;
+
+    for(int i = 0; i < BLADES; ++i) {
+
+	GrassBlade blade;
+
+	blade.vertexPosition = Vector3f( rng.RandomFloat(-0.5f, +0.5f),0,rng.RandomFloat(-0.3f, +0.3f));
+
+	blade.grassHeight = rng.RandomFloat(0.8f, 1.2f);
+	blade.grassWidth = rng.RandomFloat(0.08f, 0.12f);
+	blade.windDirection = Vector3f(rng.RandomFloat(-0.15f, +0.15f),0,0.0f);
+
+	blades.push_back(blade);
+    }
+
+    std::sort(blades.begin(), blades.end(),
+	      [](const GrassBlade& a, const GrassBlade& b) -> bool{
+		  return a.vertexPosition.z > b.vertexPosition.z;
+	      });
+
+    for(const GrassBlade& blade : blades) {
+	MakeGrassBlade(vertices, indices, blade.vertexPosition,
+		       LOD, blade.grassHeight, blade.grassWidth, blade.windDirection);
 
     }
+
 
     m_vertexBuffer->Bind();
     m_vertexBuffer->SetBufferData(vertices);
