@@ -144,29 +144,7 @@ void Grass::MakeGrass() {
     endPoint = startPoint;
     endPoint.x += m_GrassWidth/2;
 
-    constexpr int lod = 2;
-
-
-/*
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:206:MakeGrass:start: (6.875000, 4.000000, 5.000000)
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:207:MakeGrass:end: (7.125000, 4.000000, 5.000000)
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:208:MakeGrass:start top: (6.875000, 4.500000, 5.000000)
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:209:MakeGrass:end top: (7.125000, 4.500000, 5.000000)
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:206:MakeGrass:start: (6.875000, 4.500000, 5.000000)
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:207:MakeGrass:end: (7.125000, 4.500000, 5.000000)
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:208:MakeGrass:start top: (6.875000, 5.000000, 5.000000)
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:209:MakeGrass:end top: (7.125000, 5.000000, 5.000000)
-
- */
-
-
-/*
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:196:MakeGrass:start: (6.875000, 4.000000, 5.000000)
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:197:MakeGrass:end: (7.125000, 4.000000, 5.000000)
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:198:MakeGrass:start top: (6.875000, 5.000000, 5.000000)
-INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:199:MakeGrass:end top: (7.125000, 5.000000, 5.000000)
-
- */
+    constexpr int lod =5;
 
     // http://outerra.blogspot.se/2012/05/procedural-grass-rendering.html
     // http://stijndelaruelle.com/pdf/grass.pdf
@@ -179,11 +157,13 @@ INFO: /Users/eric/tuhu/samples/grass/src/grass.cpp:199:MakeGrass:end top: (7.125
 
 	Vector3f windDirection(0.2f,0,0);
 
-	startTopPoint.x += windDirection.x;
-	startTopPoint.z += windDirection.z;
+	float windCoeff = 1.0f;
 
-	endTopPoint.x += windDirection.x;
-	endTopPoint.z += windDirection.z;
+	windCoeff = (float)i / (float)lod;
+
+	startTopPoint.x += windDirection.x* windCoeff;
+
+	endTopPoint.x += windDirection.x * windCoeff;
 
 
 	Vector3f edgeDirection = startTopPoint - startPoint;
