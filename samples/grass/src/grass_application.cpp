@@ -45,13 +45,13 @@ void GrassApplication::Init() {
 void GrassApplication::Render() {
 
     SetViewport();
-    Clear(1.0f, 1.0f, 1.0f);
+    Clear(0.0f, 0.0f, 0.0f);
 
-    const Vector4f lightPosition(7,4,5, 1.0f);
+    const Vector4f lightPosition(6.76f,4.52f,4.33f, 1.0f);
 
     m_plane->Draw(*m_camera, lightPosition);
 
-    m_grass->Draw(*m_camera, lightPosition);
+   m_grass->Draw(*m_camera, lightPosition);
 }
 
 void GrassApplication::Update(const float delta) {
@@ -71,8 +71,8 @@ void GrassApplication::Update(const float delta) {
 
 void GrassApplication::RenderText()  {
 //    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
-/*
-    m_font->DrawString(*m_fontShader, 100,150, tos(m_camera->GetPosition()).c_str() );
+
+/*    m_font->DrawString(*m_fontShader, 100,150, tos(m_camera->GetPosition()).c_str() );
     m_font->DrawString(*m_fontShader, 100,250, tos(m_camera->GetViewDir()).c_str() );
 */
 }

@@ -179,7 +179,7 @@ void Grass::MakeGrassBlade(FloatVector& vertices, UshortVector& indices,
 
 	GLushort baseIndex = vertices.size() / (3+3+2);
 
-	Vector3f n(0,1,0);
+	Vector3f n(0,0,-1);
 
 //	const Vector3f n = Vector3f::Cross(endPoint - startPoint,startTopPoint - startPoint).Normalize();
 
@@ -221,11 +221,11 @@ void Grass::MakeGrass() {
     m_numTriangles = 0;
 
     constexpr int LOD =5;
-    constexpr int BLADES =30;
+    constexpr int BLADES =50; // 30
 
     const float width = 0.10f;
 
-    Random rng(10);
+    Random rng(11);
 
 //	;->RandomInt(0, NUM_CLOUD_TEXTURES-1)];
 
@@ -238,11 +238,12 @@ void Grass::MakeGrass() {
 
     vector<GrassBlade> blades;
 
+
     for(int i = 0; i < BLADES; ++i) {
 
 	GrassBlade blade;
 
-	blade.vertexPosition = Vector3f( rng.RandomFloat(-0.5f, +0.5f),0,rng.RandomFloat(-0.3f, +0.3f));
+	blade.vertexPosition =Vector3f( rng.RandomFloat(-0.5f, +0.5f),0, rng.RandomFloat(-0.3f, +0.3f));
 
 	blade.grassHeight = rng.RandomFloat(0.8f, 1.2f);
 	blade.grassWidth = rng.RandomFloat(0.08f, 0.12f);
@@ -250,6 +251,7 @@ void Grass::MakeGrass() {
 
 	blades.push_back(blade);
     }
+
 
     std::sort(blades.begin(), blades.end(),
 	      [](const GrassBlade& a, const GrassBlade& b) -> bool{
@@ -262,7 +264,6 @@ void Grass::MakeGrass() {
 
     }
 
-
     m_vertexBuffer->Bind();
     m_vertexBuffer->SetBufferData(vertices);
     m_vertexBuffer->Unbind();
@@ -271,3 +272,7 @@ void Grass::MakeGrass() {
     m_indexBuffer->SetBufferData(indices);
     m_indexBuffer->Unbind();
 }
+
+// viewSpaceLightPosition - viewSpacePosition
+
+// (6.909399, -5.346800, -1.297220)
