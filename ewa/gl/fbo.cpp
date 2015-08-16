@@ -52,7 +52,6 @@ void FBO::CheckFramebufferStatus(const GLenum target)  {
     }
 }
 
-
 FBO::~FBO()  {
     GL_C(glDeleteFramebuffers(1, &m_fboHandle));
 

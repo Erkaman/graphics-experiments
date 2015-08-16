@@ -29,6 +29,8 @@ public:
     }
 
     void RenderbufferStorage(const GLenum internalformat, const GLsizei width, const GLsizei height) {
+
+	// Here!
 	GL_C(glRenderbufferStorage(m_target, internalformat, width, height));
     }
 
