@@ -7,6 +7,7 @@ class Camera;
 class Plane;
 class Grass;
 class FBO;
+class MSAA_FBO;
 
 class GrassApplication : public Application{
 
@@ -16,6 +17,9 @@ private:
     Plane* m_plane;
     Grass* m_grass;
     FBO* m_fbo;
+
+    MSAA_FBO* m_msaaFbo;
+
 
 public:
 

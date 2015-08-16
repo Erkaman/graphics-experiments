@@ -34,6 +34,12 @@ public:
 	GL_C(glRenderbufferStorage(m_target, internalformat, width, height));
     }
 
+    void RenderbufferStorageMultisample(const GLsizei samples, const GLenum internalformat, const GLsizei width, const GLsizei height) {
+
+	// Here!
+	GL_C(glRenderbufferStorageMultisample(m_target, samples, internalformat, width, height));
+    }
+
     GLuint GetHandle()const {
 	return m_renderBufferHandle;
     }
