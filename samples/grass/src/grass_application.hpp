@@ -7,7 +7,8 @@ class Camera;
 class Plane;
 class Grass;
 class FBO;
-class MSAA_FBO;
+class ShaderProgram;
+class Quad;
 
 class GrassApplication : public Application{
 
@@ -16,9 +17,11 @@ private:
     Camera* m_camera;
     Plane* m_plane;
     Grass* m_grass;
-    FBO* m_fbo;
+    FBO* m_fbo1;
+    FBO* m_fbo2;
 
-    MSAA_FBO* m_msaaFbo;
+    ShaderProgram* m_postShader;
+    Quad* m_quad;
 
 
 public:

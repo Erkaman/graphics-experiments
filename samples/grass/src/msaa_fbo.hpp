@@ -14,6 +14,8 @@ private:
 
     GLuint m_fboHandle;
     const GLenum m_target;
+    const GLsizei m_width;
+    const GLsizei m_height;
 
     RenderBuffer* m_depthBuffer;
     RenderBuffer* m_colorBuffer;
@@ -28,9 +30,6 @@ public:
     MSAA_FBO(const GLsizei width, const GLsizei height);
 
     ~MSAA_FBO();
-
-    GLenum GetTargetTextureUnit();
-
 
     /**
      * This method MUST be called every time the window is resized!
@@ -64,6 +63,8 @@ public:
     void UnbindForReading() {
 	GL_C(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
     }
+
+    void WriteToFile(const std::string& filename);
 
 
 

@@ -3,16 +3,17 @@
 #include "ewa/camera.hpp"
 #include "ewa/font.hpp"
 #include "ewa/keyboard_state.hpp"
+#include "ewa/quad.hpp"
 
 #include "ewa/gl/fbo.hpp"
 #include "ewa/gl/texture.hpp"
 #include "ewa/gl/render_buffer.hpp"
+#include "ewa/gl/shader_program.hpp"
 
 #include "ewa/math/vector4f.hpp"
 
 #include "plane.hpp"
 #include "grass.hpp"
-#include "msaa_fbo.hpp"
 
 #include <stdlib.h>
 
@@ -43,8 +44,18 @@ Vector3f(6.728623, 4.595068, 3.067542),Vector3f(0.121214, -0.059060, 0.990868), 
 
     m_grass = new Grass();
 
-    m_fbo = new FBO(9,
+    m_fbo1 = new FBO(9,
 			      GetFramebufferWidth(), GetFramebufferHeight());
+
+
+    m_fbo2 = new FBO(9,
+			      GetFramebufferWidth(), GetFramebufferHeight());
+
+
+    m_quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
+
+    m_postShader = new ShaderProgram("shader/post");
+
 
 /*
     GLint samples;
@@ -52,24 +63,50 @@ Vector3f(6.728623, 4.595068, 3.067542),Vector3f(0.121214, -0.059060, 0.990868), 
 
     LOG_I("samples: %d", samples);*/
 
-    m_msaaFbo = new MSAA_FBO(100,100);
 
 }
 
 void GrassApplication::Render() {
 
-    m_fbo->Bind();
+    m_fbo1->Bind();
     {
 	SetViewport();
 	Clear(0.0f, 0.0f, 0.0f);
 	const Vector4f lightPosition(6.76f,4.52f,4.33f, 1.0f);
 	m_grass->Draw(*m_camera, lightPosition);
     }
+    m_fbo1->Unbind();
+//    m_fbo->WriteToFile("grass.png");
+//    m_fbo->GetRenderTargetTexture().WriteToFile("grass.png");
+//    exit(1);
 
-    m_fbo->Unbind();
+    m_fbo2->Bind();
+    {
+	SetViewport();
+	Clear(0.0f, 0.0f, 0.0f);
 
-    m_fbo->GetRenderTargetTexture().WriteToFile("grass.png");
+
+	m_postShader->Bind();
+
+	Texture::SetActiveTextureUnit(m_fbo1->GetTargetTextureUnit());
+
+	m_postShader->SetUniform("tex", (int)m_fbo1->GetTargetTextureUnit() );
+
+	m_fbo1->GetRenderTargetTexture().Bind();
+
+	m_quad->Draw();
+
+	m_fbo1->GetRenderTargetTexture().Unbind();
+
+	m_postShader->Unbind();
+    }
+    m_fbo2->Unbind();
+
+   m_fbo2->GetRenderTargetTexture().WriteToFile("grass.png");
     exit(1);
+
+
+
 }
 
 void GrassApplication::Update(const float delta) {
