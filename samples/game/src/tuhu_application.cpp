@@ -34,7 +34,8 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,
-Vector3f(7.983032, -1.827215, 7.983032),Vector3f(0.666667, -0.333333, 0.666667)
+
+Vector3f(9.474550, -3.490666, 9.546431),Vector3f(0.666667, -0.333333, 0.666667)
 
 
 , true);

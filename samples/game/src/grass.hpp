@@ -7,6 +7,7 @@ class VBO;
 class ShaderProgram;
 class Camera;
 class Texture;
+class Vector2f;
 
 class Grass{
 
@@ -27,7 +28,7 @@ private:
 
     ShaderProgram* m_grassShader;
 
-    void GenerateBillboardVertices(FloatVector& vertices, UshortVector& indices, const float width, const float height);
+    void GenerateBillboardVertices(const Vector2f& dir, FloatVector& vertices, UshortVector& indices, const float width, const float height);
 
 public:
 

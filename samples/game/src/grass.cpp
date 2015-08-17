@@ -56,7 +56,8 @@ Grass::Grass() {
 
     constexpr float SIZE = 0.4f;
 
-    GenerateBillboardVertices(vertices, indices, SIZE,SIZE);
+    GenerateBillboardVertices(Vector2f(1,0),vertices, indices, SIZE,SIZE);
+    GenerateBillboardVertices(Vector2f(0,1),vertices, indices, SIZE,SIZE);
 
 
     m_grassVertexBuffer->Bind();
@@ -107,19 +108,25 @@ void Grass::Draw(const Camera& camera) {
 void Grass::Update(const float delta) {
 }
 
-void Grass::GenerateBillboardVertices(FloatVector& vertices, UshortVector& indices, const float width, const float height) {
+void Grass::GenerateBillboardVertices(const Vector2f& dir, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
     GLushort baseIndex = vertices.size() / (3+2);
 
-    Vector3f(-width / 2.0f, height, 0).Add(vertices);
+    //   Vector2f dir(1,0);
+    dir.Normalize();
+
+    const float X = dir.x * width / 2.0f;
+    const float Z = dir.y * width / 2.0f;
+
+    Vector3f(-X, height, -Z).Add(vertices);
     Vector2f(0.0f,0.0f).Add(vertices);
 
-    Vector3f(+width / 2.0f, height, 0).Add(vertices);
+    Vector3f(+X, height, +Z).Add(vertices);
     Vector2f(1.0f,0.0f).Add(vertices);
 
-    Vector3f(-width / 2.0f, 0, 0).Add(vertices);
+    Vector3f(-X, 0, -Z).Add(vertices);
     Vector2f(0.0f,1.0f).Add(vertices);
 
-    Vector3f(+width / 2.0f, 0, 0).Add(vertices);
+    Vector3f(+X, 0, +Z).Add(vertices);
     Vector2f(1.0f,1.0f).Add(vertices);
 
     indices.push_back(baseIndex+0);

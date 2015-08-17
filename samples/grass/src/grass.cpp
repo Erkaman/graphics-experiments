@@ -223,7 +223,6 @@ void Grass::MakeGrass() {
     constexpr int LOD =5;
     constexpr int BLADES =50; // 30
 
-    const float width = 0.10f;
 
     Random rng(11);
 
@@ -246,7 +245,7 @@ void Grass::MakeGrass() {
 	blade.vertexPosition =Vector3f( rng.RandomFloat(-0.5f, +0.5f),0, rng.RandomFloat(-0.3f, +0.3f));
 
 	blade.grassHeight = rng.RandomFloat(0.8f, 1.2f);
-	blade.grassWidth = rng.RandomFloat(0.08f, 0.12f);
+	blade.grassWidth = rng.RandomFloat(0.05f, 0.07f);
 	blade.windDirection = Vector3f(rng.RandomFloat(-0.15f, +0.15f),0,0*rng.RandomFloat(-0.15f, +0.15f));
 
 	blades.push_back(blade);

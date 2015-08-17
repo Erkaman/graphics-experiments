@@ -19,6 +19,11 @@
 
 using namespace std;
 
+constexpr bool CAMERA = false;
+constexpr int IMAGE_WIDTH = 512;
+constexpr int IMAGE_HEIGHT = 512;
+
+
 void ToClipboard(const std::string& str) {
     std::string command = "echo '" + str + "' | pbcopy";
     system(command.c_str());
@@ -48,9 +53,16 @@ void GrassApplication::Init() {
 
     m_grass = new Grass();
 
+    if(CAMERA) {
+    WIDTH = GetFramebufferWidth();
+    HEIGHT = GetFramebufferHeight();
 
-    WIDTH = 512;// GetFramebufferWidth();
-    HEIGHT = 512; //GetFramebufferHeight();
+    } else {
+	WIDTH = IMAGE_WIDTH;
+	HEIGHT = IMAGE_HEIGHT;
+
+    }
+
 
 
     m_fbo1 = new FBO(9,
@@ -92,7 +104,9 @@ void GrassApplication::Render() {
 /*    m_fbo1->GetRenderTargetTexture().WriteToFile("grass.png");
       exit(1);*/
 
-    m_fbo2->Bind();
+    if(!CAMERA) {
+	m_fbo2->Bind();
+    }
     {
 	::SetViewport(0, 0, WIDTH, WIDTH);
 	GL_C(glClearColor(0, 0, 0, 0.0f));
@@ -113,10 +127,12 @@ void GrassApplication::Render() {
 
 	m_postShader->Unbind();
     }
-   m_fbo2->Unbind();
+    if(!CAMERA) {
+	m_fbo2->Unbind();
 
-   m_fbo2->GetRenderTargetTexture().WriteToFile("grass.png");
-    exit(1);
+	m_fbo2->GetRenderTargetTexture().WriteToFile("grass.png");
+	exit(1);
+    }
 
 
 
