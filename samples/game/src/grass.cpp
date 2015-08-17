@@ -37,6 +37,8 @@ Grass::Grass() {
       Create the skydome.
     */
 
+    m_time = 0;
+
 
     m_grassShader = new ShaderProgram("shader/grass");
 
@@ -53,8 +55,8 @@ Grass::Grass() {
     m_grassVertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{
 	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX },
-	vector<GLuint>{3,2}
+		VBO_TEX_COORD_ATTRIB_INDEX, VBO_NORMAL_ATTRIB_INDEX },
+	vector<GLuint>{3,2,3}
 	);
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
@@ -78,23 +80,24 @@ Grass::Grass() {
 
 }
 
-void Grass::Draw(const Camera& camera) {
+void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
     // next we'll draw all the billboards:
 
     SetCullFace(false);
 
 
     m_grassShader->Bind();
+    m_grassShader->SetUniform("time", m_time);
+
    GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
     GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     // draw grass.
 
     const Matrix4f model =  Matrix4f::CreateTranslation(10,-3.65,10);
-    Matrix4f modelView =  camera.GetModelViewMatrix(model);
-    const Matrix4f mvp = camera.GetProjectionMatrix() * modelView;
 
-    m_grassShader->SetUniform("mvp", mvp);
+    m_grassShader->SetPhongUniforms(model, camera, lightPosition);
+
 
     m_grassShader->SetUniform("tex", 0);
     Texture::SetActiveTextureUnit(0);
@@ -113,12 +116,18 @@ void Grass::Draw(const Camera& camera) {
 }
 
 void Grass::Update(const float delta) {
+    m_time += delta;
+
+//    LOG_I("time: %f",m_time);
+
+
 }
 
 void Grass::GenerateBillboardVertices(const Vector3f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
-    GLushort baseIndex = vertices.size() / (3+2);
+    GLushort baseIndex = vertices.size() / (3+2+3);
 
     Vector2f dir = AngleToVector(angle);
+    Vector3f normal(0,1,0);
     dir.Normalize();
 
     const float X = dir.x * width / 2.0f;
@@ -126,15 +135,19 @@ void Grass::GenerateBillboardVertices(const Vector3f position, const float angle
 
     (position+Vector3f(-X, height, -Z)).Add(vertices);
     Vector2f(0.0f,0.0f).Add(vertices);
+    normal.Add(vertices);
 
     (position+Vector3f(+X, height, +Z)).Add(vertices);
     Vector2f(1.0f,0.0f).Add(vertices);
+    normal.Add(vertices);
 
     (position+Vector3f(-X, 0, -Z)).Add(vertices);
     Vector2f(0.0f,1.0f).Add(vertices);
+    normal.Add(vertices);
 
     (position+Vector3f(+X, 0, +Z)).Add(vertices);
     Vector2f(1.0f,1.0f).Add(vertices);
+    normal.Add(vertices);
 
     indices.push_back(baseIndex+0);
     indices.push_back(baseIndex+1);

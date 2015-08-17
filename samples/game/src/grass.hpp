@@ -9,6 +9,7 @@ class Camera;
 class Texture;
 class Vector2f;
 class Vector3f;
+class Vector4f;
 
 class Grass{
 
@@ -22,6 +23,8 @@ private:
     VBO* m_grassIndexBuffer;
 
     Texture* m_grassTexture;
+
+    float m_time;
 
     /*
       Used for drawing billboards:
@@ -39,6 +42,6 @@ public:
     Grass();
     ~Grass();
 
-    void Draw(const Camera& camera);
+    void Draw(const Camera& camera, const Vector4f& lightPosition);
     void Update(const float delta);
 };
