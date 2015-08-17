@@ -24,8 +24,7 @@ void ToClipboard(const std::string& str) {
     system(command.c_str());
 }
 
-
-GrassApplication::GrassApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_plane(NULL) { }
+GrassApplication::GrassApplication(int argc, char *argv[]):Application(argc, argv, 512, 512), m_camera(NULL), m_plane(NULL) { }
 
 GrassApplication::~GrassApplication() {
     MY_DELETE(m_camera);
@@ -38,18 +37,28 @@ void GrassApplication::Init() {
     ::SetCullFace(true);
 
     m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),
-Vector3f(6.728623, 4.595068, 3.067542),Vector3f(0.121214, -0.059060, 0.990868), true);
+
+			  Vector3f(6.797705, 4.315825, 3.393999),Vector3f(0.113218, 0.175353, 0.977974)
+
+
+
+		       , true);
 
     m_plane = new Plane(Vector3f(5,4,1), Vector3f(1,1,1));
 
     m_grass = new Grass();
 
+
+    WIDTH = 512;// GetFramebufferWidth();
+    HEIGHT = 512; //GetFramebufferHeight();
+
+
     m_fbo1 = new FBO(9,
-			      GetFramebufferWidth(), GetFramebufferHeight());
+		     WIDTH,HEIGHT);
 
 
     m_fbo2 = new FBO(9,
-			      GetFramebufferWidth(), GetFramebufferHeight());
+			      WIDTH,HEIGHT);
 
 
     m_quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
@@ -63,6 +72,7 @@ Vector3f(6.728623, 4.595068, 3.067542),Vector3f(0.121214, -0.059060, 0.990868), 
 
     LOG_I("samples: %d", samples);*/
 
+    LOG_I("width: %d", GetFramebufferWidth());
 
 }
 
@@ -70,7 +80,8 @@ void GrassApplication::Render() {
 
     m_fbo1->Bind();
     {
-	SetViewport();
+
+	::SetViewport(0, 0, WIDTH, WIDTH);
 	GL_C(glClearColor(0, 0, 0, 0.0f));
 	GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
@@ -83,7 +94,7 @@ void GrassApplication::Render() {
 
     m_fbo2->Bind();
     {
-	SetViewport();
+	::SetViewport(0, 0, WIDTH, WIDTH);
 	GL_C(glClearColor(0, 0, 0, 0.0f));
 	GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
@@ -102,7 +113,7 @@ void GrassApplication::Render() {
 
 	m_postShader->Unbind();
     }
-    m_fbo2->Unbind();
+   m_fbo2->Unbind();
 
    m_fbo2->GetRenderTargetTexture().WriteToFile("grass.png");
     exit(1);

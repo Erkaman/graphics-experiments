@@ -29,6 +29,10 @@ private:
 
     VAO* m_vao;
 
+    int m_width;
+    int m_height;
+
+
 public:
 
 
@@ -40,7 +44,7 @@ public:
 
 protected:
 
-    Application(int argc, char *argv[]);
+    Application(int argc, char *argv[], int width=800, int height=600);
 
     Font* m_font;
     ShaderProgram* m_fontShader;

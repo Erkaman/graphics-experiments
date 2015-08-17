@@ -20,12 +20,11 @@
 
 using namespace std;
 
-Application::Application(int argc, char *argv[]) {
+Application::Application(int argc, char *argv[], int width, int height): m_width(width), m_height(height) {
     for(int i = 1; i < argc; ++i) {
 	ResourceManager::GetInstance().AddResourcePath(argv[i]);
     }
 }
-
 
 void Application::Start() {
 
@@ -108,7 +107,7 @@ void Application::SetupOpenGL() {
     glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
-    m_window = glfwCreateWindow (800, 600, "Tuhu", NULL, NULL);
+    m_window = glfwCreateWindow (m_width, m_height, "Tuhu", NULL, NULL);
     if (!m_window) {
 	fprintf (stderr, "ERROR: could not open window with GLFW3\n");
 	glfwTerminate();

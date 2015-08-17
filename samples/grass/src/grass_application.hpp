@@ -23,6 +23,9 @@ private:
     ShaderProgram* m_postShader;
     Quad* m_quad;
 
+    int WIDTH;
+    int HEIGHT;
+
 
 public:
 
