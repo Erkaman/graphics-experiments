@@ -6,6 +6,7 @@
 class Camera;
 class HeightMap;
 class Skydome;
+class Grass;
 
 class TuhuApplication : public Application{
 
@@ -15,6 +16,8 @@ private:
     HeightMap* m_heightMap;
 
     Skydome* m_skydome;
+
+    Grass* m_grass;
 
 public:
 

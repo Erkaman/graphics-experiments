@@ -3,13 +3,20 @@
 #include "ewa/camera.hpp"
 #include "ewa/common.hpp"
 #include "ewa/font.hpp"
+#include "ewa/keyboard_state.hpp"
 
 #include "skydome.hpp"
 #include "height_map.hpp"
+#include "grass.hpp"
 
 
 
 using namespace std;
+
+void ToClipboard(const std::string& str) {
+    std::string command = "echo '" + str + "' | pbcopy";
+    system(command.c_str());
+}
 
 
 TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL),m_skydome(NULL){ }
@@ -26,7 +33,11 @@ void TuhuApplication::Init() {
 
     ::SetCullFace(true);
 
-    m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,Vector3f(0,0.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
+    m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,
+Vector3f(7.983032, -1.827215, 7.983032),Vector3f(0.666667, -0.333333, 0.666667)
+
+
+, true);
 
     m_heightMap = new HeightMap("img/combined.png");
 
@@ -34,6 +45,9 @@ void TuhuApplication::Init() {
 
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
+
+    m_grass = new Grass();
+
 }
 
 void TuhuApplication::Render() {
@@ -46,12 +60,26 @@ void TuhuApplication::Render() {
 
     Vector4f lightPosition(93,10.0f,93, 1.0f);
     m_heightMap->Draw(*m_camera, lightPosition);
+
+    m_grass->Draw(*m_camera);
 }
 
 void TuhuApplication::Update(const float delta) {
     m_camera->HandleInput(delta);
 
     //  m_skydome->Update(delta);
+
+
+    const KeyboardState& kbs = KeyboardState::GetInstance();
+
+    if( kbs.IsPressed(GLFW_KEY_P) ) {
+
+
+	string out = "Vector3f" +tos(m_camera->GetPosition()) + ",";
+	out += "Vector3f" + tos(m_camera->GetViewDir());
+	ToClipboard(out);
+
+    }
 }
 
 void TuhuApplication::RenderText()  {
