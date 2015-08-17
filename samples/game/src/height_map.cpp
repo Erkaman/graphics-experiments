@@ -185,7 +185,7 @@ void HeightMap::SetWireframe(const bool wireframe) {
 
 const float HeightMap::ScaleXZ(const int x) {
 //    return 0.03f * x;
-    return 0.3f * x;
+    return 0.8f * x;
 }
 
 const Color HeightMap::VertexColoring(const float y) {
