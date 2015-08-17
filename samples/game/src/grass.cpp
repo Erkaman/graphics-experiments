@@ -9,6 +9,7 @@
 #include "ewa/math/vector3f.hpp"
 #include "ewa/math/vector4f.hpp"
 #include "ewa/math/matrix4f.hpp"
+#include "ewa/math/math_common.hpp"
 
 #include "ewa/value_noise_seed.hpp"
 #include "ewa/camera.hpp"
@@ -20,6 +21,15 @@
 using std::string;
 using std::vector;
 
+Vector2f AngleToVector(const float angle) {
+    const float radians = ToRadians(angle);
+    return Vector2f(
+	cos(radians),
+	sin(radians)
+	);
+}
+
+
 
 Grass::Grass() {
 
@@ -28,7 +38,7 @@ Grass::Grass() {
     */
 
 
-    m_grassShader = new ShaderProgram("shader/billboard");
+    m_grassShader = new ShaderProgram("shader/grass");
 
 
 
@@ -39,8 +49,6 @@ Grass::Grass() {
     m_grassTexture->SetMinFilter(GL_LINEAR);
     m_grassTexture->SetMagFilter(GL_NEAREST);
     m_grassTexture->Unbind();
-
-
 
     m_grassVertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{
@@ -56,9 +64,9 @@ Grass::Grass() {
 
     constexpr float SIZE = 0.4f;
 
-    GenerateBillboardVertices(Vector2f(1,0),vertices, indices, SIZE,SIZE);
-    GenerateBillboardVertices(Vector2f(0,1),vertices, indices, SIZE,SIZE);
+    MakeGrass(Vector3f(0.4f,0,0), 0, vertices, indices, SIZE,SIZE);
 
+    MakeGrass(Vector3f(0,0,0), 0, vertices, indices, SIZE,SIZE);
 
     m_grassVertexBuffer->Bind();
     m_grassVertexBuffer->SetBufferData(vertices);
@@ -77,12 +85,12 @@ void Grass::Draw(const Camera& camera) {
 
 
     m_grassShader->Bind();
-    GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
+   GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
     GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     // draw grass.
 
-    const Matrix4f model =  Matrix4f::CreateTranslation(10,-4.0,10) * Matrix4f::CreateRotate(90, Vector3f(0,1,0));
+    const Matrix4f model =  Matrix4f::CreateTranslation(10,-3.65,10);
     Matrix4f modelView =  camera.GetModelViewMatrix(model);
     const Matrix4f mvp = camera.GetProjectionMatrix() * modelView;
 
@@ -97,7 +105,6 @@ void Grass::Draw(const Camera& camera) {
 
     m_grassTexture->Unbind();
 
-
     // done drawing billboards.
     GL_C(glDisable(GL_BLEND));
     m_grassShader->Unbind();
@@ -108,25 +115,25 @@ void Grass::Draw(const Camera& camera) {
 void Grass::Update(const float delta) {
 }
 
-void Grass::GenerateBillboardVertices(const Vector2f& dir, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
+void Grass::GenerateBillboardVertices(const Vector3f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
     GLushort baseIndex = vertices.size() / (3+2);
 
-    //   Vector2f dir(1,0);
+    Vector2f dir = AngleToVector(angle);
     dir.Normalize();
 
     const float X = dir.x * width / 2.0f;
     const float Z = dir.y * width / 2.0f;
 
-    Vector3f(-X, height, -Z).Add(vertices);
+    (position+Vector3f(-X, height, -Z)).Add(vertices);
     Vector2f(0.0f,0.0f).Add(vertices);
 
-    Vector3f(+X, height, +Z).Add(vertices);
+    (position+Vector3f(+X, height, +Z)).Add(vertices);
     Vector2f(1.0f,0.0f).Add(vertices);
 
-    Vector3f(-X, 0, -Z).Add(vertices);
+    (position+Vector3f(-X, 0, -Z)).Add(vertices);
     Vector2f(0.0f,1.0f).Add(vertices);
 
-    Vector3f(+X, 0, +Z).Add(vertices);
+    (position+Vector3f(+X, 0, +Z)).Add(vertices);
     Vector2f(1.0f,1.0f).Add(vertices);
 
     indices.push_back(baseIndex+0);
@@ -138,4 +145,9 @@ void Grass::GenerateBillboardVertices(const Vector2f& dir, FloatVector& vertices
     indices.push_back(baseIndex+2);
 
     m_grassNumTriangles += 2;
+}
+
+void Grass::MakeGrass(const Vector3f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
+    GenerateBillboardVertices(position, 0+angle,vertices, indices, width,height);
+    GenerateBillboardVertices(position, 90+angle,vertices, indices, width,height);
 }

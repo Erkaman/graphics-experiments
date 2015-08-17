@@ -10,8 +10,8 @@ Vector3f& Vector3f::Rotate(const float angle, const Vector3f& axis) {
 
     // see page 75, equation 4.40 in real-time rendering for an explanation of the below code.
 
-    float sinHalfAngle = (float) sin(toRadians(angle / 2.0f));
-    float cosHalfAngle = (float) cos(toRadians(angle / 2.0f));
+    float sinHalfAngle = (float) sin(ToRadians(angle / 2.0f));
+    float cosHalfAngle = (float) cos(ToRadians(angle / 2.0f));
 
     float rX = axis.x * sinHalfAngle;
     float rY = axis.y * sinHalfAngle;

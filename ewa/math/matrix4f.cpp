@@ -449,7 +449,7 @@ Matrix4f Matrix4f::CreateOrthographic( const float left, const float right, cons
 }
 
 Matrix4f Matrix4f::CreateRotate(const float angle, const Vector3f& axis) {
-    const float a = toRadians(angle);
+    const float a = ToRadians(angle);
    const float cosA = cos(a);
     const float oneMinusCosA = 1 - cosA;
     const float sinA  = sin(a);
