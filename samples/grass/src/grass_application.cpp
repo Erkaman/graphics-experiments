@@ -71,19 +71,21 @@ void GrassApplication::Render() {
     m_fbo1->Bind();
     {
 	SetViewport();
-	Clear(0.0f, 0.0f, 0.0f);
+	GL_C(glClearColor(0, 0, 0, 0.0f));
+	GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
 	const Vector4f lightPosition(6.76f,4.52f,4.33f, 1.0f);
 	m_grass->Draw(*m_camera, lightPosition);
     }
     m_fbo1->Unbind();
-//    m_fbo->WriteToFile("grass.png");
-//    m_fbo->GetRenderTargetTexture().WriteToFile("grass.png");
-//    exit(1);
+/*    m_fbo1->GetRenderTargetTexture().WriteToFile("grass.png");
+      exit(1);*/
 
     m_fbo2->Bind();
     {
 	SetViewport();
-	Clear(0.0f, 0.0f, 0.0f);
+	GL_C(glClearColor(0, 0, 0, 0.0f));
+	GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
 	m_postShader->Bind();

@@ -60,5 +60,5 @@ void main()
 {
     vec2 rcpFrame = 1.0 / textureSize(tex, 0);
 
-    fragmentColor =  /*FxaaTexLod0(tex, posPos.zw).xyz; */ vec4(FxaaPixelShader(posPos, tex, rcpFrame), 1);
+    fragmentColor =  /*FxaaTexLod0(tex, posPos.zw).xyz; */ vec4(FxaaPixelShader(posPos, tex, rcpFrame), FxaaTexLod0(tex, posPos.zw).a);
 }
