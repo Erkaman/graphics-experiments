@@ -54,7 +54,9 @@ Grass::Grass() {
     FloatVector vertices;
     UshortVector indices;
 
-    GenerateBillboardVertices(vertices, indices, 1.0f, 1.0f);
+    constexpr float SIZE = 0.4f;
+
+    GenerateBillboardVertices(vertices, indices, SIZE,SIZE);
 
 
     m_grassVertexBuffer->Bind();
@@ -79,7 +81,7 @@ void Grass::Draw(const Camera& camera) {
 
     // draw grass.
 
-    const Matrix4f model =  Matrix4f::CreateTranslation(10,-3,10) * Matrix4f::CreateRotate(90, Vector3f(0,1,0));
+    const Matrix4f model =  Matrix4f::CreateTranslation(10,-4.0,10) * Matrix4f::CreateRotate(90, Vector3f(0,1,0));
     Matrix4f modelView =  camera.GetModelViewMatrix(model);
     const Matrix4f mvp = camera.GetProjectionMatrix() * modelView;
 
