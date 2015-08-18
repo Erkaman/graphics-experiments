@@ -16,6 +16,7 @@
 #include "math/vector2f.hpp"
 #include "math/vector3f.hpp"
 #include "math/vector4f.hpp"
+#include "math/vector2i.hpp"
 #include "math/color.hpp"
 
 #include <vector>
@@ -32,6 +33,20 @@ constexpr float SCALE_XZ = 0.8f;
 constexpr char VERTEX_FILE[] = "dat/vert.dat";
 constexpr char INDEX_FILE[] = "dat/indx.dat";
 
+static inline float Lerp(float x, float y, float a) {
+    return x*(1-a)+y*a;
+}
+
+static inline int Floor(float x) {
+    return x>=0 ? (int)x : (int)x-1;
+}
+
+
+static inline Vector2f Fade(const float px, const float py) {
+    return Vector2f(
+	px * px * px * (px * (px * 6 - 15) + 10),
+	py * py * py * (py * (py * 6 - 15) + 10));
+}
 
 
 static Vector3f CalculateNormal (float north, float south, float east, float west)
@@ -364,6 +379,22 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
 float HeightMap::GetHeightAt(float x, float z)const {
 
-    Cell& c = (*m_map)(  floor((float)x / SCALE_XZ), floor((float)z / SCALE_XZ) );
-    return c.position.y;
+    Vector2f p = Vector2f( ((float)x / SCALE_XZ), ((float)z / SCALE_XZ) );
+
+    Vector2i P =  Vector2i( Floor(p.x),  Floor(p.y) );
+
+    const Vector2f f = Fade(
+	p.x - Floor(p.x),
+	p.y - Floor(p.y));
+
+
+
+    float AA = ((*m_map)(  P.x, P.y )).position.y;
+    float AB = ((*m_map)(  P.x, P.y+1 )).position.y;
+    float BA = ((*m_map)(  P.x+1, P.y )).position.y;
+    float BB = ((*m_map)(  P.x+1, P.y+1 )).position.y;
+
+
+    return Lerp(Lerp(AA, BA, f.x), Lerp(AB, BB, f.x), f.y);
+
 }

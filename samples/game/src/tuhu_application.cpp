@@ -55,6 +55,7 @@ Vector3f(9.474550, -3.490666, 9.546431),Vector3f(0.666667, -0.333333, 0.666667)
 
 void TuhuApplication::Render() {
 
+
     SetViewport();
 
     Clear(0.0f, 1.0f, 1.0f);

@@ -165,8 +165,6 @@ void Grass::Update(const float delta) {
     m_time += delta;
 
 //    LOG_I("time: %f",m_time);
-
-
 }
 
 void Grass::GenerateBillboardVertices(const Vector2f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
@@ -174,9 +172,8 @@ void Grass::GenerateBillboardVertices(const Vector2f position, const float angle
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);
-    Vector3f centerPosition(position.x, m_heightMap->GetHeightAt(position.x, position.y) - 0.09f ,position.y);
+    Vector3f centerPosition(position.x, m_heightMap->GetHeightAt(position.x, position.y)/* - 0.09f*/ ,position.y);
     dir.Normalize();
-
 
     const float X = dir.x * width / 2.0f;
     const float Z = dir.y * width / 2.0f;
