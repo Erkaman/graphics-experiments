@@ -69,7 +69,9 @@ Grass::Grass() {
 
     MakeGrass(Vector3f(0.4f,0,0), 0, vertices, indices, SIZE,SIZE);
 
-    MakeGrass(Vector3f(0,0,0), 0, vertices, indices, SIZE,SIZE);
+    MakeGrass(Vector3f(0,0,0), 30, vertices, indices, SIZE,SIZE);
+
+    MakeGrass(Vector3f(0.4f,0,0.8f), 75, vertices, indices, SIZE,SIZE);
 
     m_grassVertexBuffer->Bind();
     m_grassVertexBuffer->SetBufferData(vertices);
