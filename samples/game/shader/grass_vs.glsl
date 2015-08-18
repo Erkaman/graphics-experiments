@@ -64,8 +64,8 @@ void main()
 
     if(texCoordIn.y < 0.1) {
 
-	float xDir =rand(rand(vec2(seed.x, seed.y)), -0.1, 0.35);
-	float zDir =rand(rand(vec2(seed.y, seed.z)), 0.1, 0.3);
+	float xDir =rand(rand(vec2(seed.x, seed.y)), 0.05, 0.27);
+	float zDir =rand(rand(vec2(seed.y, seed.z)), 0.05, 0.27);
 
 	float period = rand(seed.xyz, 0.60, 0.70);
 

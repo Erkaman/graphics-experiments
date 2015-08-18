@@ -66,14 +66,56 @@ Grass::Grass(HeightMap* heightMap): m_heightMap(heightMap) {
 
     constexpr float SIZE = 0.4f;
 
-    Vector2f base(10,10); //
+    constexpr int COUNT = 20;
 
-    MakeGrass(base + Vector2f(0.4f,0), 0, vertices, indices, SIZE,SIZE);
+    Random rng(12);
 
+    vector<Vector2f> grassPositions;
+
+    Vector2f base(10,10);
+
+    for(int c = 0; c < COUNT; ++c) {
+
+	Vector2f grassPosition;
+
+	while(true) {
+
+	    grassPosition = base + Vector2f(rng.RandomFloat(-1,+1),rng.RandomFloat(-1,1));
+
+	    bool tooClose = false;
+
+	    for(const Vector2f& p : grassPositions ) {
+
+		float dist = (grassPosition - p).Length();
+
+		//	LOG_I("dist: %f", dist);
+
+		if(dist < SIZE) {
+		    tooClose = true;
+		    break;
+		}
+	    }
+
+	    if(!tooClose)
+		break;
+	}
+
+
+	MakeGrass(grassPosition, rng.RandomFloat(-90,+90), vertices, indices, SIZE,SIZE);
+
+	grassPositions.push_back(grassPosition);
+
+    }
+
+
+
+
+
+/*
     MakeGrass(base + Vector2f(0,0), 30, vertices, indices, SIZE,SIZE);
 
     MakeGrass(base + Vector2f(0.4f,0.8f), 75, vertices, indices, SIZE,SIZE);
-
+*/
     m_grassVertexBuffer->Bind();
     m_grassVertexBuffer->SetBufferData(vertices);
     m_grassVertexBuffer->Unbind();
