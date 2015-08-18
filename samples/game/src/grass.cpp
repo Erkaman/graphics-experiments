@@ -131,12 +131,11 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     SetCullFace(false);
 
-
     m_grassShader->Bind();
     m_grassShader->SetUniform("time", m_time);
 
    GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
-    GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+   GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     // draw grass.
 
@@ -211,5 +210,7 @@ void Grass::GenerateBillboardVertices(const Vector2f position, const float angle
 
 void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
     GenerateBillboardVertices(position, 0+angle,vertices, indices, width,height);
-    GenerateBillboardVertices(position, 90+angle,vertices, indices, width,height);
+    GenerateBillboardVertices(position, 60+angle,vertices, indices, width,height);
+    GenerateBillboardVertices(position, 120+angle,vertices, indices, width,height);
+
 }
