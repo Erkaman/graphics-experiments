@@ -8,6 +8,16 @@ class Texture;
 #include "ewa/gl/gl_common.hpp"
 #include "ewa/geometry_object.hpp"
 
+#include "ewa/math/vector3f.hpp"
+
+struct GrassBlade {
+    Vector3f vertexPosition;
+    float grassHeight;
+    float grassWidth;
+    Vector3f windDirection;
+    int lod;
+};
+
 class Grass{
 
     private:
@@ -42,9 +52,13 @@ class Grass{
 
 public:
 
-    //
-    Grass();
+    Grass(const std::string& textureFilename);
     ~Grass();
 
     void Draw(const Camera& camera, const Vector4f& lightPosition);
+
+    virtual void MakeGrass(std::vector<GrassBlade>& blades) = 0;
+
+    void Init();
+
 };

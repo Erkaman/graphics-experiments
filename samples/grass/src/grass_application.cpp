@@ -14,12 +14,13 @@
 
 #include "plane.hpp"
 #include "grass.hpp"
+#include "grasses.hpp"
 
 #include <stdlib.h>
 
 using namespace std;
 
-constexpr bool CAMERA = false;
+constexpr bool CAMERA = true;
 constexpr int IMAGE_WIDTH = 512;
 constexpr int IMAGE_HEIGHT = 512;
 
@@ -51,7 +52,8 @@ void GrassApplication::Init() {
 
     m_plane = new Plane(Vector3f(5,4,1), Vector3f(1,1,1));
 
-    m_grass = new Grass();
+    m_grass = new Exp();
+    m_grass->Init();
 
     if(CAMERA) {
     WIDTH = GetFramebufferWidth();

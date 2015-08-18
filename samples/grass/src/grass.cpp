@@ -9,7 +9,6 @@
 #include "ewa/math/matrix4f.hpp"
 #include "ewa/math/vector2f.hpp"
 #include "ewa/math/vector3f.hpp"
-#include "ewa/random.hpp"
 
 #include <algorithm>
 
@@ -48,11 +47,9 @@ void Grass::AddQuad(FloatVector& vertices, UshortVector& indices,
     indices.push_back(baseIndex+3);
 
     m_numTriangles += 2;
-
 }
 
-Grass::Grass( ){
-
+Grass::Grass(const std::string& textureFilename){
     m_shader = new ShaderProgram("shader/grass");
 
     m_vertexBuffer = VBO::CreateInterleaved(
@@ -64,20 +61,20 @@ Grass::Grass( ){
 	);
 
 
-
-
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
-    m_grassTexture = new Texture2D("img/grass.png");
+    m_grassTexture = new Texture2D(textureFilename); //
 
     m_grassTexture->Bind();
     m_grassTexture->SetTextureClamping();
     m_grassTexture->SetMinFilter(GL_LINEAR);
     m_grassTexture->SetMagFilter(GL_NEAREST);
     m_grassTexture->Unbind();
+}
+
+void Grass::Init() {
 
     MakeGrass();
-
 }
 
 void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
@@ -220,36 +217,20 @@ void Grass::MakeGrass() {
     UshortVector indices;
     m_numTriangles = 0;
 
-    constexpr int LOD =5;
-    constexpr int BLADES =50; // 30
 
 
-    Random rng(11);
-
-//	;->RandomInt(0, NUM_CLOUD_TEXTURES-1)];
-
-    struct GrassBlade {
-	Vector3f vertexPosition;
-	float grassHeight;
-	float grassWidth;
-	Vector3f windDirection;
-    };
-
-    vector<GrassBlade> blades;
 
 
-    for(int i = 0; i < BLADES; ++i) {
 
-	GrassBlade blade;
 
-	blade.vertexPosition =Vector3f( rng.RandomFloat(-0.5f, +0.5f),0, rng.RandomFloat(-0.3f, +0.3f));
 
-	blade.grassHeight = rng.RandomFloat(0.8f, 1.2f);
-	blade.grassWidth = rng.RandomFloat(0.05f, 0.07f);
-	blade.windDirection = Vector3f(rng.RandomFloat(-0.15f, +0.15f),0,0*rng.RandomFloat(-0.15f, +0.15f));
 
-	blades.push_back(blade);
-    }
+
+
+    std::vector<GrassBlade> blades;
+
+    MakeGrass(blades);
+
 
 
     std::sort(blades.begin(), blades.end(),
@@ -259,7 +240,7 @@ void Grass::MakeGrass() {
 
     for(const GrassBlade& blade : blades) {
 	MakeGrassBlade(vertices, indices, blade.vertexPosition,
-		       LOD, blade.grassHeight, blade.grassWidth, blade.windDirection);
+		       blade.lod, blade.grassHeight, blade.grassWidth, blade.windDirection);
 
     }
 
@@ -271,7 +252,3 @@ void Grass::MakeGrass() {
     m_indexBuffer->SetBufferData(indices);
     m_indexBuffer->Unbind();
 }
-
-// viewSpaceLightPosition - viewSpacePosition
-
-// (6.909399, -5.346800, -1.297220)
