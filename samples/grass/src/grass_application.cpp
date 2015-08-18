@@ -52,7 +52,7 @@ void GrassApplication::Init() {
 
     m_plane = new Plane(Vector3f(5,4,1), Vector3f(1,1,1));
 
-    m_grass = new Exp();
+    m_grass = new Exp4();
     m_grass->Init();
 
     if(CAMERA) {
@@ -99,8 +99,8 @@ void GrassApplication::Render() {
 	GL_C(glClearColor(0, 0, 0, 0.0f));
 	GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	const Vector4f lightPosition(6.76f,4.52f,4.33f, 1.0f);
-	m_grass->Draw(*m_camera, lightPosition);
+
+	m_grass->Draw(*m_camera);
     }
     m_fbo1->Unbind();
 /*    m_fbo1->GetRenderTargetTexture().WriteToFile("grass.png");
@@ -142,6 +142,7 @@ void GrassApplication::Render() {
 
 void GrassApplication::Update(const float delta) {
     m_camera->HandleInput(delta);
+    m_grass->Update(delta);
 
     const KeyboardState& kbs = KeyboardState::GetInstance();
 
@@ -158,7 +159,8 @@ void GrassApplication::Update(const float delta) {
 void GrassApplication::RenderText()  {
 //    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
 
-/*    m_font->DrawString(*m_fontShader, 100,150, tos(m_camera->GetPosition()).c_str() );
-    m_font->DrawString(*m_fontShader, 100,250, tos(m_camera->GetViewDir()).c_str() );
-*/
+//    m_font->DrawString(*m_fontShader, 100,150, tos(m_camera->GetPosition()).c_str() );
+//    m_font->DrawString(*m_fontShader, 100,250, tos(m_camera->GetViewDir()).c_str() );
+//Vector3f(6.884536, 4.450306, 4.144031),Vector3f(0.113218, 0.175353, 0.977974)
+
 }

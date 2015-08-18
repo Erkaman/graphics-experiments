@@ -1,6 +1,7 @@
 #include "grass.hpp"
 
 #include "ewa/common.hpp"
+#include "ewa/keyboard_state.hpp"
 
 #include "ewa/gl/shader_program.hpp"
 #include "ewa/gl/vbo.hpp"
@@ -49,7 +50,7 @@ void Grass::AddQuad(FloatVector& vertices, UshortVector& indices,
     m_numTriangles += 2;
 }
 
-Grass::Grass(const std::string& textureFilename){
+Grass::Grass(const std::string& textureFilename, const Vector4f& lightPosition): m_lightPosition(lightPosition){
     m_shader = new ShaderProgram("shader/grass");
 
     m_vertexBuffer = VBO::CreateInterleaved(
@@ -77,7 +78,7 @@ void Grass::Init() {
     MakeGrass();
 }
 
-void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
+void Grass::Draw(const Camera& camera) {
 
 
     //  glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -94,7 +95,7 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
     m_shader->SetPhongUniforms(
 
 	Matrix4f::CreateTranslation(7,4,5)
-	, camera, lightPosition);
+	, camera, m_lightPosition);
 
     GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
     GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -210,6 +211,19 @@ void Grass::MakeGrassBlade(FloatVector& vertices, UshortVector& indices,
 
 	m_numTriangles += 2;
     }
+}
+
+
+void Grass::Update(const float delta) {
+    const KeyboardState& kbs = KeyboardState::GetInstance();
+
+    if( kbs.IsPressed(GLFW_KEY_Y) ) {
+	m_lightPosition.z += 0.01f;
+    }
+    if( kbs.IsPressed(GLFW_KEY_H) ) {
+	m_lightPosition.z -= 0.01f;
+    }
+
 }
 
 void Grass::MakeGrass() {

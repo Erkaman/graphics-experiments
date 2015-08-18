@@ -13,10 +13,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <chrono>
+#include <thread>
+
 
 #include "fps_manager.hpp"
 #include "mouse.hpp"
 
+bool isFocused = true;
+
+void WindowFocusCallback(GLFWwindow* window, int iconified) {
+
+    isFocused = iconified == GL_TRUE;
+
+    LOG_I("is window: %d", isFocused);
+}
 
 using namespace std;
 
@@ -58,6 +69,12 @@ void Application::DoMainLoop() {
 
 
     while(m_running) {
+
+
+	if(!isFocused) {
+	    // if lost focus, suspend the entire engine until focus is retained. This frees up the CPU, so that it can be used for other programs as well
+	    glfwWaitEvents();
+	}
 
 	this->Update_internal(delta);
 
@@ -107,6 +124,7 @@ void Application::SetupOpenGL() {
     glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
+
     m_window = glfwCreateWindow (m_width, m_height, "Tuhu", NULL, NULL);
     if (!m_window) {
 	fprintf (stderr, "ERROR: could not open window with GLFW3\n");
@@ -114,6 +132,8 @@ void Application::SetupOpenGL() {
 	exit(1);
     }
     glfwMakeContextCurrent (m_window);
+
+    glfwSetWindowFocusCallback(m_window, WindowFocusCallback);
 
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 

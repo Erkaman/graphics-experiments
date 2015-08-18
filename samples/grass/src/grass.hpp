@@ -9,6 +9,7 @@ class Texture;
 #include "ewa/geometry_object.hpp"
 
 #include "ewa/math/vector3f.hpp"
+#include "ewa/math/vector4f.hpp"
 
 struct GrassBlade {
     Vector3f vertexPosition;
@@ -35,6 +36,8 @@ class Grass{
 
     Texture* m_grassTexture;
 
+    Vector4f m_lightPosition;
+
     void AddQuad(FloatVector& vertices, UshortVector& indices,
 	     const Vector3f& bottomLeft, const Vector3f& bottomRight,
 		 const Vector3f& topLeft, const Vector3f& topRight);
@@ -49,13 +52,14 @@ class Grass{
 
 	);
 
-
 public:
 
-    Grass(const std::string& textureFilename);
+    Grass(const std::string& textureFilename, const Vector4f& lightPosition);
     ~Grass();
 
-    void Draw(const Camera& camera, const Vector4f& lightPosition);
+    void Draw(const Camera& camera);
+
+    void Update(const float delta);
 
     virtual void MakeGrass(std::vector<GrassBlade>& blades) = 0;
 
