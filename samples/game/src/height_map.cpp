@@ -17,7 +17,6 @@
 #include "math/vector3f.hpp"
 #include "math/vector4f.hpp"
 #include "math/color.hpp"
-#include "mult_array.hpp"
 
 #include <vector>
 
@@ -25,15 +24,15 @@
 
 using std::vector;
 
+constexpr int WIDTH = 256;
+constexpr int HEIGHT = 256;
+constexpr float SCALE_XZ = 0.8f;
+
+
 constexpr char VERTEX_FILE[] = "dat/vert.dat";
 constexpr char INDEX_FILE[] = "dat/indx.dat";
 
-struct Cell {
-    Vector3f position;
-    Vector3f normal;
-//    Color color;
-    Vector2f texCoord;
-};
+
 
 static Vector3f CalculateNormal (float north, float south, float east, float west)
 {
@@ -82,9 +81,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     m_shader = new ShaderProgram("shader/height_map");
 
 
-//    if(! (File::Exists(VERTEX_FILE) && File::Exists(INDEX_FILE) )) {
+    if(! (File::Exists(VERTEX_FILE) && File::Exists(INDEX_FILE) )) {
 	CreateHeightmap(path);
-//    }
+    }
 
 
     m_vertexBuffer = VBO::CreateInterleaved(
@@ -101,7 +100,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     m_vertexBuffer->Bind();
     m_vertexBuffer->SetBufferData(dataSize, vertexData);
     m_vertexBuffer->Unbind();
-    free(vertexData);
+//    free(vertexData);
+
+    m_map = new MultArray<Cell>(WIDTH, HEIGHT, vertexData);
 
 
     void* indexData = File::ReadArray(INDEX_FILE, dataSize);
@@ -120,6 +121,7 @@ HeightMap::~HeightMap() {
     MY_DELETE(m_indexBuffer);
     MY_DELETE(m_vertexBuffer);
     MY_DELETE(m_grassTexture);
+    MY_DELETE(m_map)
 
 }
 
@@ -185,7 +187,7 @@ void HeightMap::SetWireframe(const bool wireframe) {
 
 const float HeightMap::ScaleXZ(const int x) {
 //    return 0.03f * x;
-    return 0.8f * x;
+    return SCALE_XZ * x;
 }
 
 const Color HeightMap::VertexColoring(const float y) {
@@ -358,4 +360,10 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     }
 
     File::WriteArray(INDEX_FILE, reinterpret_cast<void *>(&indices[0]), indices.size() * sizeof(GLuint) );
+}
+
+float HeightMap::GetHeightAt(float x, float z)const {
+
+    Cell& c = (*m_map)(  floor((float)x / SCALE_XZ), floor((float)z / SCALE_XZ) );
+    return c.position.y;
 }

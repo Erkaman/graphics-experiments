@@ -10,6 +10,7 @@ class Texture;
 class Vector2f;
 class Vector3f;
 class Vector4f;
+class HeightMap;
 
 class Grass{
 
@@ -32,6 +33,8 @@ private:
 
     ShaderProgram* m_grassShader;
 
+    HeightMap* m_heightMap;
+
     void GenerateBillboardVertices(const Vector3f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height);
 
     void MakeGrass(const Vector3f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height);
@@ -39,7 +42,7 @@ private:
 
 public:
 
-    Grass();
+    Grass(HeightMap* heightMap);
     ~Grass();
 
     void Draw(const Camera& camera, const Vector4f& lightPosition);

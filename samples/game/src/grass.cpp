@@ -13,6 +13,7 @@
 
 #include "ewa/value_noise_seed.hpp"
 #include "ewa/camera.hpp"
+#include "height_map.hpp"
 
 #include "ewa/util.hpp"
 #include "ewa/random.hpp"
@@ -30,9 +31,7 @@ Vector2f AngleToVector(const float angle) {
 	);
 }
 
-
-
-Grass::Grass() {
+Grass::Grass(HeightMap* heightMap): m_heightMap(heightMap) {
 
     /*
       Create the skydome.
@@ -67,11 +66,13 @@ Grass::Grass() {
 
     constexpr float SIZE = 0.4f;
 
-    MakeGrass(Vector3f(0.4f,0,0), 0, vertices, indices, SIZE,SIZE);
+    Vector3f base(10,-3.65,10);
 
-    MakeGrass(Vector3f(0,0,0), 30, vertices, indices, SIZE,SIZE);
+    MakeGrass(base + Vector3f(0.4f,0,0), 0, vertices, indices, SIZE,SIZE);
 
-    MakeGrass(Vector3f(0.4f,0,0.8f), 75, vertices, indices, SIZE,SIZE);
+    MakeGrass(base + Vector3f(0,0,0), 30, vertices, indices, SIZE,SIZE);
+
+    MakeGrass(base + Vector3f(0.4f,0,0.8f), 75, vertices, indices, SIZE,SIZE);
 
     m_grassVertexBuffer->Bind();
     m_grassVertexBuffer->SetBufferData(vertices);
@@ -97,7 +98,7 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     // draw grass.
 
-    const Matrix4f model =  Matrix4f::CreateTranslation(10,-3.65,10);
+    const Matrix4f model =  Matrix4f::CreateIdentity();
 
     m_grassShader->SetPhongUniforms(model, camera, lightPosition);
 
@@ -128,6 +129,8 @@ void Grass::Update(const float delta) {
 
 void Grass::GenerateBillboardVertices(const Vector3f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
     GLushort baseIndex = vertices.size() / (3+2+3+3);
+
+    LOG_I("height: %f", m_heightMap->GetHeightAt(position.x, position.z) );
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);

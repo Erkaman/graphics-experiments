@@ -3,6 +3,9 @@
 #include <string>
 #include "math/color.hpp"
 #include "math/vector4f.hpp"
+#include "math/vector2f.hpp"
+
+#include "ewa/mult_array.hpp"
 
 class VBO;
 class ShaderProgram;
@@ -10,6 +13,13 @@ class Camera;
 class Texture;
 class PerlinSeed;
 class Texture;
+
+
+struct Cell {
+    Vector3f position;
+    Vector3f normal;
+    Vector2f texCoord;
+};
 
 class HeightMap {
 
@@ -30,6 +40,9 @@ private:
     Texture* m_sandTexture;
     Texture* m_snowTexture;
 
+    MultArray<Cell> *m_map;
+
+
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);
@@ -45,6 +58,7 @@ public:
 
     void SetWireframe(const bool wireframe);
 
+    float GetHeightAt(float x, float z)const;
 
 
 };
