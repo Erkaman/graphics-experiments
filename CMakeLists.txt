@@ -45,7 +45,7 @@ endif()
 ######################################
 
 #SET(SRC main.cpp)
-file(GLOB ENGINE_SRC ewa/*.cpp ewa/gl/shader/*.cpp ewa/gl/*.cpp ewa/math/*.cpp deps/src/glew/*.c deps/src/lodepng/*.cpp )
+file(GLOB ENGINE_SRC ewa/*.cpp ewa/gl/shader/*.cpp ewa/gl/*.cpp ewa/math/*.cpp ewa/audio/*.cpp deps/src/glew/*.c deps/src/lodepng/*.cpp )
 
 
 ######################################
@@ -82,9 +82,9 @@ ENDIF()
 
 include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng" ".")
 
-set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake) 
+set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
-include(CreateLaunchers)	
+include(CreateLaunchers)
 
 ADD_LIBRARY(ewa ${ENGINE_SRC})
 TARGET_LINK_LIBRARIES(ewa ${game_libs})

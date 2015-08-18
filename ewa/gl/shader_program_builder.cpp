@@ -40,6 +40,12 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderSource, con
     BindAttribLocation(VBO_NORMAL_ATTRIB_INDEX, "normalIn");//vertex attribute "normal" will have index 1
     BindAttribLocation(VBO_COLOR_ATTRIB_INDEX, "colorIn");
 
+    BindAttribLocation(VBO_SLOT0_ATTRIB_INDEX, "slot0In");
+    BindAttribLocation(VBO_SLOT1_ATTRIB_INDEX, "slot1In");
+    BindAttribLocation(VBO_SLOT2_ATTRIB_INDEX, "slot2In");
+    BindAttribLocation(VBO_SLOT3_ATTRIB_INDEX, "slot3In");
+
+
     Link();
 }
 

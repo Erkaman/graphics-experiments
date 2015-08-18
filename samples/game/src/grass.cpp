@@ -21,6 +21,7 @@
 using std::string;
 using std::vector;
 
+
 Vector2f AngleToVector(const float angle) {
     const float radians = ToRadians(angle);
     return Vector2f(
@@ -55,8 +56,8 @@ Grass::Grass() {
     m_grassVertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{
 	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX, VBO_NORMAL_ATTRIB_INDEX },
-	vector<GLuint>{3,2,3}
+		VBO_TEX_COORD_ATTRIB_INDEX, VBO_NORMAL_ATTRIB_INDEX,  VBO_SLOT0_ATTRIB_INDEX},
+	vector<GLuint>{3,2,3, 3}
 	);
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
@@ -124,10 +125,11 @@ void Grass::Update(const float delta) {
 }
 
 void Grass::GenerateBillboardVertices(const Vector3f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
-    GLushort baseIndex = vertices.size() / (3+2+3);
+    GLushort baseIndex = vertices.size() / (3+2+3+3);
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);
+    Vector3f centerPosition(position);
     dir.Normalize();
 
     const float X = dir.x * width / 2.0f;
@@ -136,18 +138,22 @@ void Grass::GenerateBillboardVertices(const Vector3f position, const float angle
     (position+Vector3f(-X, height, -Z)).Add(vertices);
     Vector2f(0.0f,0.0f).Add(vertices);
     normal.Add(vertices);
+    centerPosition.Add(vertices);
 
     (position+Vector3f(+X, height, +Z)).Add(vertices);
     Vector2f(1.0f,0.0f).Add(vertices);
     normal.Add(vertices);
+    centerPosition.Add(vertices);
 
     (position+Vector3f(-X, 0, -Z)).Add(vertices);
     Vector2f(0.0f,1.0f).Add(vertices);
     normal.Add(vertices);
+    centerPosition.Add(vertices);
 
     (position+Vector3f(+X, 0, +Z)).Add(vertices);
     Vector2f(1.0f,1.0f).Add(vertices);
     normal.Add(vertices);
+    centerPosition.Add(vertices);
 
     indices.push_back(baseIndex+0);
     indices.push_back(baseIndex+1);

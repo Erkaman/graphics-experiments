@@ -5,6 +5,8 @@
 #include "ewa/font.hpp"
 #include "ewa/keyboard_state.hpp"
 
+#include "ewa/audio/wave_loader.hpp"
+
 #include "skydome.hpp"
 #include "height_map.hpp"
 #include "grass.hpp"
@@ -42,12 +44,12 @@ Vector3f(9.474550, -3.490666, 9.546431),Vector3f(0.666667, -0.333333, 0.666667)
 
     m_heightMap = new HeightMap("img/combined.png");
 
-
-
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
     m_grass = new Grass();
+
+    WaveLoader::Load("audio/smack.wav");
 
 }
 
@@ -76,7 +78,6 @@ void TuhuApplication::Update(const float delta) {
     const KeyboardState& kbs = KeyboardState::GetInstance();
 
     if( kbs.IsPressed(GLFW_KEY_P) ) {
-
 
 	string out = "Vector3f" +tos(m_camera->GetPosition()) + ",";
 	out += "Vector3f" + tos(m_camera->GetViewDir());
