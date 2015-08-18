@@ -66,13 +66,13 @@ Grass::Grass(HeightMap* heightMap): m_heightMap(heightMap) {
 
     constexpr float SIZE = 0.4f;
 
-    Vector3f base(10,-3.65,10);
+    Vector2f base(10,10); //
 
-    MakeGrass(base + Vector3f(0.4f,0,0), 0, vertices, indices, SIZE,SIZE);
+    MakeGrass(base + Vector2f(0.4f,0), 0, vertices, indices, SIZE,SIZE);
 
-    MakeGrass(base + Vector3f(0,0,0), 30, vertices, indices, SIZE,SIZE);
+    MakeGrass(base + Vector2f(0,0), 30, vertices, indices, SIZE,SIZE);
 
-    MakeGrass(base + Vector3f(0.4f,0,0.8f), 75, vertices, indices, SIZE,SIZE);
+    MakeGrass(base + Vector2f(0.4f,0.8f), 75, vertices, indices, SIZE,SIZE);
 
     m_grassVertexBuffer->Bind();
     m_grassVertexBuffer->SetBufferData(vertices);
@@ -127,35 +127,34 @@ void Grass::Update(const float delta) {
 
 }
 
-void Grass::GenerateBillboardVertices(const Vector3f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
+void Grass::GenerateBillboardVertices(const Vector2f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
     GLushort baseIndex = vertices.size() / (3+2+3+3);
-
-    LOG_I("height: %f", m_heightMap->GetHeightAt(position.x, position.z) );
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);
-    Vector3f centerPosition(position);
+    Vector3f centerPosition(position.x, m_heightMap->GetHeightAt(position.x, position.y) - 0.09f ,position.y);
     dir.Normalize();
+
 
     const float X = dir.x * width / 2.0f;
     const float Z = dir.y * width / 2.0f;
 
-    (position+Vector3f(-X, height, -Z)).Add(vertices);
+    (centerPosition+Vector3f(-X, height, -Z)).Add(vertices);
     Vector2f(0.0f,0.0f).Add(vertices);
     normal.Add(vertices);
     centerPosition.Add(vertices);
 
-    (position+Vector3f(+X, height, +Z)).Add(vertices);
+    (centerPosition+Vector3f(+X, height, +Z)).Add(vertices);
     Vector2f(1.0f,0.0f).Add(vertices);
     normal.Add(vertices);
     centerPosition.Add(vertices);
 
-    (position+Vector3f(-X, 0, -Z)).Add(vertices);
+    (centerPosition+Vector3f(-X, 0, -Z)).Add(vertices);
     Vector2f(0.0f,1.0f).Add(vertices);
     normal.Add(vertices);
     centerPosition.Add(vertices);
 
-    (position+Vector3f(+X, 0, +Z)).Add(vertices);
+    (centerPosition+Vector3f(+X, 0, +Z)).Add(vertices);
     Vector2f(1.0f,1.0f).Add(vertices);
     normal.Add(vertices);
     centerPosition.Add(vertices);
@@ -171,7 +170,7 @@ void Grass::GenerateBillboardVertices(const Vector3f position, const float angle
     m_grassNumTriangles += 2;
 }
 
-void Grass::MakeGrass(const Vector3f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
+void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
     GenerateBillboardVertices(position, 0+angle,vertices, indices, width,height);
     GenerateBillboardVertices(position, 90+angle,vertices, indices, width,height);
 }

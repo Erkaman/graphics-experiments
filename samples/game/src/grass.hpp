@@ -35,9 +35,9 @@ private:
 
     HeightMap* m_heightMap;
 
-    void GenerateBillboardVertices(const Vector3f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height);
+    void GenerateBillboardVertices(const Vector2f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height);
 
-    void MakeGrass(const Vector3f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height);
+    void MakeGrass(const Vector2f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height);
 
 
 public:
