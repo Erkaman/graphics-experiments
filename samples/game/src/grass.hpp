@@ -2,6 +2,7 @@
 
 #include "ewa/gl/gl_common.hpp"
 
+#include "ewa/math/vector2f.hpp"
 
 class VBO;
 class ShaderProgram;
@@ -23,26 +24,27 @@ private:
     VBO* m_grassVertexBuffer;
     VBO* m_grassIndexBuffer;
 
+    ShaderProgram* m_grassShader;
+
+
+
+
     Texture* m_grassTexture;
 
     float m_time;
 
-    /*
-      Used for drawing billboards:
-     */
-
-    ShaderProgram* m_grassShader;
-
     HeightMap* m_heightMap;
 
-    void GenerateBillboardVertices(const Vector2f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height);
+    Vector2f m_position;
 
-    void MakeGrass(const Vector2f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height);
+    void GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height);
+
+    void MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height);
 
 
 public:
 
-    Grass(HeightMap* heightMap);
+    Grass(Vector2f position, HeightMap* heightMap);
     ~Grass();
 
     void Draw(const Camera& camera, const Vector4f& lightPosition);

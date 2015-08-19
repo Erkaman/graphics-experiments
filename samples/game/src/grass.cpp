@@ -31,7 +31,7 @@ Vector2f AngleToVector(const float angle) {
 	);
 }
 
-Grass::Grass(HeightMap* heightMap): m_heightMap(heightMap) {
+Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m_position(position) {
 
     /*
       Create the skydome.
@@ -41,8 +41,6 @@ Grass::Grass(HeightMap* heightMap): m_heightMap(heightMap) {
 
 
     m_grassShader = new ShaderProgram("shader/grass");
-
-
 
     m_grassTexture = new Texture2D("img/grass_billboard.png");
 
@@ -60,7 +58,6 @@ Grass::Grass(HeightMap* heightMap): m_heightMap(heightMap) {
 	);
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
-
     FloatVector vertices;
     UshortVector indices;
 
@@ -72,7 +69,7 @@ Grass::Grass(HeightMap* heightMap): m_heightMap(heightMap) {
 
     vector<Vector2f> grassPositions;
 
-    Vector2f base(10,10);
+    Vector2f base(position);
 
     for(int c = 0; c < COUNT; ++c) {
 
@@ -107,15 +104,6 @@ Grass::Grass(HeightMap* heightMap): m_heightMap(heightMap) {
 
     }
 
-
-
-
-
-/*
-    MakeGrass(base + Vector2f(0,0), 30, vertices, indices, SIZE,SIZE);
-
-    MakeGrass(base + Vector2f(0.4f,0.8f), 75, vertices, indices, SIZE,SIZE);
-*/
     m_grassVertexBuffer->Bind();
     m_grassVertexBuffer->SetBufferData(vertices);
     m_grassVertexBuffer->Unbind();
@@ -127,37 +115,40 @@ Grass::Grass(HeightMap* heightMap): m_heightMap(heightMap) {
 }
 
 void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
-    // next we'll draw all the billboards:
 
-    SetCullFace(false);
+    float cameraDist = ( Vector2f(camera.GetPosition().x, camera.GetPosition().z)  - m_position).Length();
 
-    m_grassShader->Bind();
-    m_grassShader->SetUniform("time", m_time);
+    if(cameraDist < 20) {
 
-   GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
-   GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+	SetCullFace(false);
 
-    // draw grass.
+	m_grassShader->Bind();
+	m_grassShader->SetUniform("time", m_time);
 
-    const Matrix4f model =  Matrix4f::CreateIdentity();
+	GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
+	GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-    m_grassShader->SetPhongUniforms(model, camera, lightPosition);
+	// draw grass.
+
+	const Matrix4f model =  Matrix4f::CreateIdentity();
+
+	m_grassShader->SetPhongUniforms(model, camera, lightPosition);
+
+	m_grassShader->SetUniform("tex", 0);
+	Texture::SetActiveTextureUnit(0);
+	m_grassTexture->Bind();
 
 
-    m_grassShader->SetUniform("tex", 0);
-    Texture::SetActiveTextureUnit(0);
-    m_grassTexture->Bind();
+	VBO::DrawIndices(*m_grassVertexBuffer, *m_grassIndexBuffer, GL_TRIANGLES, (m_grassNumTriangles)*3);
 
+	m_grassTexture->Unbind();
 
-    VBO::DrawIndices(*m_grassVertexBuffer, *m_grassIndexBuffer, GL_TRIANGLES, (m_grassNumTriangles)*3);
+	// done drawing billboards.
+	GL_C(glDisable(GL_BLEND));
+	m_grassShader->Unbind();
 
-    m_grassTexture->Unbind();
-
-    // done drawing billboards.
-    GL_C(glDisable(GL_BLEND));
-    m_grassShader->Unbind();
-
-    SetCullFace(true);
+	SetCullFace(true);
+    }
 }
 
 void Grass::Update(const float delta) {
@@ -166,8 +157,8 @@ void Grass::Update(const float delta) {
 //    LOG_I("time: %f",m_time);
 }
 
-void Grass::GenerateBillboardVertices(const Vector2f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
-    GLushort baseIndex = vertices.size() / (3+2+3+3);
+void Grass::GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height) {
+    GLushort baseIndex = grassVertices.size() / (3+2+3+3);
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);
@@ -177,40 +168,39 @@ void Grass::GenerateBillboardVertices(const Vector2f position, const float angle
     const float X = dir.x * width / 2.0f;
     const float Z = dir.y * width / 2.0f;
 
-    (centerPosition+Vector3f(-X, height, -Z)).Add(vertices);
-    Vector2f(0.0f,0.0f).Add(vertices);
-    normal.Add(vertices);
-    centerPosition.Add(vertices);
+    (centerPosition+Vector3f(-X, height, -Z)).Add(grassVertices);
+    Vector2f(0.0f,0.0f).Add(grassVertices);
+    normal.Add(grassVertices);
+    centerPosition.Add(grassVertices);
 
-    (centerPosition+Vector3f(+X, height, +Z)).Add(vertices);
-    Vector2f(1.0f,0.0f).Add(vertices);
-    normal.Add(vertices);
-    centerPosition.Add(vertices);
+    (centerPosition+Vector3f(+X, height, +Z)).Add(grassVertices);
+    Vector2f(1.0f,0.0f).Add(grassVertices);
+    normal.Add(grassVertices);
+    centerPosition.Add(grassVertices);
 
-    (centerPosition+Vector3f(-X, 0, -Z)).Add(vertices);
-    Vector2f(0.0f,1.0f).Add(vertices);
-    normal.Add(vertices);
-    centerPosition.Add(vertices);
+    (centerPosition+Vector3f(-X, 0, -Z)).Add(grassVertices);
+    Vector2f(0.0f,1.0f).Add(grassVertices);
+    normal.Add(grassVertices);
+    centerPosition.Add(grassVertices);
 
-    (centerPosition+Vector3f(+X, 0, +Z)).Add(vertices);
-    Vector2f(1.0f,1.0f).Add(vertices);
-    normal.Add(vertices);
-    centerPosition.Add(vertices);
+    (centerPosition+Vector3f(+X, 0, +Z)).Add(grassVertices);
+    Vector2f(1.0f,1.0f).Add(grassVertices);
+    normal.Add(grassVertices);
+    centerPosition.Add(grassVertices);
 
-    indices.push_back(baseIndex+0);
-    indices.push_back(baseIndex+1);
-    indices.push_back(baseIndex+2);
+    grassIndices.push_back(baseIndex+0);
+    grassIndices.push_back(baseIndex+1);
+    grassIndices.push_back(baseIndex+2);
 
-    indices.push_back(baseIndex+1);
-    indices.push_back(baseIndex+3);
-    indices.push_back(baseIndex+2);
+    grassIndices.push_back(baseIndex+1);
+    grassIndices.push_back(baseIndex+3);
+    grassIndices.push_back(baseIndex+2);
 
     m_grassNumTriangles += 2;
 }
 
-void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& vertices, UshortVector& indices, const float width, const float height) {
-    GenerateBillboardVertices(position, 0+angle,vertices, indices, width,height);
-    GenerateBillboardVertices(position, 60+angle,vertices, indices, width,height);
-    GenerateBillboardVertices(position, 120+angle,vertices, indices, width,height);
-
+void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height) {
+    GenerateGrassVertices(position, 0+angle,grassVertices, grassIndices, width,height);
+    GenerateGrassVertices(position, 60+angle,grassVertices, grassIndices, width,height);
+    GenerateGrassVertices(position, 120+angle,grassVertices, grassIndices, width,height);
 }
