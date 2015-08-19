@@ -35,6 +35,8 @@ public:
 
     Vector3f GetPosition() const;
     Vector3f GetViewDir() const;
+    Vector3f GetUp() const;
+    Vector3f GetRight() const;
 
     void Walk(const float amount);
     void Stride(const float amount);

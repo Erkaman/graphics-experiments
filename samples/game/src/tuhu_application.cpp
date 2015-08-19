@@ -37,7 +37,10 @@ void TuhuApplication::Init() {
 
     m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,
 
-Vector3f(9.474550, -3.490666, 9.546431),Vector3f(0.666667, -0.333333, 0.666667)
+Vector3f(1.836625, -1.669451, -3.106014),Vector3f(-0.431896, -0.336571, 0.836771)
+
+
+//Vector3f(9.474550, -3.490666, 9.546431),Vector3f(0.666667, -0.333333, 0.666667)
 
 
 , true);
@@ -47,7 +50,7 @@ Vector3f(9.474550, -3.490666, 9.546431),Vector3f(0.666667, -0.333333, 0.666667)
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
-    m_grass = new Grass(Vector2f(10,10), m_heightMap);
+    m_grass = new Grass(Vector2f(00,00), m_heightMap);
 
     WaveLoader::Load("audio/smack.wav");
 
