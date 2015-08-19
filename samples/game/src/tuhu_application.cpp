@@ -57,8 +57,9 @@ Vector3f(1.836625, -1.669451, -3.106014),Vector3f(-0.431896, -0.336571, 0.836771
 
 //    WaveLoader::Load("audio/click.wav");
 
-    m_windSound = new Sound("audio/click.wav");
+    m_windSound = new Sound("audio/wind.wav");
     m_windSound->SetGain(1.0f);
+    m_windSound->SetLooping(true);
 }
 
 void TuhuApplication::Render() {

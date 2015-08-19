@@ -22,5 +22,6 @@ public:
 
     void SetPitch(float pitch);
     void SetGain(float gain);
+    void SetLooping(bool looping);
 
 };

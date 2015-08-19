@@ -177,7 +177,6 @@ WaveData WaveLoader::Load(const std::string& filename) {
 		LOG_I("sample rate: %d", sampleRate);
 		LOG_I("channels: %d", channels);
 
-
 		waveData.audioData = audioData;
 		waveData.sampleRate = sampleRate;
 		waveData.channels = channels;

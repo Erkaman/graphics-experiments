@@ -28,3 +28,7 @@ void Sound::SetPitch(float pitch){
 void Sound::SetGain(float gain){
     AL_C(alSourcef(m_source, AL_GAIN, gain));
 }
+
+void Sound::SetLooping(bool looping) {
+    AL_C(alSourcei(m_source, AL_LOOPING, looping ? AL_TRUE : AL_FALSE));
+}
