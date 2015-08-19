@@ -111,7 +111,7 @@ public:
 	Random rng(11);
 
 	constexpr int LOD =5;
-	constexpr int BLADES =1; // 30
+	constexpr int BLADES =90; // 30
 
 	for(int i = 0; i < BLADES; ++i) {
 

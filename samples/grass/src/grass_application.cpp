@@ -52,7 +52,7 @@ void GrassApplication::Init() {
 
     m_plane = new Plane(Vector3f(5,4,1), Vector3f(1,1,1));
 
-    m_grass = new Exp4();
+    m_grass = new Exp();
     m_grass->Init();
 
     if(CAMERA) {
