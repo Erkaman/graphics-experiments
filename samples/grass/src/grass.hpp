@@ -17,34 +17,58 @@ struct GrassBlade {
     float grassWidth;
     Vector3f windDirection;
     int lod;
+    int grassTexture;
 };
+
+struct GrassGroup {
+
+private:
+
+
+    GrassGroup(const GrassGroup&);
+    GrassGroup& operator=(const GrassGroup&);
+
+public:
+
+    GLushort m_numTriangles;
+    VBO* m_vertexBuffer;
+    VBO* m_indexBuffer;
+    FloatVector m_vertices;
+    UshortVector m_indices;
+    Texture* m_grassTexture;
+
+    GrassGroup() {}
+    ~GrassGroup();
+};
+
+
 
 class Grass{
 
-    private:
+private:
+
+    const int NUM_GRASS_GROUPS;
+
+
 
     /*
       INSTANCE VARIABLES.
     */
 
-    GLushort m_numTriangles;
 
     ShaderProgram* m_shader;
 
-    VBO* m_vertexBuffer;
-    VBO* m_indexBuffer;
-
-    Texture* m_grassTexture;
+    std::vector<GrassGroup*> m_grassGroups;
 
     Vector4f m_lightPosition;
 
-    void AddQuad(FloatVector& vertices, UshortVector& indices,
+    void AddQuad(GrassGroup* grassGroup,
 	     const Vector3f& bottomLeft, const Vector3f& bottomRight,
 		 const Vector3f& topLeft, const Vector3f& topRight);
 
     void MakeGrass();
 
-    void MakeGrassBlade(FloatVector& vertices, UshortVector& indices,
+    void MakeGrassBlade(GrassGroup* grassGroup,
 			const Vector3f& vertexPosition,
 			const int lod,
 			const float grassHeight, const float grassWidth,
@@ -54,7 +78,7 @@ class Grass{
 
 public:
 
-    Grass(const std::string& textureFilename, const Vector4f& lightPosition);
+    Grass(const std::vector<std::string>& textureFilenames, const Vector4f& lightPosition);
     ~Grass();
 
     void Draw(const Camera& camera);

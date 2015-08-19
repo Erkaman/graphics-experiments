@@ -16,13 +16,17 @@
 using std::vector;
 using std::string;
 
-void Grass::AddQuad(FloatVector& vertices, UshortVector& indices,
+void Grass::AddQuad(GrassGroup* grassGroup,
 		    const Vector3f& bottomLeft, const Vector3f& bottomRight,
 		    const Vector3f& topLeft, const Vector3f& topRight) {
 
     const Vector3f n = Vector3f::Cross(topRight - bottomRight,bottomRight - bottomLeft).Normalize();
 
     // LOG_I("normal %s", tos(n).c_str());
+
+
+    FloatVector& vertices = grassGroup->m_vertices;
+    UshortVector indices = grassGroup->m_indices;
 
     bottomLeft.Add(vertices);
     n.Add(vertices);
@@ -47,35 +51,61 @@ void Grass::AddQuad(FloatVector& vertices, UshortVector& indices,
     indices.push_back(baseIndex+2);
     indices.push_back(baseIndex+3);
 
-    m_numTriangles += 2;
+    grassGroup->m_numTriangles += 2;
 }
 
-Grass::Grass(const std::string& textureFilename, const Vector4f& lightPosition): m_lightPosition(lightPosition){
+Grass::Grass(const std::vector<std::string>& textureFilenames, const Vector4f& lightPosition): NUM_GRASS_GROUPS(textureFilenames.size()), m_lightPosition(lightPosition){
+
+
+
     m_shader = new ShaderProgram("shader/grass");
 
-    m_vertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{
-	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_NORMAL_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX},
-	vector<GLuint>{3,3,2}
-	);
+
+    for(int i = 0; i < NUM_GRASS_GROUPS; ++i) {
+
+	GrassGroup* grassGroup = new GrassGroup();
+
+	grassGroup->m_vertexBuffer = VBO::CreateInterleaved(
+	    vector<GLuint>{
+		VBO_POSITION_ATTRIB_INDEX,
+		    VBO_NORMAL_ATTRIB_INDEX,
+		    VBO_TEX_COORD_ATTRIB_INDEX},
+	    vector<GLuint>{3,3,2}
+	    );
 
 
-    m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
+	grassGroup->m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
-    m_grassTexture = new Texture2D(textureFilename); //
+	grassGroup->m_numTriangles = 0;
 
-    m_grassTexture->Bind();
-    m_grassTexture->SetTextureClamping();
-    m_grassTexture->SetMinFilter(GL_LINEAR);
-    m_grassTexture->SetMagFilter(GL_NEAREST);
-    m_grassTexture->Unbind();
+
+
+
+
+	Texture* grassTexture = new Texture2D(textureFilenames[i]);
+
+
+	grassTexture->Bind();
+	grassTexture->SetTextureClamping();
+	grassTexture->SetMinFilter(GL_LINEAR);
+	grassTexture->SetMagFilter(GL_NEAREST);
+	grassTexture->Unbind();
+
+	grassGroup->m_grassTexture = grassTexture;
+
+
+	m_grassGroups.push_back(grassGroup);
+    }
+
+    LOG_I("done constructor");
 }
 
 void Grass::Init() {
 
     MakeGrass();
+
+
+    LOG_I("done init");
 }
 
 void Grass::Draw(const Camera& camera) {
@@ -88,10 +118,6 @@ void Grass::Draw(const Camera& camera) {
 
     m_shader->Bind();
 
-    m_shader->SetUniform("grass", 0);
-    Texture::SetActiveTextureUnit(0);
-    m_grassTexture->Bind();
-
     m_shader->SetPhongUniforms(
 
 	Matrix4f::CreateTranslation(7,4,5)
@@ -102,13 +128,24 @@ void Grass::Draw(const Camera& camera) {
 
 
 
-    VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
+
+    for(int i = 0; i < NUM_GRASS_GROUPS; ++i) {
+
+	GrassGroup* grassGroup = m_grassGroups[i];
+
+	m_shader->SetUniform("grass", 0);
+	Texture::SetActiveTextureUnit(0);
+	grassGroup->m_grassTexture->Bind();
+
+	VBO::DrawIndices(*grassGroup->m_vertexBuffer, *grassGroup->m_indexBuffer, GL_TRIANGLES, (grassGroup->m_numTriangles)*3);
+	grassGroup->m_grassTexture->Unbind();
+
+
+    }
+
+
 
     GL_C(glDisable(GL_BLEND));
-
-
-    m_grassTexture->Unbind();
-
 
     m_shader->Unbind();
 
@@ -119,20 +156,26 @@ void Grass::Draw(const Camera& camera) {
 
 }
 Grass::~Grass() {
-    MY_DELETE(m_vertexBuffer);
-    MY_DELETE(m_indexBuffer);
+    for(GrassGroup* grassGroup : m_grassGroups) {
+	MY_DELETE(grassGroup);
+    }
+
     MY_DELETE(m_shader);
-    MY_DELETE(m_grassTexture);
 }
 
 
-void Grass::MakeGrassBlade(FloatVector& vertices, UshortVector& indices,
+void Grass::MakeGrassBlade(GrassGroup* grassGroup,
 			   const Vector3f& vertexPosition,
 			   const int lod,
 			   const float grassHeight, const float grassWidth,
 			   const Vector3f& windDirection
 
     ) {
+
+    FloatVector& vertices = grassGroup->m_vertices;
+    UshortVector& indices = grassGroup->m_indices;
+
+
 
     Vector3f startPoint, endPoint, startTopPoint, endTopPoint, normal;
 
@@ -209,7 +252,7 @@ void Grass::MakeGrassBlade(FloatVector& vertices, UshortVector& indices,
 	startPoint = startTopPoint;
 	endPoint = endTopPoint;
 
-	m_numTriangles += 2;
+	grassGroup->m_numTriangles += 2;
     }
 }
 
@@ -227,23 +270,18 @@ void Grass::Update(const float delta) {
 }
 
 void Grass::MakeGrass() {
-    FloatVector vertices;
-    UshortVector indices;
-    m_numTriangles = 0;
+/*    FloatVector vertices;
+      UshortVector indices;
+      m_numTriangles = 0;*/
 
 
-
-
-
-
-
-
-
-
+    LOG_I("makegrass1");
 
     std::vector<GrassBlade> blades;
 
     MakeGrass(blades);
+
+    LOG_I("makegrass2");
 
 
 
@@ -253,16 +291,35 @@ void Grass::MakeGrass() {
 	      });
 
     for(const GrassBlade& blade : blades) {
-	MakeGrassBlade(vertices, indices, blade.vertexPosition,
+	MakeGrassBlade(m_grassGroups[blade.grassTexture], blade.vertexPosition,
 		       blade.lod, blade.grassHeight, blade.grassWidth, blade.windDirection);
 
     }
 
-    m_vertexBuffer->Bind();
-    m_vertexBuffer->SetBufferData(vertices);
-    m_vertexBuffer->Unbind();
 
-    m_indexBuffer->Bind();
-    m_indexBuffer->SetBufferData(indices);
-    m_indexBuffer->Unbind();
+
+    for(int i = 0; i < NUM_GRASS_GROUPS; ++i) {
+
+	GrassGroup* grassGroup = m_grassGroups[i];
+
+	VBO* vertexBuffer = grassGroup->m_vertexBuffer;
+	VBO* indexBuffer = grassGroup->m_indexBuffer;
+
+	vertexBuffer->Bind();
+	vertexBuffer->SetBufferData(grassGroup->m_vertices);
+	vertexBuffer->Unbind();
+
+	indexBuffer->Bind();
+	indexBuffer->SetBufferData(grassGroup->m_indices);
+	indexBuffer->Unbind();
+    }
+
+    LOG_I("makegrass4");
+
+}
+
+GrassGroup::~GrassGroup() {
+    MY_DELETE(m_vertexBuffer);
+    MY_DELETE(m_indexBuffer);
+    MY_DELETE(m_grassTexture);
 }

@@ -5,7 +5,7 @@
 #include "ewa/font.hpp"
 #include "ewa/keyboard_state.hpp"
 
-#include "ewa/audio/wave_loader.hpp"
+#include "ewa/audio/sound.hpp"
 
 #include "skydome.hpp"
 #include "height_map.hpp"
@@ -27,6 +27,7 @@ TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_camera);
     MY_DELETE(m_heightMap);
     MY_DELETE(m_skydome);
+    MY_DELETE(m_windSound);
 }
 
 void TuhuApplication::Init() {
@@ -52,8 +53,12 @@ Vector3f(1.836625, -1.669451, -3.106014),Vector3f(-0.431896, -0.336571, 0.836771
 
     m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
-    WaveLoader::Load("audio/smack.wav");
+    OpenAL::Init();
 
+//    WaveLoader::Load("audio/click.wav");
+
+    m_windSound = new Sound("audio/click.wav");
+    m_windSound->SetGain(1.0f);
 }
 
 void TuhuApplication::Render() {
@@ -86,7 +91,15 @@ void TuhuApplication::Update(const float delta) {
 	string out = "Vector3f" +tos(m_camera->GetPosition()) + ",";
 	out += "Vector3f" + tos(m_camera->GetViewDir());
 	ToClipboard(out);
+    }
 
+    static bool b= false;
+
+    if( kbs.IsPressed(GLFW_KEY_B) && !b ) {
+	LOG_I("play sound");
+	m_windSound->Play();
+
+	b = true;
     }
 }
 

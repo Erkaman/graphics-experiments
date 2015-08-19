@@ -91,6 +91,9 @@ void* File::ReadArray(const size_t& dataSize) {
 }
 
 
+void File::Skip(const size_t& skipSize) {
+    ReadArray(skipSize);
+}
 
 void* File::ReadArray(const std::string& filename, size_t& dataSize) {
     File file(filename, FileModeReading);

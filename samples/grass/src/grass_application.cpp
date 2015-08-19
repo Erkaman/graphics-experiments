@@ -20,7 +20,7 @@
 
 using namespace std;
 
-constexpr bool CAMERA = true;
+constexpr bool CAMERA = false;
 constexpr int IMAGE_WIDTH = 512;
 constexpr int IMAGE_HEIGHT = 512;
 

@@ -9,7 +9,7 @@ class Exp : public Grass {
 
 public:
 
-    Exp(): Grass("img/grass.png", Vector4f(6.76f,4.52f,4.33f, 1.0f)) { }
+    Exp(): Grass(std::vector<std::string>{"img/grass.png"}     , Vector4f(6.76f,4.52f,4.33f, 1.0f)) { }
 
     virtual void MakeGrass(std::vector<GrassBlade>& blades) override {
 	// this thing.
@@ -29,6 +29,7 @@ public:
 	    blade.grassWidth = rng.RandomFloat(0.05f, 0.07f);
 	    blade.windDirection = Vector3f(rng.RandomFloat(-0.15f, +0.15f),0,0*rng.RandomFloat(-0.15f, +0.15f));
 	    blade.lod = LOD;
+	    blade.grassTexture = 0;
 
 	    blades.push_back(blade);
 	}
@@ -41,7 +42,7 @@ class Exp2 : public Grass {
 
 public:
 
-    Exp2(): Grass("img/grass.png", Vector4f(6.76f,4.52f,4.33f, 1.0f)) { }
+    Exp2(): Grass(std::vector<std::string>{"img/grass.png"}, Vector4f(6.76f,4.52f,4.33f, 1.0f)) { }
 
     virtual void MakeGrass(std::vector<GrassBlade>& blades) override {
 	// this thing.
@@ -61,6 +62,7 @@ public:
 	    blade.grassWidth = rng.RandomFloat(0.02f, 0.05f);
 	    blade.windDirection = Vector3f(rng.RandomFloat(-0.15f, +0.15f),0,0*rng.RandomFloat(-0.15f, +0.15f));
 	    blade.lod = LOD;
+	    blade.grassTexture = 0;
 
 	    blades.push_back(blade);
 	}
@@ -73,7 +75,7 @@ class Exp3 : public Grass {
 
 public:
 
-    Exp3(): Grass("img/grass.png", Vector4f(6.76f,4.52f,4.33f, 1.0f)) { }
+    Exp3(): Grass(std::vector<std::string>{"img/grass.png"}, Vector4f(6.76f,4.52f,4.33f, 1.0f)) { }
 
     virtual void MakeGrass(std::vector<GrassBlade>& blades) override {
 	// this thing.
@@ -93,6 +95,7 @@ public:
 	    blade.grassWidth = rng.RandomFloat(0.02f, 0.05f);
 	    blade.windDirection = Vector3f(rng.RandomFloat(-0.15f, +0.15f),0,0*rng.RandomFloat(-0.15f, +0.15f));
 	    blade.lod = LOD;
+	    blade.grassTexture = 0;
 
 	    blades.push_back(blade);
 	}
@@ -103,14 +106,16 @@ class Exp4 : public Grass {
 
 public:
 
-    Exp4(): Grass("img/grass2.png", Vector4f(6.76f,4.52f,4.33f, 1.0f)) { }
+    Exp4(): Grass(std::vector<std::string>{"img/grass.png","img/grass2.png"}, Vector4f(6.76f,4.52f,4.33f, 1.0f)) { }
 
     virtual void MakeGrass(std::vector<GrassBlade>& blades) override {
 	// this thing.
 
 	Random rng(11);
 
-	constexpr int LOD =5;
+
+/*
+  constexpr int LOD =5;
 	constexpr int BLADES =90; // 30
 
 	for(int i = 0; i < BLADES; ++i) {
@@ -123,8 +128,38 @@ public:
 	    blade.grassWidth = rng.RandomFloat(0.02f, 0.05f);
 	    blade.windDirection = Vector3f(rng.RandomFloat(-0.20f, +0.20f),0,0*rng.RandomFloat(-0.20f, +0.20f));
 	    blade.lod = 10;
+	    blade.grassTexture = 1;
 
 	    blades.push_back(blade);
-	}
+	    }
+*/
+
+
+
+	constexpr int LOD =5;
+	constexpr int BLADES =200; // 30
+
+	for(int i = 0; i < BLADES; ++i) {
+
+	    GrassBlade blade;
+
+	    blade.vertexPosition =Vector3f( rng.RandomFloat(-0.1f, +0.1f),0, rng.RandomFloat(-0.3f, +0.3f));
+
+	    blade.grassHeight = rng.RandomFloat(0.8f, 1.2f);
+	    blade.grassWidth = rng.RandomFloat(0.02f, 0.03f);
+
+	    float ratio = (float)i / (float)BLADES;
+
+	    blade.windDirection = Vector3f(
+		-0.20f + ratio*0.4f
+		,0,0);
+	    blade.lod = 10;
+	    blade.grassTexture = 1;
+
+	    blades.push_back(blade);
+	    }
+
+
+
     }
 };

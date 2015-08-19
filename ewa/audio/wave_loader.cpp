@@ -4,6 +4,8 @@
 #include "ewa/log.hpp"
 #include "ewa/file.hpp"
 
+#include "openal.hpp"
+
 
 constexpr int RIFF = 0x52494646;
 constexpr int WAVE = 0x57415645;
@@ -27,7 +29,7 @@ int ReadLittleEndianInt(File& file) {
 }
 
 int ReadLittleEndianShort(File& file) {
-    return  *((short *)file.ReadArray(4));
+    return  *((short *)file.ReadArray(2));
 }
 
 
@@ -66,8 +68,9 @@ WaveData WaveLoader::Load(const std::string& filename) {
     bool readFmtChunk = false;
 
 
+    WaveData waveData;
 
-/*
+
 
     while(readBytes < chunkSize) {
 
@@ -115,18 +118,35 @@ WaveData WaveLoader::Load(const std::string& filename) {
 
 				buffer = file.ReadArray(numsubchunkBytes);
 
-				audioData =convertAudioDataToLittleEndian(buffer, sampleRate == 16);
+
+				// TOOD: conevrt here.
+
+/*
+				if(bitsPerSample == 16) {
+				    LOG_E("16 bits per sample not yet supported!");
+				}*/
+
+				audioData = buffer;
+				waveData.audioDataSize = numsubchunkBytes;
+
+/*				char* bs = (char *)audioData;
+
+				for(int i = 0; i < 10; ++i) {
+				    LOG_I("b: %d", bs[i]);
+				    }*/
+
+				//audioData =convertAudioDataToLittleEndian(buffer, sampleRate == 16);
 
 			} else {
 
 				// unknown chunk. skip it.
 			    LOG_I("skipped chunk: %d", subchunkID);
-				dataInputStream.skip(numsubchunkBytes);
+			    file.Skip(numsubchunkBytes);
 
 			}
 		}
 
-		if(audioData == null) {
+		if(audioData == NULL) {
 			LOG_E("Invalid WAVE file: no DATA chunk could be found");
 		}
 
@@ -137,22 +157,22 @@ WaveData WaveLoader::Load(const std::string& filename) {
 
 		int channels  =0;
 
+
 		if (numChannels == 1) {
 			if (bitsPerSample == 8) {
-				channels = AL10.AL_FORMAT_MONO8;
+				channels = AL_FORMAT_MONO8;
 			} else if (bitsPerSample == 16) {
-				channels = AL10.AL_FORMAT_MONO16;
+				channels = AL_FORMAT_MONO16;
 			}
 		} else if (numChannels == 2) {
 			if (bitsPerSample == 8) {
-				channels = AL10.AL_FORMAT_STEREO8;
+				channels = AL_FORMAT_STEREO8;
 			} else if (bitsPerSample == 16) {
-				channels = AL10.AL_FORMAT_STEREO16;
+				channels = AL_FORMAT_STEREO16;
 			}
 		}
 
 
-		WaveData waveData;
 
 		LOG_I("sample rate: %d", sampleRate);
 		LOG_I("channels: %d", channels);
@@ -162,6 +182,11 @@ WaveData WaveLoader::Load(const std::string& filename) {
 		waveData.sampleRate = sampleRate;
 		waveData.channels = channels;
 
-		return waveData;*/
+		return waveData;
 
 }
+
+/*
+0x01, 0x00, 0x01, 0x00,  0xfd, 0xff
+
+ */
