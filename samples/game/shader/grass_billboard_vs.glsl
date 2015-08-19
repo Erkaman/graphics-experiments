@@ -4,6 +4,8 @@ in vec2 texCoordIn;
 uniform mat4 view;
 uniform mat4 model;
 uniform mat4 projection;
+uniform vec2 offset;
+
 
 out vec2 texCoord;
 
@@ -11,12 +13,9 @@ void main()
 {
     mat4 m = model;
 
-
-    m[3][0]  =0;
+    m[3][0]  =offset.x;
     m[3][1] =0;
-    m[3][2]  =0;
-
-
+    m[3][2]  =offset.y;
 
     mat4 mv = view * m;
 

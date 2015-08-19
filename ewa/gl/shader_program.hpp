@@ -8,6 +8,7 @@ class Color;
 class Matrix4f;
 class Vector4f;
 class Vector3f;
+class Vector2f;
 class Camera;
 class UniformLocationStore;
 
@@ -55,6 +56,7 @@ public:
     void SetUniform(const std::string& uniformName, const float val);
     void SetUniform(const std::string& uniformName, const Vector4f& v);
     void SetUniform(const std::string& uniformName, const Vector3f& v);
+    void SetUniform(const std::string& uniformName, const Vector2f& v);
 
     void SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& camera, const Vector4f& lightPosition);
 

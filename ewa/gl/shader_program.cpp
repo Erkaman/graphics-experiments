@@ -13,6 +13,7 @@
 #include "math/matrix4f.hpp"
 #include "math/vector4f.hpp"
 #include "math/vector3f.hpp"
+#include "math/vector2f.hpp"
 
 #include "file.hpp"
 
@@ -190,6 +191,16 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const float val) 
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	GL_C(glUniform1f(location, val));
+    } else {
+	SetUniformWarn(uniformName);
+    }
+}
+
+
+void ShaderProgram::SetUniform(const std::string& uniformName, const Vector2f& v) {
+    if (m_uniformLocationStore->UniformExists(uniformName)) {
+	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
+	GL_C(glUniform2f(location, v.x, v.y));
     } else {
 	SetUniformWarn(uniformName);
     }

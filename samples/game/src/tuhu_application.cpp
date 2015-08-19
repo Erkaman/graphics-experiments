@@ -50,7 +50,7 @@ Vector3f(1.836625, -1.669451, -3.106014),Vector3f(-0.431896, -0.336571, 0.836771
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
-    m_grass = new Grass(Vector2f(00,00), m_heightMap);
+    m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
     WaveLoader::Load("audio/smack.wav");
 
