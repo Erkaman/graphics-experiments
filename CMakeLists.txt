@@ -54,7 +54,9 @@ file(GLOB ENGINE_SRC ewa/*.cpp ewa/gl/shader/*.cpp ewa/gl/*.cpp ewa/math/*.cpp e
 
 
 FIND_PACKAGE(OpenGL REQUIRED)
-LIST(APPEND game_libs ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
+FIND_PACKAGE(OpenAL REQUIRED)
+
+LIST(APPEND game_libs ${GLUT_LIBRARY} ${OPENGL_LIBRARY} ${OPENAL_LIBRARY})
 
 LIST(APPEND game_libs glfw3)
 
