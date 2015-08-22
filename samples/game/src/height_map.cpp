@@ -103,9 +103,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
     m_vertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{
-	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_NORMAL_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX},
+	    0, // pos
+		1, //normal
+		2}, // tex
 	vector<GLuint>{3,3,2}
 	);
 

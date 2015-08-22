@@ -35,6 +35,7 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderSource, con
 
     Attach();
 
+/*
     BindAttribLocation(VBO_POSITION_ATTRIB_INDEX, "positionIn"); // vertex attribute "position" will have index 0
     BindAttribLocation(VBO_TEX_COORD_ATTRIB_INDEX, "texCoordIn"); //vertex attribute "texCoord" will have index 2
     BindAttribLocation(VBO_NORMAL_ATTRIB_INDEX, "normalIn");//vertex attribute "normal" will have index 1
@@ -44,7 +45,7 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderSource, con
     BindAttribLocation(VBO_SLOT1_ATTRIB_INDEX, "slot1In");
     BindAttribLocation(VBO_SLOT2_ATTRIB_INDEX, "slot2In");
     BindAttribLocation(VBO_SLOT3_ATTRIB_INDEX, "slot3In");
-
+*/
 
     Link();
 }
@@ -189,7 +190,7 @@ string ParseShader(const std::string& shaderSource, const std::string& path) {
 
     string parsedShader = "";
 
-    parsedShader +=  "#version 150\n";
+    parsedShader +=  "#version 330\n";
 
     // File::GetFileContents(
     vector<string> shaderLines = SplitString(shaderSource, "\n");
