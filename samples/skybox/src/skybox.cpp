@@ -7,6 +7,8 @@
 
 #include "ewa/math/matrix4f.hpp"
 
+using std::vector;
+
 static void  AddFace(
     FloatVector& positions,
     UshortVector& indices,
@@ -109,7 +111,9 @@ Skybox::Skybox(const std::string& frontFace, const std::string& backFace, const 
 
     m_numIndices =(GLushort)indices.size();
 
-    m_positionBuffer = VBO::CreatePosition(3);
+    m_positionBuffer = VBO::CreateInterleaved(
+	    vector<GLuint>{3} // pos,
+	    );
 
     m_positionBuffer->Bind();
     m_positionBuffer->SetBufferData(positions);
@@ -140,7 +144,16 @@ void Skybox::Draw(const Camera& camera) {
     m_shader->SetUniform("sampler", 0);
 
 
+    m_indexBuffer->Bind();
+
+    m_positionBuffer->EnableVertexAttribInterleavedWithBind();
+
+
     m_indexBuffer->DrawIndices(GL_TRIANGLES, m_numIndices);
+
+    m_indexBuffer->Unbind();
+
+    m_positionBuffer->DisableVertexAttribInterleavedWithBind();
 
 
     SetDepthTest(true);
@@ -151,9 +164,7 @@ void Skybox::Draw(const Camera& camera) {
 void Skybox::SetupForRender() {
     m_shader->Bind();
 
-    m_positionBuffer->EnableVertexAttribWithBind();
 
-    m_indexBuffer->Bind();
 
     Texture::SetActiveTextureUnit(0);
 
@@ -162,9 +173,6 @@ void Skybox::SetupForRender() {
 
 void Skybox::UnsetupForRender() {
 
-    m_positionBuffer->DisableVertexAttribWithBind();
-
-    m_indexBuffer->Unbind();
 
     m_cubeMap.Unbind();
 

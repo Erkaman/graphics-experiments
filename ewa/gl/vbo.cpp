@@ -5,6 +5,16 @@
 
 #include <assert.h>
 
+
+VBO::VBO():m_isBound(false) {
+    GL_C(glGenBuffers(1, &m_buffer));
+}
+
+VBO::~VBO() {
+    GL_C(glDeleteBuffers(1, &m_buffer));
+}
+
+
 VBO* VBO::CreateIndex(const GLenum type) {
     VBO* indexBuffer = new VBO();
 
@@ -14,45 +24,6 @@ VBO* VBO::CreateIndex(const GLenum type) {
 
     return indexBuffer;
 }
-
-
-/*VBO* VBO::CreatePosition(const GLint numComponents) {
-    VBO* positionBuffer = new VBO();
-
-    // configure VBO.
-    positionBuffer->SetVertexAttribIndex(VBO_POSITION_ATTRIB_INDEX);
-    positionBuffer->SetTarget(GL_ARRAY_BUFFER);
-    positionBuffer->SetType(GL_FLOAT);
-    positionBuffer->SetUsage(GL_STATIC_DRAW);
-    positionBuffer->SetNumberOfVertexAttribComponents(numComponents);
-
-    return positionBuffer;
-}
-
-
-VBO* VBO::CreateTexCoord(const GLint numberOfComponents) {
-    VBO* texcoordBuffer = new VBO();
-
-    // configure buffer
-    texcoordBuffer->SetVertexAttribIndex(VBO_TEX_COORD_ATTRIB_INDEX);
-    texcoordBuffer->SetTarget(GL_ARRAY_BUFFER);
-    texcoordBuffer->SetType(GL_FLOAT);
-    texcoordBuffer->SetUsage(GL_STATIC_DRAW);
-    texcoordBuffer->SetNumberOfVertexAttribComponents(numberOfComponents);
-
-    return texcoordBuffer;
-}
-
-VBO* VBO::CreateNormal() {
-
-    VBO* positionBuffer = new VBO();
-
-    positionBuffer->SetTarget(GL_ARRAY_BUFFER);
-    positionBuffer->SetType(GL_FLOAT);
-    positionBuffer->SetUsage(GL_STATIC_DRAW);
-
-    return positionBuffer;
-    }*/
 
 VBO* VBO::CreateInterleaved(const std::vector<GLuint>&& sizes, const GLenum usage){
 
@@ -75,19 +46,6 @@ VBO* VBO::CreateInterleaved(const std::vector<GLuint>&& sizes, const GLenum usag
     buffer->STRIDE = totalOffset;
 
     return buffer;
-}
-
-void VBO::EnableVertexAttrib() {
-    GL_C(glEnableVertexAttribArray(m_vertexAttribIndex));
-    GL_C(glVertexAttribPointer(m_vertexAttribIndex, m_numberOfVertexAttribComponents, m_type, false, 0, 0));
-}
-
-void VBO::DisableVertexAttrib() {
-    GL_C(glDisableVertexAttribArray(m_vertexAttribIndex));
-}
-
-void VBO::SetNumberOfVertexAttribComponents(GLint numberOfVertexAttribComponents) {
-    m_numberOfVertexAttribComponents = numberOfVertexAttribComponents;
 }
 
 void VBO::SetBufferData(GLsizeiptr size, const GLvoid* data) {
@@ -173,18 +131,6 @@ void VBO::DisableVertexAttribInterleavedWithBind() {
     Unbind();
 }
 
-void VBO::EnableVertexAttribWithBind() {
-    Bind();
-    EnableVertexAttrib();
-    Unbind();
-}
-
-void VBO::DisableVertexAttribWithBind() {
-    Bind();
-    DisableVertexAttrib();
-    Unbind();
-}
-
 
 void VBO::DrawIndices(VBO& vertexBuffer, VBO& indexBuffer, const GLenum mode, const GLsizei count) {
 
@@ -197,4 +143,36 @@ void VBO::DrawIndices(VBO& vertexBuffer, VBO& indexBuffer, const GLenum mode, co
     indexBuffer.Unbind();
 
     vertexBuffer.DisableVertexAttribInterleavedWithBind();
+}
+
+void VBO::SetTarget(GLenum target) {
+    m_target = target;
+}
+
+void VBO::SetType(GLenum type) {
+    m_type = type;
+}
+
+void VBO::SetUsage(GLenum usage) {
+    m_usage = usage;
+}
+
+void VBO::Bind() {
+
+    if(m_isBound) {
+	return;
+    }
+
+    GL_C(glBindBuffer(m_target, m_buffer));
+    m_isBound = true;
+}
+
+void VBO::Unbind() {
+
+    if(!m_isBound) {
+	return;
+    }
+
+    GL_C(glBindBuffer(m_target, 0));
+    m_isBound = false;
 }

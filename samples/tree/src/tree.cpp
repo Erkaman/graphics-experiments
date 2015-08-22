@@ -60,11 +60,7 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
     m_phongShader = new ShaderProgram("shader/phong");
 
     m_leavesVertexBuffer = VBO::CreateInterleaved(
-						    vector<GLuint>{
-							VBO_POSITION_ATTRIB_INDEX,
-							    VBO_NORMAL_ATTRIB_INDEX,
-							    VBO_TEX_COORD_ATTRIB_INDEX},
-						    vector<GLuint>{3,3,2}
+						    vector<GLuint>{3,3,2} // pos, normal, tex
 						    );
 
 
@@ -72,11 +68,7 @@ Tree::Tree(const Vector3f& position): m_stemPosition(position) {
 
 
     m_treeVertexBuffer = VBO::CreateInterleaved(
-						  vector<GLuint>{
-						      VBO_POSITION_ATTRIB_INDEX,
-							  VBO_NORMAL_ATTRIB_INDEX,
-							  VBO_TEX_COORD_ATTRIB_INDEX},
-						  vector<GLuint>{3,3,2}
+						  vector<GLuint>{3,3,2} // pos, normal, tex
 						  );
 
 

@@ -66,11 +66,7 @@ Grass::Grass(const std::vector<std::string>& textureFilenames, const Vector4f& l
 	GrassGroup* grassGroup = new GrassGroup();
 
 	grassGroup->m_vertexBuffer = VBO::CreateInterleaved(
-	    vector<GLuint>{
-		VBO_POSITION_ATTRIB_INDEX,
-		    VBO_NORMAL_ATTRIB_INDEX,
-		    VBO_TEX_COORD_ATTRIB_INDEX},
-	    vector<GLuint>{3,3,2}
+	    vector<GLuint>{3,3,2} // pos, normal, tex
 	    );
 
 

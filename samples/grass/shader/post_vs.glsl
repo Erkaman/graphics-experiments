@@ -1,5 +1,5 @@
 // This vertex shader simply outputs the input coordinates to the rasterizer. It only uses 2D coordinates.
-in vec2 positionIn;
+layout (location = 0)in vec2 positionIn;
 
 out vec4 posPos;
 

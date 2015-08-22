@@ -32,9 +32,6 @@ void Skydome::MakeSky(const float radius, const int slices, const int stacks) {
     m_domeShader = new ShaderProgram("shader/skydome");
 
     m_domeVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{
-	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX },
 	vector<GLuint>{3,3}
 	);
     m_domeIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);

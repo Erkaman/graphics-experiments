@@ -30,10 +30,7 @@ Skydome::Skydome(const float radius, const int slices, const int stacks): Geomet
     m_shader = new ShaderProgram("shader/sphere");
 
     m_vertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{
-	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX },
-	vector<GLuint>{3,3}
+	vector<GLuint>{3,3} // pos, tex
 	);
 
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
