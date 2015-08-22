@@ -81,10 +81,7 @@ void Skydome::MakeSky(const float radius, const int slices, const int stacks) {
     m_domeShader = new ShaderProgram("shader/skydome");
 
     m_domeVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{
-	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX },
-	vector<GLuint>{3,3}
+	vector<GLuint>{3,3} // pos, tex
 	);
     m_domeIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
     m_domeNumTriangles = GenerateSphereVertices(radius, slices, stacks, m_domeVertexBuffer, m_domeIndexBuffer);
@@ -163,10 +160,7 @@ void Skydome::MakeClouds() {
 	CloudGroup* cloudGroup = m_clouds[/*8*/ m_rng->RandomInt(0, NUM_CLOUD_TEXTURES-1)];
 
 	cloudInfo.m_vertexBuffer = VBO::CreateInterleaved(
-	    vector<GLuint>{
-		VBO_POSITION_ATTRIB_INDEX,
-		    VBO_TEX_COORD_ATTRIB_INDEX },
-	    vector<GLuint>{3,2}
+	    vector<GLuint>{3,2} // pos, tex
 	    );
 
 	cloudInfo.m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
@@ -214,10 +208,7 @@ void Skydome::MakeClouds() {
 void Skydome::MakeSun() {
 
     m_sunVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{
-	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX },
-	vector<GLuint>{3,2}
+	vector<GLuint>{3,2} // pos, tex
 	);
 
     m_sunIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);

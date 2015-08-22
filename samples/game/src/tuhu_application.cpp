@@ -49,7 +49,7 @@ Vector3f(1.836625, -1.669451, -3.106014),Vector3f(-0.431896, -0.336571, 0.836771
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
-//    m_grass = new Grass(Vector2f(10,10), m_heightMap);
+    m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
     OpenAL::Init();
 
@@ -72,7 +72,7 @@ void TuhuApplication::Render() {
     Vector4f lightPosition(93,10.0f,93, 1.0f);
     m_heightMap->Draw(*m_camera, lightPosition);
 
-    //  m_grass->Draw(*m_camera, lightPosition);
+    m_grass->Draw(*m_camera, lightPosition);
 }
 
 void TuhuApplication::Update(const float delta) {
@@ -81,7 +81,7 @@ void TuhuApplication::Update(const float delta) {
 
     m_skydome->Update(delta);
 
-    //   m_grass->Update(delta);
+    m_grass->Update(delta);
 
     const KeyboardState& kbs = KeyboardState::GetInstance();
 

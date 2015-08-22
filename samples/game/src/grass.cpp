@@ -70,20 +70,12 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
     m_grassTexture->Unbind();
 
     m_grassVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{
-	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX, VBO_NORMAL_ATTRIB_INDEX,  VBO_SLOT0_ATTRIB_INDEX},
-	vector<GLuint>{3,2,3, 3}
+	vector<GLuint>{3,2,3, 3} // pos, texcoord, normal, slot0
 	);
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
-
-
     m_billboardVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{
-	    VBO_POSITION_ATTRIB_INDEX,
-		VBO_TEX_COORD_ATTRIB_INDEX},
-	vector<GLuint>{3,2}
+	vector<GLuint>{3,2} // pos, tex
 	);
     m_billboardIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 

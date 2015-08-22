@@ -1,5 +1,5 @@
-in  vec3 positionIn;
-in vec3 texCoordIn;
+layout (location = 0) in  vec3 positionIn;
+layout (location = 1) in vec3 texCoordIn;
 
 uniform mat4 mvp;
 

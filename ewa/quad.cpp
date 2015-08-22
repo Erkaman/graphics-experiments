@@ -15,9 +15,7 @@ using std::vector;
 Quad::Quad(const Vector2f c1, const Vector2f& c2) {
 
     m_vertexBuffer = VBO::CreateInterleaved(
-						    vector<GLuint>{
-							VBO_POSITION_ATTRIB_INDEX, VBO_TEX_COORD_ATTRIB_INDEX},
-						    vector<GLuint>{2, 2}
+	vector<GLuint>{2, 2} // position, texcoord
 						    );
 
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);

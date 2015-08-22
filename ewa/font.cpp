@@ -39,10 +39,7 @@ Font::Font(
     // allocate vbo.
 
     m_vertexBuffer = VBO::CreateInterleaved(
-					      vector<GLuint>{
-						  VBO_POSITION_ATTRIB_INDEX,
-						      VBO_TEX_COORD_ATTRIB_INDEX},
-					      vector<GLuint>{2,2},
+					      vector<GLuint>{2,2}, // position, tex
 					      GL_DYNAMIC_DRAW
 					      );
 

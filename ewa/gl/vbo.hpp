@@ -26,7 +26,7 @@ private:
     bool m_isBound;
 
     // only valid for interleaved VBOs:
-    std::vector<GLuint> m_vertexAttribs;
+//    std::vector<GLuint> m_vertexAttribs;
     std::vector<GLuint> m_sizes;
     std::vector<GLuint> m_offsets;
     GLsizei STRIDE;
@@ -109,12 +109,14 @@ public:
     void DisableVertexAttribWithBind();
 
 
-    static VBO* CreatePosition(const GLint numComponents);
-    static VBO* CreateIndex(const GLenum type = GL_UNSIGNED_SHORT);
+/*    static VBO* CreatePosition(const GLint numComponents);
     static VBO* CreateTexCoord(const GLint numberOfComponents);
     static VBO* CreateNormal();
+*/
+    static VBO* CreateIndex(const GLenum type = GL_UNSIGNED_SHORT);
 
-    static VBO* CreateInterleaved(const std::vector<GLuint>&& vertexAttribs, const std::vector<GLuint>&& sizes, const GLenum usage = GL_STATIC_DRAW);
+
+    static VBO* CreateInterleaved(const std::vector<GLuint>&& sizes, const GLenum usage = GL_STATIC_DRAW);
 
     static void DrawIndices(VBO& vertexBuffer, VBO& indexBuffer, const GLenum mode, const GLsizei count);
 

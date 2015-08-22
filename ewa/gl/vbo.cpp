@@ -5,8 +5,18 @@
 
 #include <assert.h>
 
+VBO* VBO::CreateIndex(const GLenum type) {
+    VBO* indexBuffer = new VBO();
 
-VBO* VBO::CreatePosition(const GLint numComponents) {
+    indexBuffer->SetTarget(GL_ELEMENT_ARRAY_BUFFER);
+    indexBuffer->SetType(type);
+    indexBuffer->SetUsage(GL_STATIC_DRAW);
+
+    return indexBuffer;
+}
+
+
+/*VBO* VBO::CreatePosition(const GLint numComponents) {
     VBO* positionBuffer = new VBO();
 
     // configure VBO.
@@ -19,18 +29,6 @@ VBO* VBO::CreatePosition(const GLint numComponents) {
     return positionBuffer;
 }
 
-VBO* VBO::CreateIndex(const GLenum type) {
-    VBO* indexBuffer = new VBO();
-
-    /**
-     * Configure buffer.
-     */
-    indexBuffer->SetTarget(GL_ELEMENT_ARRAY_BUFFER);
-    indexBuffer->SetType(type);
-    indexBuffer->SetUsage(GL_STATIC_DRAW);
-
-    return indexBuffer;
-}
 
 VBO* VBO::CreateTexCoord(const GLint numberOfComponents) {
     VBO* texcoordBuffer = new VBO();
@@ -54,20 +52,17 @@ VBO* VBO::CreateNormal() {
     positionBuffer->SetUsage(GL_STATIC_DRAW);
 
     return positionBuffer;
-}
+    }*/
 
-VBO* VBO::CreateInterleaved(const std::vector<GLuint>&& vertexAttribs, const std::vector<GLuint>&& sizes, const GLenum usage){
-
-    assert(vertexAttribs.size() == sizes.size());
+VBO* VBO::CreateInterleaved(const std::vector<GLuint>&& sizes, const GLenum usage){
 
     VBO* buffer = new VBO();
 
-    buffer->SetVertexAttribIndex(VBO_NORMAL_ATTRIB_INDEX);
     buffer->SetTarget(GL_ARRAY_BUFFER);
     buffer->SetType(GL_FLOAT);
     buffer->SetUsage(usage);
 
-    buffer->m_vertexAttribs = std::move(vertexAttribs);
+//    buffer->m_vertexAttribs = std::move(vertexAttribs);
     buffer->m_sizes = std::move(sizes);
 
     buffer->m_offsets.reserve(sizes.size());
@@ -133,14 +128,18 @@ void VBO::EnableVertexAttribInterleaved() {
 
     Bind();
 
+    GLuint vertexAttrib = 0;
+
     for(size_t i = 0; i < m_sizes.size(); ++i) {
 
-	const GLuint vertexAttrib = m_vertexAttribs[i];
+
 	const GLuint size = m_sizes[i];
 	const GLuint offset = m_offsets[i];
 
 	GL_C(glEnableVertexAttribArray(vertexAttrib));
 	GL_C(glVertexAttribPointer(vertexAttrib, size, GL_FLOAT, false, STRIDE, reinterpret_cast<const GLvoid*>(offset)));
+
+	++vertexAttrib;
     }
 
     Unbind();
@@ -149,10 +148,13 @@ void VBO::EnableVertexAttribInterleaved() {
 void VBO::DisableVertexAttribInterleaved() {
     Bind();
 
+    GLuint vertexAttrib = 0;
+
     for(size_t i = 0; i < m_sizes.size(); ++i) {
-	const GLuint vertexAttrib = m_vertexAttribs[i];
 
 	GL_C(glDisableVertexAttribArray(vertexAttrib));
+
+	++vertexAttrib;
     }
 
     Unbind();

@@ -1,6 +1,5 @@
-in vec2 positionIn;
-
-in vec2 texCoordIn;
+layout (location = 0)in vec2 positionIn;
+layout (location = 1)in vec2 texCoordIn;
 out vec2 texCoord;
 
 void main(void) {

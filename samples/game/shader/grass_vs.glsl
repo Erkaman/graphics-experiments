@@ -1,9 +1,7 @@
-in  vec3 positionIn;
-in  vec3 normalIn;
-//in  vec4 colorIn;
-
-in vec2 texCoordIn;
-in vec3 slot0In;
+layout (location = 0) in  vec3 positionIn;
+layout (location = 1) in vec2 texCoordIn;
+layout (location = 2) in  vec3 normalIn;
+layout (location = 3) in vec3 slot0In;
 
 uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
