@@ -31,7 +31,7 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
-//    m_system = new ParticleSystem(Vector3f(10,0,10));
+    m_system = new ParticleSystem(Vector3f(10,0,10));
 
 
     ::SetDepthTest(true);
@@ -40,10 +40,9 @@ void TuhuApplication::Init() {
 
     m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,
 
-Vector3f(1.836625, -1.669451, -3.106014),Vector3f(-0.431896, -0.336571, 0.836771)
 
+			  Vector3f(7.398285, -2.360752, 4.288156),Vector3f(0.258117, -0.137462, 0.956285)
 
-//Vector3f(9.474550, -3.490666, 9.546431),Vector3f(0.666667, -0.333333, 0.666667)
 
 
 , true);
@@ -84,7 +83,7 @@ void TuhuApplication::Render() {
 
     m_grass->Draw(*m_camera, lightPosition);
 
-//    m_system->Render(m_camera->GetMvp(), m_camera->GetPosition());
+    m_system->Render(m_camera->GetMvp(), m_camera->GetPosition());
 }
 
 void TuhuApplication::Update(const float delta) {
@@ -95,9 +94,9 @@ void TuhuApplication::Update(const float delta) {
 
 //    m_system->Update(delta);
 
-    m_skydome->Update(delta);
+      m_skydome->Update(delta);
 
-    m_grass->Update(delta);
+      m_grass->Update(delta);
 
     const KeyboardState& kbs = KeyboardState::GetInstance();
 

@@ -153,6 +153,15 @@ void VBO::DrawIndices(VBO& vertexBuffer, VBO& indexBuffer, const GLenum mode, co
     vertexBuffer.DisableVertexAttribInterleavedWithBind();
 }
 
+void VBO::DrawVertices(VBO& vertexBuffer, const GLenum mode, const GLsizei count) {
+
+    vertexBuffer.EnableVertexAttribInterleavedWithBind();
+
+    vertexBuffer.DrawVertices(mode, count);
+
+    vertexBuffer.DisableVertexAttribInterleavedWithBind();
+}
+
 void VBO::SetTarget(GLenum target) {
     m_target = target;
 }

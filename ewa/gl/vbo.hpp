@@ -75,6 +75,8 @@ public:
 
     static void DrawIndices(VBO& vertexBuffer, VBO& indexBuffer, const GLenum mode, const GLsizei count);
 
+    static void DrawVertices(VBO& vertexBuffer, const GLenum mode, const GLsizei count);
+
 
     void GetBufferSubData(GLintptr offset, GLsizeiptr size, GLvoid* data);
 

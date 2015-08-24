@@ -329,6 +329,8 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
     m_billboardTechnique->Bind();
     m_billboardTechnique->SetUniform("gCameraPos", CameraPos);
     m_billboardTechnique->SetUniform("gVP", VP);
+    m_billboardTechnique->SetUniform("gBillboardSize", 1.0f);
+
 
     m_billboardTechnique->SetUniform("gColorMap", 0);
     Texture::SetActiveTextureUnit(0);
