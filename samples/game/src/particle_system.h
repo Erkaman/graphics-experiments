@@ -24,11 +24,13 @@
 //#include <GL/glew.h>
 
 
+
 class Vector3f;
 class Matrix4f;
 class Matrix4f;
 class Texture;
 class ShaderProgram;
+class VBO;
 
 class ParticleSystem
 {
@@ -37,17 +39,23 @@ public:
 
     ~ParticleSystem();
 
-    void Render(int DeltaTimeMillis, const Matrix4f& VP, const Vector3f& CameraPos);
+    void Render(const Matrix4f& VP, const Vector3f& CameraPos);
+    void Update(int DeltaTimeMillis);
+    void Print(int i);
 
 private:
 
     void UpdateParticles(int DeltaTimeMillis);
+
     void RenderParticles(const Matrix4f& VP, const Vector3f& CameraPos);
+
 
     bool m_isFirst;
     unsigned int m_currVB;
     unsigned int m_currTFB;
-    GLuint m_particleBuffer[2];
+//    GLuint m_particleBuffer[2];
+    VBO* m_particleBuffer[2];
+
     GLuint m_transformFeedback[2];
     ShaderProgram* m_updateTechnique;
     ShaderProgram* m_billboardTechnique;

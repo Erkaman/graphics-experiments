@@ -1,57 +1,3 @@
-/*
-
-DO REMEMBER TO CORRECTLY SETUP THE FEEDBACK BUFFER IN THE SHADER.
-
-
-
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#version 330
-
 layout(points) in;
 layout(points) out;
 layout(max_vertices = 30) out;
@@ -89,7 +35,7 @@ void main()
     float Age = Age0[0] + gDeltaTimeMillis;
 
     if (Type0[0] == PARTICLE_TYPE_LAUNCHER) {
-        if (Age >= gLauncherLifetime) {
+/*        if (Age >= gLauncherLifetime) {
             Type1 = PARTICLE_TYPE_SHELL;
             Position1 = Position0[0];
             vec3 Dir = GetRandomDir(gTime/1000.0);
@@ -99,16 +45,16 @@ void main()
             EmitVertex();
             EndPrimitive();
             Age = 0.0;
-        }
+	    }*/
 
         Type1 = PARTICLE_TYPE_LAUNCHER;
         Position1 = Position0[0];
-        Velocity1 = Velocity0[0];
+        Velocity1 = vec3(2,2,2); //Velocity0[0];
         Age1 = Age;
         EmitVertex();
         EndPrimitive();
     }
-    else {
+    /*  else {
         float DeltaTimeSecs = gDeltaTimeMillis / 1000.0f;
         float t1 = Age0[0] / 1000.0;
         float t2 = Age / 1000.0;
@@ -146,5 +92,5 @@ void main()
                 EndPrimitive();
             }
         }
-    }
+    }*/
 }

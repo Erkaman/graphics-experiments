@@ -29,7 +29,7 @@ private:
 
     GLuint m_shaderProgram;
 
-    void CompileShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource,const std::string& geometryShaderSource, const std::string& path);
+    void CompileShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource,const std::string& geometryShaderSource, const std::string& path, void (*beforeLinkingHook)(GLuint));
 
     ShaderProgram();
 
@@ -37,7 +37,7 @@ private:
 
 public:
 
-    ShaderProgram(const std::string& shaderName);
+    ShaderProgram(const std::string& shaderName, void (*beforeLinkingHook)(GLuint) = NULL );
 
     // create shader from source code.
     ShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
@@ -59,5 +59,7 @@ public:
     void SetUniform(const std::string& uniformName, const Vector2f& v);
 
     void SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& camera, const Vector4f& lightPosition);
+
+    void Query();
 
 };

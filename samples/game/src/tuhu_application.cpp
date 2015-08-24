@@ -10,6 +10,7 @@
 #include "skydome.hpp"
 #include "height_map.hpp"
 #include "grass.hpp"
+#include "particle_system.h"
 
 using namespace std;
 
@@ -30,6 +31,9 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
+//    m_system = new ParticleSystem(Vector3f(10,0,10));
+
+
     ::SetDepthTest(true);
 
     ::SetCullFace(true);
@@ -44,12 +48,19 @@ Vector3f(1.836625, -1.669451, -3.106014),Vector3f(-0.431896, -0.336571, 0.836771
 
 , true);
 
+
+
     m_heightMap = new HeightMap("img/combined.png");
+
+
 
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
+
     m_grass = new Grass(Vector2f(10,10), m_heightMap);
+
+
 
     OpenAL::Init();
 
@@ -62,7 +73,6 @@ Vector3f(1.836625, -1.669451, -3.106014),Vector3f(-0.431896, -0.336571, 0.836771
 
 void TuhuApplication::Render() {
 
-
     SetViewport();
 
     Clear(0.0f, 1.0f, 1.0f);
@@ -70,14 +80,20 @@ void TuhuApplication::Render() {
     m_skydome->Draw(*m_camera);
 
     Vector4f lightPosition(93,10.0f,93, 1.0f);
-    m_heightMap->Draw(*m_camera, lightPosition);
+   m_heightMap->Draw(*m_camera, lightPosition);
 
     m_grass->Draw(*m_camera, lightPosition);
+
+//    m_system->Render(m_camera->GetMvp(), m_camera->GetPosition());
 }
 
 void TuhuApplication::Update(const float delta) {
+
+    ::SetCullFace(false);
+
     m_camera->HandleInput(delta);
 
+//    m_system->Update(delta);
 
     m_skydome->Update(delta);
 

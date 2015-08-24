@@ -8,6 +8,7 @@ class HeightMap;
 class Skydome;
 class Grass;
 class Sound;
+class ParticleSystem;
 
 class TuhuApplication : public Application{
 
@@ -21,6 +22,8 @@ private:
     Grass* m_grass;
 
     Sound* m_windSound;
+
+    ParticleSystem* m_system;
 
 public:
 

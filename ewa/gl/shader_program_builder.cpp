@@ -18,7 +18,7 @@ bool GetCompileStatus(GLuint shaderProgram);
 string ParseShader(const std::string& shaderSource, const std::string& path);
 
 
-ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderSource, const string& fragmentShaderSource, const string& geometryShaderSource, const std::string& path) {
+ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderSource, const string& fragmentShaderSource, const string& geometryShaderSource, const std::string& path, void (*beforeLinkingHook)(GLuint)) {
 
 
     m_compiledVertexShader = BuildAndCompileShader(vertexShaderSource, GL_VERTEX_SHADER, path);
@@ -32,20 +32,13 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderSource, con
 	m_hasGeometryShader = false;
     }
 
-
     Attach();
 
-/*
-    BindAttribLocation(VBO_POSITION_ATTRIB_INDEX, "positionIn"); // vertex attribute "position" will have index 0
-    BindAttribLocation(VBO_TEX_COORD_ATTRIB_INDEX, "texCoordIn"); //vertex attribute "texCoord" will have index 2
-    BindAttribLocation(VBO_NORMAL_ATTRIB_INDEX, "normalIn");//vertex attribute "normal" will have index 1
-    BindAttribLocation(VBO_COLOR_ATTRIB_INDEX, "colorIn");
+    // here put hook.
 
-    BindAttribLocation(VBO_SLOT0_ATTRIB_INDEX, "slot0In");
-    BindAttribLocation(VBO_SLOT1_ATTRIB_INDEX, "slot1In");
-    BindAttribLocation(VBO_SLOT2_ATTRIB_INDEX, "slot2In");
-    BindAttribLocation(VBO_SLOT3_ATTRIB_INDEX, "slot3In");
-*/
+    if(beforeLinkingHook != NULL) {
+	beforeLinkingHook(m_shaderProgram);
+    }
 
     Link();
 }

@@ -136,7 +136,6 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
     m_grassIndexBuffer->SetBufferData(grassIndices);
     m_grassIndexBuffer->Unbind();
 
-    LOG_I("size: %ld", billboardVertices.size());
 
     m_billboardVertexBuffer->Bind();
     m_billboardVertexBuffer->SetBufferData(billboardVertices);
@@ -297,34 +296,8 @@ void Grass::GenerateBillboardVertices(const Vector2f position, FloatVector& bill
     Vector3f centerPosition(position.x, m_heightMap->GetHeightAt(position.x+m_position.x, position.y+m_position.y) ,position.y);
     dir.Normalize();
 
-/*
-  INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 10.613633
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 9.159506
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 10.042944
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 10.449350
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 9.136868
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 9.059547
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 9.868878
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 9.815653
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 10.217096
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 9.857285
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 10.780457
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 10.833551
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 9.006429
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 9.529883
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 9.411310
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 10.570762
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 10.964326
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 10.345138
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 10.981901
-INFO: /Users/eric/tuhu/samples/game/src/grass.cpp:311:GenerateBillboardVertices:pos: 9.456833
- */
-
     const float X = dir.x * width / 2.0f;
     const float Z = dir.y * width / 2.0f;
-
-    LOG_I("pos: %f", position.x);
-
 
     (centerPosition+Vector3f(-X, height, -Z)).Add(billboardVertices);
     Vector2f(0.0f,0.0f).Add(billboardVertices);

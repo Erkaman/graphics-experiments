@@ -58,6 +58,9 @@ public:
 
     void SetUsage(GLenum usage);
 
+    GLuint GetBuffer();
+
+
     void DrawIndices(const GLenum mode, const GLsizei count);
     void DrawVertices(const GLenum mode, const GLsizei count);
 
@@ -71,6 +74,11 @@ public:
     static VBO* CreateInterleaved(const std::vector<GLuint>&& sizes, const GLenum usage = GL_STATIC_DRAW);
 
     static void DrawIndices(VBO& vertexBuffer, VBO& indexBuffer, const GLenum mode, const GLsizei count);
+
+
+    void GetBufferSubData(GLintptr offset, GLsizeiptr size, GLvoid* data);
+
+    GLint GetBufferSize();
 
 };
 

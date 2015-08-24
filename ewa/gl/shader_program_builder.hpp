@@ -26,7 +26,7 @@ public:
     /*
       The source code of the shaders are passed as arguments.
      */
-    ShaderProgramBuilder(const std::string& vertexShaderSource, const std::string& fragmentShaderSource, const std::string& geometryShaderSource, const std::string& path);
+    ShaderProgramBuilder(const std::string& vertexShaderSource, const std::string& fragmentShaderSource, const std::string& geometryShaderSource, const std::string& path, void (*beforeLinkingHook)(GLuint));
 
     GLuint GetLinkedShaderProgram();
 };

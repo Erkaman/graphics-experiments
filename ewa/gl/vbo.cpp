@@ -3,6 +3,8 @@
 #include "math/vector3f.hpp"
 #include "math/vector2f.hpp"
 
+#include "ewa/log.hpp"
+
 #include <assert.h>
 
 
@@ -40,8 +42,13 @@ VBO* VBO::CreateInterleaved(const std::vector<GLuint>&& sizes, const GLenum usag
 
     GLuint totalOffset = 0;
     for(size_t i = 0; i <buffer->m_sizes.size(); ++i) {
+
+//	LOG_I("offset: %d", totalOffset);
+
 	buffer->m_offsets.push_back(totalOffset);
         totalOffset += buffer->m_sizes[i] * sizeof(GLfloat);
+
+
     }
     buffer->STRIDE = totalOffset;
 
@@ -93,6 +100,7 @@ void VBO::EnableVertexAttribInterleaved() {
 
 	const GLuint size = m_sizes[i];
 	const GLuint offset = m_offsets[i];
+
 
 	GL_C(glEnableVertexAttribArray(vertexAttrib));
 	GL_C(glVertexAttribPointer(vertexAttrib, size, GL_FLOAT, false, STRIDE, reinterpret_cast<const GLvoid*>(offset)));
@@ -152,7 +160,6 @@ void VBO::SetTarget(GLenum target) {
 void VBO::SetType(GLenum type) {
     m_type = type;
 }
-
 void VBO::SetUsage(GLenum usage) {
     m_usage = usage;
 }
@@ -175,4 +182,21 @@ void VBO::Unbind() {
 
     GL_C(glBindBuffer(m_target, 0));
     m_isBound = false;
+}
+
+GLuint VBO::GetBuffer() {
+    return m_buffer;
+}
+
+
+void VBO::GetBufferSubData(GLintptr offset, GLsizeiptr size, GLvoid* data) {
+    LOG_I("size: %d", size);
+    GL_C(glGetBufferSubData(m_target, offset, size, data));
+}
+
+
+GLint VBO::GetBufferSize() {
+    GLint bufferSize = 0;
+    glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
+    return bufferSize;
 }

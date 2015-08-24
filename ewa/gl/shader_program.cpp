@@ -43,8 +43,7 @@ static std::string GetShaderContents(const std::string& shaderPath) {
     return f.GetFileContents();
 }
 
-
-ShaderProgram::ShaderProgram(const std::string& shaderName){
+ShaderProgram::ShaderProgram(const std::string& shaderName, void (*beforeLinkingHook)(GLuint)){
 
 
     m_alreadyBoundProgram = false;
@@ -64,7 +63,8 @@ ShaderProgram::ShaderProgram(const std::string& shaderName){
 	GetShaderContents(shaderName + "_vs.glsl"),
 	GetShaderContents(shaderName + "_fs.glsl"),
 	geometryShaderSource,
-	GetFileDirectory(shaderName + "_vs.glsl"));
+	GetFileDirectory(shaderName + "_vs.glsl"),
+	beforeLinkingHook);
 
 
 }
@@ -75,15 +75,15 @@ ShaderProgram::ShaderProgram(const std::string& vertexShaderSource, const std::s
 	vertexShaderSource,
 	fragmentShaderSource,
 	"",
-	"");
+	"", NULL);
 
 }
 
 
-void ShaderProgram::CompileShaderProgram(const string& vertexShaderSource, const string& fragmentShaderSource,const string& geometryShaderSource, const std::string& path) {
+void ShaderProgram::CompileShaderProgram(const string& vertexShaderSource, const string& fragmentShaderSource,const string& geometryShaderSource, const std::string& path, void (*beforeLinkingHook)(GLuint)) {
     // link shader program.
 
-    ShaderProgramBuilder shaderBuilder(vertexShaderSource, fragmentShaderSource, geometryShaderSource, path);
+    ShaderProgramBuilder shaderBuilder(vertexShaderSource, fragmentShaderSource, geometryShaderSource, path, beforeLinkingHook);
     m_shaderProgram = shaderBuilder.GetLinkedShaderProgram();
 
     m_uniformLocationStore = new UniformLocationStore(m_shaderProgram);
@@ -203,5 +203,45 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Vector2f& v
 	GL_C(glUniform2f(location, v.x, v.y));
     } else {
 	SetUniformWarn(uniformName);
+    }
+}
+
+
+char* TypeToString(GLenum type) {
+
+    switch(type) {
+    case GL_FLOAT:
+	return "GL_FLOAT";
+    case GL_FLOAT_VEC3:
+	return "GL_FLOAT_VEC3";
+    default:
+	return "Unknown";
+    }
+}
+
+void ShaderProgram::Query() {
+
+    GLint numVaryings;
+    glGetProgramiv(m_shaderProgram, GL_TRANSFORM_FEEDBACK_VARYINGS, &numVaryings);
+
+
+
+    for(int i = 0; i < numVaryings; ++i) {
+
+	char nameBuffer[256];
+	GLsizei length; // the actual size of the name.
+	GLsizei size; // size of the varying.
+	GLenum type; // type of the varying
+
+	glGetTransformFeedbackVarying(m_shaderProgram, i,256, &length, &size, &type, nameBuffer);
+
+	string nameStr = string(nameBuffer);
+
+	LOG_I("name: %s", nameStr.c_str() );
+	LOG_I("size: %d", size );
+	LOG_I("type: %s", TypeToString(type) );
+
+	LOG_I("\n" );
+
     }
 }
