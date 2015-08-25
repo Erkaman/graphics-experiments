@@ -12,7 +12,7 @@ out vec3 Position1;
 out vec3 Velocity1;
 out float Age1;
 
-uniform float gDeltaTimeMillis;
+uniform float gDeltaTimeSecs;
 uniform float gTime;
 uniform sampler1D gRandomTexture;
 uniform float gLauncherLifetime;
@@ -32,34 +32,34 @@ vec3 GetRandomDir(float TexCoord)
 
 void main()
 {
-    float Age = Age0[0] + gDeltaTimeMillis;
+    float Age = Age0[0] + gDeltaTimeSecs;
 
     if (Type0[0] == PARTICLE_TYPE_LAUNCHER) {
-/*        if (Age >= gLauncherLifetime) {
+        if (Age >= gLauncherLifetime) {
             Type1 = PARTICLE_TYPE_SHELL;
             Position1 = Position0[0];
-            vec3 Dir = GetRandomDir(gTime/1000.0);
+            vec3 Dir = vec3(0,0.01, 0);//GetRandomDir(gTime/1000.0);// fix a random dir function!
             Dir.y = max(Dir.y, 0.5);
-            Velocity1 = normalize(Dir) / 20.0;
+            Velocity1 = normalize(Dir) / 20.0; // maybe the dir is too slow?
             Age1 = 0.0;
             EmitVertex();
             EndPrimitive();
             Age = 0.0;
-	    }*/
+	}
 
         Type1 = PARTICLE_TYPE_LAUNCHER;
         Position1 = Position0[0];
-        Velocity1 = vec3(2,2,2); //Velocity0[0];
+        Velocity1 = Velocity0[0];
         Age1 = Age;
         EmitVertex();
         EndPrimitive();
     }
-    /*  else {
-        float DeltaTimeSecs = gDeltaTimeMillis / 1000.0f;
-        float t1 = Age0[0] / 1000.0;
-        float t2 = Age / 1000.0;
-        vec3 DeltaP = DeltaTimeSecs * Velocity0[0];
-        vec3 DeltaV = vec3(DeltaTimeSecs) * (0.0, -9.81, 0.0);
+    else {
+//        float DeltaTimeSecs = gDeltaTimeMillis / 1000.0f;
+/*        float t1 = Age0[0] / 1000.0;
+	  float t2 = Age / 1000.0;*/
+        vec3 DeltaP = gDeltaTimeSecs * Velocity0[0];
+        vec3 DeltaV = vec3(gDeltaTimeSecs) * (0.0, -9.81, 0.0);
 
         if (Type0[0] == PARTICLE_TYPE_SHELL)  {
 	        if (Age < gShellLifetime) {
@@ -82,7 +82,7 @@ void main()
                 }
             }
         }
-        else {
+        else { // secondary shell.
             if (Age < gSecondaryShellLifetime) {
                 Type1 = PARTICLE_TYPE_SECONDARY_SHELL;
                 Position1 = Position0[0] + DeltaP;
@@ -92,5 +92,8 @@ void main()
                 EndPrimitive();
             }
         }
-    }*/
+    }
 }
+
+
+//but the secondary shells are somehow launched? but the lifetime is so long! how can that be!

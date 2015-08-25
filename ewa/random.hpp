@@ -1,15 +1,17 @@
 #pragma once
 
+typedef unsigned long long Seed;
+
 // 64 xor-shift generator.
 class Random {
 
 private:
 
-    unsigned long long m_seed;
+    Seed m_seed;
 
 public:
 
-    Random(unsigned long long seed);
+    Random(Seed seed);
     Random();
 
     // random float in range [0,1]

@@ -40,12 +40,12 @@ public:
     ~ParticleSystem();
 
     void Render(const Matrix4f& VP, const Vector3f& CameraPos);
-    void Update(int DeltaTimeMillis);
+    void Update(float delta);
     void Print(int i);
 
 private:
 
-    void UpdateParticles(int DeltaTimeMillis);
+    void UpdateParticles(float delta);
 
     void RenderParticles(const Matrix4f& VP, const Vector3f& CameraPos);
 
@@ -61,7 +61,7 @@ private:
     ShaderProgram* m_billboardTechnique;
     //RandomTexture m_randomTexture;
     Texture* m_texture;
-    int m_time;
+    float m_time;
 
     int count = 0;
 };

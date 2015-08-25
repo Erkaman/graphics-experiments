@@ -25,7 +25,6 @@ private:
 
     std::string m_shaderProgramName;
 
-
     GLuint m_shaderProgram;
 
     void CompileShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource,const std::string& geometryShaderSource, const std::string& path, void (*beforeLinkingHook)(GLuint));

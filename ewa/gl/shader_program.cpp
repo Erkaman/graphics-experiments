@@ -169,10 +169,6 @@ void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& 
     SetUniform("modelViewMatrix", modelViewMatrix);
     SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
 
-    Vector3f v = Vector3f(camera.GetViewMatrix() * lightPosition);
-
-    // LOG_I("v: %s", tos(v).c_str() )
-
     SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * lightPosition) );
 }
 
@@ -196,7 +192,7 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Vector2f& v
 }
 
 
-char* TypeToString(GLenum type) {
+std::string TypeToString(GLenum type) {
 
     switch(type) {
     case GL_FLOAT:
@@ -228,7 +224,7 @@ void ShaderProgram::Query() {
 
 	LOG_I("name: %s", nameStr.c_str() );
 	LOG_I("size: %d", size );
-	LOG_I("type: %s", TypeToString(type) );
+	LOG_I("type: %s", TypeToString(type).c_str() );
 
 	LOG_I("\n" );
 
