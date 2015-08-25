@@ -37,9 +37,9 @@ void main()
         if (Age >= gLauncherLifetime) {
             Type1 = PARTICLE_TYPE_SHELL;
             Position1 = Position0[0];
-            vec3 Dir = GetRandomDir(gTime);// fix a random dir function!
+            vec3 Dir = GetRandomDir(gTime);
             Dir.y = max(Dir.y, 0.5);
-            Velocity1 = normalize(Dir) / 20.0; // maybe the dir is too slow?
+            Velocity1 = normalize(Dir) / 20.0;
             Age1 = 0.0;
             EmitVertex();
             EndPrimitive();
@@ -93,6 +93,3 @@ void main()
         }
     }
 }
-
-
-//but the secondary shells are somehow launched? but the lifetime is so long! how can that be!

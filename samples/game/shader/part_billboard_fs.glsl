@@ -7,7 +7,6 @@ void main()
 {
     FragColor = texture(gColorMap, TexCoord);
 
-
     if (FragColor.r >= 0.9 && FragColor.g >= 0.9 && FragColor.b >= 0.9) {
         discard;
     }
