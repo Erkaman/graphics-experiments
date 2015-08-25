@@ -31,7 +31,7 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
-    m_system = new ParticleSystem(Vector3f(10,0,10));
+    m_system = new ParticleSystem(Vector3f(0,0,0));
 
 
     ::SetDepthTest(true);

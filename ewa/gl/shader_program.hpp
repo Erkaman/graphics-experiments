@@ -25,7 +25,6 @@ private:
 
     std::string m_shaderProgramName;
 
-    bool m_alreadyBoundProgram;
 
     GLuint m_shaderProgram;
 

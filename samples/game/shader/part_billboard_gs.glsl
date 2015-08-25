@@ -10,7 +10,7 @@ out vec2 TexCoord;
 
 void main()
 {
-    vec3 Pos = vec3(10,0,10); //gl_in[0].gl_Position.xyz;
+    vec3 Pos = gl_in[0].gl_Position.xyz;
     vec3 toCamera = normalize(gCameraPos - Pos);
     vec3 up = vec3(0.0, 1.0, 0.0);
     vec3 right = cross(toCamera, up) * gBillboardSize;

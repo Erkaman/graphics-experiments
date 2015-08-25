@@ -27,7 +27,7 @@ ShaderProgram::ShaderProgram():m_uniformLocationStore(nullptr) {
 ShaderProgram::~ShaderProgram() {
     MY_DELETE(m_uniformLocationStore);
 
-    glDeleteProgram(m_alreadyBoundProgram);
+    glDeleteProgram(m_shaderProgram);
 }
 
 static std::string GetShaderContents(const std::string& shaderPath) {
@@ -46,7 +46,6 @@ static std::string GetShaderContents(const std::string& shaderPath) {
 ShaderProgram::ShaderProgram(const std::string& shaderName, void (*beforeLinkingHook)(GLuint)){
 
 
-    m_alreadyBoundProgram = false;
 
     string geometryShaderPath = shaderName + "_gs.glsl";
 
@@ -92,21 +91,11 @@ void ShaderProgram::CompileShaderProgram(const string& vertexShaderSource, const
 }
 
 void ShaderProgram::Bind() {
-    if(m_alreadyBoundProgram)
-	return;
-
     GL_C(glUseProgram(m_shaderProgram));
-
-    m_alreadyBoundProgram = true;
 }
 
 void ShaderProgram::Unbind() {
-    if(!m_shaderProgram) {
-	return;
-    }
-
     GL_C(glUseProgram(0));
-    m_alreadyBoundProgram = false;
 }
 
 void ShaderProgram::SetUniform(const std::string& uniformName, const Color& color) {

@@ -73,20 +73,12 @@ void Texture::SetActiveTextureUnit(const GLenum textureUnit) {
 }
 
 void Texture::Bind() {
-    if(m_alreadyBound)
-	return;
-
     GL_C(glBindTexture(m_target, m_textureHandle));
-    m_alreadyBound = true;
 }
 
 
 void Texture::Unbind() {
-    if(!m_alreadyBound)
-	return;
-
     GL_C(glBindTexture(m_target, 0));
-    m_alreadyBound = false;
 }
 
 
@@ -104,7 +96,7 @@ void Texture::SetTextureWrap(const GLenum sAndT) {
     SetTextureWrap(sAndT, sAndT);
 }
 
-Texture::Texture(const GLenum target):m_alreadyBound(false), m_target(target){
+Texture::Texture(const GLenum target):m_target(target){
     GL_C(glGenTextures(1, &m_textureHandle));
 }
 

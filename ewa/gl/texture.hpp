@@ -18,7 +18,6 @@ private:
       PRIVATE VARIABLES
     */
     static GLfloat cachedMaxAnisotropic;
-    bool m_alreadyBound;
 
 protected:
 
