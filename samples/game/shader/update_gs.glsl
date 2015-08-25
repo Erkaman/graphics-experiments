@@ -17,11 +17,9 @@ uniform float gTime;
 uniform sampler1D gRandomTexture;
 uniform float gLauncherLifetime;
 uniform float gShellLifetime;
-uniform float gSecondaryShellLifetime;
 
 #define PARTICLE_TYPE_LAUNCHER 0.0f
 #define PARTICLE_TYPE_SHELL 1.0f
-#define PARTICLE_TYPE_SECONDARY_SHELL 2.0f
 
 vec3 GetRandomDir(float TexCoord) {
     vec3 Dir =  texture(gRandomTexture, TexCoord).xyz;
@@ -68,28 +66,7 @@ void main()
 	            Age1 = Age;
 	            EmitVertex();
 	            EndPrimitive();
-	        }
-            else {
-                for (int i = 0 ; i < 10 ; i++) {
-                     Type1 = PARTICLE_TYPE_SECONDARY_SHELL;
-                     Position1 = Position0[0];
-                     vec3 Dir = GetRandomDir((gTime + i)/1000.0);
-                     Velocity1 = normalize(Dir) / 20.0;
-                     Age1 = 0.0f;
-                     EmitVertex();
-                     EndPrimitive();
-                }
-            }
-        }
-        else { // secondary shell.
-            if (Age < gSecondaryShellLifetime) {
-                Type1 = PARTICLE_TYPE_SECONDARY_SHELL;
-                Position1 = Position0[0] + DeltaP;
-                Velocity1 = Velocity0[0] + DeltaV;
-                Age1 = Age;
-                EmitVertex();
-                EndPrimitive();
-            }
+	        } // else particle will die.
         }
     }
 }

@@ -31,7 +31,7 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
-    m_system = new ParticleSystem(Vector3f(0,0,0));
+    m_system = new ParticleSystem(Vector3f(10,-3,10));
 
 
     ::SetDepthTest(true);
@@ -39,9 +39,7 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,
-
-
-			  Vector3f(7.398285, -2.360752, 4.288156),Vector3f(0.258117, -0.137462, 0.956285)
+Vector3f(9.619988, -2.556720, 8.197560),Vector3f(0.239273, -0.065007, 0.968774)
 
 
 

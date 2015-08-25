@@ -14,7 +14,6 @@
 
 #define PARTICLE_TYPE_LAUNCHER 0.0f
 #define PARTICLE_TYPE_SHELL 1.0f
-#define PARTICLE_TYPE_SECONDARY_SHELL 2.0f
 
 using std::vector;
 
@@ -95,7 +94,6 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
 
     m_updateTechnique->SetUniform("gLauncherLifetime", 0.1f);
     m_updateTechnique->SetUniform("gShellLifetime", 10.0f);
-    m_updateTechnique->SetUniform("gSecondaryShellLifetime", 2.5f);
 
     m_updateTechnique->Unbind();
 
@@ -107,7 +105,7 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
     m_billboardTechnique->Bind();
 
 
-    m_texture = new Texture2D( "img/fireworks_red.png");
+    m_texture = new Texture2D( "img/smoke2.png");
 
     m_texture->Bind();
     m_texture->SetTextureRepeat();
@@ -115,9 +113,6 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
     m_texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
     m_texture->SetMagFilter(GL_LINEAR);
     m_texture->Unbind();
-
-
-    m_updateTechnique->Query();
 
 
 }
@@ -184,6 +179,11 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
     m_billboardTechnique->SetUniform("gVP", VP);
     m_billboardTechnique->SetUniform("gBillboardSize", 0.05f);
 
+    GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
+    GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+    GL_C(glDepthMask(GL_FALSE) );
+
     m_billboardTechnique->SetUniform("gColorMap", 0);
     Texture::SetActiveTextureUnit(0);
     m_texture->Bind();
@@ -197,6 +197,11 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
     GL_C(glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]));
 
     glDisableVertexAttribArray(0);
+
+    GL_C(glDisable(GL_BLEND));
+
+    GL_C(glDepthMask(GL_TRUE) );
+
 
     m_billboardTechnique->Unbind();
 }
