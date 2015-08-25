@@ -24,9 +24,6 @@ using std::string;
 using std::vector;
 
 
-constexpr float SIZE = 0.4f;
-
-
 Vector2f AngleToVector(const float angle) {
     const float radians = ToRadians(angle);
     return Vector2f(
@@ -40,6 +37,7 @@ Grass::~Grass() {
     MY_DELETE(m_grassIndexBuffer);
 
     MY_DELETE(m_billboardVertexBuffer);
+    MY_DELETE(m_billboardIndexBuffer);
 
 
     MY_DELETE(m_grassShader);
@@ -58,10 +56,10 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 
 
     m_grassNumTriangles = 0;
-    m_billboardNumPoints = 0;
+    m_billboardNumTriangles = 0;
 
     m_grassShader = new ShaderProgram("shader/grass");
-    m_billboardShader = new ShaderProgram("shader/part_billboard");
+    m_billboardShader = new ShaderProgram("shader/grass_billboard");
 
     m_grassTexture = new Texture2D("img/grass_billboard.png");
 
@@ -77,14 +75,17 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
     m_billboardVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{3} // pos.
+	vector<GLuint>{3,2} // pos, tex
 	);
+    m_billboardIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
     FloatVector grassVertices;
     UshortVector grassIndices;
 
     FloatVector billboardVertices;
+    UshortVector billboardIndices;
 
+    constexpr float SIZE = 0.4f;
 
     constexpr int COUNT = 20;
 
@@ -121,7 +122,7 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 	}
 
 
-	MakeGrass(grassPosition, rng.RandomFloat(-90,+90), grassVertices, grassIndices, billboardVertices, SIZE,SIZE);
+	MakeGrass(grassPosition, rng.RandomFloat(-90,+90), grassVertices, grassIndices, billboardVertices, billboardIndices, SIZE,SIZE);
 
 	grassPositions.push_back(grassPosition);
 
@@ -139,6 +140,12 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
     m_billboardVertexBuffer->Bind();
     m_billboardVertexBuffer->SetBufferData(billboardVertices);
     m_billboardVertexBuffer->Unbind();
+
+    m_billboardIndexBuffer->Bind();
+    m_billboardIndexBuffer->SetBufferData(billboardIndices);
+    m_billboardIndexBuffer->Unbind();
+
+
 }
 
 
@@ -147,7 +154,7 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     float cameraDist = ( Vector2f(camera.GetPosition().x, camera.GetPosition().z)  - m_position).Length();
 
-    if(/*cameraDist < 40*/false) {
+    if(cameraDist < 40) {
 
 	SetCullFace(false);
 
@@ -196,25 +203,20 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
 
 //	const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
-/*	m_billboardShader->SetUniform("model", model);
+	m_billboardShader->SetUniform("model", model);
 	m_billboardShader->SetUniform("view", view);
 
 	m_billboardShader->SetUniform("projection", camera.GetProjectionMatrix());
 	m_billboardShader->SetUniform("offset", m_position);
-*/
 
-	m_billboardShader->SetUniform("gCameraPos", camera.GetPosition());
-	m_billboardShader->SetUniform("gVP", camera.GetMvp());
-	m_billboardShader->SetUniform("gBillboardSize", SIZE/2.0f);
 
-	m_billboardShader->SetUniform("gColorMap", 0);
+	m_billboardShader->SetUniform("tex", 0);
 	Texture::SetActiveTextureUnit(0);
 	m_grassTexture->Bind();
 
-//	LOG_I("num points: %d",  m_billboardNumPoints );
 
 
-	VBO::DrawVertices(*m_billboardVertexBuffer, GL_POINTS, (m_billboardNumPoints));
+	VBO::DrawIndices(*m_billboardVertexBuffer, *m_billboardIndexBuffer, GL_TRIANGLES, (m_billboardNumTriangles)*3);
 
 	m_grassTexture->Unbind();
 
@@ -277,31 +279,45 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, Fl
     m_grassNumTriangles += 2;
 }
 
-void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, FloatVector& billboardVertices, const float width, const float height) {
+void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height) {
     GenerateGrassVertices(position, 0+angle,grassVertices, grassIndices, width,height);
     GenerateGrassVertices(position, 60+angle,grassVertices, grassIndices, width,height);
     GenerateGrassVertices(position, 120+angle,grassVertices, grassIndices, width,height);
 
-    GenerateBillboardVertices(position,billboardVertices, width,height);
+    GenerateBillboardVertices(position - m_position,billboardVertices, billboardIndices, width,height);
 }
 
-void Grass::GenerateBillboardVertices(const Vector2f position, FloatVector& billboardVertices, const float width, const float height) {
+void Grass::GenerateBillboardVertices(const Vector2f position, FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height) {
 
     GLushort baseIndex = billboardVertices.size() / (3+2);
 
 
     Vector2f dir = AngleToVector(0);
-    Vector3f centerPosition(position.x, m_heightMap->GetHeightAt(position.x, position.y) ,position.y);
+    Vector3f centerPosition(position.x, m_heightMap->GetHeightAt(position.x+m_position.x, position.y+m_position.y) ,position.y);
     dir.Normalize();
 
-/*    const float X = dir.x * width / 2.0f;
+    const float X = dir.x * width / 2.0f;
     const float Z = dir.y * width / 2.0f;
 
-    (centerPosition+Vector3f(-X, height, -Z)).Add(billboardVertices);*/
+    (centerPosition+Vector3f(-X, height, -Z)).Add(billboardVertices);
+    Vector2f(0.0f,0.0f).Add(billboardVertices);
 
-//    LOG_I("center %s", tos(centerPosition).c_str() );
+    (centerPosition+Vector3f(+X, height, +Z)).Add(billboardVertices);
+    Vector2f(1.0f,0.0f).Add(billboardVertices);
 
-    centerPosition.Add(billboardVertices);
+    (centerPosition+Vector3f(-X, 0, -Z)).Add(billboardVertices);
+    Vector2f(0.0f,1.0f).Add(billboardVertices);
 
-    m_billboardNumPoints += 1;
+    (centerPosition+Vector3f(+X, 0, +Z)).Add(billboardVertices);
+    Vector2f(1.0f,1.0f).Add(billboardVertices);
+
+    billboardIndices.push_back(baseIndex+0);
+    billboardIndices.push_back(baseIndex+1);
+    billboardIndices.push_back(baseIndex+2);
+
+    billboardIndices.push_back(baseIndex+1);
+    billboardIndices.push_back(baseIndex+3);
+    billboardIndices.push_back(baseIndex+2);
+
+    m_billboardNumTriangles += 2;
 }

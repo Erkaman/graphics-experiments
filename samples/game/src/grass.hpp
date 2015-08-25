@@ -27,11 +27,13 @@ private:
 
 
 
-    unsigned int m_billboardNumPoints;
+    unsigned int m_billboardNumTriangles;
     /*
       These are used to draw the billboard sun:
      */
     VBO* m_billboardVertexBuffer;
+    VBO* m_billboardIndexBuffer;
+
 
 
     ShaderProgram* m_grassShader;
@@ -49,10 +51,10 @@ private:
     void GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height);
 
 
-    void GenerateBillboardVertices(const Vector2f position, FloatVector& billboardVertices, const float width, const float height);
+    void GenerateBillboardVertices(const Vector2f position, FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height);
 
 
-    void MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices,    FloatVector& billboardVertices, const float width, const float height);
+    void MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices,    FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height);
 
 
 public:
