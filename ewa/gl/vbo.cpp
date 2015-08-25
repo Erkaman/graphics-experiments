@@ -174,23 +174,11 @@ void VBO::SetUsage(GLenum usage) {
 }
 
 void VBO::Bind() {
-
-    if(m_isBound) {
-	return;
-    }
-
     GL_C(glBindBuffer(m_target, m_buffer));
-    m_isBound = true;
 }
 
 void VBO::Unbind() {
-
-    if(!m_isBound) {
-	return;
-    }
-
     GL_C(glBindBuffer(m_target, 0));
-    m_isBound = false;
 }
 
 GLuint VBO::GetBuffer() {

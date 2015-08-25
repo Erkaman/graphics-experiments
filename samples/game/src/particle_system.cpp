@@ -69,6 +69,8 @@ ParticleSystem::~ParticleSystem()
 
 ParticleSystem::ParticleSystem(const Vector3f& Pos)
 {
+    count = 0;
+
     m_currVB = 0;
     m_currTFB = 1;
     m_isFirst = true;
@@ -172,10 +174,10 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
 void ParticleSystem::Print(int i) {
 
     // m_currVB
-/*
+
     Particle arr[5];
-           m_particleBuffer[i]->Unbind();
-           m_particleBuffer[i]->Bind();
+//    m_particleBuffer[i]->Unbind();
+//    m_particleBuffer[i]->Bind();
 
 	// binding in the wrong way?
 
@@ -189,7 +191,7 @@ void ParticleSystem::Print(int i) {
 	LOG_I("pos0: %s", tos(arr[0].Pos).c_str() );
 	LOG_I("pos1: %s", tos(arr[1].Pos).c_str() );
 	LOG_I("pos2: %s", tos(arr[2].Pos).c_str() );
-*/
+
 
 }
 
@@ -223,9 +225,10 @@ void ParticleSystem::UpdateParticles(int DeltaTimeMillis)
 
 //    m_particleBuffer[m_currVB]->Unbind();
 
-    Print(m_currVB);
-    Print(m_currTFB);
 
+/*    Print(m_currVB);
+    Print(m_currTFB);
+*/
 
 
 
@@ -240,6 +243,7 @@ void ParticleSystem::UpdateParticles(int DeltaTimeMillis)
 
     //  glBindBuffer(GL_ARRAY_BUFFER, m_particleBuffer[m_currVB]);
     // TODO: BIND VBO Her.
+//    m_particleBuffer[m_currVB]->Unbind();
     m_particleBuffer[m_currVB]->Bind();
 
     GL_C(glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, m_transformFeedback[m_currTFB]));
@@ -306,10 +310,10 @@ void ParticleSystem::UpdateParticles(int DeltaTimeMillis)
     m_updateTechnique->Unbind();
 
     GL_C(glDisable(GL_RASTERIZER_DISCARD));
-
+/*
     Print(m_currVB);
     Print(m_currTFB);
-
+*/
 
 
 
@@ -320,16 +324,16 @@ void ParticleSystem::UpdateParticles(int DeltaTimeMillis)
 
 void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraPos)
 {
-    Print(m_currVB);
+/*    Print(m_currVB);
     Print(m_currTFB);
-
+*/
 
     GL_C(glDisable(GL_RASTERIZER_DISCARD));
 
     m_billboardTechnique->Bind();
     m_billboardTechnique->SetUniform("gCameraPos", CameraPos);
     m_billboardTechnique->SetUniform("gVP", VP);
-    m_billboardTechnique->SetUniform("gBillboardSize", 1.0f);
+    m_billboardTechnique->SetUniform("gBillboardSize", 0.2f);
 
 
     m_billboardTechnique->SetUniform("gColorMap", 0);
@@ -352,7 +356,10 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
 
     m_billboardTechnique->Unbind();
 
-//    exit(1);
+    ++count;
+
+/*    if(count > 3)
+      exit(1);*/
 }
 
 /*

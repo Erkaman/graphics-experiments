@@ -214,7 +214,7 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
 //	LOG_I("num points: %d",  m_billboardNumPoints );
 
 
-	VBO::DrawVertices(*m_billboardVertexBuffer, GL_TRIANGLES, (m_billboardNumPoints));
+	VBO::DrawVertices(*m_billboardVertexBuffer, GL_POINTS, (m_billboardNumPoints));
 
 	m_grassTexture->Unbind();
 

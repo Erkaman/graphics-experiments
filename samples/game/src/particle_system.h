@@ -62,6 +62,8 @@ private:
     //RandomTexture m_randomTexture;
     Texture* m_texture;
     int m_time;
+
+    int count = 0;
 };
 
 

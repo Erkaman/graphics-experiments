@@ -81,7 +81,7 @@ void TuhuApplication::Render() {
     Vector4f lightPosition(93,10.0f,93, 1.0f);
    m_heightMap->Draw(*m_camera, lightPosition);
 
-    m_grass->Draw(*m_camera, lightPosition);
+//    m_grass->Draw(*m_camera, lightPosition);
 
     m_system->Render(m_camera->GetMvp(), m_camera->GetPosition());
 }
@@ -92,11 +92,11 @@ void TuhuApplication::Update(const float delta) {
 
     m_camera->HandleInput(delta);
 
-//    m_system->Update(delta);
+    m_system->Update(delta);
 
       m_skydome->Update(delta);
 
-      m_grass->Update(delta);
+//      m_grass->Update(delta);
 
     const KeyboardState& kbs = KeyboardState::GetInstance();
 
