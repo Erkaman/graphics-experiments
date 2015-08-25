@@ -1,21 +1,3 @@
-/*
-
-	Copyright 2011 Etay Meiri
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include "particle_system.h"
 
 #include "ewa/math/vector3f.hpp"
@@ -112,8 +94,8 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
     m_updateTechnique->Bind();
 
     m_updateTechnique->SetUniform("gLauncherLifetime", 0.1f);
-    m_updateTechnique->SetUniform("gShellLifetime", /*10.0f*/ 1000000000.0f);
-    m_updateTechnique->SetUniform("gSecondaryShellLifetime", /*2.5f*/ 10000000.0f);
+    m_updateTechnique->SetUniform("gShellLifetime", 10.0f);
+    m_updateTechnique->SetUniform("gSecondaryShellLifetime", 2.5f);
 
     m_updateTechnique->Unbind();
 
@@ -136,29 +118,6 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
 
 
     m_updateTechnique->Query();
-
-
-    LOG_I("BEGIN");
-    Print(m_currVB);
-    Print(m_currTFB);
-}
-
-void ParticleSystem::Print(int i) {
-    Particle arr[20];
-//    m_particleBuffer[i]->Unbind();
-//    m_particleBuffer[i]->Bind();
-
-    // binding in the wrong way?
-
-
-    m_particleBuffer[i]->GetBufferSubData(0, sizeof(arr), &arr);
-
-    for(int i =0; i < 20; ++i) {
-
-	Particle p = arr[0];
-
-	LOG_I("%d age: %f, vel: %s, type: %f", i, p.LifetimeMillis, tos(p.Vel).c_str(), p.Type );
-    }
 
 
 }
@@ -198,12 +157,6 @@ void ParticleSystem::UpdateParticles(float delta){
 
     // TODO: enabledinterleaved here!
 
-
-//    Query query(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN);
-
-
-//    query.Bind();
-
     GL_C(glBeginTransformFeedback(GL_POINTS));
     // within begin/end, we'll render frmo currVB, and the rendered vertices will be captured in currTFB
 
@@ -212,7 +165,6 @@ void ParticleSystem::UpdateParticles(float delta){
     if (m_isFirst) {
 	// VBO:: call draw arrays in VBO here
 	m_particleBuffer[m_currVB]->DrawVertices(GL_POINTS, 1);
-//        glDrawArrays(GL_POINTS, 0, 1);
 
         m_isFirst = false;
     }
@@ -224,33 +176,17 @@ void ParticleSystem::UpdateParticles(float delta){
 
     GL_C(glEndTransformFeedback());
 
-//    query.Unbind();
-
-//    glFlush();
-
-//    LOG_I("feedback result: %d", query.GetResult());
-
-
-
     m_particleBuffer[m_currVB]->DisableVertexAttribInterleavedWithBind();
 
 
     m_updateTechnique->Unbind();
 
     GL_C(glDisable(GL_RASTERIZER_DISCARD));
-/*
-    Print(m_currVB);
-    Print(m_currTFB);
-*/
 }
 
 
 void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraPos)
 {
-/*    Print(m_currVB);
-    Print(m_currTFB);
-*/
-
     GL_C(glDisable(GL_RASTERIZER_DISCARD));
 
     m_billboardTechnique->Bind();
@@ -261,8 +197,6 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
     m_billboardTechnique->SetUniform("gColorMap", 0);
     Texture::SetActiveTextureUnit(0);
     m_texture->Bind();
-//    m_pTexture->Bind(COLOR_TEXTURE_UNIT);
-
 
     m_particleBuffer[m_currTFB]->Bind();
 
@@ -276,15 +210,4 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
     glDisableVertexAttribArray(0);
 
     m_billboardTechnique->Unbind();
-
-    ++count;
-
-    /*  if(count > 8) {
-	LOG_I("OVER");
-    Print(m_currVB);
-    Print(m_currTFB);
-    LOG_I("m_time. %f", m_time);
-      exit(1);
-
-      }*/
 }

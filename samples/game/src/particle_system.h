@@ -21,10 +21,6 @@
 
 #include "ewa/gl/gl_common.hpp"
 
-//#include <GL/glew.h>
-
-
-
 class Vector3f;
 class Matrix4f;
 class Matrix4f;
@@ -42,7 +38,6 @@ public:
 
     void Render(const Matrix4f& VP, const Vector3f& CameraPos);
     void Update(float delta);
-    void Print(int i);
 
 private:
 
@@ -54,13 +49,11 @@ private:
     bool m_isFirst;
     unsigned int m_currVB;
     unsigned int m_currTFB;
-//    GLuint m_particleBuffer[2];
     VBO* m_particleBuffer[2];
 
     GLuint m_transformFeedback[2];
     ShaderProgram* m_updateTechnique;
     ShaderProgram* m_billboardTechnique;
-    //RandomTexture m_randomTexture;
     Texture* m_texture;
     float m_time;
 
