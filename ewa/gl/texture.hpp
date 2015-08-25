@@ -109,4 +109,16 @@ public:
 
     static void SetActiveTextureUnit(const GLenum textureUnit);
 
+    template<typename T>
+    T* GetPixels(size_t size, GLenum format/* GL_RGBA*/, GLenum type/*GL_UNSIGNED_BYTE */) {
+	// first, get the raw pixel data from opengl
+	Bind();
+//    size_t size = m_width* m_height * 4;
+	T* pixels = new T[size];
+	GL_C(glGetTexImage(m_target, 0, format, type, pixels));
+	Unbind();
+	return pixels;
+    }
+
+
 };

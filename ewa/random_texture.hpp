@@ -7,6 +7,5 @@
 class RandomTexture : public Texture{
 public:
     RandomTexture(GLsizei size, Seed seed);
-    ~RandomTexture();
 
 };

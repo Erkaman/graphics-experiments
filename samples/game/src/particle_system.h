@@ -31,6 +31,7 @@ class Matrix4f;
 class Texture;
 class ShaderProgram;
 class VBO;
+class RandomTexture;
 
 class ParticleSystem
 {
@@ -62,6 +63,8 @@ private:
     //RandomTexture m_randomTexture;
     Texture* m_texture;
     float m_time;
+
+    RandomTexture* m_randomTexture;
 
     int count = 0;
 };

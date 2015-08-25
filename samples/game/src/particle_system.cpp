@@ -57,6 +57,7 @@ void beforeLinkingHook(GLuint shaderProgram) {
 ParticleSystem::~ParticleSystem()
 {
     MY_DELETE(m_texture);
+    MY_DELETE(m_randomTexture);
 
     if (m_transformFeedback[0] != 0) {
         glDeleteTransformFeedbacks(2, m_transformFeedback);
@@ -116,12 +117,8 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
 
     m_updateTechnique->Unbind();
 
+    m_randomTexture = new RandomTexture(1000, 2);
 
-/*    if (!m_randomTexture.InitRandomTexture(1000)) {
-        return false;
-	}*/
-
-//    m_randomTexture.Bind(RANDOM_TEXTURE_UNIT);
 
     m_billboardTechnique = new ShaderProgram("shader/part_billboard");
 
@@ -185,7 +182,11 @@ void ParticleSystem::UpdateParticles(float delta){
     m_updateTechnique->SetUniform("gTime", m_time);
     m_updateTechnique->SetUniform("gDeltaTimeSecs", delta);
 
-//    m_randomTexture.Bind(RANDOM_TEXTURE_UNIT);
+
+    m_updateTechnique->SetUniform("gRandomTexture", 0);
+    Texture::SetActiveTextureUnit(0);
+    m_randomTexture->Bind();
+
 
     GL_C(glEnable(GL_RASTERIZER_DISCARD));
 

@@ -2,29 +2,35 @@
 
 #include "math/vector3f.hpp"
 
+#include "log.hpp"
+
 RandomTexture::RandomTexture(GLsizei size, Seed seed):  Texture(GL_TEXTURE_1D) {
 
-    std::vector<Vector3f> randomData(size);
-    randomData.reserve(size);
+    Vector3f* randomData = new Vector3f[size];
+//    randomData.reserve(size);
 
     Random rng(seed);
 
     for (GLsizei i = 0 ; i < size ; i++) {
 
-	randomData.push_back(Vector3f(
-				 rng.RandomFloat(),
-				 rng.RandomFloat(),
-				 rng.RandomFloat()
-				 ));
+	Vector3f v(
+	    rng.RandomFloat(),
+	    rng.RandomFloat(),
+	    rng.RandomFloat()
+	    );
+
+	randomData[i] = v;
     }
 
     Bind();
-    {
-	GL_C(glTexImage1D(m_target, 0, GL_RGB, size, 0, GL_RGB, GL_FLOAT, &randomData[0]));
+	GL_C(glTexImage1D(m_target, 0, GL_RGB, size, 0, GL_RGB, GL_FLOAT, randomData));
+    Unbind();
 
+    delete [] randomData;
+
+    Bind();
 	SetTextureRepeat();
 	SetMinFilter(GL_LINEAR);
 	SetMagFilter(GL_LINEAR);
-    }
     Unbind();
 }

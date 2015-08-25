@@ -23,9 +23,8 @@ uniform float gSecondaryShellLifetime;
 #define PARTICLE_TYPE_SHELL 1.0f
 #define PARTICLE_TYPE_SECONDARY_SHELL 2.0f
 
-vec3 GetRandomDir(float TexCoord)
-{
-     vec3 Dir = texture(gRandomTexture, TexCoord).xyz;
+vec3 GetRandomDir(float TexCoord) {
+    vec3 Dir =  texture(gRandomTexture, TexCoord).xyz;
      Dir -= vec3(0.5, 0.5, 0.5);
      return Dir;
 }
@@ -38,7 +37,7 @@ void main()
         if (Age >= gLauncherLifetime) {
             Type1 = PARTICLE_TYPE_SHELL;
             Position1 = Position0[0];
-            vec3 Dir = vec3(0,0.01, 0);//GetRandomDir(gTime/1000.0);// fix a random dir function!
+            vec3 Dir = GetRandomDir(gTime);// fix a random dir function!
             Dir.y = max(Dir.y, 0.5);
             Velocity1 = normalize(Dir) / 20.0; // maybe the dir is too slow?
             Age1 = 0.0;
