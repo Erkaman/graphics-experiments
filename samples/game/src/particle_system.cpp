@@ -155,29 +155,19 @@ void ParticleSystem::UpdateParticles(float delta){
 
     m_particleBuffer[m_currVB]->EnableVertexAttribInterleavedWithBind();
 
-    // TODO: enabledinterleaved here!
-
     GL_C(glBeginTransformFeedback(GL_POINTS));
-    // within begin/end, we'll render frmo currVB, and the rendered vertices will be captured in currTFB
-
-
 
     if (m_isFirst) {
-	// VBO:: call draw arrays in VBO here
 	m_particleBuffer[m_currVB]->DrawVertices(GL_POINTS, 1);
-
         m_isFirst = false;
     }
     else {
-
-	// m_transformFeedback[m_currVB] is the transform feedback buffer bound to the current vertex buffer. from that vb we fetch the number of vertices to draw.
         GL_C(glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currVB]));
     }
 
     GL_C(glEndTransformFeedback());
 
     m_particleBuffer[m_currVB]->DisableVertexAttribInterleavedWithBind();
-
 
     m_updateTechnique->Unbind();
 
@@ -204,7 +194,6 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)4);  // position
 
-    // instead of using normal drawelements we use glDrawTransformFeedback here instead!
     GL_C(glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]));
 
     glDisableVertexAttribArray(0);
