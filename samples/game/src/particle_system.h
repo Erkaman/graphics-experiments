@@ -28,6 +28,9 @@ public:
     void SetMaxVelocity(const Vector3f& vel);
     void SetMaxParticles(size_t maxParticles);
     void SetTexture(Texture* texture);
+    void SetEmitRate(float emitRate);
+    void SetParticleLifetime(float particleLifetime);
+    void SetBillboardSize(float billboardSize);
 
 private:
 
@@ -47,6 +50,9 @@ private:
     Vector3f m_maxVelocity;
     size_t m_maxParticles;
     Texture* m_texture;
+    float m_emitRate;
+    float m_particleLifetime;
+    float m_billboardSize;
 };
 
 

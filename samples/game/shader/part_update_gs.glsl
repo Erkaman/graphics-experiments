@@ -15,7 +15,7 @@ out float age1;
 uniform float deltaTime;
 uniform float time;
 uniform sampler1D randomTexture;
-uniform float emitInterval;
+uniform float emitRate;
 uniform float particleLifetime;
 
 uniform vec3 minVelocity;
@@ -43,7 +43,7 @@ void main() {
     float age = age0[0] + deltaTime;
 
     if (type0[0] == PARTICLE_TYPE_EMITTER) {
-        if (age >= emitInterval) {
+        if (age >= emitRate) {
             type1 = PARTICLE_TYPE_PARTICLE;
             position1 = position0[0];
 

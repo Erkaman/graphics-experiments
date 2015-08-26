@@ -38,7 +38,9 @@ void TuhuApplication::Init() {
     m_system->SetMinVelocity(Vector3f(-A,A,-A));
     m_system->SetMaxVelocity(Vector3f(A,1.0f / 20.0f,A));
     m_system->SetMaxParticles(1000);
-
+    m_system->SetEmitRate(0.1f);
+    m_system->SetParticleLifetime(10.0f);
+    m_system->SetBillboardSize(0.09f);
 
     Texture* texture = new Texture2D("img/smoke2.png");
 

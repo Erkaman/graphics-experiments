@@ -110,8 +110,8 @@ void ParticleSystem::Update(float delta){
 
     m_particleUpdateShader->SetUniform("minVelocity", m_minVelocity);
     m_particleUpdateShader->SetUniform("maxVelocity", m_maxVelocity);
-    m_particleUpdateShader->SetUniform("emitInterval", 0.1f);
-    m_particleUpdateShader->SetUniform("particleLifetime", 10.0f);
+    m_particleUpdateShader->SetUniform("emitRate", m_emitRate);
+    m_particleUpdateShader->SetUniform("particleLifetime", m_particleLifetime );
 
 
     m_particleUpdateShader->SetUniform("randomTexture", 0);
@@ -153,7 +153,7 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
     m_particleBillboardShader->Bind();
     m_particleBillboardShader->SetUniform("gCameraPos", CameraPos);
     m_particleBillboardShader->SetUniform("gVP", VP);
-    m_particleBillboardShader->SetUniform("gBillboardSize", 0.05f);
+    m_particleBillboardShader->SetUniform("gBillboardSize", m_billboardSize);
 
 
     GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
@@ -204,4 +204,16 @@ void ParticleSystem::SetMaxParticles(size_t maxParticles) {
 
 void ParticleSystem::SetTexture(Texture* texture) {
     m_texture = texture;
+}
+
+void ParticleSystem::SetEmitRate(float emitRate) {
+    m_emitRate = emitRate;
+}
+
+void ParticleSystem::SetParticleLifetime(float particleLifetime) {
+    m_particleLifetime = particleLifetime;
+}
+
+void ParticleSystem::SetBillboardSize(float billboardSize) {
+    m_billboardSize = billboardSize;
 }
