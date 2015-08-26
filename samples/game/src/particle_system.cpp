@@ -56,11 +56,11 @@ ParticleSystem::ParticleSystem(){
     m_texture = NULL;
 }
 
-void ParticleSystem::Init(const Vector3f& Pos){
+void ParticleSystem::Init(){
     Particle* Particles  = new Particle[m_maxParticles];
 
     Particles[0].type = PARTICLE_TYPE_EMITTER;
-    Particles[0].pos = Pos;
+    Particles[0].pos = m_emitPosition;
     Particles[0].vel = Vector3f(0.0f);
     Particles[0].lifetime = 0.0f;
 
@@ -112,6 +112,7 @@ void ParticleSystem::Update(float delta){
     m_particleUpdateShader->SetUniform("maxVelocity", m_maxVelocity);
     m_particleUpdateShader->SetUniform("emitRate", m_emitRate);
     m_particleUpdateShader->SetUniform("particleLifetime", m_particleLifetime );
+    m_particleUpdateShader->SetUniform("emitPosition", m_emitPosition );
 
 
     m_particleUpdateShader->SetUniform("randomTexture", 0);
@@ -168,12 +169,15 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
     m_particleBuffer[m_currTFB]->Bind();
 
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)4);  // position
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)0);  // position
 
     GL_C(glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]));
 
     glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
 
     GL_C(glDisable(GL_BLEND));
 
@@ -216,4 +220,8 @@ void ParticleSystem::SetParticleLifetime(float particleLifetime) {
 
 void ParticleSystem::SetBillboardSize(float billboardSize) {
     m_billboardSize = billboardSize;
+}
+
+void ParticleSystem::SetEmitPosition(const Vector3f& emitPosition) {
+    m_emitPosition = emitPosition;
 }

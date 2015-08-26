@@ -20,6 +20,7 @@ uniform float particleLifetime;
 
 uniform vec3 minVelocity;
 uniform vec3 maxVelocity;
+uniform vec3 emitPosition;
 
 #define PARTICLE_TYPE_EMITTER 0.0f
 #define PARTICLE_TYPE_PARTICLE 1.0f
@@ -45,7 +46,7 @@ void main() {
     if (type0[0] == PARTICLE_TYPE_EMITTER) {
         if (age >= emitRate) {
             type1 = PARTICLE_TYPE_PARTICLE;
-            position1 = position0[0];
+            position1 = emitPosition;
 
 	    velocity1 = GetRandomDir(time, minVelocity, maxVelocity);
 
@@ -56,7 +57,7 @@ void main() {
 	}
 
         type1 = PARTICLE_TYPE_EMITTER;
-        position1 = position0[0];
+        position1 = position0[0]; // is basically unused.
         velocity1 = velocity0[0];
         age1 = age;
         EmitVertex();

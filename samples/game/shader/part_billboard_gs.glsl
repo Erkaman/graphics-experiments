@@ -6,10 +6,16 @@ uniform mat4 gVP;
 uniform vec3 gCameraPos;
 uniform float gBillboardSize;
 
+in float type[];
+
 out vec2 TexCoord;
 
 void main()
 {
+    if(type[0] == 0) {
+
+    } else {
+
     vec3 Pos = gl_in[0].gl_Position.xyz;
     vec3 toCamera = normalize(gCameraPos - Pos);
     vec3 up = vec3(0.0, 1.0, 0.0);
@@ -37,4 +43,6 @@ void main()
     EmitVertex();
 
     EndPrimitive();
+
+    }
 }

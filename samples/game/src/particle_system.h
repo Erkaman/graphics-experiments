@@ -17,7 +17,7 @@ class ParticleSystem
 {
 public:
     ParticleSystem();
-    void Init(const Vector3f& pos);
+    void Init();
 
     ~ParticleSystem();
 
@@ -31,6 +31,7 @@ public:
     void SetEmitRate(float emitRate);
     void SetParticleLifetime(float particleLifetime);
     void SetBillboardSize(float billboardSize);
+    void SetEmitPosition(const Vector3f& emitPosition);
 
 private:
 
@@ -51,6 +52,7 @@ private:
     size_t m_maxParticles;
     Texture* m_texture;
     float m_emitRate;
+    Vector3f m_emitPosition;
     float m_particleLifetime;
     float m_billboardSize;
 };

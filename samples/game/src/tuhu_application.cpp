@@ -41,6 +41,9 @@ void TuhuApplication::Init() {
     m_system->SetEmitRate(0.1f);
     m_system->SetParticleLifetime(10.0f);
     m_system->SetBillboardSize(0.09f);
+    m_system->SetEmitPosition(Vector3f(10,-3,10));
+
+    LOG_I("log1");
 
     Texture* texture = new Texture2D("img/smoke2.png");
 
@@ -54,9 +57,8 @@ void TuhuApplication::Init() {
     m_system->SetTexture(texture);
 
 
+    m_system->Init();
 
-
-    m_system->Init(Vector3f(10,-3,10));
 
     ::SetDepthTest(true);
 

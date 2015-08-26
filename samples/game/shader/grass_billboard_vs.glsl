@@ -6,7 +6,6 @@ uniform mat4 model;
 uniform mat4 projection;
 uniform vec2 offset;
 
-
 out vec2 texCoord;
 
 void main()
