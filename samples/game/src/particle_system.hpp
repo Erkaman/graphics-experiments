@@ -19,7 +19,7 @@ public:
     ParticleSystem();
     void Init();
 
-    ~ParticleSystem();
+    virtual ~ParticleSystem();
 
     void Render(const Matrix4f& VP, const Vector3f& CameraPos);
     void Update(float delta);

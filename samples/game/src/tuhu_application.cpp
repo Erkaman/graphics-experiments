@@ -5,14 +5,14 @@
 #include "ewa/font.hpp"
 #include "ewa/keyboard_state.hpp"
 
-#include "ewa/gl/texture2d.hpp"
 
 #include "ewa/audio/sound.hpp"
 
 #include "skydome.hpp"
 #include "height_map.hpp"
 #include "grass.hpp"
-#include "particle_system.h"
+#include "particle_system.hpp"
+#include "smoke_effect.hpp"
 
 using namespace std;
 
@@ -32,33 +32,10 @@ TuhuApplication::~TuhuApplication() {
 }
 
 void TuhuApplication::Init() {
-    m_system = new ParticleSystem();
-
-    constexpr float A = 0.02886f;
-    m_system->SetMinVelocity(Vector3f(-A,A,-A));
-    m_system->SetMaxVelocity(Vector3f(A,1.0f / 20.0f,A));
-    m_system->SetMaxParticles(1000);
-    m_system->SetEmitRate(0.1f);
-    m_system->SetParticleLifetime(10.0f);
-    m_system->SetBillboardSize(0.09f);
-    m_system->SetEmitPosition(Vector3f(10,-3,10));
-    m_system->SetEmitRange(Vector3f(0,0,0));
-
-    LOG_I("log1");
-
-    Texture* texture = new Texture2D("img/smoke2.png");
-
-    texture->Bind();
-    texture->SetTextureRepeat();
-    texture->GenerateMipmap();
-    texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-    texture->SetMagFilter(GL_LINEAR);
-    texture->Unbind();
-
-    m_system->SetTexture(texture);
+    m_smoke = new SmokeEffect(Vector3f(10,-3,10));
 
 
-    m_system->Init();
+    m_smoke->Init();
 
 
     ::SetDepthTest(true);
@@ -108,14 +85,14 @@ void TuhuApplication::Render() {
 
     m_grass->Draw(*m_camera, lightPosition);
 
-    m_system->Render(m_camera->GetMvp(), m_camera->GetPosition());
+    m_smoke->Render(m_camera->GetMvp(), m_camera->GetPosition());
 }
 
 void TuhuApplication::Update(const float delta) {
 
     m_camera->HandleInput(delta);
 
-    m_system->Update(delta);
+    m_smoke->Update(delta);
 
       m_skydome->Update(delta);
 

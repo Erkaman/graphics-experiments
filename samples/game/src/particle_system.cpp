@@ -1,4 +1,4 @@
-#include "particle_system.h"
+#include "particle_system.hpp"
 
 #include "ewa/math/vector3f.hpp"
 #include "ewa/common.hpp"
@@ -45,6 +45,10 @@ ParticleSystem::~ParticleSystem()
 
     MY_DELETE(m_particleBuffer[0]);
     MY_DELETE(m_particleBuffer[1]);
+
+    MY_DELETE(m_particleUpdateShader);
+    MY_DELETE(m_particleBillboardShader);
+
 }
 
 

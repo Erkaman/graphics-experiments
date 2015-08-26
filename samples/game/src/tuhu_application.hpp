@@ -23,7 +23,7 @@ private:
 
     Sound* m_windSound;
 
-    ParticleSystem* m_system;
+    ParticleSystem* m_smoke;
 
 public:
 
