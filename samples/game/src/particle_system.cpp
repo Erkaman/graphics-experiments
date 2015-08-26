@@ -26,13 +26,13 @@ struct Particle
 };
 
 void beforeLinkingHook(GLuint shaderProgram) {
-    const GLchar* Varyings[4];
-    Varyings[0] = "Type1";
-    Varyings[1] = "Position1";
-    Varyings[2] = "Velocity1";
-    Varyings[3] = "Age1";
+    const GLchar* varyings[4];
+    varyings[0] = "type1";
+    varyings[1] = "position1";
+    varyings[2] = "velocity1";
+    varyings[3] = "age1";
 
-    GL_C(glTransformFeedbackVaryings(shaderProgram, 4, Varyings, GL_INTERLEAVED_ATTRIBS));
+    GL_C(glTransformFeedbackVaryings(shaderProgram, 4, varyings, GL_INTERLEAVED_ATTRIBS));
 }
 
 ParticleSystem::~ParticleSystem()

@@ -2,15 +2,15 @@ layout(points) in;
 layout(points) out;
 layout(max_vertices = 30) out;
 
-in float Type0[];
-in vec3 Position0[];
-in vec3 Velocity0[];
-in float Age0[];
+in float type0[];
+in vec3 position0[];
+in vec3 velocity0[];
+in float age0[];
 
-out float Type1;
-out vec3 Position1;
-out vec3 Velocity1;
-out float Age1;
+out float type1;
+out vec3 position1;
+out vec3 velocity1;
+out float age1;
 
 uniform float deltaTime;
 uniform float time;
@@ -45,38 +45,38 @@ vec3 GetRandomDir(float seed, vec3 minVel, vec3 maxVel) {
 }
 
 void main() {
-    float Age = Age0[0] + deltaTime;
+    float age = age0[0] + deltaTime;
 
-    if (Type0[0] == PARTICLE_TYPE_EMITTER) {
-        if (Age >= emitInterval) {
-            Type1 = PARTICLE_TYPE_PARTICLE;
-            Position1 = Position0[0];
+    if (type0[0] == PARTICLE_TYPE_EMITTER) {
+        if (age >= emitInterval) {
+            type1 = PARTICLE_TYPE_PARTICLE;
+            position1 = position0[0];
 
-	    Velocity1 = GetRandomDir(time, minVelocity, maxVelocity);
+	    velocity1 = GetRandomDir(time, minVelocity, maxVelocity);
 
-            Age1 = 0.0;
+            age1 = 0.0;
             EmitVertex();
             EndPrimitive();
-            Age = 0.0;
+            age = 0.0;
 	}
 
-        Type1 = PARTICLE_TYPE_EMITTER;
-        Position1 = Position0[0];
-        Velocity1 = Velocity0[0];
-        Age1 = Age;
+        type1 = PARTICLE_TYPE_EMITTER;
+        position1 = position0[0];
+        velocity1 = velocity0[0];
+        age1 = age;
         EmitVertex();
         EndPrimitive();
     }
     else {
-        vec3 DeltaP = deltaTime * Velocity0[0];
+        vec3 DeltaP = deltaTime * velocity0[0];
         vec3 DeltaV = deltaTime * vec3(0.0, 0.0, 0.0);
 
-        if (Type0[0] == PARTICLE_TYPE_PARTICLE)  {
-	        if (Age < particleLifetime) {
-	            Type1 = PARTICLE_TYPE_PARTICLE;
-	            Position1 = Position0[0] + DeltaP;
-	            Velocity1 = Velocity0[0] + DeltaV;
-	            Age1 = Age;
+        if (type0[0] == PARTICLE_TYPE_PARTICLE)  {
+	        if (age < particleLifetime) {
+	            type1 = PARTICLE_TYPE_PARTICLE;
+	            position1 = position0[0] + DeltaP;
+	            velocity1 = velocity0[0] + DeltaV;
+	            age1 = age;
 	            EmitVertex();
 	            EndPrimitive();
 	        } // else particle will die.
