@@ -17,6 +17,7 @@ uniform float time;
 uniform sampler1D randomTexture;
 uniform float emitRate;
 uniform float particleLifetime;
+uniform float emitCount;
 
 uniform vec3 minVelocity;
 uniform vec3 maxVelocity;
@@ -55,14 +56,20 @@ void main() {
 
     if (type0[0] == PARTICLE_TYPE_EMITTER) {
         if (age >= emitRate) {
-            type1 = PARTICLE_TYPE_PARTICLE;
-            position1 = GetRandomPosition(time, emitPosition, emitRange);
 
-	    velocity1 = GetRandomDir(time, minVelocity, maxVelocity);
+	    for(int i = 0; i < 10; ++i) {
+
+            type1 = PARTICLE_TYPE_PARTICLE;
+	    float seed = (time+i)/10.0;
+            position1 = GetRandomPosition(seed, emitPosition, emitRange);
+
+	    velocity1 = GetRandomDir(seed, minVelocity, maxVelocity);
 
             age1 = 0.0;
             EmitVertex();
             EndPrimitive();
+	    }
+
             age = 0.0;
 	}
 

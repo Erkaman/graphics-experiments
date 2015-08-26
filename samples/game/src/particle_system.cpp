@@ -1,6 +1,8 @@
 #include "particle_system.hpp"
 
 #include "ewa/math/vector3f.hpp"
+#include "ewa/math/matrix4f.hpp"
+
 #include "ewa/common.hpp"
 #include "ewa/gl/texture2d.hpp"
 #include "ewa/gl/shader_program.hpp"
@@ -58,6 +60,10 @@ ParticleSystem::ParticleSystem(){
     m_isFirst = true;
     m_time = 0;
     m_texture = NULL;
+
+    SetMaxParticles(1000);
+    SetWarmupFrames(0);
+    SetEmitCount(1);
 }
 
 void ParticleSystem::Init(){
@@ -103,9 +109,41 @@ void ParticleSystem::Init(){
 
     delete [] Particles;
 
+    // finally, we warm up the particle system.
+/*    if(m_warmupFrames > 0) {
+
+
+	const float DELTA = 1.0 / 60.0f; // TODO, fix so that it handles frame rates other than 60.
+
+
+	GL_C(glEnable(GL_RASTERIZER_DISCARD));
+
+	for(int i = 0; i < m_warmupFrames; ++i)  {
+
+	    UpdateParticles(DELTA);
+
+	    m_currVB = m_currTFB;
+	    m_currTFB = (m_currTFB + 1) % 2;
+	}
+
+	GL_C(glDisable(GL_RASTERIZER_DISCARD));
+	}*/
+
+
 }
 
 void ParticleSystem::Update(float delta){
+    GL_C(glEnable(GL_RASTERIZER_DISCARD));
+
+//    LOG_I("time: %f", delta);
+
+    UpdateParticles(delta);
+
+    GL_C(glDisable(GL_RASTERIZER_DISCARD));
+}
+
+
+void ParticleSystem::UpdateParticles(float delta){
     m_time += delta;
 
         m_particleUpdateShader->Bind();
@@ -118,13 +156,12 @@ void ParticleSystem::Update(float delta){
     m_particleUpdateShader->SetUniform("particleLifetime", m_particleLifetime );
     m_particleUpdateShader->SetUniform("emitPosition", m_emitPosition );
     m_particleUpdateShader->SetUniform("emitRange", m_emitRange );
+    m_particleUpdateShader->SetUniform("emitCount", m_emitCount );
 
     m_particleUpdateShader->SetUniform("randomTexture", 0);
     Texture::SetActiveTextureUnit(0);
     m_randomTexture->Bind();
 
-
-    GL_C(glEnable(GL_RASTERIZER_DISCARD));
 
     m_particleBuffer[m_currVB]->Bind();
 
@@ -133,6 +170,8 @@ void ParticleSystem::Update(float delta){
     m_particleBuffer[m_currVB]->EnableVertexAttribInterleavedWithBind();
 
     GL_C(glBeginTransformFeedback(GL_POINTS));
+
+
 
     if (m_isFirst) {
 	m_particleBuffer[m_currVB]->DrawVertices(GL_POINTS, 1);
@@ -144,16 +183,25 @@ void ParticleSystem::Update(float delta){
 
     GL_C(glEndTransformFeedback());
 
+
     m_particleBuffer[m_currVB]->DisableVertexAttribInterleavedWithBind();
 
     m_particleUpdateShader->Unbind();
 
-    GL_C(glDisable(GL_RASTERIZER_DISCARD));
 }
 
 void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
-
     GL_C(glDisable(GL_RASTERIZER_DISCARD));
+
+    RenderParticles(VP, CameraPos);
+
+    m_currVB = m_currTFB;
+    m_currTFB = (m_currTFB + 1) % 2;
+}
+
+
+void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraPos){
+
 
     m_particleBillboardShader->Bind();
     m_particleBillboardShader->SetUniform("gCameraPos", CameraPos);
@@ -189,8 +237,7 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
 
     m_particleBillboardShader->Unbind();
 
-    m_currVB = m_currTFB;
-    m_currTFB = (m_currTFB + 1) % 2;
+
 }
 
 /*
@@ -232,4 +279,13 @@ void ParticleSystem::SetEmitPosition(const Vector3f& emitPosition) {
 
 void ParticleSystem::SetEmitRange(const Vector3f& emitRange) {
     m_emitRange = emitRange;
+}
+
+
+void ParticleSystem::SetWarmupFrames(const int warmupFrames) {
+    m_warmupFrames = warmupFrames;
+}
+
+void ParticleSystem::SetEmitCount(const int emitCount) {
+    m_emitCount = emitCount;
 }

@@ -21,8 +21,8 @@ public:
 
     virtual ~ParticleSystem();
 
-    void Render(const Matrix4f& VP, const Vector3f& CameraPos);
-    void Update(float delta);
+    virtual void Render(const Matrix4f& VP, const Vector3f& CameraPos);
+    virtual void Update(float delta);
 
     void SetMinVelocity(const Vector3f& vel);
     void SetMaxVelocity(const Vector3f& vel);
@@ -33,8 +33,14 @@ public:
     void SetBillboardSize(float billboardSize);
     void SetEmitPosition(const Vector3f& emitPosition);
     void SetEmitRange(const Vector3f& emitRange);
+    void SetWarmupFrames(const int warmupFrames);
+    void SetEmitCount(const int emitCount);
 
 private:
+
+    void UpdateParticles(float delta);
+    void RenderParticles(const Matrix4f& VP, const Vector3f& CameraPos);
+
 
     bool m_isFirst;
     unsigned int m_currVB;
@@ -57,6 +63,8 @@ private:
     Vector3f m_emitRange;
     float m_particleLifetime;
     float m_billboardSize;
+    int m_warmupFrames;
+    int m_emitCount;
 };
 
 

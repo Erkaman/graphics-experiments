@@ -131,6 +131,7 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Matrix4f& m
 
 
 void ShaderProgram::SetUniform(const std::string& uniformName, const int val) {
+
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	GL_C(glUniform1i(location, val));

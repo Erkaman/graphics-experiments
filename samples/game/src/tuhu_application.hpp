@@ -24,6 +24,7 @@ private:
     Sound* m_windSound;
 
     ParticleSystem* m_smoke;
+    ParticleSystem* m_snow;
 
 public:
 
