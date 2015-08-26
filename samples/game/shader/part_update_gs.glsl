@@ -18,13 +18,8 @@ uniform sampler1D randomTexture;
 uniform float emitInterval;
 uniform float particleLifetime;
 
-
 uniform vec3 minVelocity;
 uniform vec3 maxVelocity;
-
-
-
-
 
 #define PARTICLE_TYPE_EMITTER 0.0f
 #define PARTICLE_TYPE_PARTICLE 1.0f

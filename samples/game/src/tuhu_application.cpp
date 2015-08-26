@@ -5,6 +5,8 @@
 #include "ewa/font.hpp"
 #include "ewa/keyboard_state.hpp"
 
+#include "ewa/gl/texture2d.hpp"
+
 #include "ewa/audio/sound.hpp"
 
 #include "skydome.hpp"
@@ -30,9 +32,29 @@ TuhuApplication::~TuhuApplication() {
 }
 
 void TuhuApplication::Init() {
+    m_system = new ParticleSystem();
 
-    m_system = new ParticleSystem(Vector3f(10,-3,10));
+    constexpr float A = 0.02886f;
+    m_system->SetMinVelocity(Vector3f(-A,A,-A));
+    m_system->SetMaxVelocity(Vector3f(A,1.0f / 20.0f,A));
+    m_system->SetMaxParticles(1000);
 
+
+    Texture* texture = new Texture2D("img/smoke2.png");
+
+    texture->Bind();
+    texture->SetTextureRepeat();
+    texture->GenerateMipmap();
+    texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    texture->SetMagFilter(GL_LINEAR);
+    texture->Unbind();
+
+    m_system->SetTexture(texture);
+
+
+
+
+    m_system->Init(Vector3f(10,-3,10));
 
     ::SetDepthTest(true);
 

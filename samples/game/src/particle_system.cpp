@@ -9,7 +9,6 @@
 
 #include "ewa/random_texture.hpp"
 
-#define MAX_PARTICLES 1000
 #define PARTICLE_LIFETIME 10.0f
 
 #define PARTICLE_TYPE_EMITTER 0.0f
@@ -49,18 +48,16 @@ ParticleSystem::~ParticleSystem()
 }
 
 
-ParticleSystem::ParticleSystem(const Vector3f& Pos)
-{
-    count = 0;
-
+ParticleSystem::ParticleSystem(){
     m_currVB = 0;
     m_currTFB = 1;
     m_isFirst = true;
     m_time = 0;
     m_texture = NULL;
+}
 
-
-    Particle Particles[MAX_PARTICLES];
+void ParticleSystem::Init(const Vector3f& Pos){
+    Particle* Particles  = new Particle[m_maxParticles];
 
     Particles[0].type = PARTICLE_TYPE_EMITTER;
     Particles[0].pos = Pos;
@@ -82,70 +79,42 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
 
 	m_particleBuffer[i]->Bind();
 
-	m_particleBuffer[i]->SetBufferData(sizeof(Particles), Particles);
+
+	m_particleBuffer[i]->SetBufferData(sizeof(Particle) * m_maxParticles, Particles);
 	m_particleBuffer[i]->Unbind();
 
         GL_C(glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_particleBuffer[i]->GetBuffer()));
     }
 
-    m_updateTechnique = new ShaderProgram("shader/update", beforeLinkingHook);
+    m_particleUpdateShader = new ShaderProgram("shader/part_update", beforeLinkingHook);
 
-    m_updateTechnique->Bind();
-
-    m_updateTechnique->SetUniform("emitInterval", 0.1f);
-    m_updateTechnique->SetUniform("particleLifetime", 10.0f);
-
-    constexpr float A = 0.02886f;
-
-    m_updateTechnique->SetUniform("minVelocity", Vector3f(-A,A,-A));
-
-    constexpr float V = 0.025f;
-
-    m_updateTechnique->SetUniform("maxVelocity", Vector3f(A,1.0f / 20.0f,A));
-
-
-    m_updateTechnique->Unbind();
 
     m_randomTexture = new RandomTexture(1000, 2);
 
 
-    m_billboardTechnique = new ShaderProgram("shader/part_billboard");
+    m_particleBillboardShader = new ShaderProgram("shader/part_billboard");
 
-    m_billboardTechnique->Bind();
+    m_particleBillboardShader->Bind();
 
-    m_texture = new Texture2D("img/smoke2.png");
 
-    m_texture->Bind();
-    m_texture->SetTextureRepeat();
-    m_texture->GenerateMipmap();
-    m_texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-    m_texture->SetMagFilter(GL_LINEAR);
-    m_texture->Unbind();
-
+    delete [] Particles;
 
 }
 
 void ParticleSystem::Update(float delta){
     m_time += delta;
 
-    UpdateParticles(delta);
-}
+        m_particleUpdateShader->Bind();
+    m_particleUpdateShader->SetUniform("time", m_time);
+    m_particleUpdateShader->SetUniform("deltaTime", delta);
 
-void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
-    RenderParticles(VP, CameraPos);
-
-    m_currVB = m_currTFB;
-    m_currTFB = (m_currTFB + 1) & 0x1;
-}
-
-void ParticleSystem::UpdateParticles(float delta){
-
-    m_updateTechnique->Bind();
-    m_updateTechnique->SetUniform("time", m_time);
-    m_updateTechnique->SetUniform("deltaTime", delta);
+    m_particleUpdateShader->SetUniform("minVelocity", m_minVelocity);
+    m_particleUpdateShader->SetUniform("maxVelocity", m_maxVelocity);
+    m_particleUpdateShader->SetUniform("emitInterval", 0.1f);
+    m_particleUpdateShader->SetUniform("particleLifetime", 10.0f);
 
 
-    m_updateTechnique->SetUniform("randomTexture", 0);
+    m_particleUpdateShader->SetUniform("randomTexture", 0);
     Texture::SetActiveTextureUnit(0);
     m_randomTexture->Bind();
 
@@ -172,21 +141,19 @@ void ParticleSystem::UpdateParticles(float delta){
 
     m_particleBuffer[m_currVB]->DisableVertexAttribInterleavedWithBind();
 
-    m_updateTechnique->Unbind();
+    m_particleUpdateShader->Unbind();
 
     GL_C(glDisable(GL_RASTERIZER_DISCARD));
 }
 
+void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
 
-void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraPos)
-{
     GL_C(glDisable(GL_RASTERIZER_DISCARD));
 
-    m_billboardTechnique->Bind();
-    m_billboardTechnique->SetUniform("gCameraPos", CameraPos);
-    m_billboardTechnique->SetUniform("gVP", VP);
-    m_billboardTechnique->SetUniform("gBillboardSize", 0.05f);
-
+    m_particleBillboardShader->Bind();
+    m_particleBillboardShader->SetUniform("gCameraPos", CameraPos);
+    m_particleBillboardShader->SetUniform("gVP", VP);
+    m_particleBillboardShader->SetUniform("gBillboardSize", 0.05f);
 
 
     GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
@@ -194,7 +161,7 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
 
     GL_C(glDepthMask(GL_FALSE) );
 
-    m_billboardTechnique->SetUniform("gColorMap", 0);
+    m_particleBillboardShader->SetUniform("gColorMap", 0);
     Texture::SetActiveTextureUnit(0);
     m_texture->Bind();
 
@@ -212,26 +179,29 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
 
     GL_C(glDepthMask(GL_TRUE) );
 
+    m_particleBillboardShader->Unbind();
 
-    m_billboardTechnique->Unbind();
+    m_currVB = m_currTFB;
+    m_currTFB = (m_currTFB + 1) % 2;
 }
 
 /*
-
-  1. figure out how to randomize velocity.
-  2. figure out how to reuse particles.
   3. figure out how to emit per second.
 
-
  */
 
-/*
+void ParticleSystem::SetMinVelocity(const Vector3f& vel) {
+    m_minVelocity = vel;
+}
 
-  GetRandomDirs, has a value [-0.5, +0.5] for xyz each.
+void ParticleSystem::SetMaxVelocity(const Vector3f& vel) {
+    m_maxVelocity = vel;
+}
 
-  however, it is made sure
+void ParticleSystem::SetMaxParticles(size_t maxParticles) {
+    m_maxParticles = maxParticles;
+}
 
-  so always y=0.5
-
-
- */
+void ParticleSystem::SetTexture(Texture* texture) {
+    m_texture = texture;
+}
