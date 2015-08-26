@@ -95,6 +95,15 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
     m_updateTechnique->SetUniform("emitInterval", 0.1f);
     m_updateTechnique->SetUniform("particleLifetime", 10.0f);
 
+    constexpr float A = 0.02886f;
+
+    m_updateTechnique->SetUniform("minVelocity", Vector3f(-A,A,-A));
+
+    constexpr float V = 0.025f;
+
+    m_updateTechnique->SetUniform("maxVelocity", Vector3f(A,1.0f / 20.0f,A));
+
+
     m_updateTechnique->Unbind();
 
     m_randomTexture = new RandomTexture(1000, 2);
@@ -177,6 +186,8 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
     m_billboardTechnique->SetUniform("gCameraPos", CameraPos);
     m_billboardTechnique->SetUniform("gVP", VP);
     m_billboardTechnique->SetUniform("gBillboardSize", 0.05f);
+
+
 
     GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
     GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));

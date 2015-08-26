@@ -18,14 +18,16 @@ uniform sampler1D randomTexture;
 uniform float emitInterval;
 uniform float particleLifetime;
 
+
+uniform vec3 minVelocity;
+uniform vec3 maxVelocity;
+
+
+
+
+
 #define PARTICLE_TYPE_EMITTER 0.0f
 #define PARTICLE_TYPE_PARTICLE 1.0f
-
-vec3 GetRandomDir(float TexCoord) {
-    vec3 Dir =  texture(randomTexture, TexCoord).xyz;
-     Dir -= vec3(0.5, 0.5, 0.5);
-     return Dir;
-}
 
 // given a random value rand, return a number in range [low,high]
 float rand_range(float rand, float low, float high) {
@@ -49,9 +51,9 @@ void main() {
         if (Age >= emitInterval) {
             Type1 = PARTICLE_TYPE_PARTICLE;
             Position1 = Position0[0];
-            vec3 Dir = GetRandomDir(time);
-            Dir.y = 0.5;
-            Velocity1 = normalize(Dir) / 20.0;
+
+	    Velocity1 = GetRandomDir(time, minVelocity, maxVelocity);
+
             Age1 = 0.0;
             EmitVertex();
             EndPrimitive();
