@@ -12,17 +12,17 @@
 #define MAX_PARTICLES 1000
 #define PARTICLE_LIFETIME 10.0f
 
-#define PARTICLE_TYPE_LAUNCHER 0.0f
-#define PARTICLE_TYPE_SHELL 1.0f
+#define PARTICLE_TYPE_EMITTER 0.0f
+#define PARTICLE_TYPE_PARTICLE 1.0f
 
 using std::vector;
 
 struct Particle
 {
-    float Type;
-    Vector3f Pos;
-    Vector3f Vel;
-    float LifetimeMillis;
+    float type;
+    Vector3f pos;
+    Vector3f vel;
+    float lifetime;
 };
 
 void beforeLinkingHook(GLuint shaderProgram) {
@@ -62,10 +62,10 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
 
     Particle Particles[MAX_PARTICLES];
 
-    Particles[0].Type = PARTICLE_TYPE_LAUNCHER;
-    Particles[0].Pos = Pos;
-    Particles[0].Vel = Vector3f(0.0f, 0.0001f, 0.0f);
-    Particles[0].LifetimeMillis = 0.0f;
+    Particles[0].type = PARTICLE_TYPE_EMITTER;
+    Particles[0].pos = Pos;
+    Particles[0].vel = Vector3f(0.0f);
+    Particles[0].lifetime = 0.0f;
 
     GL_C(glGenTransformFeedbacks(2, m_transformFeedback));
 
@@ -92,8 +92,8 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
 
     m_updateTechnique->Bind();
 
-    m_updateTechnique->SetUniform("gLauncherLifetime", 0.1f);
-    m_updateTechnique->SetUniform("gShellLifetime", 10.0f);
+    m_updateTechnique->SetUniform("emitInterval", 0.1f);
+    m_updateTechnique->SetUniform("particleLifetime", 10.0f);
 
     m_updateTechnique->Unbind();
 
@@ -104,8 +104,7 @@ ParticleSystem::ParticleSystem(const Vector3f& Pos)
 
     m_billboardTechnique->Bind();
 
-
-    m_texture = new Texture2D( "img/smoke2.png");
+    m_texture = new Texture2D("img/smoke2.png");
 
     m_texture->Bind();
     m_texture->SetTextureRepeat();
@@ -133,11 +132,11 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
 void ParticleSystem::UpdateParticles(float delta){
 
     m_updateTechnique->Bind();
-    m_updateTechnique->SetUniform("gTime", m_time);
-    m_updateTechnique->SetUniform("gDeltaTimeSecs", delta);
+    m_updateTechnique->SetUniform("time", m_time);
+    m_updateTechnique->SetUniform("deltaTime", delta);
 
 
-    m_updateTechnique->SetUniform("gRandomTexture", 0);
+    m_updateTechnique->SetUniform("randomTexture", 0);
     Texture::SetActiveTextureUnit(0);
     m_randomTexture->Bind();
 
@@ -205,3 +204,23 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
 
     m_billboardTechnique->Unbind();
 }
+
+/*
+
+  1. figure out how to randomize velocity.
+  2. figure out how to reuse particles.
+  3. figure out how to emit per second.
+
+
+ */
+
+/*
+
+  GetRandomDirs, has a value [-0.5, +0.5] for xyz each.
+
+  however, it is made sure
+
+  so always y=0.5
+
+
+ */
