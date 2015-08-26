@@ -21,6 +21,7 @@ uniform float particleLifetime;
 uniform vec3 minVelocity;
 uniform vec3 maxVelocity;
 uniform vec3 emitPosition;
+uniform vec3 emitRange;
 
 #define PARTICLE_TYPE_EMITTER 0.0f
 #define PARTICLE_TYPE_PARTICLE 1.0f
@@ -40,13 +41,22 @@ vec3 GetRandomDir(float seed, vec3 minVel, vec3 maxVel) {
 	);
 }
 
+vec3 GetRandomPosition(float time, vec3 emitPosition, vec3 emitArea) {
+    float seed = time + emitPosition.x + emitPosition.y + emitPosition.z;
+
+    vec3 rands =  texture(randomTexture, seed).xyz;
+    rands = -1 + 2 * rands; // convert from range [0,1] to range [-1,1]
+
+    return emitPosition + rands * emitArea;
+}
+
 void main() {
     float age = age0[0] + deltaTime;
 
     if (type0[0] == PARTICLE_TYPE_EMITTER) {
         if (age >= emitRate) {
             type1 = PARTICLE_TYPE_PARTICLE;
-            position1 = emitPosition;
+            position1 = GetRandomPosition(time, emitPosition, emitRange);
 
 	    velocity1 = GetRandomDir(time, minVelocity, maxVelocity);
 

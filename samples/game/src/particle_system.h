@@ -32,6 +32,7 @@ public:
     void SetParticleLifetime(float particleLifetime);
     void SetBillboardSize(float billboardSize);
     void SetEmitPosition(const Vector3f& emitPosition);
+    void SetEmitRange(const Vector3f& emitRange);
 
 private:
 
@@ -53,6 +54,7 @@ private:
     Texture* m_texture;
     float m_emitRate;
     Vector3f m_emitPosition;
+    Vector3f m_emitRange;
     float m_particleLifetime;
     float m_billboardSize;
 };

@@ -113,7 +113,7 @@ void ParticleSystem::Update(float delta){
     m_particleUpdateShader->SetUniform("emitRate", m_emitRate);
     m_particleUpdateShader->SetUniform("particleLifetime", m_particleLifetime );
     m_particleUpdateShader->SetUniform("emitPosition", m_emitPosition );
-
+    m_particleUpdateShader->SetUniform("emitRange", m_emitRange );
 
     m_particleUpdateShader->SetUniform("randomTexture", 0);
     Texture::SetActiveTextureUnit(0);
@@ -224,4 +224,8 @@ void ParticleSystem::SetBillboardSize(float billboardSize) {
 
 void ParticleSystem::SetEmitPosition(const Vector3f& emitPosition) {
     m_emitPosition = emitPosition;
+}
+
+void ParticleSystem::SetEmitRange(const Vector3f& emitRange) {
+    m_emitRange = emitRange;
 }

@@ -42,6 +42,7 @@ void TuhuApplication::Init() {
     m_system->SetParticleLifetime(10.0f);
     m_system->SetBillboardSize(0.09f);
     m_system->SetEmitPosition(Vector3f(10,-3,10));
+    m_system->SetEmitRange(Vector3f(0,0,0));
 
     LOG_I("log1");
 
