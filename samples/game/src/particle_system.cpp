@@ -24,16 +24,18 @@ struct Particle
     Vector3f pos;
     Vector3f vel;
     float lifetime;
+    float size;
 };
 
 void beforeLinkingHook(GLuint shaderProgram) {
-    const GLchar* varyings[4];
+    const GLchar* varyings[5];
     varyings[0] = "type1";
     varyings[1] = "position1";
     varyings[2] = "velocity1";
     varyings[3] = "age1";
+    varyings[4] = "size1";
 
-    GL_C(glTransformFeedbackVaryings(shaderProgram, 4, varyings, GL_INTERLEAVED_ATTRIBS));
+    GL_C(glTransformFeedbackVaryings(shaderProgram, 5, varyings, GL_INTERLEAVED_ATTRIBS));
 }
 
 ParticleSystem::~ParticleSystem()
@@ -80,7 +82,7 @@ void ParticleSystem::Init(){
 
 
 	m_particleBuffer[i] = VBO::CreateInterleaved(
-	    vector<GLuint>{1,3,3,1}, // type, pos, vel, lifetime
+	    vector<GLuint>{1,3,3,1, 1}, // type, pos, vel, lifetime, size
 	    GL_DYNAMIC_DRAW
 	);
 
@@ -96,13 +98,19 @@ void ParticleSystem::Init(){
         GL_C(glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_particleBuffer[i]->GetBuffer()));
     }
 
+    LOG_I("linking update");
+
+
     m_particleUpdateShader = new ShaderProgram("shader/part_update", beforeLinkingHook);
 
+    LOG_I("linked update");
 
     m_randomTexture = new RandomTexture(1000, 2);
 
 
     m_particleBillboardShader = new ShaderProgram("shader/part_billboard");
+
+    LOG_I("linked billboard");
 
     m_particleBillboardShader->Bind();
 
@@ -157,6 +165,14 @@ void ParticleSystem::UpdateParticles(float delta){
     m_particleUpdateShader->SetUniform("emitPosition", m_emitPosition );
     m_particleUpdateShader->SetUniform("emitRange", m_emitRange );
     m_particleUpdateShader->SetUniform("emitCount", m_emitCount );
+    m_particleUpdateShader->SetUniform("startSize", m_startSize );
+    m_particleUpdateShader->SetUniform("endSize", m_endSize );
+
+/*    LOG_I("start size: %f", m_startSize);
+    LOG_I("end size: %f", m_endSize);
+    LOG_I("particle life time: %f", m_particleLifetime);
+*/
+
 
     m_particleUpdateShader->SetUniform("randomTexture", 0);
     Texture::SetActiveTextureUnit(0);
@@ -206,7 +222,7 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
     m_particleBillboardShader->Bind();
     m_particleBillboardShader->SetUniform("gCameraPos", CameraPos);
     m_particleBillboardShader->SetUniform("gVP", VP);
-    m_particleBillboardShader->SetUniform("gBillboardSize", m_billboardSize);
+//    m_particleBillboardShader->SetUniform("gBillboardSize", m_billboardSize);
 
 
     GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
@@ -222,9 +238,11 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)4);  // position
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)0);  // position
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)0);  // type
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)32);  // size
 
     GL_C(glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]));
 
@@ -269,10 +287,6 @@ void ParticleSystem::SetParticleLifetime(float particleLifetime) {
     m_particleLifetime = particleLifetime;
 }
 
-void ParticleSystem::SetBillboardSize(float billboardSize) {
-    m_billboardSize = billboardSize;
-}
-
 void ParticleSystem::SetEmitPosition(const Vector3f& emitPosition) {
     m_emitPosition = emitPosition;
 }
@@ -288,4 +302,24 @@ void ParticleSystem::SetWarmupFrames(const int warmupFrames) {
 
 void ParticleSystem::SetEmitCount(const int emitCount) {
     m_emitCount = emitCount;
+}
+
+
+void ParticleSystem::SetVelocity(const Vector3f& vel) {
+    SetMinVelocity(vel);
+    SetMaxVelocity(vel);
+}
+
+
+void ParticleSystem::SetStartSize(const float startSize) {
+    m_startSize = startSize;
+}
+
+void ParticleSystem::SetEndSize(const float endSize) {
+    m_endSize = endSize;
+}
+
+void ParticleSystem::SetSize(const float size) {
+    SetStartSize(size);
+    SetEndSize(size);
 }

@@ -14,6 +14,7 @@
 #include "particle_system.hpp"
 #include "smoke_effect.hpp"
 #include "snow_effect.hpp"
+#include "fire_effect.hpp"
 
 using namespace std;
 
@@ -33,7 +34,7 @@ TuhuApplication::~TuhuApplication() {
 }
 
 void TuhuApplication::Init() {
-    m_smoke = new SmokeEffect(Vector3f(10,-3,10));
+    m_smoke = new SmokeEffect(Vector3f(11.5,-3,10));
     m_smoke->Init();
 
 
@@ -43,16 +44,21 @@ void TuhuApplication::Init() {
 
     ::SetCullFace(true);
 
-    const Vector3f pos = Vector3f(9.619988, -2.556720, 8.197560);
+
+	 const Vector3f pos = Vector3f(10.614038, -2.656145, 9.056442);
     m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,
-pos,Vector3f(0.239273, -0.065007, 0.968774)
-
-
-
+pos,
+Vector3f(0.754520, -0.075467, 0.651923)
 , true);
 
     m_snow = new SnowEffect(pos);
     m_snow->Init();
+
+
+
+    m_fire = new FireEffect(Vector3f(12,-3,10));
+    m_fire->Init();
+
 
     m_heightMap = new HeightMap("img/combined.png");
 
@@ -88,17 +94,18 @@ void TuhuApplication::Render() {
 
     m_grass->Draw(*m_camera, lightPosition);
 
-    //   m_smoke->Render(m_camera->GetMvp(), m_camera->GetPosition());
-
-    m_snow->Render(m_camera->GetMvp(), m_camera->GetPosition());
+    m_smoke->Render(m_camera->GetMvp(), m_camera->GetPosition());
+//    m_snow->Render(m_camera->GetMvp(), m_camera->GetPosition());
+    m_fire->Render(m_camera->GetMvp(), m_camera->GetPosition());
 }
 
 void TuhuApplication::Update(const float delta) {
 
     m_camera->HandleInput(delta);
 
-    //  m_smoke->Update(delta);
-    m_snow->Update(delta);
+    m_smoke->Update(delta);
+//    m_snow->Update(delta);
+    m_fire->Update(delta);
 
       m_skydome->Update(delta);
 

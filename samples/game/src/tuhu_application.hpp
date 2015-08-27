@@ -25,6 +25,7 @@ private:
 
     ParticleSystem* m_smoke;
     ParticleSystem* m_snow;
+    ParticleSystem* m_fire;
 
 public:
 

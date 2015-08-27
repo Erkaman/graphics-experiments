@@ -12,7 +12,9 @@ using namespace std;
 GLuint CreateShaderFromString(const string& str, GLenum shaderType);
 string FormatCompilerErrorOutput(const GLuint shader, const string& shaderStr);
 
-string GetLogInfo(GLuint shaderProgram);
+string GetShaderLogInfo(GLuint shaderProgram);
+string GetProgramLogInfo(GLuint shaderProgram);
+
 bool GetCompileStatus(GLuint shaderProgram);
 
 string ParseShader(const std::string& shaderSource, const std::string& path);
@@ -81,7 +83,7 @@ GLuint CreateShaderFromString(const string& str, const GLenum shaderType) {
 string FormatCompilerErrorOutput(const GLuint shader, const string& shaderStr)  {
     string result = "";
 
-    vector<string> errors =  SplitString(GetLogInfo(shader), "\n");
+    vector<string> errors =  SplitString(GetShaderLogInfo(shader), "\n");
 
     vector<string> shaderLines = SplitString(shaderStr, "\n");
 
@@ -143,7 +145,7 @@ void ShaderProgramBuilder::Link() {
     glGetProgramiv(m_shaderProgram, GL_LINK_STATUS, &linkOk);
 
     if (linkOk == GL_FALSE) {
-	LOG_E("Error linking program: %s", GetLogInfo(m_shaderProgram).c_str());
+	LOG_E("Error linking program: %s", GetProgramLogInfo(m_shaderProgram).c_str());
     }
 }
 
@@ -157,7 +159,7 @@ bool GetCompileStatus(GLuint shaderProgram)  {
     return status == GL_TRUE;
 }
 
-string GetLogInfo(GLuint shaderProgram) {
+string GetShaderLogInfo(GLuint shaderProgram) {
     GLint len;
     GL_C(glGetShaderiv(shaderProgram,  GL_INFO_LOG_LENGTH, &len));
 
@@ -168,6 +170,20 @@ string GetLogInfo(GLuint shaderProgram) {
     delete infoLog;
     return logInfoStr;
 }
+
+string GetProgramLogInfo(GLuint shaderProgram) {
+
+    GLint len;
+    GL_C(glGetProgramiv(shaderProgram,  GL_INFO_LOG_LENGTH, &len));
+
+    char* infoLog = new char[len];
+    GLsizei actualLen;
+    glGetProgramInfoLog(shaderProgram, len, &actualLen, infoLog);
+    string logInfoStr(infoLog, actualLen);
+    delete infoLog;
+    return logInfoStr;
+}
+
 
 static std::string GetShaderContents(const std::string& shaderPath) {
     File f(shaderPath, FileModeReading);

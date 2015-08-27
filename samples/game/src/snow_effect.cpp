@@ -10,11 +10,11 @@ SnowEffect::SnowEffect( const Vector3f& CameraPos) {
     SetMaxParticles(2000);
     SetEmitRate(0.01f);
     SetParticleLifetime(2.5f);
-    SetBillboardSize(0.04f);
+    SetSize(0.04f);
     SetEmitPosition(CameraPos + SNOW_HEIGHT); // emit position will be following player, so not point in setting.
     SetEmitRange(Vector3f(4,0,4) );
     SetWarmupFrames(0);
-    SetEmitCount(20);
+    SetEmitCount(10);
 
     Texture* texture = new Texture2D("img/snow.png");
 

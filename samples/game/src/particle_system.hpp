@@ -26,15 +26,21 @@ public:
 
     void SetMinVelocity(const Vector3f& vel);
     void SetMaxVelocity(const Vector3f& vel);
+    void SetVelocity(const Vector3f& vel);
+
     void SetMaxParticles(size_t maxParticles);
     void SetTexture(Texture* texture);
     void SetEmitRate(float emitRate);
     void SetParticleLifetime(float particleLifetime);
-    void SetBillboardSize(float billboardSize);
     void SetEmitPosition(const Vector3f& emitPosition);
     void SetEmitRange(const Vector3f& emitRange);
     void SetWarmupFrames(const int warmupFrames);
     void SetEmitCount(const int emitCount);
+
+    void SetStartSize(const float startSize);
+    void SetEndSize(const float endSize);
+    void SetSize(const float size);
+
 
 private:
 
@@ -54,17 +60,40 @@ private:
 
     float m_time;
 
+
+    Texture* m_texture;
+
+    /*
+      Minimum and maximum velocity
+     */
     Vector3f m_minVelocity;
     Vector3f m_maxVelocity;
+
     size_t m_maxParticles;
-    Texture* m_texture;
+
+    /*
+      How often particles are emitted.
+     */
     float m_emitRate;
+
+    /*
+      How many particles are emitted each time.
+     */
+    int m_emitCount;
+
     Vector3f m_emitPosition;
     Vector3f m_emitRange;
     float m_particleLifetime;
-    float m_billboardSize;
+
+    /*
+      The initial and final sizes.
+     */
+    float m_startSize;
+    float m_endSize;
+
     int m_warmupFrames;
-    int m_emitCount;
+
+
 };
 
 
