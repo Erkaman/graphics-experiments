@@ -5,13 +5,13 @@
 
 FireEffect::FireEffect(const Vector3f& position) {
 
-    constexpr float V = 0.1886f;
+    constexpr float V = 0.1486f;
     SetVelocity(Vector3f(0,V,0));
     SetMaxParticles(1000);
     SetEmitRate(0.1f);
-    SetEmitCount(1);
-    SetParticleLifetime(3.0f);
-    SetStartSize(0.09f);
+    SetEmitCount(2);
+    SetParticleLifetime(2.5f);
+    SetStartSize(0.20f);
     SetEndSize(0.00f);
 
     SetEmitPosition(position);
