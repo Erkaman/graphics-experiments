@@ -26,7 +26,7 @@ FireEffect::FireEffect(const Vector3f& position) {
     SetEmitPosition(position);
     SetEmitRange(Vector3f(0.00,0,0.0));
 
-    Texture* texture = new Texture2D("img/particle.png");
+    Texture* texture = new Texture2D("img/particle_post.png");
 
     texture->Bind();
     texture->SetTextureRepeat();
