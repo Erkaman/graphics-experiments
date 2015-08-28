@@ -1,6 +1,8 @@
 #include "color.hpp"
 #include <math.h>
 
+#include "log.hpp"
+
 const Color Color::WHITE(1.0,1.0,1.0);
 const Color Color::RED(1.0,0.0,0.0);
 
@@ -11,6 +13,7 @@ Color::Color(const float value): r(value), g(value),b(value), a(value){  }
 Color::Color(const float r, const float g, const float b, const float a):r(r), g(g),b(b), a(a) { }
 
 Color::Color(const float r, const float g, const float b):r(r), g(g),b(b), a(1.0f) { }
+
 
 Color Color::FromInt(const unsigned int r, const unsigned int g, const unsigned int b){
     return Color(

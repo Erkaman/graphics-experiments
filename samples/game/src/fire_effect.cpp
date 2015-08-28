@@ -14,8 +14,15 @@ FireEffect::FireEffect(const Vector3f& position) {
     SetStartSize(0.20f);
     SetEndSize(0.00f);
 
-    SetStartColor(Vector4f(1,0.50,0,1));
-    SetEndColor(Vector4f(1,0.50,0,0));
+
+    SetStartColor(Color(1,0.50,0,1));
+    SetEndColor(Color(1,0.50,0,0));
+
+
+//    SetStartColor(Color(1,1,1,1));
+//    SetEndColor(Color(1,1,1,0));
+
+    SetBlendingMode(ALPHA_BLENDING_MODE);
 
 
     SetEmitPosition(position);
@@ -31,4 +38,7 @@ FireEffect::FireEffect(const Vector3f& position) {
     texture->Unbind();
 
     SetTexture(texture);
+
 }
+
+//#

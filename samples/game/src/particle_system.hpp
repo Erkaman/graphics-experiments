@@ -4,7 +4,7 @@
 #include "ewa/gl/gl_common.hpp"
 
 #include "ewa/math/vector3f.hpp"
-#include "ewa/math/vector4f.hpp"
+#include "ewa/math/color.hpp"
 
 class Vector3f;
 class Matrix4f;
@@ -13,6 +13,11 @@ class Texture;
 class ShaderProgram;
 class VBO;
 class RandomTexture;
+
+enum ColorBlendingMode {
+    ALPHA_BLENDING_MODE,
+    ADDITIVE_BLENDING_MODE
+};
 
 class ParticleSystem
 {
@@ -42,9 +47,11 @@ public:
     void SetEndSize(const float endSize);
     void SetSize(const float size);
 
-    void SetStartColor(const Vector4f& startColor);
-    void SetEndColor(const Vector4f& endColor);
-    void SetColor(const Vector4f& color);
+    void SetStartColor(const Color& startColor);
+    void SetEndColor(const Color& endColor);
+    void SetColor(const Color& color);
+
+    void SetBlendingMode(const ColorBlendingMode blendingMode);
 
 private:
 
@@ -104,10 +111,11 @@ private:
 
     int m_warmupFrames;
 
-    Vector4f m_startColor;
-    Vector4f m_endColor;
+    Color m_startColor;
+    Color m_endColor;
 
-
+    GLenum m_sfactor;
+    GLenum m_dfactor;
 };
 
 

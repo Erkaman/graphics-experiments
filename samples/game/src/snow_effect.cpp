@@ -15,7 +15,7 @@ SnowEffect::SnowEffect( const Vector3f& CameraPos) {
     SetEmitRange(Vector3f(4,0,4) );
     SetWarmupFrames(0);
     SetEmitCount(10);
-    SetColor(Vector4f(1,1,1,1));
+    SetColor(Color(1,1,1,1));
 
     Texture* texture = new Texture2D("img/snow.png");
 

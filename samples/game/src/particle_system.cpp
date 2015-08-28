@@ -2,6 +2,7 @@
 
 #include "ewa/math/vector3f.hpp"
 #include "ewa/math/matrix4f.hpp"
+#include "ewa/math/matrix4f.hpp"
 
 #include "ewa/common.hpp"
 #include "ewa/gl/texture2d.hpp"
@@ -25,7 +26,7 @@ struct Particle
     Vector3f vel;
     float lifetime;
     float size;
-    Vector4f color;
+    Color color;
 };
 
 void beforeLinkingHook(GLuint shaderProgram) {
@@ -68,7 +69,8 @@ ParticleSystem::ParticleSystem(){
     SetMaxParticles(1000);
     SetWarmupFrames(0);
     SetEmitCount(1);
-    SetColor(Vector4f(1,1,1,1));
+    SetColor(Color(1,1,1,1));
+    SetBlendingMode(ALPHA_BLENDING_MODE);
 }
 
 void ParticleSystem::Init(){
@@ -79,7 +81,7 @@ void ParticleSystem::Init(){
     Particles[0].vel = Vector3f(0.0f);
     Particles[0].lifetime = 0.0f;
     Particles[0].size = 0.0f;
-    Particles[0].color = Vector4f(0,0,0,0);
+    Particles[0].color = Color(0,0,0,0);
 
     GL_C(glGenTransformFeedbacks(2, m_transformFeedback));
 
@@ -238,7 +240,7 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
 
 
     GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
-    GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    GL_C(glBlendFunc(m_sfactor, m_dfactor));
 
     GL_C(glDepthMask(GL_FALSE) );
 
@@ -340,15 +342,27 @@ void ParticleSystem::SetSize(const float size) {
     SetEndSize(size);
 }
 
-void ParticleSystem::SetStartColor(const Vector4f& startColor) {
+void ParticleSystem::SetStartColor(const Color& startColor) {
     m_startColor = startColor;
 }
 
-void ParticleSystem::SetEndColor(const Vector4f& endColor) {
+void ParticleSystem::SetEndColor(const Color& endColor) {
     m_endColor = endColor;
 }
 
-void ParticleSystem::SetColor(const Vector4f& color) {
+void ParticleSystem::SetColor(const Color& color) {
     SetStartColor(color);
     SetEndColor(color);
+}
+
+void ParticleSystem::SetBlendingMode(const ColorBlendingMode blendingMode) {
+    if(blendingMode == ALPHA_BLENDING_MODE) {
+	m_sfactor = GL_SRC_ALPHA;
+	m_dfactor = GL_ONE_MINUS_SRC_ALPHA;
+    } else if(blendingMode == ADDITIVE_BLENDING_MODE) {
+	m_sfactor = GL_SRC_ALPHA;
+	m_dfactor = GL_ONE;
+    } else {
+	assert(false);
+    }
 }
