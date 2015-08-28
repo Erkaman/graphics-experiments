@@ -7,12 +7,14 @@ in vec3 position0[];
 in vec3 velocity0[];
 in float age0[];
 in float size0[];
+in vec4 color0[];
 
 out float type1;
 out vec3 position1;
 out vec3 velocity1;
 out float age1;
 out float size1;
+out vec4 color1;
 
 uniform float deltaTime;
 uniform float time;
@@ -24,6 +26,10 @@ uniform int emitCount;
 uniform float startSize;
 uniform float endSize;
 
+uniform vec4 startColor;
+uniform vec4 endColor;
+
+
 uniform vec3 minVelocity;
 uniform vec3 maxVelocity;
 uniform vec3 emitPosition;
@@ -33,6 +39,10 @@ uniform vec3 emitRange;
 #define PARTICLE_TYPE_PARTICLE 1.0f
 
 float lerp(float minVal, float maxVal, float age) {
+      return mix(minVal, maxVal, age / particleLifetime);
+}
+
+vec4 lerp(vec4 minVal, vec4 maxVal, float age) {
       return mix(minVal, maxVal, age / particleLifetime);
 }
 
@@ -64,6 +74,11 @@ float GetSize(float age) {
       return lerp(startSize, endSize, age);
 }
 
+vec4 GetColor(float age) {
+    return lerp(startColor, endColor, age);
+}
+
+
 void main() {
     float age = age0[0] + deltaTime;
 
@@ -80,6 +95,7 @@ void main() {
 
             age1 = 0.0;
 	    size1 = GetSize(0);
+	    color1 = GetColor(0);
 
             EmitVertex();
             EndPrimitive();
@@ -92,7 +108,10 @@ void main() {
         position1 = position0[0]; // is basically unused.
         velocity1 = velocity0[0];
         size1 = size0[0];
+        color1 = color0[0];
+
         age1 = age;
+
         EmitVertex();
         EndPrimitive();
     }
@@ -107,6 +126,7 @@ void main() {
 	            velocity1 = velocity0[0] + DeltaV;
 	            age1 = age;
 		    size1  = GetSize(age);
+		    color1  = GetColor(age);
 	            EmitVertex();
 	            EndPrimitive();
 	        } // else particle will die.

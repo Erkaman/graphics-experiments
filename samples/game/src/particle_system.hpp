@@ -4,6 +4,7 @@
 #include "ewa/gl/gl_common.hpp"
 
 #include "ewa/math/vector3f.hpp"
+#include "ewa/math/vector4f.hpp"
 
 class Vector3f;
 class Matrix4f;
@@ -41,6 +42,9 @@ public:
     void SetEndSize(const float endSize);
     void SetSize(const float size);
 
+    void SetStartColor(const Vector4f& startColor);
+    void SetEndColor(const Vector4f& endColor);
+    void SetColor(const Vector4f& color);
 
 private:
 
@@ -77,12 +81,19 @@ private:
     float m_emitRate;
 
     /*
-      How many particles are emitted each time.
+      How many particles are emitted each emit.
      */
     int m_emitCount;
 
+    /*
+      The position from which the particles are emitted.
+     */
     Vector3f m_emitPosition;
     Vector3f m_emitRange;
+
+    /*
+      The lifetime of a particle.
+     */
     float m_particleLifetime;
 
     /*
@@ -92,6 +103,9 @@ private:
     float m_endSize;
 
     int m_warmupFrames;
+
+    Vector4f m_startColor;
+    Vector4f m_endColor;
 
 
 };

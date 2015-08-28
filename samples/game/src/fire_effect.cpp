@@ -14,10 +14,14 @@ FireEffect::FireEffect(const Vector3f& position) {
     SetStartSize(0.20f);
     SetEndSize(0.00f);
 
+    SetStartColor(Vector4f(1,0.50,0,1));
+    SetEndColor(Vector4f(1,0.50,0,0));
+
+
     SetEmitPosition(position);
     SetEmitRange(Vector3f(0.05,0,0.05));
 
-    Texture* texture = new Texture2D("img/fire.png");
+    Texture* texture = new Texture2D("img/snow.png");
 
     texture->Bind();
     texture->SetTextureRepeat();

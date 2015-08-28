@@ -3,9 +3,12 @@ uniform sampler2D gColorMap;
 in vec2 TexCoord;
 out vec4 FragColor;
 
+in vec4 Color;
+
+
 void main()
 {
-    FragColor = texture(gColorMap, TexCoord);
+    FragColor = Color * texture(gColorMap, TexCoord);
 
 /*    if(FragColor.a < 0.9) {
 	discard;

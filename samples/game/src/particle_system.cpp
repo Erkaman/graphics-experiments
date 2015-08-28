@@ -25,17 +25,19 @@ struct Particle
     Vector3f vel;
     float lifetime;
     float size;
+    Vector4f color;
 };
 
 void beforeLinkingHook(GLuint shaderProgram) {
-    const GLchar* varyings[5];
+    const GLchar* varyings[6];
     varyings[0] = "type1";
     varyings[1] = "position1";
     varyings[2] = "velocity1";
     varyings[3] = "age1";
     varyings[4] = "size1";
+    varyings[5] = "color1";
 
-    GL_C(glTransformFeedbackVaryings(shaderProgram, 5, varyings, GL_INTERLEAVED_ATTRIBS));
+    GL_C(glTransformFeedbackVaryings(shaderProgram, 6, varyings, GL_INTERLEAVED_ATTRIBS));
 }
 
 ParticleSystem::~ParticleSystem()
@@ -66,6 +68,7 @@ ParticleSystem::ParticleSystem(){
     SetMaxParticles(1000);
     SetWarmupFrames(0);
     SetEmitCount(1);
+    SetColor(Vector4f(1,1,1,1));
 }
 
 void ParticleSystem::Init(){
@@ -75,6 +78,8 @@ void ParticleSystem::Init(){
     Particles[0].pos = m_emitPosition;
     Particles[0].vel = Vector3f(0.0f);
     Particles[0].lifetime = 0.0f;
+    Particles[0].size = 0.0f;
+    Particles[0].color = Vector4f(0,0,0,0);
 
     GL_C(glGenTransformFeedbacks(2, m_transformFeedback));
 
@@ -82,7 +87,7 @@ void ParticleSystem::Init(){
 
 
 	m_particleBuffer[i] = VBO::CreateInterleaved(
-	    vector<GLuint>{1,3,3,1, 1}, // type, pos, vel, lifetime, size
+	    vector<GLuint>{1,3,3,1, 1, 4}, // type, pos, vel, lifetime, size, color
 	    GL_DYNAMIC_DRAW
 	);
 
@@ -167,6 +172,13 @@ void ParticleSystem::UpdateParticles(float delta){
     m_particleUpdateShader->SetUniform("emitCount", m_emitCount );
     m_particleUpdateShader->SetUniform("startSize", m_startSize );
     m_particleUpdateShader->SetUniform("endSize", m_endSize );
+    m_particleUpdateShader->SetUniform("startColor", m_startColor );
+    m_particleUpdateShader->SetUniform("endColor", m_endColor );
+
+/*    LOG_I("start: %s",  tos(m_startColor).c_str() );
+    LOG_I("end: %s",  tos(m_endColor).c_str() );
+*/
+
 
 /*    LOG_I("start size: %f", m_startSize);
     LOG_I("end size: %f", m_endSize);
@@ -239,15 +251,19 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)4);  // position
     glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)0);  // type
     glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)32);  // size
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)36);  // color
 
     GL_C(glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]));
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(3);
 
     GL_C(glDisable(GL_BLEND));
 
@@ -322,4 +338,17 @@ void ParticleSystem::SetEndSize(const float endSize) {
 void ParticleSystem::SetSize(const float size) {
     SetStartSize(size);
     SetEndSize(size);
+}
+
+void ParticleSystem::SetStartColor(const Vector4f& startColor) {
+    m_startColor = startColor;
+}
+
+void ParticleSystem::SetEndColor(const Vector4f& endColor) {
+    m_endColor = endColor;
+}
+
+void ParticleSystem::SetColor(const Vector4f& color) {
+    SetStartColor(color);
+    SetEndColor(color);
 }
