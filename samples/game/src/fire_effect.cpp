@@ -5,30 +5,28 @@
 
 FireEffect::FireEffect(const Vector3f& position) {
 
-    constexpr float V = 0.1486f;
+    constexpr float V = 0.3086f;
     SetVelocity(Vector3f(0,V,0));
     SetMaxParticles(1000);
-    SetEmitRate(0.1f);
-    SetEmitCount(2);
+    SetEmitRate(0.01f);
+    SetEmitCount(1);
     SetParticleLifetime(2.5f);
     SetStartSize(0.20f);
-    SetEndSize(0.00f);
+    SetEndSize(0.01f);
 
 
-    SetStartColor(Color(1,0.50,0,1));
+/*    SetStartColor(Color(1,0.50,0,1));
     SetEndColor(Color(1,0.50,0,0));
+*/
+    SetStartColor(Color(1,0.3,0,0.6));
+    SetEndColor(Color(1,0.3,0,0));
 
-
-//    SetStartColor(Color(1,1,1,1));
-//    SetEndColor(Color(1,1,1,0));
-
-    SetBlendingMode(ALPHA_BLENDING_MODE);
-
+    SetBlendingMode(ADDITIVE_BLENDING_MODE);
 
     SetEmitPosition(position);
-    SetEmitRange(Vector3f(0.05,0,0.05));
+    SetEmitRange(Vector3f(0.00,0,0.0));
 
-    Texture* texture = new Texture2D("img/snow.png");
+    Texture* texture = new Texture2D("img/particle.png");
 
     texture->Bind();
     texture->SetTextureRepeat();
@@ -42,3 +40,13 @@ FireEffect::FireEffect(const Vector3f& position) {
 }
 
 //#
+
+/*
+lifespan variance is important.
+
+size variance makes it look more interesting it seems.
+
+getting a nice texture is important though.
+
+http://onebyonedesign.com/flash/particleeditor/
+*/
