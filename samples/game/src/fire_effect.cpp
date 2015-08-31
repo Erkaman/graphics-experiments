@@ -6,11 +6,16 @@
 FireEffect::FireEffect(const Vector3f& position) {
 
     constexpr float V = 0.3086f;
-    SetVelocity(Vector3f(0,V,0));
+
+    constexpr float range = 0.03;
+
+    SetMinVelocity(Vector3f(-range,V,-range) );
+    SetMaxVelocity(Vector3f(+range,V,+range));
+
     SetMaxParticles(1000);
     SetEmitRate(0.01f);
     SetEmitCount(1);
-    SetBaseParticleLifetime(2.5f);
+    SetBaseParticleLifetime(1.5f);
     SetParticleLifetimeVariance(0.9f);
 
     SetBaseStartSize(0.20f);
