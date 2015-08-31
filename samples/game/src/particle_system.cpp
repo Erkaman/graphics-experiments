@@ -176,16 +176,23 @@ void ParticleSystem::UpdateParticles(float delta){
 
     m_particleUpdateShader->SetUniform("minVelocity", m_minVelocity);
     m_particleUpdateShader->SetUniform("maxVelocity", m_maxVelocity);
-    m_particleUpdateShader->SetUniform("emitRate", m_emitRate);
-    m_particleUpdateShader->SetUniform("particleLifetime", m_particleLifetime );
+
+
+    m_particleUpdateShader->SetUniform("baseParticleLifetime", m_particleLifetime );
     m_particleUpdateShader->SetUniform("particleLifetimeVariance", m_particleLifetimeVariance );
+
+    m_particleUpdateShader->SetUniform("baseStartSize", m_startSize );
     m_particleUpdateShader->SetUniform("startSizeVariance", m_startSizeVariance );
+
+    m_particleUpdateShader->SetUniform("baseEndSize", m_endSize );
     m_particleUpdateShader->SetUniform("endSizeVariance", m_endSizeVariance );
+
     m_particleUpdateShader->SetUniform("emitPosition", m_emitPosition );
-    m_particleUpdateShader->SetUniform("emitVariance", m_emitPositionVariance );
+    m_particleUpdateShader->SetUniform("emitPositionVariance", m_emitPositionVariance );
+
+    m_particleUpdateShader->SetUniform("emitRate", m_emitRate);
     m_particleUpdateShader->SetUniform("emitCount", m_emitCount );
-    m_particleUpdateShader->SetUniform("startSize", m_startSize );
-    m_particleUpdateShader->SetUniform("endSize", m_endSize );
+
     m_particleUpdateShader->SetUniform("startColor", m_startColor );
     m_particleUpdateShader->SetUniform("endColor", m_endColor );
 

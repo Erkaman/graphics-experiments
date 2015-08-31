@@ -26,11 +26,11 @@ uniform float deltaTime;
 uniform float time;
 uniform sampler1D randomTexture;
 uniform float emitRate;
-uniform float particleLifetime;
+uniform float baseParticleLifetime;
 uniform int emitCount;
 
-uniform float startSize;
-uniform float endSize;
+uniform float baseStartSize;
+uniform float baseEndSize;
 
 uniform vec4 startColor;
 uniform vec4 endColor;
@@ -39,7 +39,7 @@ uniform vec4 endColor;
 uniform vec3 minVelocity;
 uniform vec3 maxVelocity;
 uniform vec3 emitPosition;
-uniform vec3 emitVariance;
+uniform vec3 emitPositionVariance;
 
 uniform float particleLifetimeVariance;
 uniform float startSizeVariance;
@@ -109,19 +109,19 @@ void main() {
 
             type1 = PARTICLE_TYPE_PARTICLE;
 	    float seed = (time+i)/10.0;
-            position1 = GetRandomPosition(seed, emitPosition, emitVariance);
+            position1 = GetRandomPosition(seed, emitPosition, emitPositionVariance);
 
 	    velocity1 = GetRandomDir(seed, minVelocity, maxVelocity);
 
             age1 = 0.0;
 
-	    startSize1 = RandVariance(seed, startSize, startSizeVariance);
-	    endSize1 = RandVariance(seed, endSize, endSizeVariance);
+	    startSize1 = RandVariance(seed, baseStartSize, startSizeVariance);
+	    endSize1 = RandVariance(seed, baseEndSize, endSizeVariance);
 
 
 	    size1 = lerp(startSize1, endSize1, 0, lifetime0[0]);
 	    color1 = GetColor(0, lifetime0[0]);
-	    lifetime1 = RandVariance(seed, particleLifetime, particleLifetimeVariance);
+	    lifetime1 = RandVariance(seed, baseParticleLifetime, particleLifetimeVariance);
 
             EmitVertex();
             EndPrimitive();
