@@ -39,7 +39,7 @@ public:
     void SetEmitRate(float emitRate);
     void SetParticleLifetime(float particleLifetime);
     void SetEmitPosition(const Vector3f& emitPosition);
-    void SetEmitRange(const Vector3f& emitRange);
+    void SetEmitVariance(const Vector3f& emitVariance);
     void SetWarmupFrames(const int warmupFrames);
     void SetEmitCount(const int emitCount);
 
@@ -96,7 +96,7 @@ private:
       The position from which the particles are emitted.
      */
     Vector3f m_emitPosition;
-    Vector3f m_emitRange;
+    Vector3f m_emitVariance;
 
     /*
       The lifetime of a particle.

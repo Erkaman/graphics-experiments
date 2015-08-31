@@ -170,7 +170,7 @@ void ParticleSystem::UpdateParticles(float delta){
     m_particleUpdateShader->SetUniform("emitRate", m_emitRate);
     m_particleUpdateShader->SetUniform("particleLifetime", m_particleLifetime );
     m_particleUpdateShader->SetUniform("emitPosition", m_emitPosition );
-    m_particleUpdateShader->SetUniform("emitRange", m_emitRange );
+    m_particleUpdateShader->SetUniform("emitVariance", m_emitVariance );
     m_particleUpdateShader->SetUniform("emitCount", m_emitCount );
     m_particleUpdateShader->SetUniform("startSize", m_startSize );
     m_particleUpdateShader->SetUniform("endSize", m_endSize );
@@ -309,8 +309,8 @@ void ParticleSystem::SetEmitPosition(const Vector3f& emitPosition) {
     m_emitPosition = emitPosition;
 }
 
-void ParticleSystem::SetEmitRange(const Vector3f& emitRange) {
-    m_emitRange = emitRange;
+void ParticleSystem::SetEmitVariance(const Vector3f& emitVariance) {
+    m_emitVariance = emitVariance;
 }
 
 

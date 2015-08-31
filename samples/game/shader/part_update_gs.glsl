@@ -33,7 +33,7 @@ uniform vec4 endColor;
 uniform vec3 minVelocity;
 uniform vec3 maxVelocity;
 uniform vec3 emitPosition;
-uniform vec3 emitRange;
+uniform vec3 emitVariance;
 
 #define PARTICLE_TYPE_EMITTER 0.0f
 #define PARTICLE_TYPE_PARTICLE 1.0f
@@ -89,7 +89,7 @@ void main() {
 
             type1 = PARTICLE_TYPE_PARTICLE;
 	    float seed = (time+i)/10.0;
-            position1 = GetRandomPosition(seed, emitPosition, emitRange);
+            position1 = GetRandomPosition(seed, emitPosition, emitVariance);
 
 	    velocity1 = GetRandomDir(seed, minVelocity, maxVelocity);
 
