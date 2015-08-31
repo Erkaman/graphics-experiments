@@ -73,6 +73,7 @@ ParticleSystem::ParticleSystem(){
     SetEmitCount(1);
     SetColor(Color(1,1,1,1));
     SetBlendingMode(ALPHA_BLENDING_MODE);
+    SetParticleLifetimeVariance(0.0f);
 }
 
 void ParticleSystem::Init(){
@@ -171,6 +172,7 @@ void ParticleSystem::UpdateParticles(float delta){
     m_particleUpdateShader->SetUniform("maxVelocity", m_maxVelocity);
     m_particleUpdateShader->SetUniform("emitRate", m_emitRate);
     m_particleUpdateShader->SetUniform("particleLifetime", m_particleLifetime );
+    m_particleUpdateShader->SetUniform("particleLifetimeVariance", m_particleLifetimeVariance );
     m_particleUpdateShader->SetUniform("emitPosition", m_emitPosition );
     m_particleUpdateShader->SetUniform("emitVariance", m_emitVariance );
     m_particleUpdateShader->SetUniform("emitCount", m_emitCount );
@@ -367,4 +369,8 @@ void ParticleSystem::SetBlendingMode(const ColorBlendingMode blendingMode) {
     } else {
 	assert(false);
     }
+}
+
+void ParticleSystem::SetParticleLifetimeVariance(const float particleLifetimeVariance) {
+    m_particleLifetimeVariance = particleLifetimeVariance;
 }

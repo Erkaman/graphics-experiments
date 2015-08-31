@@ -53,6 +53,8 @@ public:
 
     void SetBlendingMode(const ColorBlendingMode blendingMode);
 
+    void SetParticleLifetimeVariance(const float particleLifetimeVariance);
+
 private:
 
     void UpdateParticles(float delta);
@@ -116,6 +118,8 @@ private:
 
     GLenum m_sfactor;
     GLenum m_dfactor;
+
+    float m_particleLifetimeVariance;
 };
 
 

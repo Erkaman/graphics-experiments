@@ -12,8 +12,8 @@ FireEffect::FireEffect(const Vector3f& position) {
     SetEmitCount(1);
     SetParticleLifetime(2.5f);
     SetStartSize(0.20f);
-    SetEndSize(0.01f);
-
+    SetEndSize(0.09f);
+    SetParticleLifetimeVariance(/*0.9f*/ 0.0f);
 
 /*    SetStartColor(Color(1,0.50,0,1));
     SetEndColor(Color(1,0.50,0,0));

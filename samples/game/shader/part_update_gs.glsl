@@ -37,6 +37,8 @@ uniform vec3 maxVelocity;
 uniform vec3 emitPosition;
 uniform vec3 emitVariance;
 
+uniform float particleLifetimeVariance;
+
 #define PARTICLE_TYPE_EMITTER 0.0f
 #define PARTICLE_TYPE_PARTICLE 1.0f
 
@@ -48,9 +50,13 @@ vec4 lerp(vec4 minVal, vec4 maxVal, float age, float lifetime) {
       return mix(minVal, maxVal, age / lifetime);
 }
 
-// given a random value rand, return a number in range [low,high]
+// given a random value rand in range [0,1], return a number in range [low,high]
 float rand_range(float rand, float low, float high) {
     return low + rand * (high - low);
+}
+
+float rand_variance(float rand, float base, float variance) {
+    return base + rand_range(rand, -1, +1) * variance;
 }
 
 vec3 GetRandomDir(float seed, vec3 minVel, vec3 maxVel) {
@@ -71,6 +77,13 @@ vec3 GetRandomPosition(float time, vec3 emitPosition, vec3 emitArea) {
 
     return emitPosition + rands * emitArea;
 }
+
+float GetRandomLifetime(float seed, float particleLifetime, float particleLifetimeVariance) {
+    float rand =  texture(randomTexture, seed).x;
+
+    return rand_variance(rand, particleLifetime, particleLifetimeVariance);
+}
+
 
 float GetSize(float age, float lifetime) {
     return lerp(startSize, endSize, age, lifetime);
@@ -98,7 +111,7 @@ void main() {
             age1 = 0.0;
 	    size1 = GetSize(0, lifetime0[0]);
 	    color1 = GetColor(0, lifetime0[0]);
-	    lifetime1 = particleLifetime;
+	    lifetime1 = GetRandomLifetime(seed, particleLifetime, particleLifetimeVariance);
 
             EmitVertex();
             EndPrimitive();
