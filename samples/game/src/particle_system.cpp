@@ -409,3 +409,13 @@ void ParticleSystem::SetStartSizeVariance(const float startSizeVariance) {
 void ParticleSystem::SetEndSizeVariance(const float endSizeVariance) {
     m_endSizeVariance = endSizeVariance;
 }
+
+void ParticleSystem::SetStartSize(const float startSize) {
+    SetBaseStartSize(startSize);
+    SetStartSizeVariance(0.0);
+}
+
+void ParticleSystem::SetEndSize(const float endSize) {
+    SetBaseEndSize(endSize);
+    SetEndSizeVariance(0.0);
+}

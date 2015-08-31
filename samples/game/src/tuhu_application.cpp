@@ -94,18 +94,18 @@ void TuhuApplication::Render() {
 
     m_grass->Draw(*m_camera, lightPosition);
 
-//    m_smoke->Render(m_camera->GetMvp(), m_camera->GetPosition());
+    m_smoke->Render(m_camera->GetMvp(), m_camera->GetPosition());
 //    m_snow->Render(m_camera->GetMvp(), m_camera->GetPosition());
-    m_fire->Render(m_camera->GetMvp(), m_camera->GetPosition());
+//    m_fire->Render(m_camera->GetMvp(), m_camera->GetPosition());
 }
 
 void TuhuApplication::Update(const float delta) {
 
     m_camera->HandleInput(delta);
 
-//    m_smoke->Update(delta);
+    m_smoke->Update(delta);
 //    m_snow->Update(delta);
-    m_fire->Update(delta);
+//    m_fire->Update(delta);
 
       m_skydome->Update(delta);
 

@@ -49,6 +49,10 @@ public:
     void SetBaseEndSize(const float endSize);
     void SetSize(const float size);
 
+    void SetStartSize(const float startSize);
+    void SetEndSize(const float endSize);
+
+
     void SetStartColor(const Color& startColor);
     void SetEndColor(const Color& endColor);
     void SetColor(const Color& color);
