@@ -37,14 +37,16 @@ public:
     void SetMaxParticles(size_t maxParticles);
     void SetTexture(Texture* texture);
     void SetEmitRate(float emitRate);
-    void SetParticleLifetime(float particleLifetime);
+
+    void SetBaseEmitPosition(const Vector3f& emitPosition);
     void SetEmitPosition(const Vector3f& emitPosition);
-    void SetEmitVariance(const Vector3f& emitVariance);
+    void SetEmitPositionVariance(const Vector3f& emitPositionVariance);
+
     void SetWarmupFrames(const int warmupFrames);
     void SetEmitCount(const int emitCount);
 
-    void SetStartSize(const float startSize);
-    void SetEndSize(const float endSize);
+    void SetBaseStartSize(const float startSize);
+    void SetBaseEndSize(const float endSize);
     void SetSize(const float size);
 
     void SetStartColor(const Color& startColor);
@@ -53,7 +55,10 @@ public:
 
     void SetBlendingMode(const ColorBlendingMode blendingMode);
 
+
+    void SetBaseParticleLifetime(float particleLifetime);
     void SetParticleLifetimeVariance(const float particleLifetimeVariance);
+    void SetParticleLifetime(float particleLifetime);
 
     void SetStartSizeVariance(const float startSizeVariance);
     void SetEndSizeVariance(const float endSizeVariance);
@@ -101,7 +106,8 @@ private:
       The position from which the particles are emitted.
      */
     Vector3f m_emitPosition;
-    Vector3f m_emitVariance;
+    Vector3f m_emitPositionVariance;
+
 
     /*
       The lifetime of a particle.

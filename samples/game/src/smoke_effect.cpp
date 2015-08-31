@@ -13,7 +13,7 @@ SmokeEffect::SmokeEffect(const Vector3f& position) {
     SetParticleLifetime(10.0f);
     SetSize(0.09f);
     SetEmitPosition(position); //
-    SetEmitVariance(Vector3f(0,0,0));
+    SetEmitPositionVariance(Vector3f(0,0,0));
 
 
     Texture* texture = new Texture2D("img/smoke2.png" );

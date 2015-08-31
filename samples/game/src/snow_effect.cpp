@@ -12,7 +12,7 @@ SnowEffect::SnowEffect( const Vector3f& CameraPos) {
     SetParticleLifetime(2.5f);
     SetSize(0.04f);
     SetEmitPosition(CameraPos + SNOW_HEIGHT); // emit position will be following player, so not point in setting.
-    SetEmitVariance(Vector3f(4,0,4) );
+    SetEmitPositionVariance(Vector3f(4,0,4) );
     SetWarmupFrames(0);
     SetEmitCount(10);
     SetColor(Color(1,1,1,1));

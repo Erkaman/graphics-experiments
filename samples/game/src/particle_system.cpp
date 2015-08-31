@@ -182,7 +182,7 @@ void ParticleSystem::UpdateParticles(float delta){
     m_particleUpdateShader->SetUniform("startSizeVariance", m_startSizeVariance );
     m_particleUpdateShader->SetUniform("endSizeVariance", m_endSizeVariance );
     m_particleUpdateShader->SetUniform("emitPosition", m_emitPosition );
-    m_particleUpdateShader->SetUniform("emitVariance", m_emitVariance );
+    m_particleUpdateShader->SetUniform("emitVariance", m_emitPositionVariance );
     m_particleUpdateShader->SetUniform("emitCount", m_emitCount );
     m_particleUpdateShader->SetUniform("startSize", m_startSize );
     m_particleUpdateShader->SetUniform("endSize", m_endSize );
@@ -313,16 +313,21 @@ void ParticleSystem::SetEmitRate(float emitRate) {
     m_emitRate = emitRate;
 }
 
-void ParticleSystem::SetParticleLifetime(float particleLifetime) {
+void ParticleSystem::SetBaseParticleLifetime(float particleLifetime) {
     m_particleLifetime = particleLifetime;
+}
+
+void ParticleSystem::SetBaseEmitPosition(const Vector3f& emitPosition) {
+    SetBaseEmitPosition(emitPosition);
+    SetEmitPositionVariance(Vector3f(0,0,0));
 }
 
 void ParticleSystem::SetEmitPosition(const Vector3f& emitPosition) {
     m_emitPosition = emitPosition;
 }
 
-void ParticleSystem::SetEmitVariance(const Vector3f& emitVariance) {
-    m_emitVariance = emitVariance;
+void ParticleSystem::SetEmitPositionVariance(const Vector3f& emitPositionVariance) {
+    m_emitPositionVariance = emitPositionVariance;
 }
 
 
@@ -341,17 +346,19 @@ void ParticleSystem::SetVelocity(const Vector3f& vel) {
 }
 
 
-void ParticleSystem::SetStartSize(const float startSize) {
+void ParticleSystem::SetBaseStartSize(const float startSize) {
     m_startSize = startSize;
 }
 
-void ParticleSystem::SetEndSize(const float endSize) {
+void ParticleSystem::SetBaseEndSize(const float endSize) {
     m_endSize = endSize;
 }
 
 void ParticleSystem::SetSize(const float size) {
-    SetStartSize(size);
-    SetEndSize(size);
+    SetBaseStartSize(size);
+    SetBaseEndSize(size);
+    SetStartSizeVariance(0);
+    SetEndSizeVariance(0);
 }
 
 void ParticleSystem::SetStartColor(const Color& startColor) {
@@ -381,6 +388,11 @@ void ParticleSystem::SetBlendingMode(const ColorBlendingMode blendingMode) {
 
 void ParticleSystem::SetParticleLifetimeVariance(const float particleLifetimeVariance) {
     m_particleLifetimeVariance = particleLifetimeVariance;
+}
+
+void ParticleSystem::SetParticleLifetime(float particleLifetime) {
+    SetBaseParticleLifetime(particleLifetime);
+    SetParticleLifetimeVariance(0);
 }
 
 void ParticleSystem::SetStartSizeVariance(const float startSizeVariance) {

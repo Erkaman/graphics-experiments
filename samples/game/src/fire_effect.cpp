@@ -10,11 +10,11 @@ FireEffect::FireEffect(const Vector3f& position) {
     SetMaxParticles(1000);
     SetEmitRate(0.01f);
     SetEmitCount(1);
-    SetParticleLifetime(2.5f);
-    SetStartSize(0.20f);
-    SetEndSize(0.09f);
+    SetBaseParticleLifetime(2.5f);
     SetParticleLifetimeVariance(0.9f);
 
+    SetBaseStartSize(0.20f);
+    SetBaseEndSize(0.09f);
     SetStartSizeVariance(0.06f);
     SetEndSizeVariance(0.03f);
 
@@ -24,7 +24,7 @@ FireEffect::FireEffect(const Vector3f& position) {
     SetBlendingMode(ADDITIVE_BLENDING_MODE);
 
     SetEmitPosition(position);
-    SetEmitVariance(Vector3f(0.00,0,0.0));
+    SetEmitPositionVariance(Vector3f(0.0,0,0.0));
 
     Texture* texture = new Texture2D("img/particle_post.png");
 
