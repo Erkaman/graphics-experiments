@@ -24,21 +24,23 @@ struct Particle
     float type;
     Vector3f pos;
     Vector3f vel;
-    float lifetime;
+    float age;
     float size;
     Color color;
+    float lifetime;
 };
 
 void beforeLinkingHook(GLuint shaderProgram) {
-    const GLchar* varyings[6];
+    const GLchar* varyings[7];
     varyings[0] = "type1";
     varyings[1] = "position1";
     varyings[2] = "velocity1";
     varyings[3] = "age1";
     varyings[4] = "size1";
     varyings[5] = "color1";
+    varyings[6] = "lifetime1";
 
-    GL_C(glTransformFeedbackVaryings(shaderProgram, 6, varyings, GL_INTERLEAVED_ATTRIBS));
+    GL_C(glTransformFeedbackVaryings(shaderProgram, 7, varyings, GL_INTERLEAVED_ATTRIBS));
 }
 
 ParticleSystem::~ParticleSystem()
@@ -79,7 +81,7 @@ void ParticleSystem::Init(){
     Particles[0].type = PARTICLE_TYPE_EMITTER;
     Particles[0].pos = m_emitPosition;
     Particles[0].vel = Vector3f(0.0f);
-    Particles[0].lifetime = 0.0f;
+    Particles[0].age = 0.0f;
     Particles[0].size = 0.0f;
     Particles[0].color = Color(0,0,0,0);
 
@@ -89,7 +91,7 @@ void ParticleSystem::Init(){
 
 
 	m_particleBuffer[i] = VBO::CreateInterleaved(
-	    vector<GLuint>{1,3,3,1, 1, 4}, // type, pos, vel, lifetime, size, color
+	    vector<GLuint>{1,3,3,1, 1, 4, 1}, // type, pos, vel, lifetime, size, color, lifetime
 	    GL_DYNAMIC_DRAW
 	);
 

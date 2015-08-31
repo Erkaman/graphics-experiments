@@ -8,6 +8,7 @@ in vec3 velocity0[];
 in float age0[];
 in float size0[];
 in vec4 color0[];
+in float lifetime0[];
 
 out float type1;
 out vec3 position1;
@@ -15,6 +16,7 @@ out vec3 velocity1;
 out float age1;
 out float size1;
 out vec4 color1;
+out float lifetime1;
 
 uniform float deltaTime;
 uniform float time;
@@ -38,12 +40,12 @@ uniform vec3 emitVariance;
 #define PARTICLE_TYPE_EMITTER 0.0f
 #define PARTICLE_TYPE_PARTICLE 1.0f
 
-float lerp(float minVal, float maxVal, float age) {
-      return mix(minVal, maxVal, age / particleLifetime);
+float lerp(float minVal, float maxVal, float age, float lifetime) {
+      return mix(minVal, maxVal, age / lifetime);
 }
 
-vec4 lerp(vec4 minVal, vec4 maxVal, float age) {
-      return mix(minVal, maxVal, age / particleLifetime);
+vec4 lerp(vec4 minVal, vec4 maxVal, float age, float lifetime) {
+      return mix(minVal, maxVal, age / lifetime);
 }
 
 // given a random value rand, return a number in range [low,high]
@@ -70,12 +72,12 @@ vec3 GetRandomPosition(float time, vec3 emitPosition, vec3 emitArea) {
     return emitPosition + rands * emitArea;
 }
 
-float GetSize(float age) {
-      return lerp(startSize, endSize, age);
+float GetSize(float age, float lifetime) {
+    return lerp(startSize, endSize, age, lifetime);
 }
 
-vec4 GetColor(float age) {
-    return lerp(startColor, endColor, age);
+vec4 GetColor(float age, float lifetime) {
+    return lerp(startColor, endColor, age, lifetime);
 }
 
 
@@ -94,8 +96,9 @@ void main() {
 	    velocity1 = GetRandomDir(seed, minVelocity, maxVelocity);
 
             age1 = 0.0;
-	    size1 = GetSize(0);
-	    color1 = GetColor(0);
+	    size1 = GetSize(0, lifetime0[0]);
+	    color1 = GetColor(0, lifetime0[0]);
+	    lifetime1 = particleLifetime;
 
             EmitVertex();
             EndPrimitive();
@@ -109,6 +112,7 @@ void main() {
         velocity1 = velocity0[0];
         size1 = size0[0];
         color1 = color0[0];
+	lifetime1 = lifetime0[0];
 
         age1 = age;
 
@@ -125,8 +129,9 @@ void main() {
 	            position1 = position0[0] + DeltaP;
 	            velocity1 = velocity0[0] + DeltaV;
 	            age1 = age;
-		    size1  = GetSize(age);
-		    color1  = GetColor(age);
+		    size1  = GetSize(age, lifetime0[0]);
+		    color1  = GetColor(age, lifetime0[0]);
+		    lifetime1 = lifetime0[0];
 	            EmitVertex();
 	            EndPrimitive();
 	        } // else particle will die.

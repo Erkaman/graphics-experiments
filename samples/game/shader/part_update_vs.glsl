@@ -4,6 +4,7 @@ layout (location = 2) in vec3 velocity;
 layout (location = 3) in float age;
 layout (location = 4) in float size;
 layout (location = 5) in vec4 color;
+layout (location = 6) in float lifetime;
 
 out float type0;
 out vec3 position0;
@@ -11,6 +12,7 @@ out vec3 velocity0;
 out float age0;
 out float size0;
 out vec4 color0;
+out float lifetime0;
 
 void main()
 {
@@ -20,4 +22,5 @@ void main()
     age0 = age;
     size0 = size;
     color0 = color;
+    lifetime0 = lifetime;
 }
