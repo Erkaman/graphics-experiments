@@ -9,6 +9,8 @@ in float age0[];
 in float size0[];
 in vec4 color0[];
 in float lifetime0[];
+in float startSize0[];
+in float endSize0[];
 
 out float type1;
 out vec3 position1;
@@ -17,6 +19,8 @@ out float age1;
 out float size1;
 out vec4 color1;
 out float lifetime1;
+out float startSize1;
+out float endSize1;
 
 uniform float deltaTime;
 uniform float time;
@@ -38,6 +42,8 @@ uniform vec3 emitPosition;
 uniform vec3 emitVariance;
 
 uniform float particleLifetimeVariance;
+uniform float startSizeVariance;
+uniform float endSizeVariance;
 
 #define PARTICLE_TYPE_EMITTER 0.0f
 #define PARTICLE_TYPE_PARTICLE 1.0f
@@ -78,16 +84,15 @@ vec3 GetRandomPosition(float time, vec3 emitPosition, vec3 emitArea) {
     return emitPosition + rands * emitArea;
 }
 
-float GetRandomLifetime(float seed, float particleLifetime, float particleLifetimeVariance) {
+float RandVariance(float seed, float base, float variance) {
     float rand =  texture(randomTexture, seed).x;
-
-    return rand_variance(rand, particleLifetime, particleLifetimeVariance);
+    return rand_variance(rand, base, variance);
 }
 
 
-float GetSize(float age, float lifetime) {
+/*float GetSize(float startSize, float endSize, float age, float lifetime) {
     return lerp(startSize, endSize, age, lifetime);
-}
+}*/
 
 vec4 GetColor(float age, float lifetime) {
     return lerp(startColor, endColor, age, lifetime);
@@ -109,9 +114,14 @@ void main() {
 	    velocity1 = GetRandomDir(seed, minVelocity, maxVelocity);
 
             age1 = 0.0;
-	    size1 = GetSize(0, lifetime0[0]);
+
+	    startSize1 = RandVariance(seed, startSize, startSizeVariance);
+	    endSize1 = RandVariance(seed, endSize, endSizeVariance);
+
+
+	    size1 = lerp(startSize1, endSize1, 0, lifetime0[0]);
 	    color1 = GetColor(0, lifetime0[0]);
-	    lifetime1 = GetRandomLifetime(seed, particleLifetime, particleLifetimeVariance);
+	    lifetime1 = RandVariance(seed, particleLifetime, particleLifetimeVariance);
 
             EmitVertex();
             EndPrimitive();
@@ -137,14 +147,16 @@ void main() {
         vec3 DeltaV = deltaTime * vec3(0.0, 0.0, 0.0);
 
         if (type0[0] == PARTICLE_TYPE_PARTICLE)  {
-	        if (age < particleLifetime) {
+	        if (age < lifetime0[0]) {
 	            type1 = PARTICLE_TYPE_PARTICLE;
 	            position1 = position0[0] + DeltaP;
 	            velocity1 = velocity0[0] + DeltaV;
 	            age1 = age;
-		    size1  = GetSize(age, lifetime0[0]);
+		    size1  = lerp(startSize0[0], endSize0[0], age, lifetime0[0]);
 		    color1  = GetColor(age, lifetime0[0]);
 		    lifetime1 = lifetime0[0];
+		    startSize1 = startSize0[0];
+		    endSize1 = endSize0[0];
 	            EmitVertex();
 	            EndPrimitive();
 	        } // else particle will die.

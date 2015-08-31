@@ -28,10 +28,12 @@ struct Particle
     float size;
     Color color;
     float lifetime;
+    float startSize;
+    float endSize;
 };
 
 void beforeLinkingHook(GLuint shaderProgram) {
-    const GLchar* varyings[7];
+    const GLchar* varyings[9];
     varyings[0] = "type1";
     varyings[1] = "position1";
     varyings[2] = "velocity1";
@@ -39,8 +41,10 @@ void beforeLinkingHook(GLuint shaderProgram) {
     varyings[4] = "size1";
     varyings[5] = "color1";
     varyings[6] = "lifetime1";
+    varyings[7] = "startSize1";
+    varyings[8] = "endSize1";
 
-    GL_C(glTransformFeedbackVaryings(shaderProgram, 7, varyings, GL_INTERLEAVED_ATTRIBS));
+    GL_C(glTransformFeedbackVaryings(shaderProgram, 9, varyings, GL_INTERLEAVED_ATTRIBS));
 }
 
 ParticleSystem::~ParticleSystem()
@@ -74,6 +78,8 @@ ParticleSystem::ParticleSystem(){
     SetColor(Color(1,1,1,1));
     SetBlendingMode(ALPHA_BLENDING_MODE);
     SetParticleLifetimeVariance(0.0f);
+    SetStartSizeVariance(0);
+    SetEndSizeVariance(0);
 }
 
 void ParticleSystem::Init(){
@@ -92,7 +98,7 @@ void ParticleSystem::Init(){
 
 
 	m_particleBuffer[i] = VBO::CreateInterleaved(
-	    vector<GLuint>{1,3,3,1, 1, 4, 1}, // type, pos, vel, lifetime, size, color, lifetime
+	    vector<GLuint>{1,3,3,1, 1, 4, 1,1,1}, // type, pos, vel, lifetime, size, color, lifetime, startsize, endsize
 	    GL_DYNAMIC_DRAW
 	);
 
@@ -173,6 +179,8 @@ void ParticleSystem::UpdateParticles(float delta){
     m_particleUpdateShader->SetUniform("emitRate", m_emitRate);
     m_particleUpdateShader->SetUniform("particleLifetime", m_particleLifetime );
     m_particleUpdateShader->SetUniform("particleLifetimeVariance", m_particleLifetimeVariance );
+    m_particleUpdateShader->SetUniform("startSizeVariance", m_startSizeVariance );
+    m_particleUpdateShader->SetUniform("endSizeVariance", m_endSizeVariance );
     m_particleUpdateShader->SetUniform("emitPosition", m_emitPosition );
     m_particleUpdateShader->SetUniform("emitVariance", m_emitVariance );
     m_particleUpdateShader->SetUniform("emitCount", m_emitCount );
@@ -373,4 +381,12 @@ void ParticleSystem::SetBlendingMode(const ColorBlendingMode blendingMode) {
 
 void ParticleSystem::SetParticleLifetimeVariance(const float particleLifetimeVariance) {
     m_particleLifetimeVariance = particleLifetimeVariance;
+}
+
+void ParticleSystem::SetStartSizeVariance(const float startSizeVariance) {
+    m_startSizeVariance = startSizeVariance;
+}
+
+void ParticleSystem::SetEndSizeVariance(const float endSizeVariance) {
+    m_endSizeVariance = endSizeVariance;
 }

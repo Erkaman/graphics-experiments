@@ -55,6 +55,9 @@ public:
 
     void SetParticleLifetimeVariance(const float particleLifetimeVariance);
 
+    void SetStartSizeVariance(const float startSizeVariance);
+    void SetEndSizeVariance(const float endSizeVariance);
+
 private:
 
     void UpdateParticles(float delta);
@@ -110,6 +113,8 @@ private:
      */
     float m_startSize;
     float m_endSize;
+    float m_startSizeVariance;
+    float m_endSizeVariance;
 
     int m_warmupFrames;
 

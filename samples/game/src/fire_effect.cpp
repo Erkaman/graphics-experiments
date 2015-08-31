@@ -13,11 +13,11 @@ FireEffect::FireEffect(const Vector3f& position) {
     SetParticleLifetime(2.5f);
     SetStartSize(0.20f);
     SetEndSize(0.09f);
-    SetParticleLifetimeVariance(/*0.9f*/ 0.0f);
+    SetParticleLifetimeVariance(0.9f);
 
-/*    SetStartColor(Color(1,0.50,0,1));
-    SetEndColor(Color(1,0.50,0,0));
-*/
+    SetStartSizeVariance(0.06f);
+    SetEndSizeVariance(0.03f);
+
     SetStartColor(Color(1,0.3,0,0.6));
     SetEndColor(Color(1,0.3,0,0));
 
@@ -49,4 +49,7 @@ size variance makes it look more interesting it seems.
 getting a nice texture is important though.
 
 http://onebyonedesign.com/flash/particleeditor/
+
+start size variance big,
+end size variance small.
 */
