@@ -7,7 +7,7 @@ Vector3i::operator std::string() const {
 }
 
 float Vector3i::Length()const {
-    return sqrt(x*x + y*y + z*z);
+    return (float)sqrt(x*x + y*y + z*z);
 }
 
 Vector3i Vector3i::Cross(const Vector3i& v1, const Vector3i& v2) {

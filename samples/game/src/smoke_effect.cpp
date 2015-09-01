@@ -15,10 +15,10 @@ SmokeEffect::SmokeEffect(const Vector3f& position) {
     SetStartSize(0.20f);
     SetEndSize(0.10f);
     SetStartSizeVariance(0.01f);
-    SetEndSizeVariance(0.01);
+    SetEndSizeVariance(0.01f);
 
     SetEmitPosition(position); //
-    SetEmitPositionVariance(Vector3f(0.0,0,0.0));
+    SetEmitPositionVariance(Vector3f(0.0f,0.0f,0.0f));
 
     float C = 0.77f;
 

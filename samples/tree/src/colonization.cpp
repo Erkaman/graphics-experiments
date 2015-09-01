@@ -73,7 +73,7 @@ Branch::Branch(const Vector3f& position,
     m_path = -1;
 }
 
-void Colonization::computeBranchSizes(int lastCount)  {
+void Colonization::computeBranchSizes(int)  {
     // zero all the branch areas
     for (int j = m_branches.size()-1; j >= 0; j--)
     {
@@ -225,7 +225,7 @@ Leaf::Leaf(const Vector3f& position) {
 bool Colonization::FindClosestBranch(const Vector3f& leafPosition, int& closest) {
 
     closest = -1;
-    float closestDist = INT_MAX;
+    float closestDist = (float)INT_MAX;
 
     for(size_t i = 0; i < m_branches.size(); ++i) {
 	const Branch* branch = m_branches[i];

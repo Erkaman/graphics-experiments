@@ -238,7 +238,7 @@ void Grass::Update(const float delta) {
 }
 
 void Grass::GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height) {
-    GLushort baseIndex = grassVertices.size() / (3+2+3+3);
+    GLushort baseIndex = (GLushort)grassVertices.size() / (3+2+3+3);
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);
@@ -289,7 +289,7 @@ void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& g
 
 void Grass::GenerateBillboardVertices(const Vector2f position, FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height) {
 
-    GLushort baseIndex = billboardVertices.size() / (3+2);
+    GLushort baseIndex = (GLushort)billboardVertices.size() / (3+2);
 
 
     Vector2f dir = AngleToVector(0);

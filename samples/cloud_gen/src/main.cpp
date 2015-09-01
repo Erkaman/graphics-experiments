@@ -38,7 +38,7 @@ void FindCloudFloodfill(int x, int y, int& xmin,int& xmax, int& ymin, int& ymax,
 
 void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, const float scale, const string& filename);
 
-int main (int argc, char *argv[]) {
+int main (int, char *[]) {
 
     LogInit();
 
@@ -69,15 +69,15 @@ int main (int argc, char *argv[]) {
 
 float SampleNoise(const Vector2f& p) {
 
-    float sample = noise.Turbulence(7, p * 0.04f, 2, 0.5);
+    float sample = noise.Turbulence(7, p * 0.04f, 2.0f, 0.5f);
 
-    sample -= 0.4;
+    sample -= 0.4f;
 
-    if(sample < 0) {
-	sample = 0;
+    if(sample < 0.0f) {
+	sample = 0.0f;
     }
 
-    sample = 1 - ( pow(0.1f,sample)  * 1 );
+    sample = 1.0f - ( pow(0.1f,sample)  * 1.0f );
 
     return sample;
 }
@@ -90,7 +90,7 @@ void FindCloud( int& xmin,int& xmax, int& ymin, int& ymax) {
 	int x = rng.RandomInt(-1000000,+1000000);
 	int y = rng.RandomInt(-1000000,+1000000);
 
-	if(SampleNoise(Vector2f(x,y)) > EPSILON) {
+	if(SampleNoise(Vector2f((float)x,(float)y)) > EPSILON) {
 	    xmin = x;
 	    xmax = x;
 
@@ -124,7 +124,7 @@ void FindCloud( int& xmin,int& xmax, int& ymin, int& ymax) {
 
 // if true is returned the
 void FindCloudFloodfill(int x, int y, int& xmin,int& xmax, int& ymin, int& ymax, unordered_set<Vector2f>& visitedPixels, bool& tooBig) {
-    Vector2f p(x,y);
+    Vector2f p((float)x,(float)y);
 
     if(tooBig) {
 	return; // too big, stop the entire recursion
@@ -170,8 +170,8 @@ void FindCloudFloodfill(int x, int y, int& xmin,int& xmax, int& ymin, int& ymax,
 
 void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, const float scale, const string& filename) {
 
-    const size_t height = (ymax - ymin) * scale + 1;
-    const size_t width =(xmax - xmin) * scale + 1;
+    const size_t height = (size_t)((ymax - ymin) * scale + 1);
+    const size_t width = (size_t)((xmax - xmin) * scale + 1);
 
     unsigned char* pixels = new unsigned char[4 * height * width];
 
@@ -188,7 +188,7 @@ void SaveNoise( const int xmin, const int xmax, const int ymin, const int ymax, 
 	    Color sky(1.0f, 1.0f, 1.0f);
 	    Color clouds(sample,sample,sample);
 
-	    unsigned char alpha = sample < EPSILON ? 0 : CLOUD_ALPHA;
+	//    unsigned char alpha = sample < EPSILON ? 0 : CLOUD_ALPHA;
 //	    unsigned char val = (unsigned char)((sample) * 255.0f);
 
 	    Color l = Color::Lerp(sky, clouds, 0.3f);

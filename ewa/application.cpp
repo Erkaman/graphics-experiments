@@ -22,7 +22,7 @@
 
 bool isFocused = true;
 
-void WindowFocusCallback(GLFWwindow* window, int iconified) {
+void WindowFocusCallback(GLFWwindow*, int iconified) {
 
     isFocused = iconified == GL_TRUE;
 

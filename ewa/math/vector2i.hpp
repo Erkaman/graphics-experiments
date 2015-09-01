@@ -19,7 +19,7 @@ public:
       CONSTRUCTORS
      */
 
-    Vector2i():x(0),y(0.) {  }
+    Vector2i():x(0),y(0) {  }
 
     Vector2i(const int value_): x(value_), y(value_){  }
 

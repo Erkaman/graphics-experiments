@@ -30,6 +30,6 @@ SnowEffect::SnowEffect( const Vector3f& CameraPos) {
 }
 
 void SnowEffect::Render(const Matrix4f& VP, const Vector3f& CameraPos) {
-    SetEmitPosition(CameraPos + SNOW_HEIGHT );
+    SetBaseEmitPosition(CameraPos + SNOW_HEIGHT );
     ParticleSystem::Render(VP, CameraPos);
 }

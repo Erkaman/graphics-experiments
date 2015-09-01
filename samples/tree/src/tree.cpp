@@ -341,7 +341,7 @@ void Tree::DrawLeaves(const Camera& camera, const Vector4f& lightPosition) {
     m_leafTexture->Unbind();
 }
 
-void Tree::DrawTree(const Camera& camera, const Vector4f& lightPosition) {
+void Tree::DrawTree(const Camera&, const Vector4f&) {
 
     m_woodTexture->Bind();
 

@@ -20,7 +20,7 @@ public:
       CONSTRUCTORS
      */
 
-    Vector3i():x(0),y(0.),z(0) {  }
+    Vector3i():x(0),y(0),z(0) {  }
 
     Vector3i(const int value_): x(value_), y(value_),z(value_){  }
 

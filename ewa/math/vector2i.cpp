@@ -7,7 +7,7 @@ Vector2i::operator std::string() const {
 }
 
 float Vector2i::Length()const {
-    return sqrt(x*x + y*y);
+    return (float)sqrt(x*x + y*y);
 }
 
 bool operator==(const Vector2i& v1, const Vector2i& v2) {

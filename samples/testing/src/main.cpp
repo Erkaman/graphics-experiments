@@ -8,7 +8,7 @@
 
 using std::vector;
 
-int main (int argc, char *argv[]) {
+int main (int, char *[]) {
 
     LogInit();
 
@@ -74,7 +74,7 @@ int main (int argc, char *argv[]) {
 
     float* pixels = rt.GetPixels<float>(SIZE* 1 * 3 * sizeof(float), GL_RGB, GL_FLOAT);
 
-    for(int i = 0; i < (SIZE*3 + 10); ++i) {
+    for(size_t i = 0; i < (SIZE*3 + 10); ++i) {
 	LOG_I("pixels: %f", pixels[i] );
     }
 

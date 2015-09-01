@@ -46,10 +46,10 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
 
-	 const Vector3f pos = Vector3f(10.614038, -2.656145, 9.056442);
+	 const Vector3f pos = Vector3f(10.614038f, -2.656145f, 9.056442f);
     m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,
 pos,
-Vector3f(0.754520, -0.075467, 0.651923)
+Vector3f(0.754520f, -0.075467f, 0.651923f)
 , true);
 
     m_snow = new SnowEffect(pos);

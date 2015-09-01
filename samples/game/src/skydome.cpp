@@ -135,7 +135,7 @@ void Skydome::MakeClouds() {
 
     for(int x = 0; x <= (CLOUD_GRID_X_COUNT-1); ++x) {
 
-	float weight = abs(middleX -x);
+	float weight = (float)abs(middleX -x);
 	weights.push_back(weight);
 	items.push_back(x);
     }
@@ -165,8 +165,8 @@ void Skydome::MakeClouds() {
 
 	cloudInfo.m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
-	const float cloudWidth = 0.1 + cloudGroup->m_width / 10000.0f;
-	const float cloudHeight = 0.1 + cloudGroup->m_height / 10000.0f;
+	const float cloudWidth = 0.1f + cloudGroup->m_width / 10000.0f;
+	const float cloudHeight = 0.1f + cloudGroup->m_height / 10000.0f;
 
 	GenerateBillboardVertices(cloudInfo.m_vertexBuffer, cloudInfo.m_indexBuffer,  cloudWidth, cloudHeight);
 
@@ -195,9 +195,9 @@ void Skydome::MakeClouds() {
 	    m_rng->RandomFloat(-CLOUD_GRID_Y_SIZE/2, CLOUD_GRID_Y_SIZE/2);
 	cloudInfo.m_orientation = m_rng->RandomFloat(0.0f,360.0f);
 
-	cloudInfo.m_elevationVelocity = m_rng->RandomFloat(-0.1,+0.1);
-	cloudInfo.m_rotationVelocity = 0.2f  +  m_rng->RandomFloat(-0.1,+0.1);
-	cloudInfo.m_orientationVelocity = m_rng->RandomFloat(-1.5,+1.5);
+	cloudInfo.m_elevationVelocity = m_rng->RandomFloat(-0.1f,+0.1f);
+	cloudInfo.m_rotationVelocity = 0.2f  +  m_rng->RandomFloat(-0.1f,+0.1f);
+	cloudInfo.m_orientationVelocity = m_rng->RandomFloat(-1.5f,+1.5f);
 
 
 	cloudGroup->m_clouds.push_back(cloudInfo);

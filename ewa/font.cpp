@@ -61,7 +61,7 @@ Font::Font(
     }
 }
 
-void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, const std::string& str, const Color& color) {
+void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, const std::string& str, const Color&) {
 
     // scale the coordinate to the window.
     float scaledX = -1 + x * m_scaleX;

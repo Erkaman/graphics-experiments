@@ -76,6 +76,9 @@ private:
 
 	);
 
+	Grass& operator=(const Grass&);
+	Grass(const Grass&);
+
 public:
 
     Grass(const std::vector<std::string>& textureFilenames, const Vector4f& lightPosition);

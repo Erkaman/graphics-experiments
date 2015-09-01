@@ -58,6 +58,6 @@ GLushort GenerateSphereVertices(
     m_indexBuffer->SetBufferData(indices);
     m_indexBuffer->Unbind();
 
-    return indices.size();
+    return (GLushort)indices.size();
 
 }

@@ -44,13 +44,13 @@ void GrassApplication::Init() {
 
     m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),
 
-			  Vector3f(6.797705, 4.315825, 3.393999),Vector3f(0.113218, 0.175353, 0.977974)
+			  Vector3f(6.797705f, 4.315825f, 3.393999f),Vector3f(0.113218f, 0.175353f, 0.977974f)
 
 
 
 		       , true);
 
-    m_plane = new Plane(Vector3f(5,4,1), Vector3f(1,1,1));
+    m_plane = new Plane(Vector3f(5.0f,4.0f,1.0f), Vector3f(1.0f,1.0f,1.0f));
 
     m_grass = new Exp();
     m_grass->Init();

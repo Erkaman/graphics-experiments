@@ -28,7 +28,7 @@ int ReadLittleEndianInt(File& file) {
     return  *((int *)file.ReadArray(4));
 }
 
-int ReadLittleEndianShort(File& file) {
+short ReadLittleEndianShort(File& file) {
     return  *((short *)file.ReadArray(2));
 }
 

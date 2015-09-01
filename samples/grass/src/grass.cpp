@@ -41,7 +41,7 @@ void Grass::AddQuad(GrassGroup* grassGroup,
     n.Add(vertices);
 
 
-    GLushort baseIndex = indices.size() / 3;
+    GLushort baseIndex = (GLushort)indices.size() / 3;
 
     indices.push_back(baseIndex+0);
     indices.push_back(baseIndex+1);
@@ -214,7 +214,7 @@ void Grass::MakeGrassBlade(GrassGroup* grassGroup,
 
 	float bottomY = 1.0f - (i * (1.0f/lod));
 
-	GLushort baseIndex = vertices.size() / (3+3+2);
+	GLushort baseIndex = (GLushort)vertices.size() / (3+3+2);
 
 	Vector3f n(0,0,-1);
 
@@ -253,7 +253,7 @@ void Grass::MakeGrassBlade(GrassGroup* grassGroup,
 }
 
 
-void Grass::Update(const float delta) {
+void Grass::Update(const float) {
     const KeyboardState& kbs = KeyboardState::GetInstance();
 
     if( kbs.IsPressed(GLFW_KEY_Y) ) {

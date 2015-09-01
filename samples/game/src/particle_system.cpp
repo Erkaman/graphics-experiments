@@ -325,12 +325,12 @@ void ParticleSystem::SetBaseParticleLifetime(float particleLifetime) {
 }
 
 void ParticleSystem::SetBaseEmitPosition(const Vector3f& emitPosition) {
-    SetBaseEmitPosition(emitPosition);
-    SetEmitPositionVariance(Vector3f(0,0,0));
+	m_emitPosition = emitPosition;
 }
 
 void ParticleSystem::SetEmitPosition(const Vector3f& emitPosition) {
-    m_emitPosition = emitPosition;
+	SetBaseEmitPosition(emitPosition);
+	SetEmitPositionVariance(Vector3f(0.0f, 0.0f, 0.0f));
 }
 
 void ParticleSystem::SetEmitPositionVariance(const Vector3f& emitPositionVariance) {
@@ -364,8 +364,8 @@ void ParticleSystem::SetBaseEndSize(const float endSize) {
 void ParticleSystem::SetSize(const float size) {
     SetBaseStartSize(size);
     SetBaseEndSize(size);
-    SetStartSizeVariance(0);
-    SetEndSizeVariance(0);
+    SetStartSizeVariance(0.0f);
+    SetEndSizeVariance(0.0f);
 }
 
 void ParticleSystem::SetStartColor(const Color& startColor) {

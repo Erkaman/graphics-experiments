@@ -40,8 +40,8 @@ float ValueNoise::Sample(const Vector2f& p)const {
 
 
     const Vector2f P =
-	Vector2f( Floor(p.x) % 256,  Floor(p.y) % 256 );
-
+	Vector2f( (float)(Floor(p.x) % 256), (float)(Floor(p.y) % 256) );
+	
 //      LOG_I("P: %s", std::string(P).c_str());
 
 //    p -= floor(p);
@@ -57,10 +57,10 @@ float ValueNoise::Sample(const Vector2f& p)const {
 
 
 
-    const int A = GetPerm(P.x) + P.y;
+    const int A = GetPerm((int)P.x) +(int) P.y;
     const int AA = GetPerm(A);
     const int AB = GetPerm(A + 1);
-    const int B =  GetPerm(P.x + 1) + P.y;
+    const int B =  GetPerm((int)P.x + 1) + (int)P.y;
     const int BA = GetPerm(B);
     const int BB = GetPerm(B + 1);
 

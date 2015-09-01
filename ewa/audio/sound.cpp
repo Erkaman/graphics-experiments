@@ -2,6 +2,9 @@
 
 #include "wave_loader.hpp"
 
+//  "conditional expression is constant"
+#pragma warning (disable : 4127)
+
 
 Sound::Sound(const std::string& filename) {
     AL_C(alGenBuffers(1, &m_buffer));

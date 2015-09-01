@@ -6,11 +6,11 @@
 
 
 static void TestAdd() {
-    Vector2f a(1,2.2);
-    Vector2f b(4,-1.1);
+    Vector2f a(1.0f,2.2f);
+    Vector2f b(4.0f,-1.1f);
 
     Vector2f sum = a + b;
-    Vector2f expectedSum(5,1.1);
+    Vector2f expectedSum(5.0f,1.1f);
 
     AssertEquals(sum,expectedSum);
 }
@@ -39,11 +39,11 @@ static void TestNormalize() {
     Vector2f v(2.5f,0.0f);
     v.Normalize();
 
-    AssertEquals(v,Vector2f(1,0));
+    AssertEquals(v,Vector2f(1.0f,0.0f));
 
     v = Vector2f(2,3);
     v.Normalize();
-    AssertEquals(v,Vector2f(.55470f, 0.83205));
+    AssertEquals(v,Vector2f(.55470f, 0.83205f));
 }
 
 static void TestEquals() {
