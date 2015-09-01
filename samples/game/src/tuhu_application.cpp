@@ -7,6 +7,7 @@
 
 
 #include "ewa/audio/sound.hpp"
+#include "ewa/audio/wave_loader.hpp"
 
 #include "skydome.hpp"
 #include "height_map.hpp"
@@ -74,11 +75,10 @@ Vector3f(0.754520, -0.075467, 0.651923)
 
     OpenAL::Init();
 
-//    WaveLoader::Load("audio/click.wav");
-
-/*    m_windSound = new Sound("audio/wind2.wav");
+    
+    m_windSound = new Sound("audio/wind2.wav");
     m_windSound->SetGain(1.0f);
-    m_windSound->SetLooping(true);*/
+    m_windSound->SetLooping(true);
 }
 
 void TuhuApplication::Render() {
@@ -95,8 +95,8 @@ void TuhuApplication::Render() {
     m_grass->Draw(*m_camera, lightPosition);
 
     m_smoke->Render(m_camera->GetMvp(), m_camera->GetPosition());
-//    m_snow->Render(m_camera->GetMvp(), m_camera->GetPosition());
-//    m_fire->Render(m_camera->GetMvp(), m_camera->GetPosition());
+   m_snow->Render(m_camera->GetMvp(), m_camera->GetPosition());
+    m_fire->Render(m_camera->GetMvp(), m_camera->GetPosition());
 }
 
 void TuhuApplication::Update(const float delta) {
@@ -104,8 +104,8 @@ void TuhuApplication::Update(const float delta) {
     m_camera->HandleInput(delta);
 
     m_smoke->Update(delta);
-//    m_snow->Update(delta);
-//    m_fire->Update(delta);
+    m_snow->Update(delta);
+    m_fire->Update(delta);
 
       m_skydome->Update(delta);
 

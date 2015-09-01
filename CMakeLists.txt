@@ -54,9 +54,8 @@ file(GLOB ENGINE_SRC ewa/*.cpp ewa/gl/shader/*.cpp ewa/gl/*.cpp ewa/math/*.cpp e
 
 
 FIND_PACKAGE(OpenGL REQUIRED)
-FIND_PACKAGE(OpenAL REQUIRED)
 
-LIST(APPEND game_libs ${GLUT_LIBRARY} ${OPENGL_LIBRARY} ${OPENAL_LIBRARY})
+LIST(APPEND game_libs ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
 
 LIST(APPEND game_libs glfw3)
 
@@ -71,6 +70,10 @@ IF(APPLE)
     "${COCOA_FRAMEWORK}"
     "${CORE_VIDEO_FRAMEWORK}"
     "${IOKIT_FRAMEWORK}")
+	
+	FIND_PACKAGE(OpenAL REQUIRED)
+	LIST(APPEND game_libs ${OPENAL_LIBRARY})
+
 ELSEIF(UNIX)
   LINK_DIRECTORIES("deps/libs/linux")
   find_package(X11 REQUIRED)
@@ -79,8 +82,9 @@ ELSEIF(UNIX)
 ELSEIF(WIN32)
   MESSAGE(linking)
   LINK_DIRECTORIES("deps/libs/win32")
-ENDIF()
+  LIST(APPEND game_libs OpenAL32)
 
+ENDIF()
 
 include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng" ".")
 
@@ -94,3 +98,8 @@ TARGET_LINK_LIBRARIES(ewa ${game_libs})
 add_subdirectory("samples")
 
 add_subdirectory("unit_test")
+
+
+
+# we should put al headers in deps/include.
+# put openal.lib in link directory. 

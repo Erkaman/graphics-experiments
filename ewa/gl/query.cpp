@@ -1,7 +1,7 @@
 #include "gl/query.hpp"
 
 Query::Query(GLenum target): m_target(target) {
-    GL_C(glGenQueries(1, &m_id);)
+	GL_C(glGenQueries(1, &m_id));
 }
 
 Query::~Query() {

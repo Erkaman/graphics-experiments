@@ -7,7 +7,7 @@ const Vector3f SNOW_HEIGHT = Vector3f(0,1.0,0) ;
 SnowEffect::SnowEffect( const Vector3f& CameraPos) {
     SetMinVelocity(Vector3f(0,-0.6f,0));
     SetMaxVelocity(Vector3f(0,-0.7f,0));
-    SetMaxParticles(2000);
+    SetMaxParticles(2500);
     SetEmitRate(0.01f);
     SetParticleLifetime(2.5f);
     SetSize(0.04f);
