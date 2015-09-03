@@ -19,7 +19,7 @@ Matrix4f GeometryObject::GetModelMatrix()const {
 */
 
 
-void GeometryObject::Init(GeometryObjectData& data, const FloatVector& vertices, const UshortVector& indices) {
+void GeometryObject::Init(GeometryObjectData& data) {
 
     m_vertexBuffer = VBO::CreateInterleaved(
 	data.m_vertexAttribsSizes);

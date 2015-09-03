@@ -59,7 +59,7 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
 
     m_perlinSeed = new PerlinSeed(1);
 
-    GeometryObject::Init(data,vertices, indices);
+    GeometryObject::Init(data);
 
 
 }

@@ -34,7 +34,7 @@ public:
 
 //    GeometryObject(const Vector3f& translation, const Vector3f& scale);
 
-    void Init(GeometryObjectData&  data, const FloatVector& vertices, const UshortVector& indices);
+    void Init(GeometryObjectData&  data);
 
     GeometryObject() {}
     ~GeometryObject();
