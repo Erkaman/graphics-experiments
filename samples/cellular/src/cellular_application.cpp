@@ -25,8 +25,8 @@ void CellularApplication::Init() {
 
     m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,7.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
 
-    m_cellularPlane = new Plane(Vector3f(1,4,1), Vector3f(1,1,1), true);
-    m_perlinPlane = new Plane(Vector3f(20,4,1), Vector3f(1,1,1), false);
+    m_cellularPlane = new Plane(Vector3f(1,4,1), true);
+    m_perlinPlane = new Plane(Vector3f(20,4,1), false);
 
 }
 

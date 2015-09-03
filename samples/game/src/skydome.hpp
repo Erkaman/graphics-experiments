@@ -11,7 +11,7 @@ class Texture;
 class CloudGroup;
 class Random;
 
-class Skydome : public GeometryObject{
+class Skydome /*: public GeometryObject*/{
 
 private:
 

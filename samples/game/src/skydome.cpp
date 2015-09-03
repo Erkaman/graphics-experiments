@@ -61,7 +61,7 @@ public:
 
 void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const float width, const float height);
 
-Skydome::Skydome(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)),m_rng(new Random(3)) {
+Skydome::Skydome(const float radius, const int slices, const int stacks): /*GeometryObject(Vector3f(0), Vector3f(1)),*/m_rng(new Random(3)) {
 
     /*
       Create the skydome.

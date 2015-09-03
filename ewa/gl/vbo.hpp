@@ -71,7 +71,7 @@ public:
     static VBO* CreateIndex(const GLenum type = GL_UNSIGNED_SHORT);
 
 
-    static VBO* CreateInterleaved(const std::vector<GLuint>&& sizes, const GLenum usage = GL_STATIC_DRAW);
+    static VBO* CreateInterleaved(const std::vector<GLuint>& sizes, const GLenum usage = GL_STATIC_DRAW);
 
     static void DrawIndices(VBO& vertexBuffer, VBO& indexBuffer, const GLenum mode, const GLsizei count);
 

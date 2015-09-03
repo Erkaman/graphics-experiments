@@ -4,7 +4,6 @@
 #include "ewa/common.hpp"
 
 #include "ewa/gl/shader_program.hpp"
-#include "ewa/gl/vbo.hpp"
 #include "ewa/gl/texture2d.hpp"
 
 #include "ewa/math/matrix4f.hpp"
@@ -13,20 +12,17 @@
 
 using std::vector;
 
-Plane::Plane(const Vector3f& position, const Vector3f& scale,const bool isCellular ): GeometryObject(position, scale){
+Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Matrix4f::CreateTranslation(position)){
 
     m_shader = isCellular ? new ShaderProgram("shader/cellular") : new ShaderProgram("shader/perlin");
 
+    GeometryObjectData data;
 
-    m_vertexBuffer = VBO::CreateInterleaved(
-						    vector<GLuint>{3,3,2} // pos, normal, tex
-			  );
+    data.m_vertexAttribsSizes = vector<GLuint>{3,3,2};
+    data.m_indexType = GL_UNSIGNED_SHORT;
 
-
-    m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
-
-    FloatVector vertices;
-    UshortVector indices;
+    FloatVector& vertices = data.m_vertices;
+    UshortVector& indices = data.m_indices;
 
     const float SCALE = 10.0f;
     // compute the 4 corners.
@@ -57,17 +53,12 @@ Plane::Plane(const Vector3f& position, const Vector3f& scale,const bool isCellul
     indices.push_back(3);
     indices.push_back(2);
 
-    m_vertexBuffer->Bind();
-    m_vertexBuffer->SetBufferData(vertices);
-    m_vertexBuffer->Unbind();
 
-    m_indexBuffer->Bind();
-    m_indexBuffer->SetBufferData(indices);
-    m_indexBuffer->Unbind();
-
-    m_numTriangles = 2;
+    data.m_numTriangles = 2;
 
     m_perlinSeed = new PerlinSeed(1);
+
+    GeometryObject::Init(data);
 
 }
 
@@ -80,11 +71,11 @@ void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
     m_shader->SetPhongUniforms(
 
-	GetModelMatrix()
+	m_modelMatrix
 	 , camera, lightPosition);
 
 
-    VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
+    GeometryObject::Render();
 
     m_perlinSeed->Unbind();
 
@@ -93,8 +84,6 @@ void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
 }
 
 Plane::~Plane() {
-    MY_DELETE(m_vertexBuffer);
-    MY_DELETE(m_indexBuffer);
     MY_DELETE(m_shader);
     MY_DELETE(m_perlinSeed);
 }

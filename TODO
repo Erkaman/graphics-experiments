@@ -1,6 +1,7 @@
 * bump mapping.
 
 misc todo:
+* shadow mapping.
 * create an efficient terrain system.
 * water rendering
 * shadows.

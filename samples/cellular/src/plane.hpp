@@ -10,6 +10,7 @@ class Vector3f;
 
 #include "ewa/gl/gl_common.hpp"
 #include "ewa/geometry_object.hpp"
+#include "ewa/math/matrix4f.hpp"
 
 class ShaderProgram;
 class VBO;
@@ -19,25 +20,39 @@ class Plane : public GeometryObject{
 
     private:
 
-    /*
-      INSTANCE VARIABLES.
-    */
-
-    GLushort m_numTriangles;
-
     ShaderProgram* m_shader;
-
-    VBO* m_vertexBuffer;
-    VBO* m_indexBuffer;
 
     PerlinSeed* m_perlinSeed;
 
+    Matrix4f m_modelMatrix;
+
 public:
 
-    //
-    Plane(const Vector3f& position, const Vector3f& scale, const bool isCellular);
+    Plane(const Vector3f& position, const bool isCellular);
     ~Plane();
 
     void Draw(const Camera& camera, const Vector4f& lightPosition);
 
 };
+
+/*
+  class GeometryObject {
+
+  VBO vertices;
+  VBO indices;
+
+  GeometryObject(Vector3f position, string filename) {}
+
+  Init(Vector3f position, GeometryObjectData) {}
+
+}
+
+GeometryObjectData {
+
+    Texture;
+    numTriangles;
+    vertexBuffer
+    indexBuffer
+
+    }
+*/

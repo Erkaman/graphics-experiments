@@ -27,7 +27,7 @@ VBO* VBO::CreateIndex(const GLenum type) {
     return indexBuffer;
 }
 
-VBO* VBO::CreateInterleaved(const std::vector<GLuint>&& sizes, const GLenum usage){
+VBO* VBO::CreateInterleaved(const std::vector<GLuint>& sizes, const GLenum usage){
 
     VBO* buffer = new VBO();
 
@@ -36,7 +36,7 @@ VBO* VBO::CreateInterleaved(const std::vector<GLuint>&& sizes, const GLenum usag
     buffer->SetUsage(usage);
 
 //    buffer->m_vertexAttribs = std::move(vertexAttribs);
-    buffer->m_sizes = std::move(sizes);
+    buffer->m_sizes = sizes;
 
     buffer->m_offsets.reserve(sizes.size());
 
@@ -187,7 +187,6 @@ GLuint VBO::GetBuffer() {
 
 
 void VBO::GetBufferSubData(GLintptr offset, GLsizeiptr size, GLvoid* data) {
-    LOG_I("size: %d", size);
     GL_C(glGetBufferSubData(m_target, offset, size, data));
 }
 
