@@ -14,8 +14,8 @@ CellularApplication::CellularApplication(int argc, char *argv[]):Application(arg
 
 CellularApplication::~CellularApplication() {
     MY_DELETE(m_camera);
-    MY_DELETE(m_cellularPlane);
-    MY_DELETE(m_perlinPlane);
+//    MY_DELETE(m_cellularPlane);
+      MY_DELETE(m_perlinPlane);
 }
 
 void CellularApplication::Init() {
@@ -37,9 +37,7 @@ void CellularApplication::Render() {
 
     const Vector4f lightPosition(93,10.0f,93, 1.0f);
     m_cellularPlane->Draw(*m_camera, lightPosition);
-
-
-    m_perlinPlane->Draw(*m_camera, lightPosition);
+      m_perlinPlane->Draw(*m_camera, lightPosition);
 
 }
 

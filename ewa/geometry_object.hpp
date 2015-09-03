@@ -15,19 +15,26 @@ private:
     Matrix4f scaleMatrix;
 */
 
+    /*
 
     VBO* m_vertexBuffer;
+    VBO* m_indexBuffer;
+    */
+
+
+public:
+
+        VBO* m_vertexBuffer;
     VBO* m_indexBuffer;
 
     GLuint m_numTriangles;
 
-public:
 
 //    GeometryObject(const Vector3f& translation, const Vector3f& scale);
 
 //    GeometryObject(const Vector3f& translation, const Vector3f& scale);
 
-    void Init(GeometryObjectData&  data);
+    void Init(GeometryObjectData&  data, const FloatVector& vertices, const UshortVector& indices);
 
     GeometryObject() {}
     ~GeometryObject();

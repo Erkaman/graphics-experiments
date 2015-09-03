@@ -5,6 +5,7 @@
 
 #include "ewa/gl/shader_program.hpp"
 #include "ewa/gl/texture2d.hpp"
+#include "ewa/gl/vbo.hpp"
 
 #include "ewa/math/matrix4f.hpp"
 #include "ewa/math/vector2f.hpp"
@@ -21,7 +22,7 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
     data.m_vertexAttribsSizes = vector<GLuint>{3,3,2};
     data.m_indexType = GL_UNSIGNED_SHORT;
 
-    FloatVector& vertices = data.m_vertices;
+    FloatVector& vertices= data.m_vertices;
     UshortVector& indices = data.m_indices;
 
     const float SCALE = 10.0f;
@@ -58,7 +59,8 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
 
     m_perlinSeed = new PerlinSeed(1);
 
-    GeometryObject::Init(data);
+    GeometryObject::Init(data,vertices, indices);
+
 
 }
 
@@ -76,6 +78,8 @@ void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
 
     GeometryObject::Render();
+
+
 
     m_perlinSeed->Unbind();
 

@@ -26,6 +26,8 @@ class Plane : public GeometryObject{
 
     Matrix4f m_modelMatrix;
 
+
+
 public:
 
     Plane(const Vector3f& position, const bool isCellular);
