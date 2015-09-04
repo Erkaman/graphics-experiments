@@ -11,6 +11,10 @@
 #include "ewa/math/vector2f.hpp"
 #include "ewa/math/vector3f.hpp"
 
+#include "ewa/eob_file.hpp"
+#include "ewa/file.hpp"
+
+
 using std::vector;
 
 Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Matrix4f::CreateTranslation(position)){
@@ -60,7 +64,7 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
     m_perlinSeed = new PerlinSeed(1);
 
     GeometryObject::Init(data);
-
+    File::CreatePath("eric/a/elias/w/");
 
 }
 

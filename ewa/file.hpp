@@ -36,4 +36,18 @@ public:
 
     static void WriteArray(const std::string& filename, const void* data, const size_t dataSize);
     static void* ReadArray(const std::string& filename, size_t& dataSize);
+
+    // given a filepath(like elias/eric/test.txt), get the directory this file is located in.
+    static std::string GetFileDirectory(const std::string& filepath);
+
+    static std::string AppendPaths(const std::string& path1, const std::string& path2 );
+
+    // check whether a path exists.
+    static bool PathExists(const std::string& path );
+
+    // recursively create a path.
+    static void CreatePath(const std::string& path);
+
+
+
 };

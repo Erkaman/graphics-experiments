@@ -218,7 +218,7 @@ string ParseShader(const std::string& shaderSource, const std::string& path) {
 		string includeStr;
 
 
-		string defaultPath = AppendPaths(path, includePath);
+		string defaultPath = File::AppendPaths(path, includePath);
 		if(File::Exists(defaultPath) ){
 		    includeStr = GetShaderContents(defaultPath);
 		} else {

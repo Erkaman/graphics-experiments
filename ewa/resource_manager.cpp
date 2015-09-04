@@ -1,6 +1,6 @@
 #include "resource_manager.hpp"
 
-#include "str.hpp"
+#include "file.hpp"
 
 #include "log.hpp"
 #include "file.hpp"
@@ -34,7 +34,7 @@ bool ResourceManager::ResourceExists(const std::string& resourceName, std::strin
 
     for(const std::string& path : resourcePaths ) {
 
-	std::string resourcePath = AppendPaths(path, resourceName);
+	std::string resourcePath = File::AppendPaths(path, resourceName);
 
 	if(File::Exists(resourcePath)) {
 	    foundResource = resourcePath;
