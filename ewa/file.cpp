@@ -208,3 +208,8 @@ void File::CreatePath(const std::string& path) {
 
     }while(beg < path.size());
 }
+
+
+void File::Write64u(const uint64 u) {
+    WriteArray(&u, sizeof(u));
+}

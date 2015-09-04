@@ -20,7 +20,7 @@ typedef int int32;
 typedef short int16;
 typedef char int8;
 
-
+typedef unsigned long long uint64;
 
 #define MY_DELETE(p)      if ( (p) != NULL ) { delete p; p = NULL; }
 

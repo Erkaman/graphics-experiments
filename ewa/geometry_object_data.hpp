@@ -4,8 +4,12 @@
 
 struct GeometryObjectData {
 
-    FloatVector m_vertices;
-    UshortVector m_indices;
+    // make the types of these as generic as possible.
+    GLsizeiptr m_verticesSize;
+    GLvoid* m_vertices;
+
+    GLsizeiptr m_indicesSize;
+    GLvoid* m_indices;
 
     GLuint m_numTriangles;
 

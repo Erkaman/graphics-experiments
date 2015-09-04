@@ -3,6 +3,8 @@
 #include <string>
 #include <stdio.h>
 
+#include "common.hpp"
+
 enum FileMode {
     FileModeReading,
     FileModeWriting
@@ -33,6 +35,9 @@ public:
     void WriteArray(const void* data, const size_t dataSize);
     void*  ReadArray(const size_t& dataSize);
     void  Skip(const size_t& skipSize);
+
+
+    void Write64u(const uint64 u);
 
     static void WriteArray(const std::string& filename, const void* data, const size_t dataSize);
     static void* ReadArray(const std::string& filename, size_t& dataSize);

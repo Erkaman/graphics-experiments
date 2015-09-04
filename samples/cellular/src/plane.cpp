@@ -26,8 +26,17 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
     data.m_vertexAttribsSizes = vector<GLuint>{3,3,2};
     data.m_indexType = GL_UNSIGNED_SHORT;
 
-    FloatVector& vertices= data.m_vertices;
-    UshortVector& indices = data.m_indices;
+
+    const size_t verticesSize = 4 * (3+3+2); // four corners,
+    data.m_verticesSize = verticesSize * sizeof(float);
+    vector<GLfloat> vertices;
+    vertices.reserve(verticesSize);
+
+    const size_t indicesSize = 6; // 6 indiices
+    data.m_indicesSize = indicesSize * sizeof(GLushort);
+    vector<GLushort> indices;
+    indices.reserve(indicesSize);
+
 
     const float SCALE = 10.0f;
     // compute the 4 corners.
@@ -61,10 +70,16 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
 
     data.m_numTriangles = 2;
 
+
+    data.m_vertices = &vertices[0];
+    data.m_indices = &indices[0];
+
     m_perlinSeed = new PerlinSeed(1);
 
     GeometryObject::Init(data);
-    File::CreatePath("eric/a/elias/w/");
+
+    EobFile::Write(data, "dat/plane.eob");
+
 
 }
 

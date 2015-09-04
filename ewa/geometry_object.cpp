@@ -26,17 +26,16 @@ void GeometryObject::Init(GeometryObjectData& data) {
 
     m_indexBuffer = VBO::CreateIndex(data.m_indexType);
 
+
     m_numTriangles = data.m_numTriangles;
 
     m_vertexBuffer->Bind();
-    m_vertexBuffer->SetBufferData(data.m_vertices);
+    m_vertexBuffer->SetBufferData(data.m_verticesSize, data.m_vertices);
     m_vertexBuffer->Unbind();
 
     m_indexBuffer->Bind();
-    m_indexBuffer->SetBufferData(data.m_indices);
+    m_indexBuffer->SetBufferData(data.m_indicesSize, data.m_indices);
     m_indexBuffer->Unbind();
-
-
 }
 
 
@@ -46,6 +45,7 @@ GeometryObject::~GeometryObject() {
 }
 
 void GeometryObject::Render() {
+
     VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
 
 }
