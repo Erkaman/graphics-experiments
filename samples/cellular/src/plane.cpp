@@ -76,11 +76,10 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
 
     m_perlinSeed = new PerlinSeed(1);
 
-    GeometryObject::Init(data);
-
     EobFile::Write(data, "dat/plane.eob");
+    GeometryObjectData obj =  EobFile::Read("dat/plane.eob");
 
-
+    GeometryObject::Init(obj);
 }
 
 void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {

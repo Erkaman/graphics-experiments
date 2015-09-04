@@ -106,6 +106,9 @@ void* File::ReadArray(const size_t& dataSize) {
     return ptr;
 }
 
+void File::ReadArray(void* outData, const size_t& dataSize) {
+    fread(outData, 1, dataSize, m_fp);
+}
 
 void File::Skip(const size_t& skipSize) {
     ReadArray(skipSize);
@@ -212,4 +215,20 @@ void File::CreatePath(const std::string& path) {
 
 void File::Write64u(const uint64 u) {
     WriteArray(&u, sizeof(u));
+}
+
+uint64 File::Read64u() {
+    uint64 u;
+    ReadArray(&u, sizeof(u));
+    return u;
+}
+
+void File::Write32u(const uint32 u) {
+    WriteArray(&u, sizeof(u));
+}
+
+uint32 File::Read32u() {
+    uint32 u;
+    ReadArray(&u, sizeof(u));
+    return u;
 }

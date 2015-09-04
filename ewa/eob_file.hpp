@@ -7,6 +7,6 @@ public:
 
     static void Write(const GeometryObjectData& data, const std::string& outfile);
 
-    static GeometryObjectData Read(const std::string& outfile);
+    static GeometryObjectData Read(const std::string& infile);
 
 };

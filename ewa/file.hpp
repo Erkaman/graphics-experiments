@@ -33,11 +33,19 @@ public:
     static bool Exists(const std::string& filename);
 
     void WriteArray(const void* data, const size_t dataSize);
+
     void*  ReadArray(const size_t& dataSize);
+    void ReadArray(void* outData, const size_t& dataSize);
+
     void  Skip(const size_t& skipSize);
 
 
     void Write64u(const uint64 u);
+    uint64 Read64u();
+
+    void Write32u(const uint32 u);
+    uint32 Read32u();
+
 
     static void WriteArray(const std::string& filename, const void* data, const size_t dataSize);
     static void* ReadArray(const std::string& filename, size_t& dataSize);
