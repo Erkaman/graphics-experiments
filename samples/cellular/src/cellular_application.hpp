@@ -5,6 +5,7 @@
 
 class Camera;
 class Plane;
+class Cube;
 
 class CellularApplication : public Application{
 
@@ -13,6 +14,7 @@ private:
     Camera* m_camera;
     Plane* m_cellularPlane;
     Plane* m_perlinPlane;
+    Cube* m_cube;
 
 public:
 

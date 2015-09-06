@@ -7,6 +7,7 @@
 
 
 #include "plane.hpp"
+#include "cube.hpp"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ CellularApplication::~CellularApplication() {
     MY_DELETE(m_camera);
 //    MY_DELETE(m_cellularPlane);
       MY_DELETE(m_perlinPlane);
+      MY_DELETE(m_cube);
 }
 
 void CellularApplication::Init() {
@@ -27,6 +29,7 @@ void CellularApplication::Init() {
 
     m_cellularPlane = new Plane(Vector3f(1,4,1), true);
     m_perlinPlane = new Plane(Vector3f(20,4,1), false);
+    m_cube = new Cube(Vector3f(20,4,1));
 
 }
 
@@ -38,6 +41,9 @@ void CellularApplication::Render() {
     const Vector4f lightPosition(93,10.0f,93, 1.0f);
     m_cellularPlane->Draw(*m_camera, lightPosition);
       m_perlinPlane->Draw(*m_camera, lightPosition);
+
+
+      m_cube->Draw(*m_camera, lightPosition);
 
 }
 
