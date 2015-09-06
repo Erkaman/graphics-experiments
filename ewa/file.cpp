@@ -106,8 +106,8 @@ void* File::ReadArray(const size_t& dataSize) {
     return ptr;
 }
 
-void File::ReadArray(void* outData, const size_t& dataSize) {
-    fread(outData, 1, dataSize, m_fp);
+size_t File::ReadArray(void* outData, const size_t& dataSize) {
+    return fread(outData, 1, dataSize, m_fp);
 }
 
 void File::Skip(const size_t& skipSize) {

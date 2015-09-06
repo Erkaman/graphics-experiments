@@ -27,3 +27,7 @@ bool BeginsWith(const std::string& str,
 		const std::string& substr) {
     return substr == str.substr(0, substr.length());
 }
+
+void ToLowercase(std::string& str)  {
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+}

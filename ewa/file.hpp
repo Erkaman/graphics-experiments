@@ -35,7 +35,7 @@ public:
     void WriteArray(const void* data, const size_t dataSize);
 
     void*  ReadArray(const size_t& dataSize);
-    void ReadArray(void* outData, const size_t& dataSize);
+    size_t ReadArray(void* outData, const size_t& dataSize);
 
     void  Skip(const size_t& skipSize);
 

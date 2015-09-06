@@ -113,6 +113,8 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 
 
 // TODO: clean up the memory allocated in this method.
+
+// TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
 GeometryObjectData EobFile::Read(const std::string& infile) {
 
     GeometryObjectData data;
@@ -121,6 +123,7 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 
     FileHeader fileHeader;
 
+        // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
     f.ReadArray(&fileHeader, sizeof(fileHeader));
 
     if(fileHeader.m_magic != EOBF) {
@@ -137,6 +140,7 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
     f.ReadArray(&vertexAttribsSizes[0], length);
     data.m_vertexAttribsSizes = std::vector<GLuint>(&vertexAttribsSizes[0]+0, &vertexAttribsSizes[0]+length / sizeof(GLuint));
 
+        // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
 
     uint32 numChunks = f.Read32u();
     for(uint32 i = 0; i < numChunks; ++i) {
