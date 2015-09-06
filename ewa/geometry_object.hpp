@@ -8,31 +8,18 @@ class Vector3f;
 class VBO;
 
 class GeometryObject {
-
 private:
 
-/*    Matrix4f translationMatrix;
-    Matrix4f scaleMatrix;
-*/
+    struct Chunk {
+	VBO* m_vertexBuffer;
+	VBO* m_indexBuffer;
+	GLuint m_numTriangles;
+    };
 
-    /*
-
-    VBO* m_vertexBuffer;
-    VBO* m_indexBuffer;
-    */
-
+    std::vector<Chunk*> m_chunks;
 
 public:
 
-        VBO* m_vertexBuffer;
-    VBO* m_indexBuffer;
-
-    GLuint m_numTriangles;
-
-
-//    GeometryObject(const Vector3f& translation, const Vector3f& scale);
-
-//    GeometryObject(const Vector3f& translation, const Vector3f& scale);
 
     void Init(GeometryObjectData&  data);
 
@@ -40,10 +27,4 @@ public:
     ~GeometryObject();
 
     void Render();
-
-
-//    Matrix4f GetModelMatrix()const;
-
-
-
 };

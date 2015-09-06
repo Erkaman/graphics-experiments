@@ -2,16 +2,30 @@
 
 #include "gl/gl_common.hpp"
 
+#include <string>
+
+struct Material{
+    std::string m_textureFilename;
+};
+
 struct GeometryObjectData {
 
     // make the types of these as generic as possible.
-    GLsizeiptr m_verticesSize;
-    GLvoid* m_vertices;
 
-    GLsizeiptr m_indicesSize;
-    GLvoid* m_indices;
+    struct Chunk{
+	GLsizeiptr m_verticesSize;
+	GLvoid* m_vertices;
 
-    GLuint m_numTriangles;
+	GLsizeiptr m_indicesSize;
+	GLvoid* m_indices;
+
+	GLuint m_numTriangles;
+
+
+	Material m_material; // store texture in material.
+    };
+
+    std::vector<Chunk*> m_chunks;
 
     std::vector<GLuint> m_vertexAttribsSizes;
 

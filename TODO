@@ -6,8 +6,14 @@ misc todo:
 * water rendering
 * shadows.
 * make prettier text.
+
+
 * detail textures to improve the grass texture. http://blogs.msdn.com/b/shawnhar/archive/2008/11/03/detail-textures.aspx
+https://developer.valvesoftware.com/wiki/$detail
+
 * trees.
+
+
 * HDR
 * make bmp loader.
 *bsp vs octtree http://stackoverflow.com/questions/99796/when-to-use-binary-space-partitioning-quadtree-octree

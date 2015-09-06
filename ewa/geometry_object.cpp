@@ -21,31 +21,54 @@ Matrix4f GeometryObject::GetModelMatrix()const {
 
 void GeometryObject::Init(GeometryObjectData& data) {
 
-    m_vertexBuffer = VBO::CreateInterleaved(
-	data.m_vertexAttribsSizes);
+    GLushort* inds = (GLushort *)data.m_chunks[0]->m_indices;
 
-    m_indexBuffer = VBO::CreateIndex(data.m_indexType);
+    for(size_t i = 0; i < data.m_chunks.size(); ++i) {
+	GeometryObjectData::Chunk* baseChunk = data.m_chunks[i];
+
+	Chunk* newChunk = new Chunk;
 
 
-    m_numTriangles = data.m_numTriangles;
+	newChunk->m_vertexBuffer = VBO::CreateInterleaved(
+	    data.m_vertexAttribsSizes);
 
-    m_vertexBuffer->Bind();
-    m_vertexBuffer->SetBufferData(data.m_verticesSize, data.m_vertices);
-    m_vertexBuffer->Unbind();
+	newChunk->m_indexBuffer = VBO::CreateIndex(data.m_indexType);
 
-    m_indexBuffer->Bind();
-    m_indexBuffer->SetBufferData(data.m_indicesSize, data.m_indices);
-    m_indexBuffer->Unbind();
+
+	newChunk->m_numTriangles = baseChunk->m_numTriangles;
+
+	newChunk->m_vertexBuffer->Bind();
+	newChunk->m_vertexBuffer->SetBufferData(baseChunk->m_verticesSize, baseChunk->m_vertices);
+	newChunk->m_vertexBuffer->Unbind();
+
+	newChunk->m_indexBuffer->Bind();
+	newChunk->m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
+	newChunk->m_indexBuffer->Unbind();
+
+	m_chunks.push_back(newChunk);
+    }
 }
 
 
 GeometryObject::~GeometryObject() {
-    MY_DELETE(m_vertexBuffer);
-    MY_DELETE(m_indexBuffer);
+
+    for(size_t i = 0; i < m_chunks.size(); ++i) {
+	Chunk* chunk = m_chunks[i];
+
+	MY_DELETE(chunk->m_vertexBuffer);
+	MY_DELETE(chunk->m_indexBuffer);
+
+	MY_DELETE(chunk);
+    }
 }
 
 void GeometryObject::Render() {
 
-    VBO::DrawIndices(*m_vertexBuffer, *m_indexBuffer, GL_TRIANGLES, (m_numTriangles)*3);
+    for(size_t i = 0; i < m_chunks.size(); ++i) {
+	Chunk* chunk = m_chunks[i];
+
+
+	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+    }
 
 }

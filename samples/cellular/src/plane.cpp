@@ -26,14 +26,17 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
     data.m_vertexAttribsSizes = vector<GLuint>{3,3,2};
     data.m_indexType = GL_UNSIGNED_SHORT;
 
+    GeometryObjectData::Chunk* chunk = new GeometryObjectData::Chunk;
+    chunk->m_material.m_textureFilename = "filename.png";
+    data.m_chunks.push_back(chunk);
 
     const size_t verticesSize = 4 * (3+3+2); // four corners,
-    data.m_verticesSize = verticesSize * sizeof(float);
+    chunk->m_verticesSize = verticesSize * sizeof(float);
     vector<GLfloat> vertices;
     vertices.reserve(verticesSize);
 
     const size_t indicesSize = 6; // 6 indiices
-    data.m_indicesSize = indicesSize * sizeof(GLushort);
+    chunk->m_indicesSize = indicesSize * sizeof(GLushort);
     vector<GLushort> indices;
     indices.reserve(indicesSize);
 
@@ -68,11 +71,11 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
     indices.push_back(2);
 
 
-    data.m_numTriangles = 2;
+    chunk->m_numTriangles = 2;
 
 
-    data.m_vertices = &vertices[0];
-    data.m_indices = &indices[0];
+    chunk->m_vertices = &vertices[0];
+    chunk->m_indices = &indices[0];
 
     m_perlinSeed = new PerlinSeed(1);
 
@@ -80,6 +83,8 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
     GeometryObjectData obj =  EobFile::Read("dat/plane.eob");
 
     GeometryObject::Init(obj);
+
+
 }
 
 void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
@@ -96,8 +101,6 @@ void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
 
     GeometryObject::Render();
-
-
 
     m_perlinSeed->Unbind();
 
