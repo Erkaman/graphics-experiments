@@ -16,9 +16,7 @@ class PerlinSeed;
 
 class Cube : public GeometryObject{
 
-    private:
-
-    ShaderProgram* m_shader;
+private:
 
 public:
 

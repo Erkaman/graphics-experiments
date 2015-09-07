@@ -21,12 +21,8 @@ Cube::Cube(const Vector3f& position ) {
 
     m_modelMatrix = Matrix4f::CreateTranslation(position);
 
-    m_shader = new ShaderProgram("shader/simple");
-
-    GeometryObjectData data = EobFile::Read("dat/cube.eob");
-    GeometryObject::Init(data);
+    GeometryObject::Init("obj/cube.eob");
 }
 
 Cube::~Cube() {
-    MY_DELETE(m_shader);
 }

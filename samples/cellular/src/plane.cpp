@@ -28,7 +28,7 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
     data.m_indexType = GL_UNSIGNED_SHORT;
 
     GeometryObjectData::Chunk* chunk = new GeometryObjectData::Chunk;
-    chunk->m_material.m_textureFilename = "filename.png";
+    chunk->m_material.m_textureFilename = "";
     data.m_chunks.push_back(chunk);
 
     const size_t verticesSize = 4 * (3+3+2); // four corners,
@@ -80,8 +80,8 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
 
     m_perlinSeed = new PerlinSeed(1);
 
-    EobFile::Write(data, "dat/plane.eob");
-    GeometryObjectData obj =  EobFile::Read("dat/plane.eob");
+    EobFile::Write(data, "obj/plane.eob");
+    GeometryObjectData obj =  EobFile::Read("obj/plane.eob");
 
     GeometryObject::Init(obj, true);
 
@@ -105,7 +105,7 @@ void Plane::Render(const Camera& camera, const Vector4f& lightPosition) {
 
 
 
-    GeometryObject::RenderVertices();
+    GeometryObject::RenderVertices(*m_shader);
 
     m_perlinSeed->Unbind();
 

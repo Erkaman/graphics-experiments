@@ -44,8 +44,8 @@ void WriteArray(File& file, void* data, uint32 size) {
 }
 
 void WriteString(File& file, const std::string& str) {
-    file.Write32u(str.size());
-    file.WriteArray(str.c_str(), str.size());
+    file.Write32u(str.size()+1); // +1, because we want to include the NULL-character as well.
+    file.WriteArray(str.c_str(), str.size()+1);
 }
 
 std::string ReadString(File& file) {

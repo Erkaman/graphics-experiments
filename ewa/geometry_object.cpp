@@ -4,8 +4,29 @@
 
 #include "ewa/gl/vbo.hpp"
 #include "ewa/gl/shader_program.hpp"
+#include "ewa/gl/texture2d.hpp"
 
 #include "ewa/common.hpp"
+#include "ewa/file.hpp"
+#include "eob_file.hpp"
+
+using std::string;
+
+void GeometryObject::Init(const std::string& filename, const bool useCustomShader) {
+    GeometryObjectData data = EobFile::Read(filename);
+
+    string basePath = File::GetFileDirectory(filename);
+
+    for(size_t i = 0; i < data.m_chunks.size(); ++i) {
+	Material& mat = data.m_chunks[i]->m_material;
+
+	mat.m_textureFilename = File::AppendPaths(basePath, mat.m_textureFilename);
+    }
+
+
+    Init(data, useCustomShader);
+}
+
 
 void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) {
 
@@ -34,6 +55,24 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	newChunk->m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
 	newChunk->m_indexBuffer->Unbind();
 
+
+	if(baseChunk->m_material.m_textureFilename != "") {
+
+
+	    Texture* texture = new Texture2D(baseChunk->m_material.m_textureFilename);
+
+	    texture->Bind();
+	    texture->SetTextureClamping();
+	    texture->GenerateMipmap();
+	    texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+	    texture->SetMagFilter(GL_LINEAR);
+	    texture->Unbind();
+
+	    newChunk->m_texture = texture;
+	} else {
+	    newChunk->m_texture = NULL;
+	}
+
 	m_chunks.push_back(newChunk);
     }
 }
@@ -60,19 +99,30 @@ void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition)
 	m_modelMatrix
 	 , camera, lightPosition);
 
-    RenderVertices();
+    RenderVertices(*m_defaultShader);
 
     m_defaultShader->Unbind();
 
 }
 
-void GeometryObject::RenderVertices() {
+void GeometryObject::RenderVertices(ShaderProgram& shader) {
 
     for(size_t i = 0; i < m_chunks.size(); ++i) {
 	Chunk* chunk = m_chunks[i];
 
 
+	if(chunk->m_texture != NULL) {
+	    shader.SetUniform("tex", 0);
+	    Texture::SetActiveTextureUnit(0);
+	    chunk->m_texture->Bind();
+	}
+
 	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+
+	if(chunk->m_texture != NULL) {
+	    chunk->m_texture->Unbind();
+	}
+
     }
 
 }

@@ -8,6 +8,7 @@ class Vector3f;
 class VBO;
 class ShaderProgram;
 class Camera;
+class Texture;
 
 class GeometryObject {
 private:
@@ -16,6 +17,9 @@ private:
 	VBO* m_vertexBuffer;
 	VBO* m_indexBuffer;
 	GLuint m_numTriangles;
+
+	// the material.
+	Texture* m_texture;
     };
 
     std::vector<Chunk*> m_chunks;
@@ -26,13 +30,14 @@ protected:
 
     Matrix4f m_modelMatrix;
 
-    void RenderVertices();
+    void RenderVertices(ShaderProgram& shader);
 
 
 
 public:
 
     void Init(GeometryObjectData&  data, const bool useCustomShader = false);
+    void Init(const std::string& filename, const bool useCustomShader = false);
 
     GeometryObject() {}
     virtual ~GeometryObject();

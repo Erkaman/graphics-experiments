@@ -80,7 +80,6 @@ Grass::Grass(const std::vector<std::string>& textureFilenames, const Vector4f& l
 
 	Texture* grassTexture = new Texture2D(textureFilenames[i]);
 
-
 	grassTexture->Bind();
 	grassTexture->SetTextureClamping();
 	grassTexture->SetMinFilter(GL_LINEAR);
