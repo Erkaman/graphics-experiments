@@ -20,13 +20,9 @@ class Cube : public GeometryObject{
 
     ShaderProgram* m_shader;
 
-    Matrix4f m_modelMatrix;
-
 public:
 
     Cube(const Vector3f& position);
     ~Cube();
-
-    void Draw(const Camera& camera, const Vector4f& lightPosition);
 
 };

@@ -17,27 +17,14 @@
 
 using std::vector;
 
-Cube::Cube(const Vector3f& position ): m_modelMatrix(Matrix4f::CreateTranslation(position)){
+Cube::Cube(const Vector3f& position ) {
+
+    m_modelMatrix = Matrix4f::CreateTranslation(position);
 
     m_shader = new ShaderProgram("shader/simple");
 
     GeometryObjectData data = EobFile::Read("dat/cube.eob");
     GeometryObject::Init(data);
-}
-
-void Cube::Draw(const Camera& camera, const Vector4f& lightPosition) {
-
-    m_shader->Bind();
-
-    m_shader->SetPhongUniforms(
-
-	m_modelMatrix
-	 , camera, lightPosition);
-
-
-    GeometryObject::Render();
-
-    m_shader->Unbind();
 }
 
 Cube::~Cube() {

@@ -3,31 +3,20 @@
 #include "math/vector3f.hpp"
 
 #include "ewa/gl/vbo.hpp"
+#include "ewa/gl/shader_program.hpp"
 
 #include "ewa/common.hpp"
 
+void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) {
 
-
-/*
-GeometryObject::GeometryObject(const Vector3f& translation, const Vector3f& scale): translationMatrix(Matrix4f::CreateTranslation(translation)), scaleMatrix(Matrix4f::CreateScale(scale)) {
-}
-
-
-Matrix4f GeometryObject::GetModelMatrix()const {
-    return translationMatrix * scaleMatrix;
-}
-*/
-
-
-void GeometryObject::Init(GeometryObjectData& data) {
-
-    GLushort* inds = (GLushort *)data.m_chunks[0]->m_indices;
+    if(!useCustomShader) {
+	m_defaultShader = new ShaderProgram("shader/simple");
+    }
 
     for(size_t i = 0; i < data.m_chunks.size(); ++i) {
 	GeometryObjectData::Chunk* baseChunk = data.m_chunks[i];
 
 	Chunk* newChunk = new Chunk;
-
 
 	newChunk->m_vertexBuffer = VBO::CreateInterleaved(
 	    data.m_vertexAttribsSizes);
@@ -62,7 +51,22 @@ GeometryObject::~GeometryObject() {
     }
 }
 
-void GeometryObject::Render() {
+
+void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition) {
+        m_defaultShader->Bind();
+
+    m_defaultShader->SetPhongUniforms(
+
+	m_modelMatrix
+	 , camera, lightPosition);
+
+    RenderVertices();
+
+    m_defaultShader->Unbind();
+
+}
+
+void GeometryObject::RenderVertices() {
 
     for(size_t i = 0; i < m_chunks.size(); ++i) {
 	Chunk* chunk = m_chunks[i];

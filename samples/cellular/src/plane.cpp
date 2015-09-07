@@ -13,6 +13,7 @@
 
 #include "ewa/eob_file.hpp"
 #include "ewa/file.hpp"
+#include "ewa/camera.hpp"
 
 
 using std::vector;
@@ -82,25 +83,29 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
     EobFile::Write(data, "dat/plane.eob");
     GeometryObjectData obj =  EobFile::Read("dat/plane.eob");
 
-    GeometryObject::Init(obj);
+    GeometryObject::Init(obj, true);
 
 
 }
 
-void Plane::Draw(const Camera& camera, const Vector4f& lightPosition) {
+void Plane::Render(const Camera& camera, const Vector4f& lightPosition) {
 
     m_shader->Bind();
 
     m_perlinSeed->Bind(*m_shader);
 
 
-    m_shader->SetPhongUniforms(
 
-	m_modelMatrix
-	 , camera, lightPosition);
+    const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
+	m_modelMatrix);
+
+    const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
+
+    m_shader->SetUniform("mvp", mvp);
 
 
-    GeometryObject::Render();
+
+    GeometryObject::RenderVertices();
 
     m_perlinSeed->Unbind();
 

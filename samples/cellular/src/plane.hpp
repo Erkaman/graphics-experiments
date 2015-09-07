@@ -33,7 +33,7 @@ public:
     Plane(const Vector3f& position, const bool isCellular);
     ~Plane();
 
-    void Draw(const Camera& camera, const Vector4f& lightPosition);
+    virtual void Render(const Camera& camera, const Vector4f& lightPosition) override;
 
 };
 

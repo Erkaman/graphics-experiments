@@ -39,11 +39,11 @@ void CellularApplication::Render() {
     Clear(0.0f, 1.0f, 1.0f);
 
     const Vector4f lightPosition(93,10.0f,93, 1.0f);
-    m_cellularPlane->Draw(*m_camera, lightPosition);
-      m_perlinPlane->Draw(*m_camera, lightPosition);
+    m_cellularPlane->Render(*m_camera, lightPosition);
+       m_perlinPlane->Render(*m_camera, lightPosition);
 
 
-      m_cube->Draw(*m_camera, lightPosition);
+      m_cube->Render(*m_camera, lightPosition);
 
 }
 
