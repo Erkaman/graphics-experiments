@@ -108,6 +108,8 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 	WriteArray(f, chunk->m_vertices, chunk->m_verticesSize );
 	f.Write32u(INDX);
 	WriteArray(f, chunk->m_indices, chunk->m_indicesSize );
+
+
     }
 }
 
@@ -116,6 +118,8 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 
 // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
 GeometryObjectData EobFile::Read(const std::string& infile) {
+
+    //   LOG_I("READ OBJ");
 
     GeometryObjectData data;
 
@@ -174,6 +178,13 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 	chunk->m_vertices= ReadArray(f, temp);
 	chunk->m_verticesSize = temp;
 
+
+	float*vs = (float *) chunk->m_vertices;
+
+/*	for(int i = 0; i < 100; ++i) {
+	    LOG_I("v: %f", vs[i]);
+	    }*/
+
 	uint32 indexMagic = f.Read32u();
 	if(indexMagic != INDX) {
 	    LOG_E("%s is not a EOB file: chunk number %d has an invalid index magic number %d", infile.c_str(), i, indexMagic);
@@ -190,3 +201,8 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 
     return data;
 }
+
+
+/*debugging tip:
+draw the colors of the uv on the cube. does the uv map really look like it is supposed to?
+*/

@@ -227,6 +227,9 @@ int ParseFEntry(const string& entry) {
 
     point.Add(currentChunk->m_vertices);
     texCoord.Add(currentChunk->m_vertices);
+
+    LOG_I("texcoord: %s", string(texCoord).c_str() );
+
     normal.Add(currentChunk->m_vertices);
 
     GLushort index = indexTable.size();
