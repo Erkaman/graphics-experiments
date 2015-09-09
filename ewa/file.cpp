@@ -30,8 +30,8 @@ File::File(const std::string& filename, const FileMode fileMode): m_fp(NULL), m_
 
 
     // create the directory of the file if necessary.
-    if(FileModeWriting == fileMode && !File::PathExists(File::GetFileDirectory(filename)) ) {
-	CreatePath(File::GetFileDirectory(filename));
+    if(FileModeWriting == fileMode && !File::PathExists(File::GetFilePath(filename)) ) {
+	CreatePath(File::GetFilePath(filename));
     }
 
     m_fp = fopen(filename.c_str(), fileMode == FileModeReading ? "rb" : "wb ");
@@ -130,9 +130,9 @@ std::string File::GetError()const {
 }
 
 
-string File::GetFileDirectory(const std::string& filepath) {
+string File::GetFilePath(const std::string& filepath) {
 
-    size_t index = filepath.find(PATH_SEPARATOR);
+    size_t index = filepath.find_last_of(PATH_SEPARATOR);
 
     if(index == string::npos) {
 	return "./"; // it is the current directory.
@@ -231,4 +231,15 @@ uint32 File::Read32u() {
     uint32 u;
     ReadArray(&u, sizeof(u));
     return u;
+}
+
+
+std::string File::GetFile(const std::string& filepath) {
+    size_t index = filepath.find_last_of(PATH_SEPARATOR);
+
+    if(index == string::npos) {
+	return filepath;
+    } else {
+	return filepath.substr(index+1, filepath.size() -index);
+    }
 }

@@ -31,6 +31,14 @@ FireEffect::FireEffect(const Vector3f& position) {
     SetEmitPosition(position);
     SetEmitPositionVariance(Vector3f(0.0f,0.0f,0.0f));
 
+    Texture* texture = new Texture2D("img/particle_post.png");
+
+    texture->Bind();
+    texture->SetTextureRepeat();
+    texture->GenerateMipmap();
+    texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    texture->SetMagFilter(GL_LINEAR);
+    texture->Unbind();
 
     SetTexture(texture);
 

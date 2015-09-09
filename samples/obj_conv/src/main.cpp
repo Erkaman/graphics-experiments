@@ -48,15 +48,33 @@ int ParseFEntry(const string& entry);
 
 GeometryObjectData CreateGeometryObjectData();
 
-int main (int, char *[]) {
+string basePath;
+
+int main (int argc, char * argv[]) {
+
+
+    if(argc != 2) {
+	LOG_E("Not enough arguments specified");
+    }
+
+
+    string objFilename = string(argv[1]);
+
+
+
+    basePath = File::GetFilePath(objFilename);
+
 
     LogInit();
 
+    LOG_I("basepath: %s", basePath.c_str() );
+
+
     LOG_I("obj conv");
 
-    BufferedFileReader reader("cube.obj");
+    system("pwd");
 
-
+    BufferedFileReader reader(  objFilename);
 
     currentChunk = NULL;
 
@@ -167,8 +185,10 @@ int main (int, char *[]) {
 	data.m_chunks.push_back(newChunk);
     }
 
-    EobFile::Write(data, "dat/cube.eob");
+    string f = File::GetFile(objFilename);
+    string outfile = File::AppendPaths(basePath, f.substr(0, f.size()-4 ) + ".eob" );
 
+    EobFile::Write(data, outfile);
 
     LogDispose();
 
@@ -179,7 +199,7 @@ map<string, Material*> ParseMtllib(const string& filename) {
     map<string, Material*> mtllib;
     Material* currentMaterial = NULL;
 
-    BufferedFileReader reader(filename);
+    BufferedFileReader reader(File::AppendPaths(basePath, filename) );
 
     while(!reader.IsEof()) {
 
@@ -228,7 +248,6 @@ int ParseFEntry(const string& entry) {
     point.Add(currentChunk->m_vertices);
     texCoord.Add(currentChunk->m_vertices);
 
-    LOG_I("texcoord: %s", string(texCoord).c_str() );
 
     normal.Add(currentChunk->m_vertices);
 

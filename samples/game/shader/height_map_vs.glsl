@@ -28,8 +28,6 @@ void main()
 
     viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
-//    vertexColor = colorIn.rgb;
-
     texCoord = texCoordIn;
 
     position = positionIn;

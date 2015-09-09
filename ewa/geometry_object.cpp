@@ -15,7 +15,7 @@ using std::string;
 void GeometryObject::Init(const std::string& filename, const bool useCustomShader) {
     GeometryObjectData data = EobFile::Read(filename);
 
-    string basePath = File::GetFileDirectory(filename);
+    string basePath = File::GetFilePath(filename);
 
     for(size_t i = 0; i < data.m_chunks.size(); ++i) {
 	Material& mat = data.m_chunks[i]->m_material;

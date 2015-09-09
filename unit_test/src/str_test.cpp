@@ -2,6 +2,9 @@
 
 #include "framework.hpp"
 
+#include "ewa/file.hpp"
+
+
 using std::string;
 
 static void TestBeginsWith() {
@@ -10,20 +13,25 @@ static void TestBeginsWith() {
     AssertTrue(BeginsWith(str, "eric"));
     AssertNotTrue(BeginsWith(str, "ric"));
     AssertNotTrue(BeginsWith(str, "elias"));
-
-
 }
 
-static void TestGetFileDirectory() {
-    AssertEquals(GetFileDirectory("shader/lib.glsl"),  string("shader/"));
-    AssertEquals(GetFileDirectory("lib.glsl"), string( "./" ));
+static void TestGetFilePath() {
+    AssertEquals(File::GetFilePath("shader/lib.glsl"),  string("shader/"));
+    AssertEquals(File::GetFilePath("lib.glsl"), string( "./" ));
+    AssertEquals(File::GetFilePath("shader/folder/lib.glsl"),  string("shader/folder/"));
+}
+
+static void TestGetFile() {
+    AssertEquals(File::GetFile("shader/lib.glsl"),  string("lib.glsl"));
+    AssertEquals(File::GetFile("lib.glsl"), string( "lib.glsl" ));
+    AssertEquals(File::GetFile("shader/folder/lib.glsl"),  string("lib.glsl"));
 }
 
 static void TestAppendPaths() {
-    AssertEquals(AppendPaths("shader/", "lib.glsl"),  string("shader/lib.glsl"));
-    AssertEquals(AppendPaths("shader", "lib.glsl"),  string("shader/lib.glsl"));
-    AssertEquals(AppendPaths("./", "lib.glsl"),  string("./lib.glsl"));
-    AssertEquals(AppendPaths(".", "lib.glsl"),  string("./lib.glsl"));
+    AssertEquals(File::AppendPaths("shader/", "lib.glsl"),  string("shader/lib.glsl"));
+    AssertEquals(File::AppendPaths("shader", "lib.glsl"),  string("shader/lib.glsl"));
+    AssertEquals(File::AppendPaths("./", "lib.glsl"),  string("./lib.glsl"));
+    AssertEquals(File::AppendPaths(".", "lib.glsl"),  string("./lib.glsl"));
 
 
 }
@@ -33,8 +41,9 @@ void StrTestSuite() {
     TestSuite suite;
 
     suite.emplace_back(TestBeginsWith, "TestBeginsWith");
-    suite.emplace_back(TestGetFileDirectory, "TestGetFileDirectory");
+    suite.emplace_back(TestGetFilePath, "TestGetFilePath");
     suite.emplace_back(TestAppendPaths, "TestAppendPaths");
+    suite.emplace_back(TestGetFile, "TestGetFile");
 
     RunSuite(suite, "Str");
 }

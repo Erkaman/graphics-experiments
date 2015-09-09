@@ -1,3 +1,5 @@
+#include "shader_lib/lib.glsl"
+
 in vec3 position;
 
 out vec4 fragmentColor;
@@ -8,7 +10,22 @@ uniform sampler2D tex;
 
 in vec3 normal;
 
+
+
+
+uniform vec3 viewSpaceLightPosition;
+in vec3 viewSpaceNormal;
+in vec3 viewSpacePosition;
+
+
+
+
 void main()
 {
-    fragmentColor = vec4(  texture(tex, vec2(texCoord.x, 1-texCoord.y  )  ).rgb, 1.0);
+
+    vec4 color = texture(tex, vec2(texCoord.x, 1-texCoord.y  )  );
+
+    vec3 shading = phongVertex(color.rgb, viewSpaceNormal, viewSpaceLightPosition, viewSpacePosition);
+
+    fragmentColor = vec4( shading.rgb , color.a);
 }

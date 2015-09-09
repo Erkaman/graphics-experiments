@@ -62,7 +62,7 @@ ShaderProgram::ShaderProgram(const std::string& shaderName, void (*beforeLinking
 	GetShaderContents(shaderName + "_vs.glsl"),
 	GetShaderContents(shaderName + "_fs.glsl"),
 	geometryShaderSource,
-	File::GetFileDirectory(shaderName + "_vs.glsl"),
+	File::GetFilePath(shaderName + "_vs.glsl"),
 	beforeLinkingHook);
 
 
