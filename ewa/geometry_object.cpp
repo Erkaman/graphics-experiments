@@ -20,7 +20,8 @@ void GeometryObject::Init(const std::string& filename, const bool useCustomShade
     for(size_t i = 0; i < data.m_chunks.size(); ++i) {
 	Material& mat = data.m_chunks[i]->m_material;
 
-	mat.m_textureFilename = File::AppendPaths(basePath, mat.m_textureFilename);
+	if(mat.m_textureFilename != "") // empty textures should remain empty.
+	    mat.m_textureFilename = File::AppendPaths(basePath, mat.m_textureFilename);
     }
 
 
@@ -56,6 +57,7 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	newChunk->m_indexBuffer->Unbind();
 
 
+
 	if(baseChunk->m_material.m_textureFilename != "") {
 
 
@@ -75,6 +77,7 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 
 	m_chunks.push_back(newChunk);
     }
+
 }
 
 
@@ -125,4 +128,9 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 
     }
 
+}
+
+
+void  GeometryObject::SetModelMatrix(Matrix4f modelMatrix) {
+    m_modelMatrix = modelMatrix;
 }

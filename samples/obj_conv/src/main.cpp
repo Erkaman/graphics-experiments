@@ -226,6 +226,9 @@ map<string, Material*> ParseMtllib(const string& filename) {
 
 	    mtllib[tokens[1]] = new Material;
 	    currentMaterial = mtllib[tokens[1]];
+
+	    // default diffuse map is an empty diffuse map.
+	    currentMaterial->m_textureFilename = "";
 	} else if(firstToken == "map_kd") {
 	    assert(tokens.size() == 2);
 

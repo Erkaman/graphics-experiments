@@ -100,6 +100,9 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 	MaterialHeader materialHeader;
 	materialHeader.m_magic = MATS;
 	f.WriteArray(&materialHeader, sizeof(materialHeader));
+
+
+
 	WriteString(f, chunk->m_material.m_textureFilename);
 
 

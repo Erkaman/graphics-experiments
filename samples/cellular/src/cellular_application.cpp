@@ -11,13 +11,15 @@
 
 using namespace std;
 
-CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL) { }
+CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_sphere(NULL) { }
 
 CellularApplication::~CellularApplication() {
     MY_DELETE(m_camera);
-//    MY_DELETE(m_cellularPlane);
+    MY_DELETE(m_cellularPlane);
       MY_DELETE(m_perlinPlane);
       MY_DELETE(m_cube);
+      MY_DELETE(m_sphere);
+
 }
 
 void CellularApplication::Init() {
@@ -30,6 +32,10 @@ void CellularApplication::Init() {
     m_cellularPlane = new Plane(Vector3f(1,4,1), true);
     m_perlinPlane = new Plane(Vector3f(20,4,1), false);
     m_cube = new Cube(Vector3f(20,4,1));
+
+    m_sphere = new GeometryObject();
+    m_sphere->Init("obj/smooth_sphere.eob");
+    m_sphere->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(25,6,1)));
 
 }
 
@@ -44,6 +50,7 @@ void CellularApplication::Render() {
 
 
       m_cube->Render(*m_camera, lightPosition);
+      m_sphere->Render(*m_camera, lightPosition);
 
 }
 

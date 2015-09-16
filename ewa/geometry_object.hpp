@@ -44,4 +44,8 @@ public:
 
     // if a custom shader is necessary, set useCustomShader=true, and override this method to bind to the shader.
     virtual void Render(const Camera& camera, const Vector4f& lightPosition);
+
+    void  SetModelMatrix(Matrix4f modelMatrix);
+
+
 };
