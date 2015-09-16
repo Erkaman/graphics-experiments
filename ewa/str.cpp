@@ -1,8 +1,8 @@
 #include "str.hpp"
 
+#include "log.hpp"
+
 using std::string;
-
-
 
 std::vector<std::string> SplitString(const std::string& str,
                                       const std::string& delimiter)
@@ -13,7 +13,12 @@ std::vector<std::string> SplitString(const std::string& str,
     std::string::size_type prev = 0;
     while ((pos = str.find(delimiter, prev)) != std::string::npos)
     {
-        strings.push_back(str.substr(prev, pos - prev));
+	string token = str.substr(prev, pos - prev);
+
+	if(token != delimiter && token.size() > 0) {
+	    strings.push_back(token);
+	}
+
         prev = pos + 1;
     }
 

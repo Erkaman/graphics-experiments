@@ -42,9 +42,15 @@ Chunk* currentChunk;
 map<string, Chunk*>  chunks;
 map<string, Material*> mtllib;
 
+
+bool noNormals;
+
+
 map<string, Material*> ParseMtllib(const string& filename);
 
 int ParseFEntry(const string& entry);
+
+//void CalculateNornmals();
 
 GeometryObjectData CreateGeometryObjectData();
 
@@ -66,13 +72,6 @@ int main (int argc, char * argv[]) {
 
 
     LogInit();
-
-    LOG_I("basepath: %s", basePath.c_str() );
-
-
-    LOG_I("obj conv");
-
-    system("pwd");
 
     BufferedFileReader reader(  objFilename);
 
@@ -120,13 +119,23 @@ int main (int argc, char * argv[]) {
 	    }
 	}else if(firstToken == "v") {
 
-	    assert(tokens.size() == 4);
+	    //assert(tokens.size() == 4);
+
+	    if(tokens.size() != 4) {
+
+		LOG_I("%s", tokens[0].c_str());
+		LOG_I("%s", tokens[1].c_str());
+		LOG_I("%s", tokens[2].c_str());
+
+		LOG_E("fail: %s", line.c_str() );
+	    }
+
 	    Vector3f point = Vector3f(stof(tokens[1]),stof(tokens[2]),stof(tokens[3]) );
 	    points.push_back(point);
 
 	}else if(firstToken == "vt") {
 
-	    assert(tokens.size() == 3);
+//	    assert(tokens.size() == 3 );
 	    Vector2f point = Vector2f(stof(tokens[1]),stof(tokens[2]) );
 	    texCoords.push_back(point);
 
@@ -144,6 +153,7 @@ int main (int argc, char * argv[]) {
 	    for(size_t i = 3; i < tokens.size(); ++i) {
 		GLushort three = ParseFEntry(tokens[i]);
 
+
 		// add the indices of a single triangle
 		currentChunk->m_indices.push_back(one);
 		currentChunk->m_indices.push_back(two);
@@ -157,8 +167,10 @@ int main (int argc, char * argv[]) {
     }
 
 
-
-
+    if(noNormals) {
+	// calculate normals.
+//	CalculateNornmals();
+    }
 
     GeometryObjectData data;
 
@@ -235,20 +247,37 @@ int ParseFEntry(const string& entry) {
     // count number of forward slashes.
     size_t slashCount = std::count(entry.begin(), entry.end(), '/');
 
-    if(slashCount != 2) {
-	LOG_E("only indices on the form v/vt/vn are allowed");
+    noNormals = false;
+
+    if(slashCount != 2 && slashCount != 1) {
+
+	// we will allow faces only on the form v/vt/vn and v/vt.
+
+	LOG_E("only indices on the form v/vt/vn or v/vt are allowed");
+    }
+
+    if(slashCount == 1) {
+	noNormals = true;
+	LOG_E("no normals in the obj file.");
     }
 
     vector<string> tokens =SplitString(entry, "/");
 
     Vector3f point = points[ stof(tokens[0])-1 ];
     Vector2f texCoord = texCoords[ stof(tokens[1])-1 ];
-    Vector3f normal = normals[ stof(tokens[2])-1 ];
+
+
+    Vector3f normal;
+
+    if(noNormals) {
+	normal = Vector3f(0);
+    } else {
+	normal = normals[ stof(tokens[2])-1 ];
+
+    }
 
     point.Add(currentChunk->m_vertices);
     texCoord.Add(currentChunk->m_vertices);
-
-
     normal.Add(currentChunk->m_vertices);
 
     GLushort index = indexTable.size();
@@ -257,3 +286,62 @@ int ParseFEntry(const string& entry) {
 
     return index;
 }
+
+/*
+void CalculateNornmals() {
+
+    struct Vertex {
+	Vector3f m_point;
+	Vector2f m_texCoord;
+	Vector3f m_normal;
+    };
+
+    map<string, Chunk*>::iterator it;
+    for ( it = chunks.begin(); it != chunks.end(); it++ ) {
+	Chunk* chunk = it->second;
+
+	// create references for easy access.
+	Vertex* vertices = (Vertex*)&chunk->m_vertices[0];
+	vector<GLushort >& indices =  chunk->m_indices;
+
+	for(size_t i = 0; i < (indices.size() / 3); ++i) {
+
+	    LOG_I("i: %d", i);
+
+	    Vector3f v1 = vertices[indices[i*3]].m_point;
+	    Vector3f v2 = vertices[indices[i*3+1]].m_point;
+	    Vector3f v3 = vertices[indices[i*3+2]].m_point;
+
+//	    Vector3f v(-1.000000, -1.000000, -1.000000);
+
+	    LOG_I("v1: %s", string(v1).c_str() );
+	    LOG_I("v2: %s", string(v2).c_str() );
+	    LOG_I("v3: %s", string(v3).c_str() );
+
+	    Vector3f normal = Vector3f::Cross(v2-v1, v3-v1);
+
+	    LOG_I("normal: %s", string(normal).c_str() );
+	    LOG_I("");
+
+
+	    vertices[indices[i*3]].m_normal += normal;
+	    vertices[indices[i*3+1]].m_normal += normal;
+	    vertices[indices[i*3+2]].m_normal += normal;
+
+	}
+
+	LOG_I("final normals:");
+
+	for(size_t i = 0; i < (chunk->m_vertices.size() / (sizeof(Vertex)/sizeof(float))  ); i+=1) {
+	    vertices[i].m_normal = Vector3f::Normalize(vertices[i].m_normal);
+
+	    // LOG_I("point: %s", string(vertices[i].m_point).c_str() );
+	    LOG_I("normal: %s", string(vertices[i].m_normal).c_str() );
+
+	    // normal should be (0,-1,0)
+
+	}
+
+    }
+}
+*/

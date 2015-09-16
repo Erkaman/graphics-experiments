@@ -6,6 +6,7 @@
 
 
 using std::string;
+using std::vector;
 
 static void TestBeginsWith() {
     string str = "eric elias";
@@ -32,9 +33,24 @@ static void TestAppendPaths() {
     AssertEquals(File::AppendPaths("shader", "lib.glsl"),  string("shader/lib.glsl"));
     AssertEquals(File::AppendPaths("./", "lib.glsl"),  string("./lib.glsl"));
     AssertEquals(File::AppendPaths(".", "lib.glsl"),  string("./lib.glsl"));
+}
+
+static void TestSplitString() {
+
+    vector<string> strs = SplitString("v  23 33", " ");
+
+
+
+    AssertEquals(strs[0], string("v") );
+    AssertEquals(strs[1], string("23") );
+    AssertEquals(strs[2], string("33") );
+
+
 
 
 }
+
+
 
 void StrTestSuite() {
 
@@ -44,6 +60,9 @@ void StrTestSuite() {
     suite.emplace_back(TestGetFilePath, "TestGetFilePath");
     suite.emplace_back(TestAppendPaths, "TestAppendPaths");
     suite.emplace_back(TestGetFile, "TestGetFile");
+
+    suite.emplace_back(TestSplitString, "TestSplitString");
+
 
     RunSuite(suite, "Str");
 }
