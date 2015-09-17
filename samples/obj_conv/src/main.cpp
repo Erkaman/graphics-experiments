@@ -196,18 +196,18 @@ int main (int argc, char * argv[]) {
     }
 
     if(generateTangents) {
-	// calculate normals.
-//	CalculateNornmals();
-
 	GenerateTangents();
-
     }
 
     GeometryObjectData data;
 
-    data.m_vertexAttribsSizes = vector<GLuint>{3,2,3}; // point, texcoord, normal
-    data.m_indexType = GL_UNSIGNED_SHORT;
+    vector<GLuint> vas{3,2,3}; // point, texcoord, normal
+    if(generateTangents) // if tangents are stored, add another size.
+	vas.push_back(3); // tangent.
 
+    data.m_vertexAttribsSizes = vas;
+    data.m_indexType = GL_UNSIGNED_SHORT;
+    data.m_hasNormalMaps = generateTangents;
 
     map<string, Chunk*>::iterator it;
     for ( it = chunks.begin(); it != chunks.end(); it++ ) {
@@ -270,7 +270,6 @@ map<string, Material*> ParseMtllib(const string& filename) {
     return mtllib;
 }
 
-
 int ParseFEntry(const string& entry) {
 
     // if has already been parsed, simply return index.
@@ -307,12 +306,17 @@ int ParseFEntry(const string& entry) {
 	normal = Vector3f(0);
     } else {
 	normal = normals[ stof(tokens[2])-1 ];
-
     }
 
     point.Add(currentChunk->m_vertices);
     texCoord.Add(currentChunk->m_vertices);
     normal.Add(currentChunk->m_vertices);
+
+    if(generateTangents) {
+	// add an empty tangent for now. we will compute it later.
+	Vector3f tangent(0);
+	tangent.Add(currentChunk->m_vertices);
+    }
 
     GLushort index = indexTable.size();
 
@@ -390,11 +394,13 @@ void PrintHelp() {
 
 void GenerateTangents() {
 
-    /*
+
     struct Vertex {
 	Vector3f m_point;
 	Vector2f m_texCoord;
 	Vector3f m_normal;
+	Vector3f m_tangent;
+
     };
 
     map<string, Chunk*>::iterator it;
@@ -414,29 +420,34 @@ void GenerateTangents() {
 	    Vector2f st1 = vertices[indices[i*3+2]].m_texCoord - vertices[indices[i*3]].m_texCoord;
 	    Vector2f st2 = vertices[indices[i*3+1]].m_texCoord - vertices[indices[i*3]].m_texCoord;
 
-
 	    float coef = 1.0f/ (st1.x * st2.y - st2.x * st1.y);
 
+	    Vector3f currentTangent;
 
-	    vertices[indices[i*3]].m_normal += normal;
-	    vertices[indices[i*3+1]].m_normal += normal;
-	    vertices[indices[i*3+2]].m_normal += normal;
+	    currentTangent.x = coef * (v1.x * st2.y  + v2.x * -st1.y);
+	    currentTangent.y = coef * (v1.y * st2.y  + v2.y * -st1.y);
+	    currentTangent.z = coef * (v1.z * st2.y  + v2.z * -st1.y);
 
+	    vertices[indices[i*3]].m_tangent += currentTangent;
+	    vertices[indices[i*3+1]].m_tangent += currentTangent;
+	    vertices[indices[i*3+2]].m_tangent += currentTangent;
 	}
 
-	LOG_I("final normals:");
+//	LOG_I("final normals:");
 
 	for(size_t i = 0; i < (chunk->m_vertices.size() / (sizeof(Vertex)/sizeof(float))  ); i+=1) {
-	    vertices[i].m_normal = Vector3f::Normalize(vertices[i].m_normal);
+	    //    vertices[i].m_normal = Vector3f::Normalize(vertices[i].m_normal);
 
-	    // LOG_I("point: %s", string(vertices[i].m_point).c_str() );
-	    LOG_I("normal: %s", string(vertices[i].m_normal).c_str() );
+
+	    vertices[i].m_tangent = Vector3f::Normalize(vertices[i].m_tangent);
+
+	    LOG_I("point: %s", string(vertices[i].m_point).c_str() );
+	    LOG_I("tangent: %s", string(vertices[i].m_tangent).c_str() );
 
 	    // normal should be (0,-1,0)
-
 	}
 
-	}*/
+    }
 }
 
 /*

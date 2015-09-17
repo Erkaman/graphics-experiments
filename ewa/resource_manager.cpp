@@ -51,3 +51,16 @@ bool ResourceManager::ResourceExists(const std::string& resourceName) {
     std::string placeHolder;
     return ResourceExists(resourceName, placeHolder);
 }
+
+
+std::string ResourceManager::LocateAndReadResource(const std::string& resourcePath) {
+    std::string fullResourcePath = ResourceManager::GetInstance().FindResource(resourcePath);
+
+    File f(fullResourcePath, FileModeReading);
+
+    if(f.HasError()) {
+	LOG_E("Could not read the resource %s: %s", resourcePath.c_str(), f.GetError().c_str() );
+    }
+
+    return f.GetFileContents();
+}

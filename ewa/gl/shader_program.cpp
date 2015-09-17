@@ -30,19 +30,6 @@ ShaderProgram::~ShaderProgram() {
     glDeleteProgram(m_shaderProgram);
 }
 
-static std::string GetShaderContents(const std::string& shaderPath) {
-
-    std::string resourcePath = ResourceManager::GetInstance().FindResource(shaderPath);
-
-    File f(resourcePath, FileModeReading);
-
-    if(f.HasError()) {
-	LOG_E("Could not read the shader %s: %s", resourcePath.c_str(), f.GetError().c_str() );
-    }
-
-    return f.GetFileContents();
-}
-
 ShaderProgram::ShaderProgram(const std::string& shaderName, void (*beforeLinkingHook)(GLuint)){
 
 
@@ -54,13 +41,13 @@ ShaderProgram::ShaderProgram(const std::string& shaderName, void (*beforeLinking
     if(	!ResourceManager::GetInstance().ResourceExists(geometryShaderPath)) {
 	geometryShaderSource = ""; // do not load a geometry shader, because it does not exist.
     } else {
-	geometryShaderSource = GetShaderContents(geometryShaderPath);
+	geometryShaderSource = ResourceManager::LocateAndReadResource(geometryShaderPath);
     }
 
     CompileShaderProgram(
 
-	GetShaderContents(shaderName + "_vs.glsl"),
-	GetShaderContents(shaderName + "_fs.glsl"),
+	ResourceManager::LocateAndReadResource(shaderName + "_vs.glsl"),
+	ResourceManager::LocateAndReadResource(shaderName + "_fs.glsl"),
 	geometryShaderSource,
 	File::GetFilePath(shaderName + "_vs.glsl"),
 	beforeLinkingHook);

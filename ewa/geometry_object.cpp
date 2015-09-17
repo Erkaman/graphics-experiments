@@ -9,6 +9,7 @@
 #include "ewa/common.hpp"
 #include "ewa/file.hpp"
 #include "eob_file.hpp"
+#include "resource_manager.hpp"
 
 using std::string;
 
@@ -37,8 +38,25 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 
 
     if(!useCustomShader) {
-	m_defaultShader = new ShaderProgram("shader/simple");
+	string shaderName = "shader/simple";
+	string vertexSource = ResourceManager::LocateAndReadResource(shaderName + "_vs.glsl");
+	string fragmentSource = ResourceManager::LocateAndReadResource(shaderName + "_fs.glsl");
+
+	LOG_I("initshader");
+
+	if(data.m_hasNormalMaps) {
+
+	    LOG_I("normal");
+
+
+	    vertexSource = string("#define NORMAL_MAPPING\n\n") + vertexSource;
+	    fragmentSource = string("#define NORMAL_MAPPING\n\n") + fragmentSource;
+
+	}
+
+	m_defaultShader = new ShaderProgram(vertexSource, fragmentSource);
     }
+
 
     for(size_t i = 0; i < data.m_chunks.size(); ++i) {
 	GeometryObjectData::Chunk* baseChunk = data.m_chunks[i];

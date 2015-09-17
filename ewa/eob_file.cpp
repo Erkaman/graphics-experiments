@@ -14,14 +14,13 @@ using std::string;
 #define VETX 0x58544556
 #define INDX 0x58444E49
 
-
-
 // https://www.opengl.org/registry/doc/glspec33.core.20100311.withchanges.pdf#page=32
 struct FileHeader {
     int32 m_magic; // Always has the value "EOBF"
 
 //    uint32 m_numTriangles; //GLuint is 32-bit
     int32 m_indexType; // GLenum is 32-bit
+    int m_hasNormalMaps; // 1 if has normal maps(and also tangents), 0 if not.
 };
 
 struct ChunkHeader {
@@ -33,7 +32,6 @@ struct ChunkHeader {
 struct MaterialHeader {
     int32 m_magic; // Always has the value "MATS"
 };
-
 
 
 // 32-bit size, then GLvoid data, then cast.
@@ -72,8 +70,8 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 
     FileHeader fileHeader;
     fileHeader.m_magic = EOBF;
-//    fileHeader.m_numTriangles = data.m_numTriangles;
     fileHeader.m_indexType = data.m_indexType;
+    fileHeader.m_hasNormalMaps = data.m_hasNormalMaps;
 
     // first write fileHeader.
     f.WriteArray(&fileHeader, sizeof(fileHeader));
@@ -142,7 +140,7 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
     }
 
     data.m_indexType = fileHeader.m_indexType;
-
+    data.m_hasNormalMaps = fileHeader.m_hasNormalMaps;
 
     // read vertex attrib size array
     uint32 length = f.Read32u();

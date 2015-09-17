@@ -11,17 +11,14 @@
 
 using namespace std;
 
-CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_sphere(NULL), m_normalCube(NULL) { }
+CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_normalCube(NULL) { }
 
 CellularApplication::~CellularApplication() {
     MY_DELETE(m_camera);
     MY_DELETE(m_cellularPlane);
       MY_DELETE(m_perlinPlane);
       MY_DELETE(m_cube);
-      MY_DELETE(m_sphere);
       MY_DELETE(m_normalCube);
-
-
 }
 
 void CellularApplication::Init() {
@@ -33,16 +30,11 @@ void CellularApplication::Init() {
 
     m_cellularPlane = new Plane(Vector3f(1,4,1), true);
     m_perlinPlane = new Plane(Vector3f(20,4,1), false);
+
     m_cube = new Cube(Vector3f(20,4,1));
-
-    m_sphere = new GeometryObject();
-    m_sphere->Init("obj/smooth_sphere.eob");
-    m_sphere->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(25,6,1)));
-
 
     m_normalCube = new GeometryObject();
     m_normalCube->Init("obj/mybox2.eob");
-
     m_normalCube->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(10,6,1)));
 
 }
@@ -54,14 +46,15 @@ void CellularApplication::Render() {
 
     const Vector4f lightPosition(93,10.0f,93, 1.0f);
     m_cellularPlane->Render(*m_camera, lightPosition);
-       m_perlinPlane->Render(*m_camera, lightPosition);
+
+    m_perlinPlane->Render(*m_camera, lightPosition);
 
 
       m_cube->Render(*m_camera, lightPosition);
-      m_sphere->Render(*m_camera, lightPosition);
 
 
       m_normalCube->Render(*m_camera, lightPosition);
+
 }
 
 void CellularApplication::Update(const float delta) {

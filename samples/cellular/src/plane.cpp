@@ -26,6 +26,7 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
 
     data.m_vertexAttribsSizes = vector<GLuint>{3,3,2};
     data.m_indexType = GL_UNSIGNED_SHORT;
+    data.m_hasNormalMaps = 0;
 
     GeometryObjectData::Chunk* chunk = new GeometryObjectData::Chunk;
     chunk->m_material.m_textureFilename = "";

@@ -32,4 +32,5 @@ struct GeometryObjectData {
     // type of the integer used to store vertex indices.
     GLenum m_indexType;
 
+    int m_hasNormalMaps;
 };

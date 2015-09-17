@@ -10,15 +10,14 @@ uniform sampler2D tex;
 
 in vec3 normal;
 
-
+#ifdef NORMAL_MAPPING
+in vec3 tangent;
+#endif
 
 
 uniform vec3 viewSpaceLightPosition;
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
-
-
-
 
 void main()
 {
@@ -27,5 +26,9 @@ void main()
 
     vec3 shading = phongVertex(color.rgb, viewSpaceNormal, viewSpaceLightPosition, viewSpacePosition);
 
-    fragmentColor = vec4( shading.rgb , color.a);
+#ifdef NORMAL_MAPPING
+    fragmentColor = vec4( abs(tangent.rgb) , color.a);
+#else
+    fragmentColor = vec4( shading , color.a);
+#endif
 }

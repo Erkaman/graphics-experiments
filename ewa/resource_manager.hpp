@@ -26,4 +26,7 @@ public:
 
     bool ResourceExists(const std::string& resourceName);
 
+    // locate a resource, fully read it into a string, then return the string.
+    static std::string LocateAndReadResource(const std::string& resourcePath);
+
 };
