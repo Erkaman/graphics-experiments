@@ -5,7 +5,7 @@
 using std::string;
 
 std::vector<std::string> SplitString(const std::string& str,
-                                      const std::string& delimiter)
+				     const std::string& delimiter, const bool keepDelimiters)
 {
     std::vector<std::string> strings;
 
@@ -15,8 +15,14 @@ std::vector<std::string> SplitString(const std::string& str,
     {
 	string token = str.substr(prev, pos - prev);
 
+
+
 	if(token != delimiter && token.size() > 0) {
 	    strings.push_back(token);
+	}
+
+	if(keepDelimiters) {
+	    strings.push_back(delimiter);
 	}
 
         prev = pos + 1;

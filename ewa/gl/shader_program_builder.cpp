@@ -80,13 +80,37 @@ GLuint CreateShaderFromString(const string& str, const GLenum shaderType) {
     return shader;
 }
 
+// split shader source code into lines.
+std::vector<std::string> SplitShaderSource(const std::string& str)
+{
+    std::vector<std::string> strings;
+
+    std::string::size_type pos = 0;
+    std::string::size_type prev = 0;
+    const string& delimiter = "\n";
+
+    while ((pos = str.find(delimiter, prev)) != std::string::npos)
+    {
+	string token = str.substr(prev, pos - prev+1); // include the newline in the line.
+
+	strings.push_back(token);
+
+        prev = pos + 1;
+    }
+
+    // To get the last substring (or only, if delimiter is not found)
+    strings.push_back(str.substr(prev));
+
+    return strings;
+}
+
+
 string FormatCompilerErrorOutput(const GLuint shader, const string& shaderStr)  {
     string result = "";
 
     vector<string> errors =  SplitString(GetShaderLogInfo(shader), "\n");
 
-    vector<string> shaderLines = SplitString(shaderStr, "\n");
-
+    vector<string> shaderLines = SplitShaderSource(shaderStr);
 
     // iterate over the errors, one after one.
     for(string error: errors) {

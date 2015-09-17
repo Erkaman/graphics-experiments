@@ -37,15 +37,18 @@ static void TestAppendPaths() {
 
 static void TestSplitString() {
 
-    vector<string> strs = SplitString("v  23 33", " ");
-
-
+    vector<string> strs = SplitString("v  23 33  ", " ");
 
     AssertEquals(strs[0], string("v") );
     AssertEquals(strs[1], string("23") );
     AssertEquals(strs[2], string("33") );
 
+    strs = SplitString("v  23", " ", true);
 
+    AssertEquals(strs[0], string("v") );
+    AssertEquals(strs[1], string(" ") );
+    AssertEquals(strs[2], string(" ") );
+    AssertEquals(strs[3], string("23") );
 
 
 }
