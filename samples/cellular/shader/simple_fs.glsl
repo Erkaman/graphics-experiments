@@ -8,6 +8,10 @@ in vec2 texCoord;
 
 uniform sampler2D tex;
 
+#ifdef NORMAL_MAPPING
+uniform sampler2D normalMap;
+#endif
+
 in vec3 normal;
 
 #ifdef NORMAL_MAPPING
@@ -27,8 +31,13 @@ void main()
     vec3 shading = phongVertex(color.rgb, viewSpaceNormal, viewSpaceLightPosition, viewSpacePosition);
 
 #ifdef NORMAL_MAPPING
-    fragmentColor = vec4( abs(tangent.rgb) , color.a);
+
+    vec4 normal = texture(normalMap, vec2(texCoord.x, 1-texCoord.y  )  );
+
+fragmentColor = vec4( /*abs(tangent.rgb)*/ normal.rgb , color.a);
 #else
+
+
     fragmentColor = vec4( shading , color.a);
 #endif
 }

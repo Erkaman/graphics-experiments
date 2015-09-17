@@ -6,6 +6,7 @@
 
 struct Material{
     std::string m_textureFilename;
+    std::string m_normalMapFilename; // only exists if m_hasNormalMaps == 1
 };
 
 struct GeometryObjectData {
@@ -32,5 +33,5 @@ struct GeometryObjectData {
     // type of the integer used to store vertex indices.
     GLenum m_indexType;
 
-    int m_hasNormalMaps;
+    int m_hasNormalMaps; // 1 if normalmaps exists, 0 otherwise.
 };

@@ -55,7 +55,6 @@ void Application::Start() {
 
     this->Init();
     this->DoMainLoop();
-    LOG_I("ebd main loop");
     this->Cleanup();
 }
 
@@ -109,13 +108,8 @@ void Application::Cleanup() {
     delete m_fontShader;
     delete m_font;
 
-    LOG_I("cleanup");
-
-
     glfwTerminate();
     LogDispose();
-
-    LOG_I("cleanup end");
 
 }
 

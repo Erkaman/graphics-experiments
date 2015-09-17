@@ -13,6 +13,19 @@
 
 using std::string;
 
+Texture* LoadTexture(const string& filename) {
+    Texture* texture = new Texture2D(filename);
+
+    texture->Bind();
+    texture->SetTextureRepeat();
+    texture->GenerateMipmap();
+    texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    texture->SetMagFilter(GL_LINEAR);
+    texture->Unbind();
+
+    return texture;
+}
+
 void GeometryObject::Init(const std::string& filename, const bool useCustomShader) {
 
 
@@ -27,6 +40,9 @@ void GeometryObject::Init(const std::string& filename, const bool useCustomShade
 
 	if(mat.m_textureFilename != "") // empty textures should remain empty.
 	    mat.m_textureFilename = File::AppendPaths(basePath, mat.m_textureFilename);
+
+	if(mat.m_normalMapFilename != "") // empty textures should remain empty.
+	    mat.m_normalMapFilename = File::AppendPaths(basePath, mat.m_normalMapFilename);
     }
 
 
@@ -42,12 +58,7 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	string vertexSource = ResourceManager::LocateAndReadResource(shaderName + "_vs.glsl");
 	string fragmentSource = ResourceManager::LocateAndReadResource(shaderName + "_fs.glsl");
 
-	LOG_I("initshader");
-
 	if(data.m_hasNormalMaps) {
-
-	    LOG_I("normal");
-
 
 	    vertexSource = string("#define NORMAL_MAPPING\n\n") + vertexSource;
 	    fragmentSource = string("#define NORMAL_MAPPING\n\n") + fragmentSource;
@@ -81,22 +92,18 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 
 
 	if(baseChunk->m_material.m_textureFilename != "") {
-
-
-	    Texture* texture = new Texture2D(baseChunk->m_material.m_textureFilename);
-
-
-	    texture->Bind();
-	    texture->SetTextureRepeat();
-	    texture->GenerateMipmap();
-	    texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-	    texture->SetMagFilter(GL_LINEAR);
-	    texture->Unbind();
-
-	    newChunk->m_texture = texture;
+	    newChunk->m_texture = LoadTexture(baseChunk->m_material.m_textureFilename);
 	} else {
 	    newChunk->m_texture = NULL;
 	}
+
+	if(data.m_hasNormalMaps) {
+
+	    newChunk->m_normalMap = LoadTexture(baseChunk->m_material.m_normalMapFilename);
+	} else {
+	    newChunk->m_normalMap = NULL;
+	}
+
 	m_chunks.push_back(newChunk);
     }
 
@@ -141,6 +148,13 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 	    Texture::SetActiveTextureUnit(0);
 	    chunk->m_texture->Bind();
 	}
+
+	if(chunk->m_normalMap != NULL) {
+	    shader.SetUniform("normalMap", 1);
+	    Texture::SetActiveTextureUnit(1);
+	    chunk->m_normalMap->Bind();
+	}
+
 
 	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 

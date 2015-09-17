@@ -264,6 +264,9 @@ map<string, Material*> ParseMtllib(const string& filename) {
 	    assert(tokens.size() == 2);
 
 	    currentMaterial->m_textureFilename = tokens[1];
+	} else if(firstToken == "map_bump") {
+	    assert(tokens.size() == 2);
+	    currentMaterial->m_normalMapFilename = tokens[1];
 	}
     }
 

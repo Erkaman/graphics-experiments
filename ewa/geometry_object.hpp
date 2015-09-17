@@ -20,6 +20,7 @@ private:
 
 	// the material.
 	Texture* m_texture;
+	Texture* m_normalMap;
     };
 
     std::vector<Chunk*> m_chunks;
@@ -31,8 +32,6 @@ protected:
     Matrix4f m_modelMatrix;
 
     void RenderVertices(ShaderProgram& shader);
-
-
 
 public:
 
@@ -46,6 +45,4 @@ public:
     virtual void Render(const Camera& camera, const Vector4f& lightPosition);
 
     void  SetModelMatrix(Matrix4f modelMatrix);
-
-
 };

@@ -102,6 +102,9 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 
 
 	WriteString(f, chunk->m_material.m_textureFilename);
+	if(data.m_hasNormalMaps) {
+	    WriteString(f, chunk->m_material.m_normalMapFilename);
+	}
 
 
 	// write chunk vertex and index data.
@@ -172,8 +175,9 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 	}
 
 	chunk->m_material.m_textureFilename = ReadString(f);
-
-
+	if(data.m_hasNormalMaps) {
+	    chunk->m_material.m_normalMapFilename = ReadString(f);
+	}
 
 	uint32 vertexMagic = f.Read32u();
 	if(vertexMagic != VETX) {
