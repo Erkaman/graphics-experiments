@@ -45,6 +45,8 @@ map<string, Material*> mtllib;
 
 bool noNormals;
 
+bool generateTangents;
+
 
 map<string, Material*> ParseMtllib(const string& filename);
 
@@ -52,26 +54,53 @@ int ParseFEntry(const string& entry);
 
 //void CalculateNornmals();
 
+void GenerateTangents();
+
 GeometryObjectData CreateGeometryObjectData();
+
+void PrintHelp();
 
 string basePath;
 
 int main (int argc, char * argv[]) {
 
+    LogInit();
 
-    if(argc != 2) {
-	LOG_E("Not enough arguments specified");
+
+    if(argc != 2 && argc!=3) {
+
+	printf("Not enough arguments specified\n\n");
+	PrintHelp();
     }
 
+    string objFilename;
 
-    string objFilename = string(argv[1]);
+    // set default options first:
+    generateTangents = false;
+
+    if(argc == 2) {
+	objFilename = string(argv[1]);
+    } else if(argc == 3){
+
+	string option = string(argv[1]);
+
+	if(option == string("-t") ) {
+	    generateTangents = true;
+	} else {
+	    LOG_E("Unknown option specified: %s", option.c_str());
+	}
+
+
+
+	objFilename = string(argv[2]);
+    }
+
 
 
 
     basePath = File::GetFilePath(objFilename);
 
 
-    LogInit();
 
     BufferedFileReader reader(  objFilename);
 
@@ -166,10 +195,12 @@ int main (int argc, char * argv[]) {
 	}
     }
 
-
-    if(noNormals) {
+    if(generateTangents) {
 	// calculate normals.
 //	CalculateNornmals();
+
+	GenerateTangents();
+
     }
 
     GeometryObjectData data;
@@ -348,3 +379,79 @@ void CalculateNornmals() {
     }
 }
 */
+
+void PrintHelp() {
+    printf("Usage:\n");
+    printf("obj_conv [-t] input-file\n");
+
+    printf("\t-t\tGenerate tangents\n");
+}
+
+
+void GenerateTangents() {
+
+    /*
+    struct Vertex {
+	Vector3f m_point;
+	Vector2f m_texCoord;
+	Vector3f m_normal;
+    };
+
+    map<string, Chunk*>::iterator it;
+    for ( it = chunks.begin(); it != chunks.end(); it++ ) {
+	Chunk* chunk = it->second;
+
+	// create references for easy access.
+	Vertex* vertices = (Vertex*)&chunk->m_vertices[0];
+	vector<GLushort >& indices =  chunk->m_indices;
+
+	for(size_t i = 0; i < (indices.size() / 3); ++i) {
+
+	    Vector3f v1 = vertices[indices[i*3+2]].m_point - vertices[indices[i*3]].m_point;
+	    Vector3f v2 = vertices[indices[i*3+1]].m_point - vertices[indices[i*3]].m_point;
+
+
+	    Vector2f st1 = vertices[indices[i*3+2]].m_texCoord - vertices[indices[i*3]].m_texCoord;
+	    Vector2f st2 = vertices[indices[i*3+1]].m_texCoord - vertices[indices[i*3]].m_texCoord;
+
+
+	    float coef = 1.0f/ (st1.x * st2.y - st2.x * st1.y);
+
+
+	    vertices[indices[i*3]].m_normal += normal;
+	    vertices[indices[i*3+1]].m_normal += normal;
+	    vertices[indices[i*3+2]].m_normal += normal;
+
+	}
+
+	LOG_I("final normals:");
+
+	for(size_t i = 0; i < (chunk->m_vertices.size() / (sizeof(Vertex)/sizeof(float))  ); i+=1) {
+	    vertices[i].m_normal = Vector3f::Normalize(vertices[i].m_normal);
+
+	    // LOG_I("point: %s", string(vertices[i].m_point).c_str() );
+	    LOG_I("normal: %s", string(vertices[i].m_normal).c_str() );
+
+	    // normal should be (0,-1,0)
+
+	}
+
+	}*/
+}
+
+/*
+
+    struct Vertex {
+	Vector3f m_point;
+	Vector2f m_texCoord;
+	Vector3f m_normal;
+    };
+
+we need to be able to handle also the format
+
+    struct Vertex {
+	Vector3f m_point;
+	Vector2f m_texCoord;
+	Vector3f m_normal;
+    Vector3f tangent.
+    };*/

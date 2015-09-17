@@ -13,9 +13,13 @@
 using std::string;
 
 void GeometryObject::Init(const std::string& filename, const bool useCustomShader) {
+
+
     GeometryObjectData data = EobFile::Read(filename);
 
+
     string basePath = File::GetFilePath(filename);
+
 
     for(size_t i = 0; i < data.m_chunks.size(); ++i) {
 	Material& mat = data.m_chunks[i]->m_material;
@@ -30,6 +34,7 @@ void GeometryObject::Init(const std::string& filename, const bool useCustomShade
 
 
 void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) {
+
 
     if(!useCustomShader) {
 	m_defaultShader = new ShaderProgram("shader/simple");
@@ -57,14 +62,14 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	newChunk->m_indexBuffer->Unbind();
 
 
-
 	if(baseChunk->m_material.m_textureFilename != "") {
 
 
 	    Texture* texture = new Texture2D(baseChunk->m_material.m_textureFilename);
 
+
 	    texture->Bind();
-	    texture->SetTextureClamping();
+	    texture->SetTextureRepeat();
 	    texture->GenerateMipmap();
 	    texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
 	    texture->SetMagFilter(GL_LINEAR);
@@ -74,7 +79,6 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	} else {
 	    newChunk->m_texture = NULL;
 	}
-
 	m_chunks.push_back(newChunk);
     }
 

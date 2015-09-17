@@ -122,16 +122,20 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
 GeometryObjectData EobFile::Read(const std::string& infile) {
 
-    //   LOG_I("READ OBJ");
-
     GeometryObjectData data;
 
     File f(infile, FileModeReading);
 
     FileHeader fileHeader;
 
+    if(f.HasError()) {
+	LOG_E("Could not open the file %s: %s", infile.c_str(), f.GetError().c_str() );
+    }
+
         // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
     f.ReadArray(&fileHeader, sizeof(fileHeader));
+
+    //LOG_I("init read");
 
     if(fileHeader.m_magic != EOBF) {
 	LOG_E("%s is not a EOB file: invalid magic number %d", infile.c_str(), fileHeader.m_magic );
@@ -148,6 +152,7 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
     data.m_vertexAttribsSizes = std::vector<GLuint>(&vertexAttribsSizes[0]+0, &vertexAttribsSizes[0]+length / sizeof(GLuint));
 
         // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
+
 
     uint32 numChunks = f.Read32u();
     for(uint32 i = 0; i < numChunks; ++i) {
