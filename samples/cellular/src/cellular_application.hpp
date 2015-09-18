@@ -16,7 +16,9 @@ private:
     Plane* m_cellularPlane;
     Plane* m_perlinPlane;
     Cube* m_cube;
+
     GeometryObject* m_normalCube;
+    GeometryObject* m_smileCube;
 
 public:
 

@@ -19,6 +19,8 @@ CellularApplication::~CellularApplication() {
       MY_DELETE(m_perlinPlane);
       MY_DELETE(m_cube);
       MY_DELETE(m_normalCube);
+      MY_DELETE(m_smileCube);
+
 }
 
 void CellularApplication::Init() {
@@ -37,6 +39,10 @@ void CellularApplication::Init() {
     m_normalCube->Init("obj/mybox2.eob");
     m_normalCube->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(10,6,1)));
 
+    m_smileCube = new GeometryObject();
+    m_smileCube->Init("obj/smile_cube.eob");
+    m_smileCube->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(20,6,5)));
+
 }
 
 void CellularApplication::Render() {
@@ -44,7 +50,9 @@ void CellularApplication::Render() {
     SetViewport();
     Clear(0.0f, 1.0f, 1.0f);
 
-    const Vector4f lightPosition(93,10.0f,93, 1.0f);
+//    const Vector4f lightPosition(93,10.0f,93, 1.0f);
+    const Vector4f lightPosition(30,6, 7, 1.0f);
+
     m_cellularPlane->Render(*m_camera, lightPosition);
 
     m_perlinPlane->Render(*m_camera, lightPosition);
@@ -54,6 +62,9 @@ void CellularApplication::Render() {
 
 
       m_normalCube->Render(*m_camera, lightPosition);
+
+      m_smileCube->Render(*m_camera, lightPosition);
+
 
 }
 

@@ -152,10 +152,6 @@ int main (int argc, char * argv[]) {
 
 	    if(tokens.size() != 4) {
 
-		LOG_I("%s", tokens[0].c_str());
-		LOG_I("%s", tokens[1].c_str());
-		LOG_I("%s", tokens[2].c_str());
-
 		LOG_E("fail: %s", line.c_str() );
 	    }
 
@@ -266,6 +262,11 @@ map<string, Material*> ParseMtllib(const string& filename) {
 	    currentMaterial->m_textureFilename = tokens[1];
 	} else if(firstToken == "map_bump") {
 	    assert(tokens.size() == 2);
+
+	    if(!generateTangents) {
+		LOG_E("This model has normal maps, but tangents are not being generated. Please add the switch -t")
+	    }
+
 	    currentMaterial->m_normalMapFilename = tokens[1];
 	}
     }
@@ -443,9 +444,6 @@ void GenerateTangents() {
 
 
 	    vertices[i].m_tangent = Vector3f::Normalize(vertices[i].m_tangent);
-
-	    LOG_I("point: %s", string(vertices[i].m_point).c_str() );
-	    LOG_I("tangent: %s", string(vertices[i].m_tangent).c_str() );
 
 	    // normal should be (0,-1,0)
 	}
