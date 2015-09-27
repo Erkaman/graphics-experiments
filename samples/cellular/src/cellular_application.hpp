@@ -19,6 +19,9 @@ private:
 
     GeometryObject* m_normalCube;
     GeometryObject* m_smileCube;
+    GeometryObject* m_stoneBall;
+    GeometryObject* m_floor;
+    GeometryObject* m_door;
 
 public:
 

@@ -1,0 +1,39 @@
+deferred rendering, multiple materials:
+
+however, Deferred Lighting. seems to support.
+
+http://www.cse.chalmers.se/~uffe/bachelor/kandidatarbetestartpaket/DATx02-14-81.pdf
+page 16 has a very nice formula!
+
+emissive component, light calculation.
+
+
+
+http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter09.html
+http://gamedev.stackexchange.com/questions/19575/is-there-a-way-to-use-an-arbitrary-number-of-lights-in-a-fragment-shader
+
+
+
+http://doomwiki.org/wiki/Thing
+
+doom3 map format:
+http://web.archive.org/web/20080220062502/http://www.gamers.org/dEngine/quake/QDP/qmapspec.html
+
+https://developer.valvesoftware.com/wiki/MAP_file_format
+
+describes how to model a car in blender:
+http://www.cse.chalmers.se/~uffe/bachelor/kandidatarbetestartpaket/RoadKill.pdf
+http://www.cse.chalmers.se/~uffe/bachelor/kandidatarbetestartpaket/RoadKill.pdf
+
+
+
+
+to handle materials with multiple brdfs, store material id in buffer.
+
+
+We don't need to store the position in a texture:
+
+"The position is usually not stored. It is instead reconstituted in the second pass by math that's too complex to get into here. Suffice it to say, we use the depth buffer and the screen-space fragment position as the input to figure out the camera-space position of the point on a surface."
+
+we want to render to four render targets. in total, we get 16 floating
+point numbers to play around with!

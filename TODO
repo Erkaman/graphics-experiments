@@ -1,6 +1,19 @@
+compute light vector in vertex shader. although it can probably also
+be done in fragment shader.
+
+
+
+
+watch this tutorial:
+https://www.youtube.com/watch?v=gSB-v4upJzI
+
+7:16, begin by adding voronoi texture.
+
+
 * bump mapping.
 
 misc todo:
+* implement precomputed radiance transfer for prebaked global illuminatin
 * shadow mapping.
 * create an efficient terrain system.
 * water rendering
@@ -56,3 +69,4 @@ http://drilian.com/wp-content/uploads/2010/01/SimpleBrick.jpg
 
 polka and cubism noise:
 https://briansharpe.wordpress.com/2011/12/24/polkadot-and-star-noises/
+http://www.swineworld.org/2015/08/fast-voronoi-f2f1-in-blender-cycles-on.html

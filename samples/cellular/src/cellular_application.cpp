@@ -20,6 +20,7 @@ CellularApplication::~CellularApplication() {
       MY_DELETE(m_cube);
       MY_DELETE(m_normalCube);
       MY_DELETE(m_smileCube);
+      MY_DELETE(m_stoneBall);
 
 }
 
@@ -28,9 +29,9 @@ void CellularApplication::Init() {
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
-    m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,7.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
+    m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,0.0f,5), Vector3f(0.0f,0.0f,-1.0f), true);
 
-    m_cellularPlane = new Plane(Vector3f(1,4,1), true);
+/*    m_cellularPlane = new Plane(Vector3f(1,4,1), true);
     m_perlinPlane = new Plane(Vector3f(20,4,1), false);
 
     m_cube = new Cube(Vector3f(20,4,1));
@@ -43,6 +44,25 @@ void CellularApplication::Init() {
     m_smileCube->Init("obj/smile_cube.eob");
     m_smileCube->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(20,6,5)));
 
+    m_stoneBall = new GeometryObject();
+    m_stoneBall->Init("obj/stone_ball.eob");
+    m_stoneBall->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(0,6,5)));
+
+    m_floor = new GeometryObject();
+    m_floor->Init("obj/floor.eob");
+    m_floor->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(0,6,5)));
+*/
+
+    const float SCALE = 0.01f;
+
+    m_door = new GeometryObject();
+    m_door->Init("obj/jumbodoor.eob");
+    m_door->SetModelMatrix(
+
+	Matrix4f::CreateScale(Vector3f(SCALE,SCALE,1)) *
+	Matrix4f::CreateTranslation(Vector3f(00,0,00)));
+
+
 }
 
 void CellularApplication::Render() {
@@ -51,8 +71,12 @@ void CellularApplication::Render() {
     Clear(0.0f, 1.0f, 1.0f);
 
 //    const Vector4f lightPosition(93,10.0f,93, 1.0f);
-    const Vector4f lightPosition(30,6, 7, 1.0f);
+//    const Vector4f lightPosition(30,6, 7, 1.0f);
 
+    const Vector4f lightPosition(0,0, 10, 1.0f);
+
+
+/*
     m_cellularPlane->Render(*m_camera, lightPosition);
 
     m_perlinPlane->Render(*m_camera, lightPosition);
@@ -64,6 +88,12 @@ void CellularApplication::Render() {
       m_normalCube->Render(*m_camera, lightPosition);
 
       m_smileCube->Render(*m_camera, lightPosition);
+
+      m_stoneBall->Render(*m_camera, lightPosition);
+
+      m_floor->Render(*m_camera, lightPosition);
+*/
+      m_door->Render(*m_camera, lightPosition);
 
 
 }

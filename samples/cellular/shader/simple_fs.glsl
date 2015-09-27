@@ -53,13 +53,13 @@ void main()
 
 #ifdef NORMAL_MAPPING
 
-//    vec4 normal = texture(normalMap, vec2(texCoord.x, 1-texCoord.y  )  );
+    vec4 normal = texture(normalMap, vec2(texCoord.x, 1-texCoord.y  )  );
 
     vec3 mah_normal =  normalize((normalMatrix * vec4(normalize(CalcBumpedNormal()),0.0)).xyz);
 
-vec3 shading = phongVertex(color.rgb,   mah_normal, viewSpaceLightPosition, viewSpacePosition);
+    vec3 shading = phongVertex(color.rgb, mah_normal, viewSpaceLightPosition, viewSpacePosition);
 
-fragmentColor = vec4( shading , color.a);
+    fragmentColor = vec4( /*shading*/ normal.rgb , color.a);
 #else
 
     vec3 shading = phongVertex(color.rgb, viewSpaceNormal, viewSpaceLightPosition, viewSpacePosition);
