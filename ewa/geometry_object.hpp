@@ -21,6 +21,7 @@ private:
 	// the material.
 	Texture* m_texture;
 	Texture* m_normalMap;
+	Texture* m_specularMap;
     };
 
     std::vector<Chunk*> m_chunks;

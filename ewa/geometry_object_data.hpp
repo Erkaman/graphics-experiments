@@ -7,6 +7,8 @@
 struct Material{
     std::string m_textureFilename;
     std::string m_normalMapFilename; // only exists if m_hasNormalMaps == 1
+    std::string m_specularMapFilename; // only exists if m_hasSpecularMaps == 1
+
 };
 
 struct GeometryObjectData {
@@ -34,4 +36,5 @@ struct GeometryObjectData {
     GLenum m_indexType;
 
     int m_hasNormalMaps; // 1 if normalmaps exists, 0 otherwise.
+    int m_hasSpecularMaps;// 1 if specular map exists, 0 otherwise.
 };

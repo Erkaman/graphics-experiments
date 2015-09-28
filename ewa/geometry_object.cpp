@@ -44,6 +44,9 @@ void GeometryObject::Init(const std::string& filename, const bool useCustomShade
 
 	if(mat.m_normalMapFilename != "") // empty textures should remain empty.
 	    mat.m_normalMapFilename = File::AppendPaths(basePath, mat.m_normalMapFilename);
+
+	if(mat.m_specularMapFilename != "") // empty textures should remain empty.
+	    mat.m_specularMapFilename = File::AppendPaths(basePath, mat.m_specularMapFilename);
     }
 
 
@@ -63,6 +66,9 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 
 	    vertexSource = string("#define NORMAL_MAPPING\n\n") + vertexSource;
 	    fragmentSource = string("#define NORMAL_MAPPING\n\n") + fragmentSource;
+
+	    vertexSource = string("#define SPEC_MAPPING\n\n") + vertexSource;
+	    fragmentSource = string("#define SPEC_MAPPING\n\n") + fragmentSource;
 
 	}
 
@@ -99,11 +105,17 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	}
 
 	if(data.m_hasNormalMaps) {
-
 	    newChunk->m_normalMap = LoadTexture(baseChunk->m_material.m_normalMapFilename);
 	} else {
 	    newChunk->m_normalMap = NULL;
 	}
+
+	if(data.m_hasSpecularMaps) {
+	    newChunk->m_specularMap = LoadTexture(baseChunk->m_material.m_specularMapFilename);
+	} else {
+	    newChunk->m_specularMap = NULL;
+	}
+
 
 	m_chunks.push_back(newChunk);
     }
@@ -156,6 +168,12 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 	    shader.SetUniform("normalMap", 1);
 	    Texture::SetActiveTextureUnit(1);
 	    chunk->m_normalMap->Bind();
+	}
+
+	if(chunk->m_specularMap != NULL) {
+	    shader.SetUniform("specularMap", 2);
+	    Texture::SetActiveTextureUnit(2);
+	    chunk->m_specularMap->Bind();
 	}
 
 

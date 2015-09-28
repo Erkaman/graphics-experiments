@@ -264,10 +264,14 @@ map<string, Material*> ParseMtllib(const string& filename) {
 	    assert(tokens.size() == 2);
 
 	    if(!generateTangents) {
-		LOG_E("This model has normal maps, but tangents are not being generated. Please add the switch -t")
+		LOG_E("This model has normal maps, but tangents are not being generated. Please add the switch -t");
 	    }
 
 	    currentMaterial->m_normalMapFilename = tokens[1];
+	}else if(firstToken == "map_spec") {
+	    assert(tokens.size() == 2);
+
+	    currentMaterial->m_specularMapFilename = tokens[1];
 	}
     }
 
@@ -444,6 +448,8 @@ void GenerateTangents() {
 
 
 	    vertices[i].m_tangent = Vector3f::Normalize(vertices[i].m_tangent);
+
+//	    LOG_I("tangent: %s", tos(vertices[i].m_tangent).c_str()  );
 
 	    // normal should be (0,-1,0)
 	}

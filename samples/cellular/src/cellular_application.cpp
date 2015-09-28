@@ -36,8 +36,8 @@ void CellularApplication::Init() {
     ::SetCullFace(true);
 
     m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),
+Vector3f(-0.597709, 0.944977, 1.555932),Vector3f(0.019267, -0.489838, -0.871601)
 
-Vector3f(-0.233554, 4.972204, 8.378012),Vector3f(0.058347, -0.533318, -0.843901)
 
 , true);
 
@@ -73,9 +73,12 @@ Vector3f(-0.233554, 4.972204, 8.378012),Vector3f(0.058347, -0.533318, -0.843901)
 	Matrix4f::CreateTranslation(Vector3f(00,0,00)));
 
 
+    const float SCALE2 = 0.2f;
+
     m_stoneFloor = new GeometryObject();
     m_stoneFloor->Init("obj/rock_floor.eob");
     m_stoneFloor->SetModelMatrix(
+	Matrix4f::CreateScale(Vector3f(SCALE2,1,SCALE2)) *
 	Matrix4f::CreateTranslation(Vector3f(00,0,00)));
 }
 
@@ -87,7 +90,7 @@ void CellularApplication::Render() {
 //    const Vector4f lightPosition(93,10.0f,93, 1.0f);
 //    const Vector4f lightPosition(30,6, 7, 1.0f);
 
-    const Vector4f lightPosition(0,0, 10, 1.0f);
+    const Vector4f lightPosition(0,0, 3, 8.0f);
 
 
 
@@ -142,3 +145,9 @@ void CellularApplication::Update(const float delta) {
 void CellularApplication::RenderText()  {
     m_font->DrawString(*m_fontShader, 600,150, "hello world" );
 }
+
+
+/*
+the first tangent is (-1,0,0)
+
+ */

@@ -2,3 +2,4 @@ newmtl jumbodoor
 
 map_Bump jumbodoor_local.png
 map_Kd jumbodoor.png
+map_spec jumbodoor_s.png

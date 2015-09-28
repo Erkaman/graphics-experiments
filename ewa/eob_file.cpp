@@ -21,6 +21,7 @@ struct FileHeader {
 //    uint32 m_numTriangles; //GLuint is 32-bit
     int32 m_indexType; // GLenum is 32-bit
     int m_hasNormalMaps; // 1 if has normal maps(and also tangents), 0 if not.
+    int m_hasSpecularMaps;
 };
 
 struct ChunkHeader {
@@ -72,6 +73,7 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
     fileHeader.m_magic = EOBF;
     fileHeader.m_indexType = data.m_indexType;
     fileHeader.m_hasNormalMaps = data.m_hasNormalMaps;
+    fileHeader.m_hasSpecularMaps = data.m_hasSpecularMaps;
 
     // first write fileHeader.
     f.WriteArray(&fileHeader, sizeof(fileHeader));
@@ -104,6 +106,9 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 	WriteString(f, chunk->m_material.m_textureFilename);
 	if(data.m_hasNormalMaps) {
 	    WriteString(f, chunk->m_material.m_normalMapFilename);
+	}
+	if(data.m_hasSpecularMaps) {
+	    WriteString(f, chunk->m_material.m_specularMapFilename);
 	}
 
 
@@ -144,6 +149,7 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 
     data.m_indexType = fileHeader.m_indexType;
     data.m_hasNormalMaps = fileHeader.m_hasNormalMaps;
+    data.m_hasSpecularMaps = fileHeader.m_hasSpecularMaps;
 
     // read vertex attrib size array
     uint32 length = f.Read32u();
@@ -177,6 +183,10 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 	chunk->m_material.m_textureFilename = ReadString(f);
 	if(data.m_hasNormalMaps) {
 	    chunk->m_material.m_normalMapFilename = ReadString(f);
+	}
+
+	if(data.m_hasSpecularMaps) {
+	    chunk->m_material.m_specularMapFilename = ReadString(f);
 	}
 
 	uint32 vertexMagic = f.Read32u();
