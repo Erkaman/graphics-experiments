@@ -4,12 +4,18 @@
 #include "ewa/font.hpp"
 
 #include "ewa/math/vector4f.hpp"
+#include "ewa/keyboard_state.hpp"
 
 
 #include "plane.hpp"
 #include "cube.hpp"
 
 using namespace std;
+
+void ToClipboard(const std::string& str) {
+    std::string command = "echo '" + str + "' | pbcopy";
+    system(command.c_str());
+}
 
 CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_normalCube(NULL) { }
 
@@ -29,7 +35,11 @@ void CellularApplication::Init() {
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
-    m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),Vector3f(0,0.0f,5), Vector3f(0.0f,0.0f,-1.0f), true);
+    m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),
+
+Vector3f(-0.233554, 4.972204, 8.378012),Vector3f(0.058347, -0.533318, -0.843901)
+
+, true);
 
 /*    m_cellularPlane = new Plane(Vector3f(1,4,1), true);
     m_perlinPlane = new Plane(Vector3f(20,4,1), false);
@@ -63,6 +73,10 @@ void CellularApplication::Init() {
 	Matrix4f::CreateTranslation(Vector3f(00,0,00)));
 
 
+    m_stoneFloor = new GeometryObject();
+    m_stoneFloor->Init("obj/rock_floor.eob");
+    m_stoneFloor->SetModelMatrix(
+	Matrix4f::CreateTranslation(Vector3f(00,0,00)));
 }
 
 void CellularApplication::Render() {
@@ -74,6 +88,7 @@ void CellularApplication::Render() {
 //    const Vector4f lightPosition(30,6, 7, 1.0f);
 
     const Vector4f lightPosition(0,0, 10, 1.0f);
+
 
 
 /*
@@ -96,10 +111,32 @@ void CellularApplication::Render() {
       m_door->Render(*m_camera, lightPosition);
 
 
+      m_stoneFloor->Render(*m_camera, lightPosition);
+
+
 }
 
 void CellularApplication::Update(const float delta) {
     m_camera->HandleInput(delta);
+
+    const KeyboardState& kbs = KeyboardState::GetInstance();
+
+    if( kbs.IsPressed(GLFW_KEY_P) ) {
+
+	string out = "Vector3f" +tos(m_camera->GetPosition()) + ",";
+	out += "Vector3f" + tos(m_camera->GetViewDir());
+	ToClipboard(out);
+    }
+
+    if( kbs.IsPressed(GLFW_KEY_Y) ) {
+
+	m_stoneFloor->ToggleBump(1);
+    }
+
+    if( kbs.IsPressed(GLFW_KEY_U) ) {
+	m_stoneFloor->ToggleBump(0);
+    }
+
 }
 
 void CellularApplication::RenderText()  {

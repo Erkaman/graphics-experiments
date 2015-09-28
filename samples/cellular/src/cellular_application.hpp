@@ -22,6 +22,7 @@ private:
     GeometryObject* m_stoneBall;
     GeometryObject* m_floor;
     GeometryObject* m_door;
+    GeometryObject* m_stoneFloor;
 
 public:
 

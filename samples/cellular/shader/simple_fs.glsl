@@ -22,6 +22,9 @@ in vec3 tangent;
 
 
 uniform vec3 viewSpaceLightPosition;
+
+uniform int bump_on;
+
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
 
@@ -57,9 +60,16 @@ void main()
 
     vec3 mah_normal =  normalize((normalMatrix * vec4(normalize(CalcBumpedNormal()),0.0)).xyz);
 
-    vec3 shading = phongVertex(color.rgb, mah_normal, viewSpaceLightPosition, viewSpacePosition);
+    vec3 n = bump_on==1 ? mah_normal : viewSpaceLightPosition;
 
-    fragmentColor = vec4( /*shading*/ normal.rgb , color.a);
+    vec3 shading = phongVertex(color.rgb,
+
+
+			       n, viewSpaceLightPosition, viewSpacePosition);
+
+//    shading = texture(normalMap,  vec2(texCoord.x, 1-texCoord.y  )).xyz;
+
+    fragmentColor = vec4( shading , color.a);
 #else
 
     vec3 shading = phongVertex(color.rgb, viewSpaceNormal, viewSpaceLightPosition, viewSpacePosition);

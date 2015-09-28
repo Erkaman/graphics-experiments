@@ -1,16 +1,6 @@
-compute light vector in vertex shader. although it can probably also
-be done in fragment shader.
-
-
-
-
-watch this tutorial:
-https://www.youtube.com/watch?v=gSB-v4upJzI
-
-7:16, begin by adding voronoi texture.
-
-
 * bump mapping.
+* http://www.valvesoftware.com/publications/2006/SIGGRAPH06_Course_ShadingInValvesSourceEngine.pdf
+* read about ambient cube.
 
 misc todo:
 * implement precomputed radiance transfer for prebaked global illuminatin
