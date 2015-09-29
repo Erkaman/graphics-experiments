@@ -39,13 +39,13 @@ public:
 
     void  Skip(const size_t& skipSize);
 
-
     void Write64u(const uint64 u);
     uint64 Read64u();
 
     void Write32u(const uint32 u);
     uint32 Read32u();
 
+    void WriteLine(const std::string& str);
 
     static void WriteArray(const std::string& filename, const void* data, const size_t dataSize);
     static void* ReadArray(const std::string& filename, size_t& dataSize);
@@ -54,7 +54,6 @@ public:
     static std::string GetFilePath(const std::string& filepath);
 
     static std::string AppendPaths(const std::string& path1, const std::string& path2 );
-
 
     // given a filepath(like elias/eric/test.txt), get strip the path and keep only the file(test.txt)
     static std::string GetFile(const std::string& filepath);

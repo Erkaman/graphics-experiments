@@ -243,3 +243,9 @@ std::string File::GetFile(const std::string& filepath) {
 	return filepath.substr(index+1, filepath.size() -index);
     }
 }
+
+
+void File::WriteLine(const std::string& str) {
+    fputs(str.c_str(), m_fp);
+    putc('\n', m_fp);
+}

@@ -35,20 +35,26 @@ void GeometryObject::Init(const std::string& filename, const bool useCustomShade
 
     string basePath = File::GetFilePath(filename);
 
+    m_hasNormalMap = false;
+    m_hasSpecularMap = false;
 
     for(size_t i = 0; i < data.m_chunks.size(); ++i) {
-	Material& mat = data.m_chunks[i]->m_material;
+	Material* mat = data.m_chunks[i]->m_material;
 
-	if(mat.m_textureFilename != "") // empty textures should remain empty.
-	    mat.m_textureFilename = File::AppendPaths(basePath, mat.m_textureFilename);
+	if(mat->m_textureFilename != ""){ // empty textures should remain empty.
+	    mat->m_textureFilename = File::AppendPaths(basePath, mat->m_textureFilename);
+	}
 
-	if(mat.m_normalMapFilename != "") // empty textures should remain empty.
-	    mat.m_normalMapFilename = File::AppendPaths(basePath, mat.m_normalMapFilename);
+	if(mat->m_normalMapFilename != ""){ // empty textures should remain empty->
+	    mat->m_normalMapFilename = File::AppendPaths(basePath, mat->m_normalMapFilename);
+	    m_hasNormalMap = true;
+	}
 
-	if(mat.m_specularMapFilename != "") // empty textures should remain empty.
-	    mat.m_specularMapFilename = File::AppendPaths(basePath, mat.m_specularMapFilename);
+	if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
+	    mat->m_specularMapFilename = File::AppendPaths(basePath, mat->m_specularMapFilename);
+	    m_hasSpecularMap = true;
+	}
     }
-
 
     Init(data, useCustomShader);
 }
@@ -56,21 +62,21 @@ void GeometryObject::Init(const std::string& filename, const bool useCustomShade
 
 void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) {
 
-
     if(!useCustomShader) {
 	string shaderName = "shader/simple";
 	string vertexSource = ResourceManager::LocateAndReadResource(shaderName + "_vs.glsl");
 	string fragmentSource = ResourceManager::LocateAndReadResource(shaderName + "_fs.glsl");
 
-	if(data.m_hasNormalMaps) {
-
+	if(m_hasNormalMap) {
 	    vertexSource = string("#define NORMAL_MAPPING\n\n") + vertexSource;
 	    fragmentSource = string("#define NORMAL_MAPPING\n\n") + fragmentSource;
+	}
 
+	if(m_hasSpecularMap) {
 	    vertexSource = string("#define SPEC_MAPPING\n\n") + vertexSource;
 	    fragmentSource = string("#define SPEC_MAPPING\n\n") + fragmentSource;
-
 	}
+
 
 	m_defaultShader = new ShaderProgram(vertexSource, fragmentSource);
     }
@@ -98,20 +104,20 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	newChunk->m_indexBuffer->Unbind();
 
 
-	if(baseChunk->m_material.m_textureFilename != "") {
-	    newChunk->m_texture = LoadTexture(baseChunk->m_material.m_textureFilename);
+	if(baseChunk->m_material->m_textureFilename != "") {
+	    newChunk->m_texture = LoadTexture(baseChunk->m_material->m_textureFilename);
 	} else {
 	    newChunk->m_texture = NULL;
 	}
 
-	if(data.m_hasNormalMaps) {
-	    newChunk->m_normalMap = LoadTexture(baseChunk->m_material.m_normalMapFilename);
+	if(m_hasNormalMap) {
+	    newChunk->m_normalMap = LoadTexture(baseChunk->m_material->m_normalMapFilename);
 	} else {
 	    newChunk->m_normalMap = NULL;
 	}
 
-	if(data.m_hasSpecularMaps) {
-	    newChunk->m_specularMap = LoadTexture(baseChunk->m_material.m_specularMapFilename);
+	if(m_hasSpecularMap) {
+	    newChunk->m_specularMap = LoadTexture(baseChunk->m_material->m_specularMapFilename);
 	} else {
 	    newChunk->m_specularMap = NULL;
 	}
@@ -175,7 +181,6 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 	    Texture::SetActiveTextureUnit(2);
 	    chunk->m_specularMap->Bind();
 	}
-
 
 	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 

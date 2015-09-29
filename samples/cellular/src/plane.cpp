@@ -26,10 +26,15 @@ Plane::Plane(const Vector3f& position, const bool isCellular ): m_modelMatrix(Ma
 
     data.m_vertexAttribsSizes = vector<GLuint>{3,3,2};
     data.m_indexType = GL_UNSIGNED_SHORT;
-    data.m_hasNormalMaps = 0;
 
     GeometryObjectData::Chunk* chunk = new GeometryObjectData::Chunk;
-    chunk->m_material.m_textureFilename = "";
+    chunk->m_material->m_textureFilename = "";
+    chunk->m_material->m_normalMapFilename = "";
+    chunk->m_material->m_specularMapFilename = "";
+
+    chunk->m_material->m_materialName = "empty_mat";
+
+
     data.m_chunks.push_back(chunk);
 
     const size_t verticesSize = 4 * (3+3+2); // four corners,

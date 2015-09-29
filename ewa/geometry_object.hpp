@@ -30,6 +30,9 @@ private:
 
     int m_bumpOn;
 
+    bool m_hasNormalMap;
+    bool m_hasSpecularMap;
+
 protected:
 
     Matrix4f m_modelMatrix;

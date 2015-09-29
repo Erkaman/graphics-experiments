@@ -1,0 +1,4 @@
+new_mat Material.001
+diff_map diffuse.png
+norm_map normal.png
+spec_map specular.png

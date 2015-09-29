@@ -5,15 +5,14 @@
 #include <string>
 
 struct Material{
-    std::string m_textureFilename;
-    std::string m_normalMapFilename; // only exists if m_hasNormalMaps == 1
-    std::string m_specularMapFilename; // only exists if m_hasSpecularMaps == 1
+    std::string m_materialName;
 
+    std::string m_textureFilename;
+    std::string m_normalMapFilename;
+    std::string m_specularMapFilename;
 };
 
 struct GeometryObjectData {
-
-    // make the types of these as generic as possible.
 
     struct Chunk{
 	GLsizeiptr m_verticesSize;
@@ -24,8 +23,7 @@ struct GeometryObjectData {
 
 	GLuint m_numTriangles;
 
-
-	Material m_material; // store texture in material.
+	Material* m_material; // store texture in material.
     };
 
     std::vector<Chunk*> m_chunks;
@@ -34,7 +32,4 @@ struct GeometryObjectData {
 
     // type of the integer used to store vertex indices.
     GLenum m_indexType;
-
-    int m_hasNormalMaps; // 1 if normalmaps exists, 0 otherwise.
-    int m_hasSpecularMaps;// 1 if specular map exists, 0 otherwise.
 };

@@ -67,5 +67,5 @@ void main(void)
 
 	fragmentColor = vec4(
 
-	    ambientComponent + (diffuseComponent + specularComponent) ,colorSample.a)  ;
+	     ambientComponent + (diffuseComponent + specularComponent) ,colorSample.a)  ;
 }

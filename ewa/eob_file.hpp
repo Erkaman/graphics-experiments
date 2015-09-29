@@ -11,4 +11,6 @@ public:
     // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
     static GeometryObjectData Read(const std::string& infile);
 
+
+
 };

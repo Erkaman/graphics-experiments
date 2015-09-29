@@ -4,7 +4,16 @@
 
 #include "file.hpp"
 
+#include "buffered_file_reader.hpp"
+#include "ewa/str.hpp"
+
+
+#include <map>
+#include <vector>
+
 using std::string;
+using std::map;
+using std::vector;
 
 
 #define EOBF 0x46424F45
@@ -20,8 +29,6 @@ struct FileHeader {
 
 //    uint32 m_numTriangles; //GLuint is 32-bit
     int32 m_indexType; // GLenum is 32-bit
-    int m_hasNormalMaps; // 1 if has normal maps(and also tangents), 0 if not.
-    int m_hasSpecularMaps;
 };
 
 struct ChunkHeader {
@@ -65,15 +72,39 @@ void* ReadArray(File& file, uint32& size) {
     return data;
 }
 
+void WriteMaterialFile(const GeometryObjectData& data, const std::string& outfile) {
+
+
+    assert( outfile.substr(outfile.size()-4, 4 ) == string(".eob") );
+    // strip ".eob" extension,
+    string materialFile = outfile.substr(0, outfile.size()-4 ) + ".mat" ;
+    File f(materialFile, FileModeWriting);
+
+
+    for(GeometryObjectData::Chunk* chunk : data.m_chunks) {
+
+	Material* mat = chunk->m_material;
+
+	f.WriteLine("new_mat " + mat->m_materialName);
+
+	f.WriteLine("diff_map " + mat->m_textureFilename);
+	f.WriteLine("norm_map " + mat->m_normalMapFilename);
+	f.WriteLine("spec_map " + mat->m_specularMapFilename);
+    }
+
+}
+
+
 void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) {
 
     File f(outfile, FileModeWriting);
 
+    WriteMaterialFile(data, outfile);
+
     FileHeader fileHeader;
     fileHeader.m_magic = EOBF;
     fileHeader.m_indexType = data.m_indexType;
-    fileHeader.m_hasNormalMaps = data.m_hasNormalMaps;
-    fileHeader.m_hasSpecularMaps = data.m_hasSpecularMaps;
+
 
     // first write fileHeader.
     f.WriteArray(&fileHeader, sizeof(fileHeader));
@@ -101,25 +132,63 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 	materialHeader.m_magic = MATS;
 	f.WriteArray(&materialHeader, sizeof(materialHeader));
 
-
-
-	WriteString(f, chunk->m_material.m_textureFilename);
-	if(data.m_hasNormalMaps) {
-	    WriteString(f, chunk->m_material.m_normalMapFilename);
-	}
-	if(data.m_hasSpecularMaps) {
-	    WriteString(f, chunk->m_material.m_specularMapFilename);
-	}
-
+	WriteString(f, chunk->m_material->m_materialName);
 
 	// write chunk vertex and index data.
 	f.Write32u(VETX);
 	WriteArray(f, chunk->m_vertices, chunk->m_verticesSize );
 	f.Write32u(INDX);
 	WriteArray(f, chunk->m_indices, chunk->m_indicesSize );
-
-
     }
+}
+
+map<string, Material*> ReadMaterialFile(const std::string& infile) {
+
+    assert( infile.substr(infile.size()-4, 4 ) == string(".eob") );
+
+    // strip ".eob" extension,
+    string materialFile = infile.substr(0, infile.size()-4 ) + ".mat" ;
+
+    BufferedFileReader reader(materialFile);
+
+    map<string, Material*> matlib;
+    Material* currentMaterial = NULL;
+
+    while(!reader.IsEof()) {
+
+	string line = reader.ReadLine();
+	vector<string> tokens =SplitString(line, " ");
+	string firstToken = tokens[0];
+
+	ToLowercase(firstToken);
+
+	if(firstToken == "new_mat") {
+	    assert(tokens.size() == 2);
+
+	    matlib[tokens[1]] = new Material;
+	    currentMaterial = matlib[tokens[1]];
+
+	    // default diffuse map is an empty diffuse map.
+	    currentMaterial->m_textureFilename = "";
+	    currentMaterial->m_normalMapFilename = "";
+	    currentMaterial->m_specularMapFilename = "";
+
+	} else if(firstToken == "diff_map") {
+	    assert(tokens.size() == 2);
+
+	    currentMaterial->m_textureFilename = tokens[1];
+	} else if(firstToken == "norm_map") {
+	    assert(tokens.size() == 2);
+
+	    currentMaterial->m_normalMapFilename = tokens[1];
+	}else if(firstToken == "spec_map") {
+	    assert(tokens.size() == 2);
+
+	    currentMaterial->m_specularMapFilename = tokens[1];
+	}
+    }
+
+    return matlib;
 }
 
 
@@ -131,6 +200,8 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
     GeometryObjectData data;
 
     File f(infile, FileModeReading);
+
+    map<string, Material*> matlib = ReadMaterialFile(infile);
 
     FileHeader fileHeader;
 
@@ -148,8 +219,6 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
     }
 
     data.m_indexType = fileHeader.m_indexType;
-    data.m_hasNormalMaps = fileHeader.m_hasNormalMaps;
-    data.m_hasSpecularMaps = fileHeader.m_hasSpecularMaps;
 
     // read vertex attrib size array
     uint32 length = f.Read32u();
@@ -180,14 +249,25 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 	    LOG_E("%s is not a EOB file: chunk number %d has an invalid material magic number %d", infile.c_str(), i, materialHeader.m_magic );
 	}
 
-	chunk->m_material.m_textureFilename = ReadString(f);
+
+	string materialName = ReadString(f);
+
+	Material* mat = matlib[materialName];
+
+	if(mat == NULL) {
+	    LOG_I("The material %s could not be found", materialName.c_str());
+	} else {
+	    chunk->m_material = mat;
+	}
+
+/*	chunk->m_material.m_textureFilename = ReadString(f);
 	if(data.m_hasNormalMaps) {
 	    chunk->m_material.m_normalMapFilename = ReadString(f);
 	}
 
 	if(data.m_hasSpecularMaps) {
 	    chunk->m_material.m_specularMapFilename = ReadString(f);
-	}
+	    }*/
 
 	uint32 vertexMagic = f.Read32u();
 	if(vertexMagic != VETX) {
@@ -201,9 +281,6 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 
 	float*vs = (float *) chunk->m_vertices;
 
-/*	for(int i = 0; i < 100; ++i) {
-	    LOG_I("v: %f", vs[i]);
-	    }*/
 
 	uint32 indexMagic = f.Read32u();
 	if(indexMagic != INDX) {

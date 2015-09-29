@@ -203,7 +203,6 @@ int main (int argc, char * argv[]) {
 
     data.m_vertexAttribsSizes = vas;
     data.m_indexType = GL_UNSIGNED_SHORT;
-    data.m_hasNormalMaps = generateTangents;
 
     map<string, Chunk*>::iterator it;
     for ( it = chunks.begin(); it != chunks.end(); it++ ) {
@@ -211,7 +210,7 @@ int main (int argc, char * argv[]) {
 
 	GeometryObjectData::Chunk* newChunk = new GeometryObjectData::Chunk;
 
-	newChunk->m_material = *baseChunk->m_material;
+	newChunk->m_material = baseChunk->m_material;
 
 	newChunk->m_numTriangles = baseChunk->m_numTriangles;
 
@@ -256,6 +255,12 @@ map<string, Material*> ParseMtllib(const string& filename) {
 
 	    // default diffuse map is an empty diffuse map.
 	    currentMaterial->m_textureFilename = "";
+	    currentMaterial->m_normalMapFilename = "";
+	    currentMaterial->m_specularMapFilename = "";
+
+	    currentMaterial->m_materialName = tokens[1];
+
+
 	} else if(firstToken == "map_kd") {
 	    assert(tokens.size() == 2);
 
