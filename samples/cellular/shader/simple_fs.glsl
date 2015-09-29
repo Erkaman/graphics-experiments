@@ -5,6 +5,12 @@ in vec3 lightVec;
 in vec3 halfVec;
 in vec2 v_texcoord;
 
+
+uniform vec3 spec_color;
+
+
+uniform float materialShininess;
+
 #ifdef NORMAL_MAPPING
 	uniform sampler2D normalMap;
 #else
@@ -21,10 +27,7 @@ out vec4 fragmentColor;
 // illum is shininess.
 // Ks is specular color.
 
-void main(void)
-{
-    float materialShininess = 3;
-    vec3 matColorSpecular = vec3(1,1,1);
+void main(void) {
 
 	vec3 ambientComponent;
 	vec3 diffuseComponent= vec3(0.0);
@@ -52,7 +55,7 @@ void main(void)
 #ifdef SPEC_MAPPING
 		vec3 matTextColor = texture(specularMap, v_texcoord).rgb;
 #else
-		vec3 matTextColor = matColorSpecular;
+		vec3 matTextColor = spec_color;
 #endif
 
 

@@ -22,6 +22,10 @@ private:
 	Texture* m_texture;
 	Texture* m_normalMap;
 	Texture* m_specularMap;
+
+	float m_shininess;
+	Vector3f m_specularColor;
+
     };
 
     std::vector<Chunk*> m_chunks;

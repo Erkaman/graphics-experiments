@@ -44,6 +44,11 @@ struct MaterialHeader {
 
 // 32-bit size, then GLvoid data, then cast.
 
+float StrToFloat(const string& str) {
+    string::size_type size;
+    return std::stof(str, &size) ;
+}
+
 void WriteArray(File& file, void* data, uint32 size) {
     file.Write32u(size);
     file.WriteArray(data, size);
@@ -90,10 +95,16 @@ void WriteMaterialFile(const GeometryObjectData& data, const std::string& outfil
 	f.WriteLine("diff_map " + mat->m_textureFilename);
 	f.WriteLine("norm_map " + mat->m_normalMapFilename);
 	f.WriteLine("spec_map " + mat->m_specularMapFilename);
+	f.WriteLine("shininess " + std::to_string(mat->m_shininess));
+
+	Vector3f v = mat->m_specularColor;
+
+	f.WriteLine("spec_color "
+		    + std::to_string(v.x) + " "
+		    + std::to_string(v.y) + " "
+		    + std::to_string(v.z));
     }
-
 }
-
 
 void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) {
 
@@ -172,6 +183,8 @@ map<string, Material*> ReadMaterialFile(const std::string& infile) {
 	    currentMaterial->m_textureFilename = "";
 	    currentMaterial->m_normalMapFilename = "";
 	    currentMaterial->m_specularMapFilename = "";
+	    currentMaterial->m_shininess = 1; // default shininess.
+	    currentMaterial->m_specularColor = Vector3f(0);
 
 	} else if(firstToken == "diff_map") {
 	    assert(tokens.size() == 2);
@@ -185,6 +198,19 @@ map<string, Material*> ReadMaterialFile(const std::string& infile) {
 	    assert(tokens.size() == 2);
 
 	    currentMaterial->m_specularMapFilename = tokens[1];
+	}else if(firstToken == "shininess") {
+	    assert(tokens.size() == 2);
+	    currentMaterial->m_shininess = StrToFloat(tokens[1]);
+	}else if(firstToken == "spec_color") {
+	    assert(tokens.size() == 4);
+
+	    currentMaterial->m_specularColor =
+		Vector3f(
+		    StrToFloat(tokens[1]),
+		    StrToFloat(tokens[2]),
+		    StrToFloat(tokens[3]));
+
+
 	}
     }
 

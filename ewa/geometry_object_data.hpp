@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gl/gl_common.hpp"
+#include "math/vector3f.hpp"
 
 #include <string>
 
@@ -10,6 +11,10 @@ struct Material{
     std::string m_textureFilename;
     std::string m_normalMapFilename;
     std::string m_specularMapFilename;
+
+    float m_shininess;
+    Vector3f m_specularColor;
+
 };
 
 struct GeometryObjectData {

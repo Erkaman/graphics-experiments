@@ -77,10 +77,8 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	    fragmentSource = string("#define SPEC_MAPPING\n\n") + fragmentSource;
 	}
 
-
 	m_defaultShader = new ShaderProgram(vertexSource, fragmentSource);
     }
-
 
     for(size_t i = 0; i < data.m_chunks.size(); ++i) {
 	GeometryObjectData::Chunk* baseChunk = data.m_chunks[i];
@@ -122,6 +120,8 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	    newChunk->m_specularMap = NULL;
 	}
 
+	newChunk->m_shininess = baseChunk->m_material->m_shininess;
+	newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
 
 	m_chunks.push_back(newChunk);
     }
@@ -180,23 +180,28 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 	    shader.SetUniform("specularMap", 2);
 	    Texture::SetActiveTextureUnit(2);
 	    chunk->m_specularMap->Bind();
+	} else {
+
+	    shader.SetUniform("spec_color", chunk->m_specularColor);
+
+//	    LOG_I("eric: %s", tos(chunk->m_specularColor).c_str() );
+
+	    // set material specular.
 	}
+
+	shader.SetUniform("materialShininess", chunk->m_shininess);
 
 	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 
 	if(chunk->m_texture != NULL) {
 	    chunk->m_texture->Unbind();
 	}
-
     }
-
 }
-
 
 void  GeometryObject::SetModelMatrix(Matrix4f modelMatrix) {
     m_modelMatrix = modelMatrix;
 }
-
 
 void GeometryObject::ToggleBump(int bump) {
     m_bumpOn = bump;

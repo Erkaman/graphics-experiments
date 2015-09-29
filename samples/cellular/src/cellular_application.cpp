@@ -115,10 +115,7 @@ void CellularApplication::Render() {
 */
       m_door->Render(*m_camera, lightPosition);
 
-
       m_stoneFloor->Render(*m_camera, lightPosition);
-
-
 }
 
 void CellularApplication::Update(const float delta) {
