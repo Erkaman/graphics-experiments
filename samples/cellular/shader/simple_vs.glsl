@@ -11,30 +11,75 @@ uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
 uniform mat4 normalMatrix;
 
-out vec3 viewSpaceNormal;
-out vec3 viewSpacePosition;
+uniform vec3 viewSpaceLightPosition;
 
-out vec2 texCoord;
-out vec3 normal;
+
+/*out vec3 viewSpaceNormal;
+out vec3 viewSpacePosition;
+*/
+
+out vec3 lightVec;
+out vec3 halfVec;
+out vec2 v_texcoord;
+
 
 #ifdef NORMAL_MAPPING
-out vec3 tangent;
+// we have tangentIn
+#else
+out vec3 v_normal ;
 #endif
 
 void main()
 {
-    gl_Position = mvp * vec4(positionIn,1);
-    texCoord = texCoordIn;
+
+	vec3 tmpVec;
+
+	#ifdef NORMAL_MAPPING
+
+	vec3 a_bitangent = cross(normalIn,tangentIn); // both tangent and normal are normalized I think
+
+	vec3 viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
+
+	tmpVec = viewSpaceLightPosition - viewSpacePosition;
+//	tmpVec =  lightPosition - a_vertex  ;
+
+		lightVec.x = dot(tmpVec, tangentIn);
+		lightVec.y = dot(tmpVec, a_bitangent);
+		lightVec.z = dot(tmpVec, normalIn);
+		lightVec = normalize(lightVec);
+
+		//tmpVec = cameraPosition - a_vertex ;
+		// eye direction.
+		tmpVec = viewSpacePosition; // since it is in view space.
+
+
+		halfVec.x = dot(tmpVec, tangentIn);
+		halfVec.y = dot(tmpVec, a_bitangent);
+		halfVec.z = dot(tmpVec, normalIn);
+
+		halfVec = normalize(halfVec);
+
+		halfVec = (halfVec + lightVec) /2.0;
+
+		halfVec = normalize(halfVec);
+
+	#else
+		v_normal = normalIn ;
+
+		lightVec = lightPosition - a_vertex ;
+		lightVec = normalize(lightVec);
+
+		halfVec  = cameraPosition - a_vertex ;
+		halfVec = (halfVec + lightVec) /2.0;
+		halfVec = normalize(halfVec);
+
+	#endif
 
 
 
-    normal = normalIn;
 
-    viewSpaceNormal = normalize((normalMatrix * vec4(normalize(normalIn),0.0)).xyz);
-    viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
+		gl_Position = mvp * vec4(positionIn,1);
+		v_texcoord = texCoordIn;
 
-#ifdef NORMAL_MAPPING
-    tangent = tangentIn;
-#endif
 
 }

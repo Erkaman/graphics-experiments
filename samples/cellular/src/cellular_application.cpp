@@ -90,7 +90,9 @@ void CellularApplication::Render() {
 //    const Vector4f lightPosition(93,10.0f,93, 1.0f);
 //    const Vector4f lightPosition(30,6, 7, 1.0f);
 
-    const Vector4f lightPosition(0,0, 3, 8.0f);
+//    const Vector4f lightPosition(0,0, 3, 8.0f);
+
+    const Vector4f lightPosition(20,60, 40, 8.0f);
 
 
 

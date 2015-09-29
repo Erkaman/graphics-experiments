@@ -1,81 +1,71 @@
-#include "shader_lib/lib.glsl"
-
-in vec3 position;
-
-uniform mat4 normalMatrix;
-
-out vec4 fragmentColor;
-
-in vec2 texCoord;
 
 uniform sampler2D tex;
 
-#ifdef NORMAL_MAPPING
-uniform sampler2D normalMap;
-#endif
-
-in vec3 normal;
+in vec3 lightVec;
+in vec3 halfVec;
+in vec2 v_texcoord;
 
 #ifdef NORMAL_MAPPING
-in vec3 tangent;
-#endif
-
-
-uniform vec3 viewSpaceLightPosition;
-
-uniform int bump_on;
-
-in vec3 viewSpaceNormal;
-in vec3 viewSpacePosition;
-
-
-#ifdef NORMAL_MAPPING
-
-
-
-
-vec3 CalcBumpedNormal()
-{
-    vec3 Normal = normalize(normal);
-    vec3 Tangent = normalize(tangent);
-    Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
-    vec3 Bitangent = cross(Tangent, Normal);
-    vec3 BumpMapNormal = texture(normalMap,  vec2(texCoord.x, 1-texCoord.y  )).xyz;
-    BumpMapNormal = 2.0 * BumpMapNormal - vec3(1.0, 1.0, 1.0);
-    vec3 NewNormal;
-    mat3 TBN = mat3(Tangent, Bitangent, Normal);
-    NewNormal = TBN * BumpMapNormal;
-    NewNormal = normalize(NewNormal);
-    return NewNormal;
-}
-
-#endif
-
-void main()
-{
-
-    vec4 color = texture(tex, vec2(texCoord.x, 1-texCoord.y  )  );
-
-
-#ifdef NORMAL_MAPPING
-
-    vec4 normal = texture(normalMap, vec2(texCoord.x, 1-texCoord.y  )  );
-
-    vec3 mah_normal =  (normalMatrix * vec4(normalize(CalcBumpedNormal()),0.0)).xyz * 2 -1;
-
-    vec3 n = bump_on==1 ? mah_normal : viewSpaceLightPosition;
-
-    vec3 shading = phongVertex(color.rgb,
-			       n, viewSpaceLightPosition, viewSpacePosition);
-
-//    shading = texture(normalMap,  vec2(texCoord.x, 1-texCoord.y  )).xyz;
-
-    fragmentColor = vec4(  shading , color.a);
+	uniform sampler2D normalMap;
 #else
-
-    vec3 shading = phongVertex(color.rgb, viewSpaceNormal, viewSpaceLightPosition, viewSpacePosition);
-
-
-    fragmentColor = vec4( shading , color.a);
+	in vec3 v_normal ;
 #endif
+
+#ifdef SPEC_MAPPING
+	uniform sampler2D specularMap;
+#endif
+
+out vec4 fragmentColor;
+
+
+// illum is shininess.
+// Ks is specular color.
+
+void main(void)
+{
+    float materialShininess = 3;
+    vec3 matColorSpecular = vec3(1,1,1);
+
+	vec3 ambientComponent;
+	vec3 diffuseComponent= vec3(0.0);
+	vec3 specularComponent= vec3(0.0);
+
+	float lamberFactor =0.0;
+	float specularFactor=0.0;
+
+	vec3 bump ;
+
+	vec4 colorSample  = texture(tex, v_texcoord) ;
+	vec3 color = colorSample.rgb;
+	float alpha = colorSample.a ;
+
+#ifdef NORMAL_MAPPING
+		bump		=  texture(normalMap, v_texcoord).rgb * 2.0 - 1.0;
+		lamberFactor  =  max(0.0,dot(lightVec, bump) );
+		specularFactor = max(0.0,pow(dot(halfVec,bump),materialShininess)) ;
+#else
+		lamberFactor  =  max(0.0,dot(lightVec, v_normal) );
+		specularFactor = max(0.0,pow(dot(halfVec,v_normal),materialShininess)) ;
+
+#endif
+
+#ifdef SPEC_MAPPING
+		vec3 matTextColor = texture(specularMap, v_texcoord).rgb;
+#else
+		vec3 matTextColor = matColorSpecular;
+#endif
+
+
+		vec3 lightColorAmbient = vec3(0.5);
+		vec3 lightColorDiffuse = vec3(0.8);
+		vec3 lightColorSpecular = vec3(1);
+
+
+	ambientComponent  = lightColorAmbient  * color ;
+	diffuseComponent  = lightColorDiffuse  * color *  lamberFactor;
+	specularComponent = lightColorSpecular * matTextColor * specularFactor;
+
+	fragmentColor = vec4(
+
+	    ambientComponent + (diffuseComponent + specularComponent) ,colorSample.a)  ;
 }

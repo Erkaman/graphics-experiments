@@ -1,3 +1,17 @@
+The format will need the following:
+
+map_Bump normal.png
+map_Kd diffuse.png
+map_spec specular.png
+map_height height.png
+
+matColorSpecular, the specular color, will be used as specular if no
+specular texture is specified
+
+materialShininess, is ammlunt of shininess for material. should always
+be specified.
+
+
 * bump mapping.
 * http://www.valvesoftware.com/publications/2006/SIGGRAPH06_Course_ShadingInValvesSourceEngine.pdf
 * read about ambient cube.
