@@ -71,6 +71,7 @@ int main (int argc, char * argv[]) {
 
 	printf("Not enough arguments specified\n\n");
 	PrintHelp();
+	exit(1);
     }
 
     string objFilename;

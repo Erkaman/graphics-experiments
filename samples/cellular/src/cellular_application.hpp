@@ -3,6 +3,9 @@
 #include "ewa/application.hpp"
 #include "ewa/common.hpp"
 
+#include "ewa/math/vector4f.hpp"
+
+
 class Camera;
 class Plane;
 class Cube;
@@ -18,6 +21,11 @@ private:
     Cube* m_cube;
 
     GeometryObject* m_stoneFloor;
+    GeometryObject* m_sun;
+    GeometryObject* m_ball;
+
+    Vector4f m_lightPosition;
+
 
 public:
 
