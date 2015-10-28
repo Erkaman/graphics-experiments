@@ -95,7 +95,6 @@ void CellularApplication::Render() {
     const Vector4f lightPosition(20,60, 40, 8.0f);
 
 
-
 /*
     m_cellularPlane->Render(*m_camera, lightPosition);
 
@@ -113,7 +112,7 @@ void CellularApplication::Render() {
 
       m_floor->Render(*m_camera, lightPosition);
 */
-      m_door->Render(*m_camera, lightPosition);
+    //  m_door->Render(*m_camera, lightPosition);
 
       m_stoneFloor->Render(*m_camera, lightPosition);
 }

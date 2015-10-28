@@ -39,7 +39,7 @@ void main(void) {
 	vec3 bump ;
 
 	vec4 colorSample  = texture(tex, v_texcoord) ;
-	vec3 color = colorSample.rgb;
+	vec3 color = vec3(1,1,1); //colorSample.rgb;
 	float alpha = colorSample.a ;
 
 #ifdef NORMAL_MAPPING
@@ -58,11 +58,9 @@ void main(void) {
 		vec3 matTextColor = spec_color;
 #endif
 
-
-		vec3 lightColorAmbient = vec3(0.5);
-		vec3 lightColorDiffuse = vec3(0.8);
-		vec3 lightColorSpecular = vec3(1);
-
+       vec3 lightColorAmbient = vec3(0.5);
+       vec3 lightColorDiffuse = vec3(0.8);
+       vec3 lightColorSpecular = vec3(1);
 
 	ambientComponent  = lightColorAmbient  * color ;
 	diffuseComponent  = lightColorDiffuse  * color *  lamberFactor;
@@ -70,5 +68,5 @@ void main(void) {
 
 	fragmentColor = vec4(
 
-	     ambientComponent + (diffuseComponent + specularComponent) ,colorSample.a)  ;
+	    ambientComponent + (diffuseComponent/* + specularComponent*/) ,colorSample.a)  ;
 }

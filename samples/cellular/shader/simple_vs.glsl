@@ -13,7 +13,6 @@ uniform mat4 normalMatrix;
 
 uniform vec3 viewSpaceLightPosition;
 
-
 /*out vec3 viewSpaceNormal;
 out vec3 viewSpacePosition;
 */
@@ -34,11 +33,13 @@ void main()
 
 	vec3 tmpVec;
 
+	vec3 viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
+
+
 	#ifdef NORMAL_MAPPING
 
 	vec3 a_bitangent = cross(normalIn,tangentIn); // both tangent and normal are normalized I think
 
-	vec3 viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
 	tmpVec = viewSpaceLightPosition - viewSpacePosition;
 //	tmpVec =  lightPosition - a_vertex  ;
@@ -66,18 +67,14 @@ void main()
 	#else
 		v_normal = normalIn ;
 
-		lightVec = lightPosition - a_vertex ;
+		lightVec = viewSpaceLightPosition - viewSpacePosition; //lightPosition - a_vertex ;
 		lightVec = normalize(lightVec);
 
-		halfVec  = cameraPosition - a_vertex ;
+		halfVec  = viewSpacePosition; //cameraPosition - a_vertex ;
 		halfVec = (halfVec + lightVec) /2.0;
 		halfVec = normalize(halfVec);
 
 	#endif
-
-
-
-
 		gl_Position = mvp * vec4(positionIn,1);
 		v_texcoord = texCoordIn;
 
