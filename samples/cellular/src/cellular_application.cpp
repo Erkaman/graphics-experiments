@@ -63,16 +63,6 @@ Vector3f(-0.597709, 0.944977, 1.555932),Vector3f(0.019267, -0.489838, -0.871601)
     m_floor->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(0,6,5)));
 */
 
-    const float SCALE = 0.01f;
-
-    m_door = new GeometryObject();
-    m_door->Init("obj/jumbodoor.eob");
-    m_door->SetModelMatrix(
-
-	Matrix4f::CreateScale(Vector3f(SCALE,SCALE,1)) *
-	Matrix4f::CreateTranslation(Vector3f(00,0,00)));
-
-
     const float SCALE2 = 0.2f;
 
     m_stoneFloor = new GeometryObject();
@@ -112,8 +102,6 @@ void CellularApplication::Render() {
 
       m_floor->Render(*m_camera, lightPosition);
 */
-    //  m_door->Render(*m_camera, lightPosition);
-
       m_stoneFloor->Render(*m_camera, lightPosition);
 }
 
