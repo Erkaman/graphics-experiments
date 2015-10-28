@@ -17,11 +17,6 @@ private:
     Plane* m_perlinPlane;
     Cube* m_cube;
 
-    GeometryObject* m_normalCube;
-    GeometryObject* m_smileCube;
-    GeometryObject* m_stoneBall;
-    GeometryObject* m_floor;
-    GeometryObject* m_door;
     GeometryObject* m_stoneFloor;
 
 public:

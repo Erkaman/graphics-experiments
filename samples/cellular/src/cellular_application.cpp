@@ -17,16 +17,13 @@ void ToClipboard(const std::string& str) {
     system(command.c_str());
 }
 
-CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_normalCube(NULL) { }
+CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL) { }
 
 CellularApplication::~CellularApplication() {
     MY_DELETE(m_camera);
     MY_DELETE(m_cellularPlane);
       MY_DELETE(m_perlinPlane);
       MY_DELETE(m_cube);
-      MY_DELETE(m_normalCube);
-      MY_DELETE(m_smileCube);
-      MY_DELETE(m_stoneBall);
 
 }
 
@@ -40,28 +37,6 @@ Vector3f(-0.597709, 0.944977, 1.555932),Vector3f(0.019267, -0.489838, -0.871601)
 
 
 , true);
-
-/*    m_cellularPlane = new Plane(Vector3f(1,4,1), true);
-    m_perlinPlane = new Plane(Vector3f(20,4,1), false);
-
-    m_cube = new Cube(Vector3f(20,4,1));
-
-    m_normalCube = new GeometryObject();
-    m_normalCube->Init("obj/mybox2.eob");
-    m_normalCube->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(10,6,1)));
-
-    m_smileCube = new GeometryObject();
-    m_smileCube->Init("obj/smile_cube.eob");
-    m_smileCube->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(20,6,5)));
-
-    m_stoneBall = new GeometryObject();
-    m_stoneBall->Init("obj/stone_ball.eob");
-    m_stoneBall->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(0,6,5)));
-
-    m_floor = new GeometryObject();
-    m_floor->Init("obj/floor.eob");
-    m_floor->SetModelMatrix(Matrix4f::CreateTranslation(Vector3f(0,6,5)));
-*/
 
     const float SCALE2 = 0.2f;
 
@@ -84,24 +59,6 @@ void CellularApplication::Render() {
 
     const Vector4f lightPosition(20,60, 40, 8.0f);
 
-
-/*
-    m_cellularPlane->Render(*m_camera, lightPosition);
-
-    m_perlinPlane->Render(*m_camera, lightPosition);
-
-
-      m_cube->Render(*m_camera, lightPosition);
-
-
-      m_normalCube->Render(*m_camera, lightPosition);
-
-      m_smileCube->Render(*m_camera, lightPosition);
-
-      m_stoneBall->Render(*m_camera, lightPosition);
-
-      m_floor->Render(*m_camera, lightPosition);
-*/
       m_stoneFloor->Render(*m_camera, lightPosition);
 }
 
