@@ -65,7 +65,12 @@ void main()
 		halfVec = normalize(halfVec);
 
 	#else
-		v_normal = normalIn ;
+
+		//v_normal = normalIn;
+
+			v_normal = (normalMatrix * vec4(normalIn, 0.0)).xyz;
+
+		//v_normal = (modelViewMatrix * vec4(normalIn, 0.0)).xyz;
 
 		lightVec = viewSpaceLightPosition - viewSpacePosition; //lightPosition - a_vertex ;
 		lightVec = normalize(lightVec);
