@@ -1,6 +1,6 @@
 new_mat Material.001
 diff_map rock_floor_d.png
 norm_map rock_floor_n.png
-//spec_map rock_floor_s.png
-shininess 10
+spec_map rock_floor_s.png
+shininess 1
 spec_color 1 1 1

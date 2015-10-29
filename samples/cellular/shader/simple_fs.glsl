@@ -28,7 +28,7 @@ void main(void) {
     vec3 specComponent= vec3(0.0);
 
     float lamberFactor =0.0;
-    float specularFactor=0.0;
+    float specFactor=0.0;
 
     vec3 bump ;
 
@@ -39,17 +39,17 @@ void main(void) {
 #ifdef NORMAL_MAPPING
     bump		=  texture(normalMap, vec2(texcoordOut.x, 1-texcoordOut.y  )).rgb * 2.0 - 1.0;
     lamberFactor  =  max(0.0,dot(lightVecOut, bump) );
-    specularFactor = max(0.0,pow(dot(eyeVecOut,bump),specShiny)) ;
+    specFactor = max(0.0,pow(dot(eyeVecOut,bump),specShiny)) ;
 #else
     lamberFactor  =  max(0.0,dot(lightVecOut, normalOut) );
 
     vec3 r = reflect(lightVecOut, normalOut);
-    specularFactor = max(0.0,pow(dot(eyeVecOut,r),specShiny)) ;
+    specFactor = max(0.0,pow(dot(eyeVecOut,r),specShiny)) ;
 #endif
 
 
 #ifdef SPEC_MAPPING
-    vec3 materialSpec = texture(specularMap, texcoordOut).rgb;
+    vec3 materialSpec = texture(specMap, vec2(texcoordOut.x, 1-texcoordOut.y  )).rgb;
 #else
     vec3 materialSpec = specColor;
 #endif
@@ -60,8 +60,7 @@ void main(void) {
 
     ambientComponent  = lightColorAmbient  * color ;
     diffuseComponent  = lightColorDiffuse  * color *  lamberFactor;
-    specComponent = lightColorSpecular * materialSpec * specularFactor;
-
+    specComponent = lightColorSpecular * materialSpec * specFactor;
 
     /*
 #ifdef NORMAL_MAPPING
@@ -70,6 +69,6 @@ void main(void) {
     */
 
     fragmentColor = vec4(
-      ambientComponent + (diffuseComponent + specComponent) ,colorSample.a)  ;
+	ambientComponent + (diffuseComponent + specComponent ) ,colorSample.a)  ;
 
 }
