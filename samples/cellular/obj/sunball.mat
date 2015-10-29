@@ -1,7 +1,5 @@
 new_mat None
 diff_map sunball_d.png
-//norm_map
-//spec_map
 shininess 3
 .000000
 spec_color 1.000000 1.000000 1.000000

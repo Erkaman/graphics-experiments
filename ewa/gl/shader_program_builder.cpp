@@ -19,9 +19,7 @@ bool GetCompileStatus(GLuint shaderProgram);
 
 string ParseShader(const std::string& shaderSource, const std::string& path);
 
-
 ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderSource, const string& fragmentShaderSource, const string& geometryShaderSource, const std::string& path, void (*beforeLinkingHook)(GLuint)) {
-
 
     m_compiledVertexShader = BuildAndCompileShader(vertexShaderSource, GL_VERTEX_SHADER, path);
     m_compiledFragmentShader = BuildAndCompileShader(fragmentShaderSource,  GL_FRAGMENT_SHADER, path);

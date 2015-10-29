@@ -21,9 +21,9 @@ vec3 sampleDiffuseTexture() {
 
 /*    return mix(red, blue,
 
-	       turbulence(3, vec3(texCoord.xy,0) * 3, 2, 0.5)
+      turbulence(3, vec3(texCoord.xy,0) * 3, 2, 0.5)
 
-    );
+      );
 */
 
     vec2 tt = cellular_euclidean(texCoord.xy);

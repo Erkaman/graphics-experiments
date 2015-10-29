@@ -165,7 +165,7 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 
 
 	if(chunk->m_texture != NULL) {
-	    shader.SetUniform("tex", 0);
+	    shader.SetUniform("diffMap", 0);
 	    Texture::SetActiveTextureUnit(0);
 	    chunk->m_texture->Bind();
 	}
@@ -177,19 +177,19 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 	}
 
 	if(chunk->m_specularMap != NULL) {
-	    shader.SetUniform("specularMap", 2);
+	    shader.SetUniform("specMap", 2);
 	    Texture::SetActiveTextureUnit(2);
 	    chunk->m_specularMap->Bind();
 	} else {
 
-	    shader.SetUniform("spec_color", chunk->m_specularColor);
+	    shader.SetUniform("specColor", chunk->m_specularColor);
 
 //	    LOG_I("eric: %s", tos(chunk->m_specularColor).c_str() );
 
 	    // set material specular.
 	}
 
-	shader.SetUniform("materialShininess", chunk->m_shininess);
+	shader.SetUniform("specShiny", chunk->m_shininess);
 
 	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 

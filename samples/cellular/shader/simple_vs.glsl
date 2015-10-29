@@ -13,59 +13,60 @@ uniform mat4 normalMatrix;
 
 uniform vec3 viewSpaceLightPosition;
 
-out vec3 lightVec;
-out vec3 eyeVec;
-out vec2 texcoord;
+out vec3 lightVecOut;
+out vec3 eyeVecOut;
+out vec2 texcoordOut;
 
 
 #ifdef NORMAL_MAPPING
 // we have tangentIn
 #else
-out vec3 normal ;
+out vec3 normalOut;
 #endif
 
 void main()
 {
 
-	vec3 viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
+    // vertex position
+    vec3 viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
-	#ifdef NORMAL_MAPPING
+#ifdef NORMAL_MAPPING
 
-	vec3 a_bitangent = cross(normalIn,tangentIn); // both tangent and normal are normalized I think
+    vec3 a_bitangent = cross(normalIn,tangentIn); // both tangent and normal are normalized I think
 
 
-	tmpVec = viewSpaceLightPosition - viewSpacePosition;
+    tmpVec = viewSpaceLightPosition - viewSpacePosition;
 //	tmpVec =  lightPosition - a_vertex  ;
 
-		lightVec.x = dot(tmpVec, tangentIn);
-		lightVec.y = dot(tmpVec, a_bitangent);
-		lightVec.z = dot(tmpVec, normalIn);
-		lightVec = normalize(lightVec);
+    lightVecOut.x = dot(tmpVec, tangentIn);
+    lightVecOut.y = dot(tmpVec, a_bitangent);
+    lightVecOut.z = dot(tmpVec, normalIn);
+    lightVecOut = normalize(lightVecOut);
 
-		//tmpVec = cameraPosition - a_vertex ;
-		// eye direction.
-		tmpVec = viewSpacePosition; // since it is in view space.
+    //tmpVec = cameraPosition - a_vertex ;
+    // eye direction.
+    tmpVec = viewSpacePosition; // since it is in view space.
 
 
-		halfVec.x = dot(tmpVec, tangentIn);
-		halfVec.y = dot(tmpVec, a_bitangent);
-		halfVec.z = dot(tmpVec, normalIn);
+    halfVec.x = dot(tmpVec, tangentIn);
+    halfVec.y = dot(tmpVec, a_bitangent);
+    halfVec.z = dot(tmpVec, normalIn);
 
-		halfVec = normalize(halfVec);
+    halfVec = normalize(halfVec);
 
-		halfVec = (halfVec + lightVec) /2.0;
+    halfVec = (halfVec + lightVecOut) /2.0;
 
-		halfVec = normalize(halfVec);
+    halfVec = normalize(halfVec);
 
-	#else
+#else
 
-	v_normal =  normalize((normalMatrix * vec4(normalIn, 0.0)).xyz);
+    normalOut =  normalize((normalMatrix * vec4(normalIn, 0.0)).xyz);
 
-	lightVec = normalize(viewSpaceLightPosition - viewSpacePosition);
+    lightVecOut = normalize(viewSpaceLightPosition - viewSpacePosition);
 
-	eyeVec  = normalize(viewSpacePosition); //cameraPosition - a_vertex ;
+    eyeVecOut  = normalize(viewSpacePosition);
 
-	#endif
-		gl_Position = mvp * vec4(positionIn,1);
-		v_texcoord = texCoordIn;
+#endif
+    gl_Position = mvp * vec4(positionIn,1);
+    texcoordOut = texCoordIn;
 }
