@@ -13,28 +13,22 @@ uniform mat4 normalMatrix;
 
 uniform vec3 viewSpaceLightPosition;
 
-/*out vec3 viewSpaceNormal;
-out vec3 viewSpacePosition;
-*/
 out vec3 lightVec;
-out vec3 halfVec;
-out vec2 v_texcoord;
+out vec3 eyeVec;
+out vec2 texcoord;
 
 
 #ifdef NORMAL_MAPPING
 // we have tangentIn
 #else
-out vec3 v_normal ;
+out vec3 normal ;
 #endif
 
 void main()
 {
 
-	vec3 tmpVec;
-
 	vec3 viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
-/*
 	#ifdef NORMAL_MAPPING
 
 	vec3 a_bitangent = cross(normalIn,tangentIn); // both tangent and normal are normalized I think
@@ -64,24 +58,14 @@ void main()
 		halfVec = normalize(halfVec);
 
 	#else
-*/
-		//v_normal = normalIn;
 
 	v_normal =  normalize((normalMatrix * vec4(normalIn, 0.0)).xyz);
 
-//	v_normal = normalize((modelViewMatrix * vec4(normalIn, 0.0)).xyz);
+	lightVec = normalize(viewSpaceLightPosition - viewSpacePosition);
 
+	eyeVec  = normalize(viewSpacePosition); //cameraPosition - a_vertex ;
 
-		lightVec = viewSpaceLightPosition - viewSpacePosition; //lightPosition - a_vertex ;
-		lightVec = normalize(lightVec);
-
-		halfVec  = normalize(viewSpacePosition); //cameraPosition - a_vertex ;
-		//	halfVec = (halfVec + lightVec) /2.0;
-		//halfVec = normalize(halfVec);
-
-//	#endif
+	#endif
 		gl_Position = mvp * vec4(positionIn,1);
 		v_texcoord = texCoordIn;
-
-
 }

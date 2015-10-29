@@ -25,7 +25,7 @@ CellularApplication::~CellularApplication() {
     MY_DELETE(m_camera);
 /*    MY_DELETE(m_cellularPlane);
       MY_DELETE(m_perlinPlane);*/
-      MY_DELETE(m_cube);
+
       MY_DELETE(m_sun);
       MY_DELETE(m_ball);
 
@@ -104,18 +104,6 @@ void CellularApplication::Update(const float delta) {
     if( kbs.IsPressed(GLFW_KEY_U) ) {
 	m_stoneFloor->ToggleBump(0);
     }
-
-    m_time += delta;
-
-/*    m_lightPosition.x = 5.0f * sin(0.5 * m_time);
-    m_lightPosition.z = 5.0f * cos(0.5 * m_time);
-*/
-    const float SCALE3 = 0.2f;
-
-    m_sun->SetModelMatrix(
-	Matrix4f::CreateScale(Vector3f(SCALE3,SCALE3,SCALE3)) *
-	Matrix4f::CreateTranslation(Vector3f(m_lightPosition)  ));
-
 
 }
 

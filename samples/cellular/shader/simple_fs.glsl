@@ -2,12 +2,10 @@
 uniform sampler2D tex;
 
 in vec3 lightVec;
-in vec3 halfVec;
+in vec3 eyeVec;
 in vec2 v_texcoord;
 
-
 uniform vec3 spec_color;
-
 
 uniform float materialShininess;
 
@@ -22,10 +20,6 @@ uniform float materialShininess;
 #endif
 
 out vec4 fragmentColor;
-
-
-// illum is shininess.
-// Ks is specular color.
 
 void main(void) {
 
@@ -45,7 +39,7 @@ void main(void) {
 #ifdef NORMAL_MAPPING
 		bump		=  texture(normalMap, v_texcoord).rgb * 2.0 - 1.0;
 		lamberFactor  =  max(0.0,dot(lightVec, bump) );
-		specularFactor = max(0.0,pow(dot(halfVec,bump),materialShininess)) ;
+		specularFactor = max(0.0,pow(dot(eyeVec,bump),materialShininess)) ;
 #else
 
 		lamberFactor  =  max(0.0,dot(lightVec, v_normal) );
@@ -58,7 +52,7 @@ void main(void) {
 		vec3 r = reflect(lightVec, v_normal);
 
 
-		specularFactor = max(0.0,pow(dot(halfVec,r),materialShininess)) ;
+		specularFactor = max(0.0,pow(dot(eyeVec,r),materialShininess)) ;
 
 
 #endif
@@ -76,10 +70,6 @@ void main(void) {
 	ambientComponent  = lightColorAmbient  * color ;
 	diffuseComponent  = lightColorDiffuse  * color *  lamberFactor;
 	specularComponent = lightColorSpecular * matTextColor * specularFactor;
-
-//	fragmentColor = vec4(vec3(v_normal), 1.0);
-
-//	fragmentColor = vec4(vec3(specularComponent), 1.0);
 
 	fragmentColor = vec4(
 	    ambientComponent + (diffuseComponent + specularComponent) ,colorSample.a)  ;

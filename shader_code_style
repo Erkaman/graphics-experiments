@@ -1,0 +1,10 @@
+camelspace is ALWAYS used.
+
+input:
+always ends with in. Example:
+layout (location = 0)in  vec3 positionIn;
+
+
+output:
+always ends with out. Example:
+out vec3 lightVecOut;
