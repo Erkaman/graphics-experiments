@@ -35,7 +35,7 @@ void main()
     vec3 a_bitangent = cross(normalIn,tangentIn); // both tangent and normal are normalized I think
 
 
-    tmpVec = viewSpaceLightPosition - viewSpacePosition;
+    vec3 tmpVec = viewSpaceLightPosition - viewSpacePosition;
 //	tmpVec =  lightPosition - a_vertex  ;
 
     lightVecOut.x = dot(tmpVec, tangentIn);
@@ -47,17 +47,11 @@ void main()
     // eye direction.
     tmpVec = viewSpacePosition; // since it is in view space.
 
+    eyeVecOut.x = dot(tmpVec, tangentIn);
+    eyeVecOut.y = dot(tmpVec, a_bitangent);
+    eyeVecOut.z = dot(tmpVec, normalIn);
 
-    halfVec.x = dot(tmpVec, tangentIn);
-    halfVec.y = dot(tmpVec, a_bitangent);
-    halfVec.z = dot(tmpVec, normalIn);
-
-    halfVec = normalize(halfVec);
-
-    halfVec = (halfVec + lightVecOut) /2.0;
-
-    halfVec = normalize(halfVec);
-
+    eyeVecOut = normalize(eyeVecOut);
 #else
 
     normalOut =  normalize((normalMatrix * vec4(normalIn, 0.0)).xyz);

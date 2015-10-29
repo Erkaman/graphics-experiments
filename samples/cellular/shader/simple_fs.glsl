@@ -37,7 +37,7 @@ void main(void) {
     float alpha = colorSample.a ;
 
 #ifdef NORMAL_MAPPING
-    bump		=  texture(normalMap, texcoordOut).rgb * 2.0 - 1.0;
+    bump		=  texture(normalMap, vec2(texcoordOut.x, 1-texcoordOut.y  )).rgb * 2.0 - 1.0;
     lamberFactor  =  max(0.0,dot(lightVecOut, bump) );
     specularFactor = max(0.0,pow(dot(eyeVecOut,bump),specShiny)) ;
 #else
@@ -62,6 +62,14 @@ void main(void) {
     diffuseComponent  = lightColorDiffuse  * color *  lamberFactor;
     specComponent = lightColorSpecular * materialSpec * specularFactor;
 
+
+    /*
+#ifdef NORMAL_MAPPING
+    fragmentColor = vec4(bump, 1.0);
+#endif
+    */
+
     fragmentColor = vec4(
-	ambientComponent + (diffuseComponent + specComponent) ,colorSample.a)  ;
+      ambientComponent + (diffuseComponent + specComponent) ,colorSample.a)  ;
+
 }

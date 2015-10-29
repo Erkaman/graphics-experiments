@@ -45,7 +45,8 @@ Vector3f(-0.597709, 0.944977, 1.555932),Vector3f(0.019267, -0.489838, -0.871601)
     const float SCALE2 = 0.2f;
 
 
-      m_stoneFloor = new GeometryObject();
+
+    m_stoneFloor = new GeometryObject();
     m_stoneFloor->Init("obj/rock_floor.eob");
     m_stoneFloor->SetModelMatrix(
 	Matrix4f::CreateScale(Vector3f(SCALE2,1,SCALE2)) *
@@ -78,7 +79,7 @@ void CellularApplication::Render() {
 //    const Vector4f lightPosition(0,0, 3, 8.0f);
 
 
-//    m_stoneFloor->Render(*m_camera, m_lightPosition);
+    m_stoneFloor->Render(*m_camera, m_lightPosition);
 
     m_sun->Render(*m_camera, m_lightPosition);
     m_ball->Render(*m_camera, m_lightPosition);
