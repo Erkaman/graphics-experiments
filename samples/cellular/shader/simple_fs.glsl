@@ -46,8 +46,8 @@ void main(void) {
 		bump		=  texture(normalMap, v_texcoord).rgb * 2.0 - 1.0;
 		lamberFactor  =  max(0.0,dot(lightVec, bump) );
 		specularFactor = max(0.0,pow(dot(halfVec,bump),materialShininess)) ;
-
 #else
+
 		lamberFactor  =  max(0.0,dot(lightVec, v_normal) );
 		specularFactor = max(0.0,pow(dot(halfVec,v_normal),materialShininess)) ;
 
@@ -61,7 +61,7 @@ void main(void) {
 
        vec3 lightColorAmbient = vec3(0.5);
        vec3 lightColorDiffuse = vec3(0.4);
-       vec3 lightColorSpecular = vec3(1);
+       vec3 lightColorSpecular = vec3(0.3);
 
 	ambientComponent  = lightColorAmbient  * color ;
 	diffuseComponent  = lightColorDiffuse  * color *  lamberFactor;
@@ -69,9 +69,9 @@ void main(void) {
 
 //	fragmentColor = vec4(vec3(v_normal), 1.0);
 
-//	fragmentColor = vec4(vec3(specularFactor), 1.0);
+//	fragmentColor = vec4(vec3(specularComponent), 1.0);
 
 
 	fragmentColor = vec4(
-	    ambientComponent + (/*diffuseComponent + */specularComponent) ,colorSample.a)  ;
+	    ambientComponent + (diffuseComponent + specularComponent) ,colorSample.a)  ;
 }
