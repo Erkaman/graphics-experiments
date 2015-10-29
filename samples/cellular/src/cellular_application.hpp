@@ -26,6 +26,8 @@ private:
 
     Vector4f m_lightPosition;
 
+    float m_time;
+
 
 public:
 

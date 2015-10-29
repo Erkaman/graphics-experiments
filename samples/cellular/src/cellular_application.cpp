@@ -10,6 +10,8 @@
 #include "plane.hpp"
 #include "cube.hpp"
 
+#include <math.h>
+
 using namespace std;
 
 void ToClipboard(const std::string& str) {
@@ -17,7 +19,7 @@ void ToClipboard(const std::string& str) {
     system(command.c_str());
 }
 
-CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_lightPosition(Vector4f(5,15, 10, 1.0f)){ }
+CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_lightPosition(Vector4f(5,15, 10, 1.0f)), m_time(0.0){ }
 
 CellularApplication::~CellularApplication() {
     MY_DELETE(m_camera);
@@ -78,9 +80,8 @@ void CellularApplication::Render() {
 
 //    m_stoneFloor->Render(*m_camera, m_lightPosition);
 
-//    m_sun->Render(*m_camera, m_lightPosition);
+    m_sun->Render(*m_camera, m_lightPosition);
     m_ball->Render(*m_camera, m_lightPosition);
-
 }
 
 void CellularApplication::Update(const float delta) {
@@ -103,6 +104,18 @@ void CellularApplication::Update(const float delta) {
     if( kbs.IsPressed(GLFW_KEY_U) ) {
 	m_stoneFloor->ToggleBump(0);
     }
+
+    m_time += delta;
+
+/*    m_lightPosition.x = 5.0f * sin(0.5 * m_time);
+    m_lightPosition.z = 5.0f * cos(0.5 * m_time);
+*/
+    const float SCALE3 = 0.2f;
+
+    m_sun->SetModelMatrix(
+	Matrix4f::CreateScale(Vector3f(SCALE3,SCALE3,SCALE3)) *
+	Matrix4f::CreateTranslation(Vector3f(m_lightPosition)  ));
+
 
 }
 
