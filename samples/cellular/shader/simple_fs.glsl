@@ -60,17 +60,18 @@ void main(void) {
 #endif
 
        vec3 lightColorAmbient = vec3(0.5);
-       vec3 lightColorDiffuse = vec3(0.8);
+       vec3 lightColorDiffuse = vec3(0.4);
        vec3 lightColorSpecular = vec3(1);
 
 	ambientComponent  = lightColorAmbient  * color ;
 	diffuseComponent  = lightColorDiffuse  * color *  lamberFactor;
 	specularComponent = lightColorSpecular * matTextColor * specularFactor;
 
+//	fragmentColor = vec4(vec3(v_normal), 1.0);
 
-	fragmentColor = vec4(vec3(v_normal), 1.0);
+//	fragmentColor = vec4(vec3(specularFactor), 1.0);
 
-//	fragmentColor = vec4(
 
-//	    ambientComponent + (diffuseComponent/* + specularComponent*/) ,colorSample.a)  ;
+	fragmentColor = vec4(
+	    ambientComponent + (/*diffuseComponent + */specularComponent) ,colorSample.a)  ;
 }

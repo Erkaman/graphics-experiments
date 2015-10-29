@@ -123,8 +123,11 @@ static void TestTranspose() {
 	4,8,12,16
 	);
 
+    Matrix4f b(a);
+
     a.Transpose();
     AssertEquals(a, expected);
+    AssertEquals(b.Transpose(), expected);
 }
 
 

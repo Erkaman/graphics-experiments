@@ -128,7 +128,6 @@ Vector3f Camera::GetPosition() const {
     return m_position;
 }
 
-
 Matrix4f Camera::GetModelViewMatrix() const {
     return m_viewMatrix;
 }

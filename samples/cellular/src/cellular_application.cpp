@@ -76,10 +76,10 @@ void CellularApplication::Render() {
 //    const Vector4f lightPosition(0,0, 3, 8.0f);
 
 
-    m_stoneFloor->Render(*m_camera, m_lightPosition);
+//    m_stoneFloor->Render(*m_camera, m_lightPosition);
 
-      m_sun->Render(*m_camera, m_lightPosition);
-      m_ball->Render(*m_camera, m_lightPosition);
+//    m_sun->Render(*m_camera, m_lightPosition);
+    m_ball->Render(*m_camera, m_lightPosition);
 
 }
 

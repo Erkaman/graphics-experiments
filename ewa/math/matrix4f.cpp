@@ -433,7 +433,23 @@ Vector4f operator*(const Matrix4f& a, const Vector4f& b) {
 Matrix4f Matrix4f::GetNormalMatrix(const Matrix4f& modelViewMatrix) {
 
     Matrix4f mv(modelViewMatrix);
-    return mv.Transpose().Inverse();
+
+//    LOG_I("mv: %s", string(mv).c_str() );
+
+    Matrix4f trans = mv.Transpose();
+
+    // LOG_I("trans: %s", string(trans).c_str() );
+
+
+    Matrix4f inv = trans.Inverse();
+
+    /*
+    LOG_I("inv: %s", string(inv).c_str() );
+
+    exit(1);
+    */
+
+    return inv;
 }
 
 
