@@ -32,14 +32,12 @@ void main()
 
 #ifdef NORMAL_MAPPING
 
-    vec3 a_bitangent = cross(normalIn,tangentIn); // both tangent and normal are normalized I think
-
+    vec3 bitangent = cross(normalIn,tangentIn); // both tangent and normal are normalized I think
 
     vec3 tmpVec = viewSpaceLightPosition - viewSpacePosition;
-//	tmpVec =  lightPosition - a_vertex  ;
 
     lightVecOut.x = dot(tmpVec, tangentIn);
-    lightVecOut.y = dot(tmpVec, a_bitangent);
+    lightVecOut.y = dot(tmpVec, bitangent);
     lightVecOut.z = dot(tmpVec, normalIn);
     lightVecOut = normalize(lightVecOut);
 
@@ -48,7 +46,7 @@ void main()
     tmpVec = viewSpacePosition; // since it is in view space.
 
     eyeVecOut.x = dot(tmpVec, tangentIn);
-    eyeVecOut.y = dot(tmpVec, a_bitangent);
+    eyeVecOut.y = dot(tmpVec, bitangent);
     eyeVecOut.z = dot(tmpVec, normalIn);
 
     eyeVecOut = normalize(eyeVecOut);
