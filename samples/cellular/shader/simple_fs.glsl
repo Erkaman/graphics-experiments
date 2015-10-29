@@ -62,11 +62,6 @@ void main(void) {
     diffuseComponent  = lightColorDiffuse  * color *  lamberFactor;
     specComponent = lightColorSpecular * materialSpec * specFactor;
 
-    /*
-#ifdef NORMAL_MAPPING
-    fragmentColor = vec4(bump, 1.0);
-#endif
-    */
 
     fragmentColor = vec4(
 	ambientComponent + (diffuseComponent + specComponent ) ,colorSample.a)  ;
