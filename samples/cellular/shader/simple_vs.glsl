@@ -75,9 +75,9 @@ void main()
 		lightVec = viewSpaceLightPosition - viewSpacePosition; //lightPosition - a_vertex ;
 		lightVec = normalize(lightVec);
 
-		halfVec  = viewSpacePosition; //cameraPosition - a_vertex ;
-		halfVec = (halfVec + lightVec) /2.0;
-		halfVec = normalize(halfVec);
+		halfVec  = normalize(viewSpacePosition); //cameraPosition - a_vertex ;
+		//	halfVec = (halfVec + lightVec) /2.0;
+		//halfVec = normalize(halfVec);
 
 //	#endif
 		gl_Position = mvp * vec4(positionIn,1);

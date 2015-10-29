@@ -49,7 +49,17 @@ void main(void) {
 #else
 
 		lamberFactor  =  max(0.0,dot(lightVec, v_normal) );
-		specularFactor = max(0.0,pow(dot(halfVec,v_normal),materialShininess)) ;
+
+
+		// halfvec contains eye vector now = v.
+
+//		specularFactor = max(0.0,pow(dot(halfVec,v_normal),materialShininess)) ;
+
+		vec3 r = reflect(lightVec, v_normal);
+
+
+		specularFactor = max(0.0,pow(dot(halfVec,r),materialShininess)) ;
+
 
 #endif
 
@@ -61,7 +71,7 @@ void main(void) {
 
        vec3 lightColorAmbient = vec3(0.5);
        vec3 lightColorDiffuse = vec3(0.4);
-       vec3 lightColorSpecular = vec3(0.3);
+       vec3 lightColorSpecular = vec3(0.15);
 
 	ambientComponent  = lightColorAmbient  * color ;
 	diffuseComponent  = lightColorDiffuse  * color *  lamberFactor;
@@ -70,7 +80,6 @@ void main(void) {
 //	fragmentColor = vec4(vec3(v_normal), 1.0);
 
 //	fragmentColor = vec4(vec3(specularComponent), 1.0);
-
 
 	fragmentColor = vec4(
 	    ambientComponent + (diffuseComponent + specularComponent) ,colorSample.a)  ;
