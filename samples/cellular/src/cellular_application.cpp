@@ -96,8 +96,6 @@ void CellularApplication::Update(const float delta) {
 	out += "Vector3f" + tos(m_camera->GetViewDir());
 	ToClipboard(out);
     }
-
-
 }
 
 void CellularApplication::RenderText()  {

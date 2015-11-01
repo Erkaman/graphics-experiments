@@ -79,7 +79,6 @@ void* ReadArray(File& file, uint32& size) {
 
 void WriteMaterialFile(const GeometryObjectData& data, const std::string& outfile) {
 
-
     assert( outfile.substr(outfile.size()-4, 4 ) == string(".eob") );
     // strip ".eob" extension,
     string materialFile = outfile.substr(0, outfile.size()-4 ) + ".mat" ;
@@ -92,9 +91,19 @@ void WriteMaterialFile(const GeometryObjectData& data, const std::string& outfil
 
 	f.WriteLine("new_mat " + mat->m_materialName);
 
-	f.WriteLine("diff_map " + mat->m_textureFilename);
-	f.WriteLine("norm_map " + mat->m_normalMapFilename);
-	f.WriteLine("spec_map " + mat->m_specularMapFilename);
+	if(mat->m_textureFilename != "")
+	    f.WriteLine("diff_map " + mat->m_textureFilename);
+
+
+	if(mat->m_normalMapFilename != "")
+	    f.WriteLine("norm_map " + mat->m_normalMapFilename);
+
+	if(mat->m_specularMapFilename != "")
+	    f.WriteLine("spec_map " + mat->m_specularMapFilename);
+
+	if(mat->m_heightMapFilename != "")
+	    f.WriteLine("height_map " + mat->m_heightMapFilename);
+
 	f.WriteLine("shininess " + std::to_string(mat->m_shininess));
 
 	Vector3f v = mat->m_specularColor;
@@ -153,6 +162,8 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
     }
 }
 
+// for every eob filed named XYZ.eob, we store a material file in the same directory.
+// It is name XYZ.mat
 map<string, Material*> ReadMaterialFile(const std::string& infile) {
 
     assert( infile.substr(infile.size()-4, 4 ) == string(".eob") );
@@ -180,10 +191,16 @@ map<string, Material*> ReadMaterialFile(const std::string& infile) {
 	    currentMaterial = matlib[tokens[1]];
 
 	    // default diffuse map is an empty diffuse map.
+	    // same thing applies for all the other map types.
 	    currentMaterial->m_textureFilename = "";
 	    currentMaterial->m_normalMapFilename = "";
 	    currentMaterial->m_specularMapFilename = "";
+	    currentMaterial->m_heightMapFilename = "";
+
 	    currentMaterial->m_shininess = 1; // default shininess.
+
+	    // default specular color is black
+	    // (which means there is no specular lighting at all)
 	    currentMaterial->m_specularColor = Vector3f(0);
 
 	} else if(firstToken == "diff_map") {
@@ -198,7 +215,11 @@ map<string, Material*> ReadMaterialFile(const std::string& infile) {
 	    assert(tokens.size() == 2);
 
 	    currentMaterial->m_specularMapFilename = tokens[1];
-	}else if(firstToken == "shininess") {
+	} else if(firstToken == "height_map") {
+	    assert(tokens.size() == 2);
+
+	    currentMaterial->m_heightMapFilename = tokens[1];
+	} else if(firstToken == "shininess") {
 	    assert(tokens.size() == 2);
 	    currentMaterial->m_shininess = StrToFloat(tokens[1]);
 	}else if(firstToken == "spec_color") {
@@ -209,18 +230,14 @@ map<string, Material*> ReadMaterialFile(const std::string& infile) {
 		    StrToFloat(tokens[1]),
 		    StrToFloat(tokens[2]),
 		    StrToFloat(tokens[3]));
-
-
 	}
     }
 
     return matlib;
 }
 
-
 // TODO: clean up the memory allocated in this method.
-
-// TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
+// TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED(for storing the number of vertices). UNSIGNED INTS ARE NOT YET HANDLED.
 GeometryObjectData EobFile::Read(const std::string& infile) {
 
     GeometryObjectData data;
@@ -285,15 +302,6 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 	} else {
 	    chunk->m_material = mat;
 	}
-
-/*	chunk->m_material.m_textureFilename = ReadString(f);
-	if(data.m_hasNormalMaps) {
-	    chunk->m_material.m_normalMapFilename = ReadString(f);
-	}
-
-	if(data.m_hasSpecularMaps) {
-	    chunk->m_material.m_specularMapFilename = ReadString(f);
-	    }*/
 
 	uint32 vertexMagic = f.Read32u();
 	if(vertexMagic != VETX) {

@@ -258,6 +258,7 @@ map<string, Material*> ParseMtllib(const string& filename) {
 	    currentMaterial->m_textureFilename = "";
 	    currentMaterial->m_normalMapFilename = "";
 	    currentMaterial->m_specularMapFilename = "";
+	    currentMaterial->m_heightMapFilename = "";
 
 	    currentMaterial->m_materialName = tokens[1];
 

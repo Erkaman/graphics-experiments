@@ -22,6 +22,7 @@ private:
 	Texture* m_texture;
 	Texture* m_normalMap;
 	Texture* m_specularMap;
+	Texture* m_heightMap;
 
 	float m_shininess;
 	Vector3f m_specularColor;
@@ -34,6 +35,7 @@ private:
 
     bool m_hasNormalMap;
     bool m_hasSpecularMap;
+    bool m_hasHeightMap;
 
 protected:
 

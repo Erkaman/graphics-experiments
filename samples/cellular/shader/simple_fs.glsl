@@ -19,6 +19,11 @@ in vec3 normalOut;
 uniform sampler2D specMap;
 #endif
 
+
+#ifdef HEIGHT_MAPPING
+uniform sampler2D heightMap;
+#endif
+
 out vec4 fragmentColor;
 
 void main(void) {
@@ -32,8 +37,15 @@ void main(void) {
 
     vec3 bump ;
 
+#ifdef HEIGHT_MAPPING
+    vec4 colorSample = texture(heightMap, vec2(texcoordOut.x, 1-texcoordOut.y  )) ;
+#else
     vec4 colorSample  = texture(diffMap, vec2(texcoordOut.x, 1-texcoordOut.y  )) ;
+#endif
+
     vec3 color = colorSample.rgb;
+
+
     float alpha = colorSample.a ;
 
 #ifdef NORMAL_MAPPING

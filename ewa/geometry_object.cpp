@@ -35,6 +35,7 @@ void GeometryObject::Init(const std::string& filename, const bool useCustomShade
 
     m_hasNormalMap = false;
     m_hasSpecularMap = false;
+    m_hasHeightMap = false;
 
     for(size_t i = 0; i < data.m_chunks.size(); ++i) {
 	Material* mat = data.m_chunks[i]->m_material;
@@ -51,6 +52,11 @@ void GeometryObject::Init(const std::string& filename, const bool useCustomShade
 	if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
 	    mat->m_specularMapFilename = File::AppendPaths(basePath, mat->m_specularMapFilename);
 	    m_hasSpecularMap = true;
+	}
+
+	if(mat->m_heightMapFilename != ""){ // empty textures should remain empty->
+	    mat->m_heightMapFilename = File::AppendPaths(basePath, mat->m_heightMapFilename);
+	    m_hasHeightMap = true;
 	}
     }
 
@@ -73,6 +79,11 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	if(m_hasSpecularMap) {
 	    vertexSource = string("#define SPEC_MAPPING\n\n") + vertexSource;
 	    fragmentSource = string("#define SPEC_MAPPING\n\n") + fragmentSource;
+	}
+
+	if(m_hasHeightMap) {
+	    vertexSource = string("#define HEIGHT_MAPPING\n\n") + vertexSource;
+	    fragmentSource = string("#define HEIGHT_MAPPING\n\n") + fragmentSource;
 	}
 
 	m_defaultShader = new ShaderProgram(vertexSource, fragmentSource);
@@ -116,6 +127,12 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	    newChunk->m_specularMap = LoadTexture(baseChunk->m_material->m_specularMapFilename);
 	} else {
 	    newChunk->m_specularMap = NULL;
+	}
+
+	if(m_hasHeightMap) {
+	    newChunk->m_heightMap = LoadTexture(baseChunk->m_material->m_heightMapFilename);
+	} else {
+	    newChunk->m_heightMap = NULL;
 	}
 
 	newChunk->m_shininess = baseChunk->m_material->m_shininess;
@@ -177,12 +194,14 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 	    Texture::SetActiveTextureUnit(2);
 	    chunk->m_specularMap->Bind();
 	} else {
-
+	    // if no spec map, the model has the same specular color all over the texture.
 	    shader.SetUniform("specColor", chunk->m_specularColor);
+	}
 
-//	    LOG_I("eric: %s", tos(chunk->m_specularColor).c_str() );
-
-	    // set material specular.
+	if(chunk->m_heightMap != NULL) {
+	    shader.SetUniform("heightMap", 3);
+	    Texture::SetActiveTextureUnit(3);
+	    chunk->m_heightMap->Bind();
 	}
 
 	shader.SetUniform("specShiny", chunk->m_shininess);
@@ -192,6 +211,20 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 	if(chunk->m_texture != NULL) {
 	    chunk->m_texture->Unbind();
 	}
+
+	if(chunk->m_normalMap != NULL) {
+	    chunk->m_normalMap->Unbind();
+	}
+
+	if(chunk->m_specularMap != NULL) {
+	    chunk->m_specularMap->Unbind();
+	}
+
+	if(chunk->m_heightMap != NULL) {
+	    chunk->m_heightMap->Unbind();
+	}
+
+
     }
 }
 
