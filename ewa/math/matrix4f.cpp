@@ -36,11 +36,10 @@ Matrix4f Matrix4f::CreatePerspective( const float fov, const float aspectRatio, 
 
 }
 
-
 Matrix4f Matrix4f::CreateLookAt(const Vector3f& eye, const Vector3f& center, const Vector3f& up) {
     Vector3f zaxis = (eye - center).Normalize(); // forward vector.
     Vector3f xaxis = (Vector3f::Cross(up, zaxis)).Normalize(); // right vector.
-    Vector3f yaxis = Vector3f::Cross(zaxis, xaxis).Normalize(); // right vector.
+    Vector3f yaxis = Vector3f::Cross(zaxis, xaxis).Normalize(); // up vector.
 
     Matrix4f orientation(
 	xaxis.x, xaxis.y, xaxis.z, 0,

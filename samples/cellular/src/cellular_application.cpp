@@ -37,14 +37,11 @@ void CellularApplication::Init() {
     ::SetCullFace(true);
 
     m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),
-Vector3f(-0.597709, 0.944977, 1.555932),Vector3f(0.019267, -0.489838, -0.871601)
-
+Vector3f(-0.50, 1.0, 1.50),Vector3f(0.0, -0.50, -1.0)
 
 , true);
 
     const float SCALE2 = 0.2f;
-
-
 
     m_stoneFloor = new GeometryObject();
     m_stoneFloor->Init("obj/rock_floor.eob");
@@ -54,7 +51,7 @@ Vector3f(-0.597709, 0.944977, 1.555932),Vector3f(0.019267, -0.489838, -0.871601)
 
 
     const float SCALE3 = 0.2f;
-
+/*
     m_sun = new GeometryObject();
     m_sun->Init("obj/sunball.eob");
     m_sun->SetModelMatrix(
@@ -66,6 +63,7 @@ Vector3f(-0.597709, 0.944977, 1.555932),Vector3f(0.019267, -0.489838, -0.871601)
     m_ball->SetModelMatrix(
 	Matrix4f::CreateScale(Vector3f(SCALE3,SCALE3,SCALE3)) *
 	Matrix4f::CreateTranslation(Vector3f(0.0, 2.0, 0.0)  ));
+*/
 }
 
 void CellularApplication::Render() {
@@ -81,8 +79,8 @@ void CellularApplication::Render() {
 
     m_stoneFloor->Render(*m_camera, m_lightPosition);
 
-    m_sun->Render(*m_camera, m_lightPosition);
-    m_ball->Render(*m_camera, m_lightPosition);
+//    m_sun->Render(*m_camera, m_lightPosition);
+//    m_ball->Render(*m_camera, m_lightPosition);
 }
 
 void CellularApplication::Update(const float delta) {
