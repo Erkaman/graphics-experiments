@@ -22,11 +22,35 @@ uniform sampler2D specMap;
 
 #ifdef HEIGHT_MAPPING
 uniform sampler2D heightMap;
+
+vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord) {
+
+    vec3 V = eyeVec;
+
+    float initialHeight = texture(heightMap, texcoord).r;
+
+    vec2 texCoordOffset = 0.05 * V.xy * initialHeight;
+
+    return texcoord -texCoordOffset;
+//    return V.xy;
+}
+
 #endif
 
 out vec4 fragmentColor;
 
+
+
+
 void main(void) {
+
+    // texture coordinates.
+
+#ifdef HEIGHT_MAPPING
+    vec2 T = parallaxMapping(eyeVecOut, vec2(texcoordOut.x, 1-texcoordOut.y  ));
+#else
+    vec2 T = vec2(texcoordOut.x, 1-texcoordOut.y  );
+#endif
 
     vec3 ambientComponent;
     vec3 diffuseComponent= vec3(0.0);
@@ -38,9 +62,11 @@ void main(void) {
     vec3 bump ;
 
 #ifdef HEIGHT_MAPPING
-    vec4 colorSample = texture(heightMap, vec2(texcoordOut.x, 1-texcoordOut.y  )) ;
+//    vec4 colorSample = vec4(vec3(texture(heightMap, T).r) , 1.0);
+//  vec4 colorSample  = texture(diffMap, T) ;
+  vec4 colorSample = vec4(1,0,0,1);
 #else
-    vec4 colorSample  = texture(diffMap, vec2(texcoordOut.x, 1-texcoordOut.y  )) ;
+    vec4 colorSample  = texture(diffMap, T) ;
 #endif
 
     vec3 color = colorSample.rgb;
@@ -49,7 +75,7 @@ void main(void) {
     float alpha = colorSample.a ;
 
 #ifdef NORMAL_MAPPING
-    bump		=  texture(normalMap, vec2(texcoordOut.x, 1-texcoordOut.y  )).rgb * 2.0 - 1.0;
+    bump		=  texture(normalMap, T).rgb * 2.0 - 1.0;
     lamberFactor  =  max(0.0,dot(lightVecOut, bump) );
     specFactor = max(0.0,pow(dot(eyeVecOut,bump),specShiny)) ;
 #else
@@ -61,7 +87,7 @@ void main(void) {
 
 
 #ifdef SPEC_MAPPING
-    vec3 materialSpec = texture(specMap, vec2(texcoordOut.x, 1-texcoordOut.y  )).rgb;
+    vec3 materialSpec = texture(specMap, T).rgb;
 #else
     vec3 materialSpec = specColor;
 #endif
