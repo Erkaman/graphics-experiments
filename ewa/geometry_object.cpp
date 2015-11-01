@@ -28,8 +28,6 @@ Texture* LoadTexture(const string& filename) {
 
 void GeometryObject::Init(const std::string& filename, const bool useCustomShader) {
 
-    m_bumpOn = 1;
-
     GeometryObjectData data = EobFile::Read(filename);
 
 
@@ -145,8 +143,6 @@ GeometryObject::~GeometryObject() {
 void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition) {
         m_defaultShader->Bind();
 
-	m_defaultShader->SetUniform("bump_on", m_bumpOn);
-
     m_defaultShader->SetPhongUniforms(
 
 	m_modelMatrix
@@ -201,8 +197,4 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 
 void  GeometryObject::SetModelMatrix(Matrix4f modelMatrix) {
     m_modelMatrix = modelMatrix;
-}
-
-void GeometryObject::ToggleBump(int bump) {
-    m_bumpOn = bump;
 }

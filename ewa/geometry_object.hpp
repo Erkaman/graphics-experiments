@@ -32,8 +32,6 @@ private:
 
     ShaderProgram* m_defaultShader;
 
-    int m_bumpOn;
-
     bool m_hasNormalMap;
     bool m_hasSpecularMap;
 
@@ -55,6 +53,4 @@ public:
     virtual void Render(const Camera& camera, const Vector4f& lightPosition);
 
     void  SetModelMatrix(Matrix4f modelMatrix);
-
-    void ToggleBump(int bump);
 };

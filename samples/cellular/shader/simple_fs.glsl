@@ -62,7 +62,6 @@ void main(void) {
     diffuseComponent  = lightColorDiffuse  * color *  lamberFactor;
     specComponent = lightColorSpecular * materialSpec * specFactor;
 
-
     fragmentColor = vec4(
 	ambientComponent + (diffuseComponent + specComponent ) ,colorSample.a)  ;
 

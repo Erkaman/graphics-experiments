@@ -97,14 +97,6 @@ void CellularApplication::Update(const float delta) {
 	ToClipboard(out);
     }
 
-    if( kbs.IsPressed(GLFW_KEY_Y) ) {
-
-	m_stoneFloor->ToggleBump(1);
-    }
-
-    if( kbs.IsPressed(GLFW_KEY_U) ) {
-	m_stoneFloor->ToggleBump(0);
-    }
 
 }
 
