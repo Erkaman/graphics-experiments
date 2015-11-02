@@ -85,7 +85,6 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord) {
 }
 */
 
-
 //relief parallax mapping:
 vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
 {
@@ -170,17 +169,13 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
 
 #endif
 
-
-
-
-
 void main(void) {
 
     // texture coordinates.
 
 #ifdef HEIGHT_MAPPING
-    vec2 T = parallaxMapping(eyeVecOut, vec2(texcoordOut.x, 1-texcoordOut.y  ));
-//    vec2 T = vec2(texcoordOut.x, 1-texcoordOut.y  );
+//    vec2 T = parallaxMapping(eyeVecOut, vec2(texcoordOut.x, 1-texcoordOut.y  ));
+    vec2 T = vec2(texcoordOut.x, 1-texcoordOut.y  );
 
 #else
     vec2 T = vec2(texcoordOut.x, 1-texcoordOut.y  );
@@ -209,9 +204,11 @@ void main(void) {
     float alpha = colorSample.a ;
 
 #ifdef NORMAL_MAPPING
-    bump		= texture(normalMap, T).rgb * 2.0 - 1.0;
+    bump		=normalize ( (texture(normalMap, T).rgb - 0.5) * 2.0);
     lamberFactor  =  max(0.0,dot(lightVecOut, bump) );
-    specFactor = max(0.0,pow(dot(eyeVecOut,bump),specShiny)) ;
+
+    vec3 r = reflect(lightVecOut, bump);
+    specFactor = 15*max(0.0,pow(dot(eyeVecOut,r),/*specShiny*/10)) ;
 #else
     lamberFactor  =  max(0.0,dot(lightVecOut, normalOut) );
 
@@ -234,7 +231,9 @@ void main(void) {
     diffuseComponent  = lightColorDiffuse  * color *  lamberFactor;
     specComponent = lightColorSpecular * materialSpec * specFactor;
 
+
     fragmentColor = vec4(
+//	specComponent ,colorSample.a)  ;
 	ambientComponent + (diffuseComponent + specComponent ) ,colorSample.a)  ;
 
 //    fragmentColor = vec4(normalize(eyeVecOut), 1.0 );

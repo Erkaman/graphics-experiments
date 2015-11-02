@@ -1,7 +1,7 @@
 new_mat Material.001
-diff_map rock_floor_d.png
-norm_map rock_floor_n.png
-spec_map rock_floor_s.png
-height_map rock_floor_h.png
+diff_map tile1_d.png
+norm_map tile1_n.png
+//spec_map rock_floor_s.png
+//height_map rock_floor_h.png
 shininess 1
 spec_color 1 1 1

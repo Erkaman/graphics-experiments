@@ -19,7 +19,7 @@ void ToClipboard(const std::string& str) {
     system(command.c_str());
 }
 
-CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_lightPosition(Vector4f(5,15, 10, 1.0f)), m_time(0.0){ }
+CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_lightPosition(Vector4f(9,5, -15, 1.0f)), m_time(0.0){ }
 
 CellularApplication::~CellularApplication() {
     MY_DELETE(m_camera);
@@ -51,13 +51,13 @@ Vector3f(-0.50, 1.0, 1.50),Vector3f(0.0, -0.50, -1.0)
 
 
     const float SCALE3 = 0.2f;
-/*
+
     m_sun = new GeometryObject();
     m_sun->Init("obj/sunball.eob");
     m_sun->SetModelMatrix(
 	Matrix4f::CreateScale(Vector3f(SCALE3,SCALE3,SCALE3)) *
 	Matrix4f::CreateTranslation(Vector3f(m_lightPosition)  ));
-
+/*
     m_ball = new GeometryObject();
     m_ball->Init("obj/sunball.eob");
     m_ball->SetModelMatrix(
@@ -79,7 +79,7 @@ void CellularApplication::Render() {
 
     m_stoneFloor->Render(*m_camera, m_lightPosition);
 
-//    m_sun->Render(*m_camera, m_lightPosition);
+    m_sun->Render(*m_camera, m_lightPosition);
 //    m_ball->Render(*m_camera, m_lightPosition);
 }
 
