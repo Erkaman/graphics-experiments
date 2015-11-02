@@ -208,7 +208,7 @@ void main(void) {
     lamberFactor  =  max(0.0,dot(lightVecOut, bump) );
 
     vec3 r = reflect(lightVecOut, bump);
-    specFactor = 15*max(0.0,pow(dot(eyeVecOut,r),/*specShiny*/10)) ;
+    specFactor = 10*max(0.0,pow(dot(eyeVecOut,r),/*specShiny*/10)) ;
 #else
     lamberFactor  =  max(0.0,dot(lightVecOut, normalOut) );
 

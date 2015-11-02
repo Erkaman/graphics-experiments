@@ -14,6 +14,9 @@
 
 using namespace std;
 
+float angle = 0;
+
+
 void ToClipboard(const std::string& str) {
     std::string command = "echo '" + str + "' | pbcopy";
     system(command.c_str());
@@ -43,10 +46,13 @@ Vector3f(-0.50, 1.0, 1.50),Vector3f(0.0, -0.50, -1.0)
 
     const float SCALE2 = 0.2f;
 
+
     m_stoneFloor = new GeometryObject();
     m_stoneFloor->Init("obj/rock_floor.eob");
     m_stoneFloor->SetModelMatrix(
 	Matrix4f::CreateScale(Vector3f(SCALE2,1,SCALE2)) *
+	Matrix4f::CreateRotate(angle,Vector3f(0,1,0)) *
+
 	Matrix4f::CreateTranslation(Vector3f(00,0,00)));
 
 
@@ -56,6 +62,7 @@ Vector3f(-0.50, 1.0, 1.50),Vector3f(0.0, -0.50, -1.0)
     m_sun->Init("obj/sunball.eob");
     m_sun->SetModelMatrix(
 	Matrix4f::CreateScale(Vector3f(SCALE3,SCALE3,SCALE3)) *
+
 	Matrix4f::CreateTranslation(Vector3f(m_lightPosition)  ));
 /*
     m_ball = new GeometryObject();
@@ -76,6 +83,14 @@ void CellularApplication::Render() {
 
 //    const Vector4f lightPosition(0,0, 3, 8.0f);
 
+    angle += 0.2;
+/*
+
+    m_stoneFloor->SetModelMatrix(
+	Matrix4f::CreateScale(Vector3f(0.2,1,0.2)) *
+	Matrix4f::CreateRotate(angle,Vector3f(0,1,0)) *
+	Matrix4f::CreateTranslation(Vector3f(00,0,00)));
+*/
 
     m_stoneFloor->Render(*m_camera, m_lightPosition);
 
