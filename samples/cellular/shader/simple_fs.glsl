@@ -23,7 +23,7 @@ uniform sampler2D specMap;
 #endif
 
 
-#ifdef HEIGHT_MAPPING
+#ifdef NORMAL_MAPPING
 uniform sampler2D heightMap;
 
 /*
@@ -32,15 +32,15 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
     vec3 V = normalize(eyeVec);
     vec2 T = texcoord;
 
-    float initialHeight = texture(heightMap, T).r;
+    float initialHeight = texture(normalMap, T).a;
 
    // calculate amount of offset for Parallax Mapping With Offset Limiting
    vec2 texCoordOffset = 0.1 * V.xy * initialHeight;
 
 
    return texcoord - texCoordOffset;
-}
-*/
+}*/
+
 
 
 // steep parallax mapping
@@ -85,6 +85,8 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord) {
 }
 */
 
+
+
 //relief parallax mapping:
 vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
 {
@@ -102,7 +104,7 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
    // depth of current layer
    float currentLayerHeight = 0;
    // shift of texture coordinates for each iteration
-   vec2 dtex = 0.01 * V.xz / V.y / numLayers;
+   vec2 dtex = 0.1 * V.xz / V.y / numLayers;
 
 //   float a = abs(0.03 *V.y / V.z);
 //   fragmentColor = vec4(a, 0 , 0, 1);
@@ -112,7 +114,7 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
    vec2 currentTextureCoords = T;
 
    // depth from heightmaps
-   float heightFromTexture = texture(heightMap, currentTextureCoords).r;
+   float heightFromTexture = texture(heightMap, currentTextureCoords).w;
 
    // while point is above surface
    while(heightFromTexture > currentLayerHeight)
@@ -122,7 +124,7 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
       // shift texture coordinates along V
       currentTextureCoords -= dtex;
       // new depth from heightmap
-      heightFromTexture = texture(heightMap, currentTextureCoords).r;
+      heightFromTexture = texture(normalMap, currentTextureCoords).w;
    }
 
    ///////////////////////////////////////////////////////////
@@ -145,7 +147,7 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
       deltaHeight /= 2;
 
       // new depth from heightmap
-      heightFromTexture = texture(heightMap, currentTextureCoords).r;
+      heightFromTexture = texture(normalMap, currentTextureCoords).w;
 
       // shift along or agains vector V
       if(heightFromTexture > currentLayerHeight) // below the surface
@@ -165,7 +167,7 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
 
    return currentTextureCoords;
 
-}
+   }
 
 #endif
 
@@ -173,9 +175,9 @@ void main(void) {
 
     // texture coordinates.
 
-#ifdef HEIGHT_MAPPING
-//    vec2 T = parallaxMapping(eyeVecOut, vec2(texcoordOut.x, 1-texcoordOut.y  ));
-    vec2 T = vec2(texcoordOut.x, 1-texcoordOut.y  );
+#ifdef NORMAL_MAPPING
+    vec2 T = parallaxMapping(eyeVecOut, vec2(texcoordOut.x, 1-texcoordOut.y  ));
+//    vec2 T = vec2(texcoordOut.x, 1-texcoordOut.y  );
 
 #else
     vec2 T = vec2(texcoordOut.x, 1-texcoordOut.y  );
@@ -235,6 +237,13 @@ void main(void) {
     fragmentColor = vec4(
 //	specComponent ,colorSample.a)  ;
 	ambientComponent + (diffuseComponent + specComponent ) ,colorSample.a)  ;
+
+
+/*
+#ifdef NORMAL_MAPPING
+    fragmentColor = vec4(vec3(texture(normalMap, T).a), 1.0);
+#endif
+*/
 
 //    fragmentColor = vec4(normalize(eyeVecOut), 1.0 );
 

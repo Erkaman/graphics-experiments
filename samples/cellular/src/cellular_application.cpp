@@ -6,7 +6,6 @@
 #include "ewa/math/vector4f.hpp"
 #include "ewa/keyboard_state.hpp"
 
-
 #include "plane.hpp"
 #include "cube.hpp"
 
