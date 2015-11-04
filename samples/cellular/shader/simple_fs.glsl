@@ -86,7 +86,7 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord) {
 */
 
 
-
+/*
 //relief parallax mapping:
 vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
 {
@@ -114,7 +114,7 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
    vec2 currentTextureCoords = T;
 
    // depth from heightmaps
-   float heightFromTexture = texture(heightMap, currentTextureCoords).w;
+   float heightFromTexture = texture(normalMap, currentTextureCoords).w;
 
    // while point is above surface
    while(heightFromTexture > currentLayerHeight)
@@ -169,6 +169,38 @@ vec2 parallaxMapping(vec3 eyeVec, vec2 texcoord)
 
    }
 
+*/
+
+float ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds) {
+
+    const int linear_search_steps=10;
+    const int binary_search_steps=5;
+    float depth_step=1.0/linear_search_steps;
+    float size=depth_step; // current size of search window
+    float depth=0.0; // current depth position
+// best match found (starts with last position 1.0)
+    float best_depth=1.0;
+// search from front to back for first point inside the object
+    for ( int i=0; i< linear_search_steps-1;i++){
+	depth+=size;
+	vec4 t=texture(reliefmap,dp+ds*depth);
+	if (best_depth>0.996) // if no depth found yet
+	    if (depth >= t.w)
+		best_depth=depth; // store best depth
+    }
+    depth=best_depth;
+// search around first point (depth) for closest match
+    for ( int i=0; i<binary_search_steps;i++) {
+	size*=0.5;
+	vec4 t=texture(reliefmap,dp+ds*depth);
+	if (depth >=  t.w) {
+	    best_depth = depth;
+	    depth -= 2*size;}
+	depth+=size;
+    }
+    return best_depth;
+}
+
 #endif
 
 void main(void) {
@@ -176,11 +208,34 @@ void main(void) {
     // texture coordinates.
 
 #ifdef NORMAL_MAPPING
-    vec2 T = parallaxMapping(eyeVecOut, vec2(texcoordOut.x, 1-texcoordOut.y  ));
-//    vec2 T = vec2(texcoordOut.x, 1-texcoordOut.y  );
 
+    vec3 V = normalize(eyeVecOut);
+
+    // may need tweaking?
+    float depth = 0.3;
+
+    vec2 ds = V.xz*depth/V.y;
+    vec2 dp = texcoordOut;
+
+//    vec2 dtex = 0.1 * V.xz / V.y / numLayers;
+
+    float d =ray_intersect_rm(normalMap,dp,ds);
+
+
+    vec2 T = dp+ds*d;
+
+//    vec2 T = parallaxMapping(eyeVecOut, vec2(texcoordOut.x, 1-texcoordOut.y  ));
+
+
+    // we have d.
+    // v = view vector in eye space.
+/*    p += v*d*s.z;
+    l=normalize(p-lightpos.xyz);
+*/
+    vec3 l = lightVecOut;
 #else
     vec2 T = vec2(texcoordOut.x, 1-texcoordOut.y  );
+    vec3 l = lightVecOut;
 #endif
 
     vec3 ambientComponent;
@@ -209,12 +264,12 @@ void main(void) {
     bump		=normalize ( (texture(normalMap, T).rgb - 0.5) * 2.0);
     lamberFactor  =  max(0.0,dot(lightVecOut, bump) );
 
-    vec3 r = reflect(lightVecOut, bump);
+    vec3 r = reflect(l, bump);
     specFactor = 10*max(0.0,pow(dot(eyeVecOut,r),/*specShiny*/10)) ;
 #else
     lamberFactor  =  max(0.0,dot(lightVecOut, normalOut) );
 
-    vec3 r = reflect(lightVecOut, normalOut);
+    vec3 r = reflect(l, normalOut);
     specFactor = max(0.0,pow(dot(eyeVecOut,r),specShiny)) ;
 #endif
 
@@ -238,6 +293,7 @@ void main(void) {
 //	specComponent ,colorSample.a)  ;
 	ambientComponent + (diffuseComponent + specComponent ) ,colorSample.a)  ;
 
+    //fragmentColor = vec4(d, 0,0,1);
 
 /*
 #ifdef NORMAL_MAPPING

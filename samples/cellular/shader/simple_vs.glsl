@@ -55,7 +55,8 @@ void main()
 
     normalOut =  normalize((normalMatrix * vec4(normalIn, 0.0)).xyz);
 
-    lightVecOut = normalize(viewSpaceLightPosition - viewSpacePosition);
+    lightVecOut = normalize((normalMatrix * vec4(, 0.0)).xyz);
+//    lightVecOut = normalize(viewSpaceLightPosition - viewSpacePosition);
 
     eyeVecOut  = normalize(viewSpacePosition);
 
