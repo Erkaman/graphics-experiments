@@ -17,6 +17,11 @@ out vec3 lightVecOut;
 out vec3 eyeVecOut;
 out vec2 texcoordOut;
 
+out vec3 viewSpacePosition;
+
+out vec3 viewSpaceLightPositionOut;
+
+out vec3 viewSpaceEyeVec;
 
 #ifdef NORMAL_MAPPING
 // we have tangentIn
@@ -26,9 +31,10 @@ out vec3 normalOut;
 
 void main()
 {
+    viewSpaceLightPositionOut = viewSpaceLightPosition;
 
     // vertex position
-    vec3 viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
+    viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
 #ifdef NORMAL_MAPPING
 
@@ -41,6 +47,8 @@ void main()
     lightVecOut.y = dot(tmpVec, bitangent);
     lightVecOut.z = dot(tmpVec, normalIn);
     lightVecOut = normalize(lightVecOut);
+
+    viewSpaceEyeVec = normalize(viewSpacePosition);
 
     // eyeVec = viewSpacePosition, since the position is in view space(so the camera is at (0,0,0) )
     // we convert to eyeVec to tangent space.

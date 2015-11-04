@@ -3,10 +3,18 @@ uniform sampler2D diffMap;
 
 out vec4 fragmentColor;
 
+in vec3 viewSpacePosition;
+
 
 in vec3 lightVecOut;
 in vec3 eyeVecOut;
 in vec2 texcoordOut;
+
+in vec3 viewSpaceLightPositionOut;
+
+in vec3 viewSpaceEyeVec;
+
+
 
 uniform vec3 specColor;
 
@@ -226,17 +234,38 @@ void main(void) {
 
 //    vec2 T = parallaxMapping(eyeVecOut, vec2(texcoordOut.x, 1-texcoordOut.y  ));
 
-
-    // we have d.
+    // p = pixel position in eye space.
+    // lightpos = light position in eye space
     // v = view vector in eye space.
-/*    p += v*d*s.z;
-    l=normalize(p-lightpos.xyz);
-*/
-    vec3 l = lightVecOut;
+    // d we already have.
+    // s = V.
+
+
+    vec3 p = viewSpacePosition;
+    vec3 lightpos = viewSpaceLightPositionOut;
+    vec3 v = viewSpaceEyeVec;
+    vec3 s = V;
+
+    p += v*d*s.z;
+    vec3 l=normalize(p-lightpos.xyz);
+
+//    vec3 l = lightVecOut;
+
+    const float near = 0.1;
+    const float far  = 1024.0;
+
+
+    float planes_x=-far/(far-near);
+    float planes_y =-far*near/(far-near);
+
+    gl_FragDepth=((planes_x*p.z+planes_y)/-p.z);
+
+
 #else
     vec2 T = vec2(texcoordOut.x, 1-texcoordOut.y  );
     vec3 l = lightVecOut;
 #endif
+
 
     vec3 ambientComponent;
     vec3 diffuseComponent= vec3(0.0);

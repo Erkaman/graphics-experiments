@@ -49,7 +49,7 @@ Vector3f(-0.50, 1.0, 1.50),Vector3f(0.0, -0.50, -1.0)
     m_stoneFloor = new GeometryObject();
     m_stoneFloor->Init("obj/rock_floor.eob");
     m_stoneFloor->SetModelMatrix(
-	Matrix4f::CreateScale(Vector3f(SCALE2,1,SCALE2)) *
+//	Matrix4f::CreateScale(Vector3f(SCALE2,1,SCALE2)) *
 	Matrix4f::CreateRotate(angle,Vector3f(0,1,0)) *
 
 	Matrix4f::CreateTranslation(Vector3f(00,0,00)));
