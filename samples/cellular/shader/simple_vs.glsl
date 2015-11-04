@@ -13,15 +13,14 @@ uniform mat4 normalMatrix;
 
 uniform vec3 viewSpaceLightPosition;
 
-out vec3 lightVecOut;
-out vec3 eyeVecOut;
+out vec3 viewSpacePixelPositionOut;
+
+out vec3 normalOut;
+out vec3 tangentOut;
+out vec3 bitangentOut;
 out vec2 texcoordOut;
 
-out vec3 viewSpacePosition;
-
-out vec3 viewSpaceLightPositionOut;
-
-out vec3 viewSpaceEyeVec;
+out vec3 lightpos;
 
 #ifdef NORMAL_MAPPING
 // we have tangentIn
@@ -31,13 +30,23 @@ out vec3 normalOut;
 
 void main()
 {
-    viewSpaceLightPositionOut = viewSpaceLightPosition;
+    //viewSpaceLightPositionOut = viewSpaceLightPosition;
 
     // vertex position
-    viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
+    viewSpacePixelPositionOut = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
-#ifdef NORMAL_MAPPING
+    lightpos = viewSpaceLightPosition;
 
+    normalOut = normalize(normalIn);
+    tangentOut = normalize(tangentIn);
+    bitangentOut = normalize(cross(normalIn,tangentIn));
+
+    texcoordOut = texCoordIn;
+
+
+
+//#ifdef NORMAL_MAPPING
+/*
     vec3 bitangent = cross(normalIn,tangentIn); // both tangent and normal are normalized I think
 
 
@@ -59,7 +68,7 @@ void main()
 	);
 
     eyeVecOut = normalize(eyeVecOut);
-#else
+/*#else
 
     normalOut =  normalize((normalMatrix * vec4(normalIn, 0.0)).xyz);
 
@@ -68,7 +77,6 @@ void main()
 
     eyeVecOut  = normalize(viewSpacePosition);
 
-#endif
+    #endif*/
     gl_Position = mvp * vec4(positionIn,1);
-    texcoordOut = texCoordIn;
 }
