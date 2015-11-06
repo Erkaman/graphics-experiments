@@ -87,10 +87,9 @@ void CellularApplication::Render() {
 //    const Vector4f lightPosition(0,0, 3, 8.0f);
 
     angle += 0.2;
-/*
 
+/*
     m_stoneFloor->SetModelMatrix(
-	Matrix4f::CreateScale(Vector3f(0.2,1,0.2)) *
 	Matrix4f::CreateRotate(angle,Vector3f(0,1,0)) *
 	Matrix4f::CreateTranslation(Vector3f(00,0,00)));
 */

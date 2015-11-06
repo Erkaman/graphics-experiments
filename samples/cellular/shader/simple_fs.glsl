@@ -1,3 +1,52 @@
+/*
+something is very odd with this part:
+ds = s.xz*depth/s.y;
+//    ds = s.xy*depth/s.z;
+
+i suspect that xy is indeed the correct way to do it.
+
+						      because if you inspect the code, you will see that the y-axis is indeed the up-axis.
+
+
+    so xz is probably incorrect.
+
+    furthermore, the texture coordinates used are xy, and not xz!
+
+
+    if you look at it from the perspective of tangent spaces, it probably makes sense!
+*/
+
+
+//lets read about orthonormal bases in the linear algrebra book when i get home!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 in vec3 viewSpacePixelPositionOut;
 
@@ -90,23 +139,41 @@ float ray_intersect_rm(in sampler2D reliefmap, in vec2 dp, in vec2 ds)
 void main(void) {
 
 
-    float depth = 0.2;
+    float depth = 0.1;
     float tile = 1.0;
 
     vec4 ambient = vec4(vec3(0.3), 1.0);
     vec4 diffuse = vec4(vec3(1.0), 1.0);
-    vec4 specular = vec4(vec3(1.0), 1.0);
-
+    vec4 specular = vec4(vec3(0.5), 1.0);
 
     vec4 t,c; vec3 p,v,l,s; vec2 dp,ds,uv; float d;
 // ray intersect in view direction
     p = viewSpacePixelPositionOut; // pixel position in eye space
     v = normalize(p); // view vector in eye space
 // view vector in tangent space
+    // see equation A.43 in RTR.
     s = normalize(vec3(dot(v,tangentOut.xyz),
 			 dot(v,bitangentOut.xyz),dot(normalOut,-v)));
 // size and start position of search in texture space
-    ds = s.xy*depth/s.z;
+//    ds = s.xz*depth/s.confirmed;
+
+    // y.
+    // s.z is negative beyond the line! which may explain the weird results.
+
+    s = normalize(s);
+
+    /*
+      it may be that s.z is negative for values beyond the line, which would certainly produce weird results.
+
+      // since the distortion goes very deep, it seems that s.z produces huge values for ds.
+      // in other words, s.z is very, very small.
+
+      also, are we using a right-handed or left-handed system?
+
+     */
+
+    ds = (s.xy*depth)/ ( s.z   );
+
     dp = texcoordOut*tile;
 
 // get intersection distance
@@ -116,10 +183,11 @@ void main(void) {
     t=texture(normalMap,uv);
     c=texture(diffMap,uv);
     t.xyz=t.xyz*2.0-1.0; // expand normal to eye space
+    // we are multiplying by TBN^-1 here.
     t.xyz=normalize(t.x*tangentOut.xyz+
 		    t.y*bitangentOut.xyz+t.z*normalOut);
 // compute light direction
-    p += v*d*s.z;
+    p += v*d*s.z; // p will now become the point where the ray intersect.
     l=normalize(p-lightpos.xyz);
 
 
@@ -137,6 +205,8 @@ void main(void) {
 // compute diffuse and specular terms
 	float att=saturate(dot(-l,normalOut));
 	float diff=saturate(dot(-l,t.xyz));
+
+	// -l, because the light vector goes from the light TO the point!
 	float spec=saturate(dot(normalize(-l-v),t.xyz));
 
 	vec4 finalcolor=ambient*c;
@@ -145,7 +215,8 @@ void main(void) {
 			     specular.xyz*pow(spec,specular.w));
 	finalcolor.w=1.0;
 	fragmentColor=finalcolor;
-//	return OUT;
+
+//	fragmentColor=vec4(vec3(s.z), 1.0);
 
 
 

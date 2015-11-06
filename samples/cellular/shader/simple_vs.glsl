@@ -37,13 +37,11 @@ void main()
 
     lightpos = viewSpaceLightPosition;
 
-    normalOut = normalize(normalIn);
-    tangentOut = normalize(tangentIn);
-    bitangentOut = normalize(cross(normalIn,tangentIn));
+    normalOut = normalize(  (normalMatrix * vec4(normalIn, 0.0)).xyz );
+    tangentOut = normalize(  (normalMatrix * vec4(tangentIn, 0.0)).xyz );
+    bitangentOut = normalize(     (normalMatrix * vec4(cross(normalIn, tangentIn), 0.0)).xyz    );
 
     texcoordOut = texCoordIn;
-
-
 
 //#ifdef NORMAL_MAPPING
 /*
