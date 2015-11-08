@@ -1,53 +1,3 @@
-/*
-something is very odd with this part:
-ds = s.xz*depth/s.y;
-//    ds = s.xy*depth/s.z;
-
-i suspect that xy is indeed the correct way to do it.
-
-						      because if you inspect the code, you will see that the y-axis is indeed the up-axis.
-
-
-    so xz is probably incorrect.
-
-    furthermore, the texture coordinates used are xy, and not xz!
-
-
-    if you look at it from the perspective of tangent spaces, it probably makes sense!
-*/
-
-
-//lets read about orthonormal bases in the linear algrebra book when i get home!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 in vec3 viewSpacePixelPositionOut;
 
 in vec3 normalOut;
@@ -61,49 +11,9 @@ float saturate(float value) {
     return clamp(value,0.0,1.0);
 }
 
-
 uniform sampler2D normalMap;
-  uniform sampler2D diffMap;
-  out vec4 fragmentColor;
-
-/*
-
-  out vec4 fragmentColor;
-
-  in vec3 viewSpacePosition;
-
-
-  in vec3 lightVecOut;
-  in vec3 eyeVecOut;
-  in vec2 texcoordOut;
-
-  in vec3 viewSpaceLightPositionOut;
-
-  in vec3 viewSpaceEyeVec;
-
-
-
-  uniform vec3 specColor;
-
-  uniform float specShiny;
-
-  #ifdef NORMAL_MAPPING
-  uniform sampler2D normalMap;
-  #else
-  in vec3 normalOut;
-  #endif
-
-  #ifdef SPEC_MAPPING
-  uniform sampler2D specMap;
-  #endif
-
-
-  #ifdef NORMAL_MAPPING
-  uniform sampler2D heightMap;
-
-
-*/
-
+uniform sampler2D diffMap;
+out vec4 fragmentColor;
 
 float ray_intersect_rm(in sampler2D reliefmap, in vec2 dp, in vec2 ds)
 {
@@ -138,7 +48,6 @@ float ray_intersect_rm(in sampler2D reliefmap, in vec2 dp, in vec2 ds)
 
 void main(void) {
 
-
     float depth = 0.1;
     float tile = 1.0;
 
@@ -153,7 +62,7 @@ void main(void) {
 // view vector in tangent space
     // see equation A.43 in RTR.
     s = normalize(vec3(dot(v,tangentOut.xyz),
-			 dot(v,bitangentOut.xyz),dot(normalOut,-v)));
+		       dot(v,bitangentOut.xyz),dot(normalOut,-v)));
 // size and start position of search in texture space
 //    ds = s.xz*depth/s.confirmed;
 
@@ -170,7 +79,7 @@ void main(void) {
 
       also, are we using a right-handed or left-handed system?
 
-     */
+    */
 
     ds = (s.xy*depth)/ ( s.z   );
 
@@ -190,7 +99,6 @@ void main(void) {
     p += v*d*s.z; // p will now become the point where the ray intersect.
     l=normalize(p-lightpos.xyz);
 
-
 //#ifdef RM DEPTHCORRECT
     const float near = 0.1;
     const float far  = 1024.0;
@@ -202,30 +110,19 @@ void main(void) {
 //#endif
 
 
+
 // compute diffuse and specular terms
-	float att=saturate(dot(-l,normalOut));
-	float diff=saturate(dot(-l,t.xyz));
+    float att=saturate(dot(-l,normalOut));
+    float diff=saturate(dot(-l,t.xyz));
 
-	// -l, because the light vector goes from the light TO the point!
-	float spec=saturate(dot(normalize(-l-v),t.xyz));
+    // -l, because the light vector goes from the light TO the point!
+    float spec=saturate(dot(normalize(-l-v),t.xyz));
 
-	vec4 finalcolor=ambient*c;
+    vec4 finalcolor=ambient*c;
 
-	finalcolor.xyz+=att*(c.xyz*diffuse.xyz*diff+
-			     specular.xyz*pow(spec,specular.w));
-	finalcolor.w=1.0;
-	fragmentColor=finalcolor;
-
-//	fragmentColor=vec4(vec3(s.z), 1.0);
-
-
-
-/*
-  gl_FragDepth=((planes_x*p.z+planes_y)/-p.z);
-
-
-  fragmentColor = vec4(
-  ambientComponent + (diffuseComponent + specComponent ) ,colorSample.a)  ;
-*/
+    finalcolor.xyz+=att*(c.xyz*diffuse.xyz*diff+
+			 specular.xyz*pow(spec,specular.w));
+    finalcolor.w=1.0;
+    fragmentColor=finalcolor;
 
 }
