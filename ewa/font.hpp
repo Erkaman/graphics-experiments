@@ -52,6 +52,7 @@ public:
 
     /*
       Load a texture atlas created by this program
+      https://github.com/Erkaman/font_creator_cpp
      */
     Font(
 	const std::string& atlasPath,

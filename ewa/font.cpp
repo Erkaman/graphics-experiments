@@ -43,6 +43,8 @@ Font::Font(
     m_atlasWidth = m_fontTexture->GetWidth();
     m_atlasHeight = m_fontTexture->GetHeight();
 
+    // The .amf format is described in the README of this repo:
+    // https://github.com/Erkaman/font_creator_cpp
     File atlasFile = ResourceManager::OpenResourceForReading(amfPath);
 
     char buffer[40];
