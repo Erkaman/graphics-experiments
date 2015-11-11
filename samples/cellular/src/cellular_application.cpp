@@ -114,7 +114,10 @@ void CellularApplication::Update(const float delta) {
 }
 
 void CellularApplication::RenderText()  {
-    m_font->DrawString(*m_fontShader, 30,150, "The quick. brown, fox jumps? over& the) lazy/ dog" );
+    m_font->DrawString(*m_fontShader, 30,150, "The quick. brown, fox ijumps? over& the) lazy/ dog" );
+
+    m_font->DrawString(*m_fontShader, 30,190, "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG" );
+
 }
 
 /*
