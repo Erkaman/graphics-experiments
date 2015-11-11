@@ -170,7 +170,6 @@ void Texture::WriteToFile(unsigned char* pixels, const size_t width, const size_
     //Encode the image
     unsigned error = lodepng::encode(filename, pixels, width, height);
 
-
   //if there's an error, display it
     if(error)
       LOG_E("PNG encoder error: %d: %s", error, lodepng_error_text(error) );

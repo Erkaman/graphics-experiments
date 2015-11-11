@@ -29,6 +29,7 @@ public:
     // has an error occurred?
     bool HasError()const;
     std::string  GetError()const;
+    bool IsEof();
 
     static bool Exists(const std::string& filename);
 
@@ -44,6 +45,10 @@ public:
 
     void Write32u(const uint32 u);
     uint32 Read32u();
+
+    // wrapper around fgets.
+    void ReadLine(char* buffer, int bufferSize);
+
 
     void WriteLine(const std::string& str);
 

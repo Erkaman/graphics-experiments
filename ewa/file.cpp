@@ -249,3 +249,11 @@ void File::WriteLine(const std::string& str) {
     fputs(str.c_str(), m_fp);
     putc('\n', m_fp);
 }
+
+bool File::IsEof() {
+    return feof(m_fp);
+}
+
+void File::ReadLine(char* buffer, int bufferSize) {
+    fgets(buffer, bufferSize, m_fp);
+}

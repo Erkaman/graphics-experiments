@@ -4,7 +4,14 @@
 #include "gl/vbo.hpp"
 #include "gl/shader_program.hpp"
 
-#include "math/color.hpp"
+#include "math/vector3f.hpp"
+
+#include "file.hpp"
+#include "str.hpp"
+#include "resource_manager.hpp"
+
+#define START_CHAR 32
+#define END_CHAR 126
 
 
 using std::vector;
@@ -19,22 +26,55 @@ Font::~Font() {
 }
 
 Font::Font(
-    const std::string& fontTexturePath,
-    const unsigned int fontTextureWidth, const unsigned int fontTextureHeight,
-    const unsigned int fontCellWidth, const unsigned int fontCellHeight,
-    const unsigned int windowWidth, const unsigned int windowHeight):
-    m_fontTextureWidth(fontTextureWidth), m_fontTextureHeight(fontTextureHeight),
-    m_fontCellWidth(fontCellWidth), m_fontCellHeight(fontCellHeight),
+    const std::string& atlasPath,
+    const std::string& amfPath,
+    const unsigned int windowWidth, const unsigned int windowHeight,
+    const float fontScale
+    ):
+    m_windowScaleX(2.0f / windowWidth), m_windowScaleY(2.0f / windowHeight),
+    atlasTable(END_CHAR-START_CHAR), m_fontScale(fontScale){
 
-    m_scaleX(2.0f / windowWidth), m_scaleY(2.0f / windowHeight) {
-
-
-    m_fontTexture = new Texture2D(fontTexturePath);
+    m_fontTexture = new Texture2D(atlasPath);
     m_fontTexture->Bind();
     m_fontTexture->SetTextureClamping();
     m_fontTexture->SetMagMinFilters(GL_LINEAR);
     m_fontTexture->Unbind();
 
+    m_atlasWidth = m_fontTexture->GetWidth();
+    m_atlasHeight = m_fontTexture->GetHeight();
+
+    File atlasFile = ResourceManager::OpenResourceForReading(amfPath);
+
+    char buffer[40];
+
+
+    printf("bla\n");
+
+    while(!atlasFile.IsEof()){
+
+	atlasFile.ReadLine(buffer, 40);
+
+	string str = string(buffer);
+
+	// first char is always the character.
+	char ch = str[0];
+
+
+	vector<string> tokens = SplitString(str.substr(2), ",");
+
+	// the character of the token.
+
+
+	AtlasEntry entry;
+	entry.x = stoi(tokens[0]);
+	entry.y = stoi(tokens[1]);
+	entry.xSize = stoi(tokens[2]);
+	entry.ySize = stoi(tokens[3]);
+	entry.preAdvance = stoi(tokens[4]);
+
+	atlasTable[ch-START_CHAR] = entry;
+
+    }
 
     // allocate vbo.
 
@@ -44,28 +84,15 @@ Font::Font(
 					      );
 
 
-    float x = 0;
-    float y = 0;
 
-    // create the font table.
-    for(size_t i = 0; i < 95; ++i) {
-	fontTable.emplace_back(x,y);
 
-	x += m_fontCellWidth;
-
-	if(x >= fontTextureWidth) {
-	    x = 0;
-	    y += fontCellHeight;
-	}
-
-    }
 }
 
-void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, const std::string& str, const Color&) {
+void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, const std::string& str, const Vector3f& color) {
 
     // scale the coordinate to the window.
-    float scaledX = -1 + x * m_scaleX;
-    float scaledY = +1 - y* m_scaleY;
+    float scaledX = -1 + x * m_windowScaleX;
+    float scaledY = +1 - y* m_windowScaleY;
 
 
     float totalWidth = 0;
@@ -77,13 +104,18 @@ void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, c
     m_fontTexture->Bind();
     {
 
-	// currently not working.
-//	fontShader.SetUniform("color", Color(1,0,0));
-
-	const float scaledCharacterWidth = 0.5f * m_fontCellWidth * m_scaleX; // TODO: is this really correct?
-	const float scaledCharacterHeight = 0.5f * m_fontCellHeight * m_scaleY;
+	// set the color.
+	fontShader.SetUniform("color", color);
 
 	for(const char ch : str) {
+
+	    const Font::AtlasEntry entry = LookupChar(ch);
+
+
+
+	    // 1.0f is real size.
+	    const float scaledCharacterWidth = m_fontScale * (entry.xSize) * m_windowScaleX; // TODO: is this really correct?
+	    const float scaledCharacterHeight = m_fontScale * entry.ySize * m_windowScaleY;
 
 	    if(ch == '\n') {
 		// go to next line, but draw nothing.
@@ -92,14 +124,11 @@ void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, c
 		continue;
 	    }
 
-
-	    const Vector2f position = LookupChar(ch);
-
 	    DrawQuad((scaledX + totalWidth), scaledY+ totalHeight,
 		     (scaledX + totalWidth + scaledCharacterWidth), (scaledY + scaledCharacterHeight + totalHeight),
 
-		     position.x,position.y, position.x + m_fontCellWidth,
-		     position.y + m_fontCellHeight
+		     entry.x,entry.y, entry.x + entry.xSize,
+		     entry.y + entry.ySize
 		);
 
 	    totalWidth += scaledCharacterWidth;
@@ -108,20 +137,16 @@ void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, c
 
     }
     m_fontTexture->Unbind();
-
-
 }
 
 void Font::DrawString(ShaderProgram& fontShader, const float x, const float y, const std::string& str) {
-    DrawString(fontShader, x, y, str, Color::WHITE);
+    DrawString(fontShader, x, y, str, Vector3f(1,1,1));
 }
 
-Vector2f Font::LookupChar(const char ch) {
-    assert(ch >= 32 && ch <= 126);
+Font::AtlasEntry Font::LookupChar(const char ch) {
+    assert(ch >= START_CHAR && ch <= END_CHAR);
 
-    Vector2f position = fontTable[ch - 32];
-
-    return position;
+    return atlasTable[ch - START_CHAR];
 }
 
 
@@ -129,12 +154,12 @@ void Font::DrawQuad(const float drawX, const float drawY, const float drawX2, co
 		    const float srcX, const float srcY, const float srcX2, const float srcY2) {
     const float drawWidth = (drawX2 - drawX);
     const float drawHeight = (drawY2 - drawY);
-    const float textureSrcX = srcX / m_fontTextureWidth;
-    const float textureSrcY = srcY / m_fontTextureHeight;
+    const float textureSrcX = srcX / m_atlasWidth;
+    const float textureSrcY = srcY / m_atlasHeight;
     const float srcWidth = srcX2 - srcX;
     const float srcHeight = srcY2 - srcY;
-    const float renderWidth = (srcWidth / m_fontTextureWidth);
-    const float renderHeight = (srcHeight / m_fontTextureHeight);
+    const float renderWidth = (srcWidth / m_atlasWidth);
+    const float renderHeight = (srcHeight / m_atlasHeight);
 
     int i = 0;
 

@@ -3,7 +3,9 @@
 #include <vector>
 #include <string>
 
-// Singeltin
+#include "file.hpp"
+
+// Singelton
 class ResourceManager {
 
 private:
@@ -28,5 +30,7 @@ public:
 
     // locate a resource, fully read it into a string, then return the string.
     static std::string LocateAndReadResource(const std::string& resourcePath);
+
+    static File OpenResourceForReading(const std::string& resourcePath);
 
 };

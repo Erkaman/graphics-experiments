@@ -79,7 +79,7 @@ Vector3f(-0.50, 1.0, 1.50),Vector3f(0.0, -0.50, -1.0)
 void CellularApplication::Render() {
 
     SetViewport();
-    Clear(0.0f, 1.0f, 1.0f);
+    Clear(0.0f, 0.3f, 0.5f);
 
 //    const Vector4f lightPosition(93,10.0f,93, 1.0f);
 //    const Vector4f lightPosition(30,6, 7, 1.0f);
@@ -114,7 +114,7 @@ void CellularApplication::Update(const float delta) {
 }
 
 void CellularApplication::RenderText()  {
-    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
+    m_font->DrawString(*m_fontShader, 30,150, "The quick. brown, fox jumps? over& the) lazy/ dog" );
 }
 
 /*

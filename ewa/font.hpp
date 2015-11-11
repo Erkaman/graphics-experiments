@@ -3,12 +3,12 @@
 #include <string>
 #include <vector>
 
-#include "math/vector2f.hpp"
 
 class Texture;
 class VBO;
 class ShaderProgram;
 class Color;
+class Vector3f;
 
 class Font {
 
@@ -17,20 +17,27 @@ private:
     Texture* m_fontTexture;
     VBO* m_vertexBuffer;
 
-    const unsigned int m_fontTextureWidth;
-    const unsigned int m_fontTextureHeight;
+    unsigned int m_atlasWidth;
+    unsigned int m_atlasHeight;
 
-    const unsigned int m_fontCellWidth;
-    const unsigned int m_fontCellHeight;
+    // Makes sure that the font properly scales for varying window proportions.
+    const float m_windowScaleX;
+    const float m_windowScaleY;
 
+    // used to scale the size of the font.
+    const float m_fontScale;
 
-    // used to position the text within the window.
-    const float m_scaleX;
-    const float m_scaleY;
+    struct AtlasEntry{
+	unsigned int x;
+	unsigned int y;
+	unsigned int xSize;
+	unsigned int ySize;
+	signed int preAdvance;
+    };
 
-    std::vector<Vector2f> fontTable;
+    std::vector<AtlasEntry> atlasTable;
 
-    Vector2f LookupChar(const char ch);
+    AtlasEntry LookupChar(const char ch);
 
     void DrawQuad(const float drawX, const float drawY, const float drawX2, const float drawY2,
 		  const float srcX, const float srcY, const float srcX2, const float srcY2);
@@ -43,13 +50,18 @@ private:
 
 public:
 
+    /*
+      Load a texture atlas created by this program
+     */
     Font(
-	const std::string& fontTexturePath,
-	const unsigned int fontTextureWidth, const unsigned int fontTextureHeight,
-	const unsigned int fontCellWidth, const unsigned int fontCellHeight,
-	const unsigned int windowWidth, const unsigned int windowHeight);
+	const std::string& atlasPath,
+	const std::string& amfPath,
+	const unsigned int windowWidth, const unsigned int windowHeight,
+	const float fontScale
+	);
     ~Font();
 
-    void DrawString(ShaderProgram& fontShader, const float x, const float y, const std::string& str, const Color& color);
     void DrawString(ShaderProgram& fontShader, const float x, const float y, const std::string& str);
+
+    void DrawString(ShaderProgram& fontShader, const float x, const float y, const std::string& str, const Vector3f& color);
 };
