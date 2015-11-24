@@ -11,11 +11,25 @@ struct Material{
     std::string m_textureFilename;
     std::string m_normalMapFilename;
     std::string m_specularMapFilename;
-    std::string m_heightMapFilename;
 
     float m_shininess;
     Vector3f m_specularColor;
+    bool m_hasHeightMap;
 
+    Material() {
+	this->m_textureFilename = "";
+	this->m_normalMapFilename = "";
+	this->m_specularMapFilename = "";
+
+	this->m_shininess = 1; // default shininess.
+	this->m_hasHeightMap = false;
+
+
+	// default specular color is black
+	// (which means there is no specular lighting at all)
+	this->m_specularColor = Vector3f(0);
+
+    }
 };
 
 struct GeometryObjectData {

@@ -1,7 +1,7 @@
 in vec3 viewSpacePixelPositionOut;
 
 in vec3 normalOut;
-#ifdef NORMAL_MAPPING
+#if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
 in vec3 tangentOut;
 in vec3 bitangentOut;
 #endif
@@ -13,7 +13,7 @@ uniform sampler2D normalMap;
 uniform sampler2D diffMap;
 out vec4 fragmentColor;
 
-#ifdef NORMAL_MAPPING
+#ifdef HEIGHT_MAPPING
 float ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds) {
 
     const int linear_search_steps=10; // 10
@@ -60,7 +60,7 @@ void main(void) {
     vec3 p = viewSpacePixelPositionOut; // pixel position in eye space
     vec3 v = normalize(p); // view vector in eye space
 
-#ifdef NORMAL_MAPPING
+#ifdef HEIGHT_MAPPING
 
     float depth = 0.1;
     float tile = 1.0;
@@ -96,9 +96,15 @@ void main(void) {
     float planes_y =-far*near/(far-near);
     gl_FragDepth=((planes_x*p.z+planes_y)/-p.z);
 
-#else
+#elif defined NORMAL_MAPPING
 
     vec4 finalNormal = texture(normalMap,texcoordOut);
+    vec4 finalDiffuse=texture(diffMap,texcoordOut);
+
+    vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
+#else // no normal or height map
+
+    vec4 finalNormal = vec4(normalOut,0.0);
     vec4 finalDiffuse=texture(diffMap,texcoordOut);
 
     vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
@@ -107,8 +113,7 @@ void main(void) {
 
     finalNormal.xyz=finalNormal.xyz*2.0-1.0;
 
-
-#ifdef NORMAL_MAPPING
+#if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
 
      // expand normal to eye space(from tangent space)
     finalNormal.xyz=normalize(finalNormal.x*tangentOut.xyz+
@@ -131,6 +136,7 @@ void main(void) {
 
     finalcolor.xyz+=0.3*(finalDiffuse.xyz*diffuse.xyz*diff+
 			 specular.xyz*pow(spec,specular.w));
+
     finalcolor.w=1.0;
     fragmentColor=finalcolor;
 }

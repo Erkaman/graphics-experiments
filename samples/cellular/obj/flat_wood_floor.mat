@@ -1,6 +1,4 @@
 new_mat Material.001
 diff_map tile1_d.png
-norm_map tile1_n.png
-//has_height_map
 shininess 1
 spec_color 1 1 1

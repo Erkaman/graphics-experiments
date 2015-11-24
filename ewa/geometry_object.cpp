@@ -47,6 +47,7 @@ void GeometryObject::Init(const std::string& filename, const bool useCustomShade
 	if(mat->m_normalMapFilename != ""){ // empty textures should remain empty->
 	    mat->m_normalMapFilename = File::AppendPaths(basePath, mat->m_normalMapFilename);
 	    m_hasNormalMap = true;
+	    m_hasHeightMap = mat->m_hasHeightMap;
 	}
 
 	if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
@@ -54,10 +55,6 @@ void GeometryObject::Init(const std::string& filename, const bool useCustomShade
 	    m_hasSpecularMap = true;
 	}
 
-	if(mat->m_heightMapFilename != ""){ // empty textures should remain empty->
-	    mat->m_heightMapFilename = File::AppendPaths(basePath, mat->m_heightMapFilename);
-	    m_hasHeightMap = true;
-	}
     }
 
     Init(data, useCustomShader);
@@ -71,10 +68,7 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	string vertexSource = ResourceManager::LocateAndReadResource(shaderName + "_vs.glsl");
 	string fragmentSource = ResourceManager::LocateAndReadResource(shaderName + "_fs.glsl");
 
-	if(m_hasNormalMap) {
-	    vertexSource = string("#define NORMAL_MAPPING\n\n") + vertexSource;
-	    fragmentSource = string("#define NORMAL_MAPPING\n\n") + fragmentSource;
-	}
+
 
 	if(m_hasSpecularMap) {
 	    vertexSource = string("#define SPEC_MAPPING\n\n") + vertexSource;
@@ -84,6 +78,9 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	if(m_hasHeightMap) {
 	    vertexSource = string("#define HEIGHT_MAPPING\n\n") + vertexSource;
 	    fragmentSource = string("#define HEIGHT_MAPPING\n\n") + fragmentSource;
+	} else if(m_hasNormalMap) {
+	    vertexSource = string("#define NORMAL_MAPPING\n\n") + vertexSource;
+	    fragmentSource = string("#define NORMAL_MAPPING\n\n") + fragmentSource;
 	}
 
 	m_defaultShader = new ShaderProgram(vertexSource, fragmentSource);
@@ -127,12 +124,6 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	    newChunk->m_specularMap = LoadTexture(baseChunk->m_material->m_specularMapFilename);
 	} else {
 	    newChunk->m_specularMap = NULL;
-	}
-
-	if(m_hasHeightMap) {
-	    newChunk->m_heightMap = LoadTexture(baseChunk->m_material->m_heightMapFilename);
-	} else {
-	    newChunk->m_heightMap = NULL;
 	}
 
 	newChunk->m_shininess = baseChunk->m_material->m_shininess;
@@ -198,11 +189,6 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 	    shader.SetUniform("specColor", chunk->m_specularColor);
 	}
 
-	if(chunk->m_heightMap != NULL) {
-	    shader.SetUniform("heightMap", 3);
-	    Texture::SetActiveTextureUnit(3);
-	    chunk->m_heightMap->Bind();
-	}
 
 	shader.SetUniform("specShiny", chunk->m_shininess);
 
@@ -218,10 +204,6 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 
 	if(chunk->m_specularMap != NULL) {
 	    chunk->m_specularMap->Unbind();
-	}
-
-	if(chunk->m_heightMap != NULL) {
-	    chunk->m_heightMap->Unbind();
 	}
 
 

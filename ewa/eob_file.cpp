@@ -101,8 +101,8 @@ void WriteMaterialFile(const GeometryObjectData& data, const std::string& outfil
 	if(mat->m_specularMapFilename != "")
 	    f.WriteLine("spec_map " + mat->m_specularMapFilename);
 
-	if(mat->m_heightMapFilename != "")
-	    f.WriteLine("height_map " + mat->m_heightMapFilename);
+	if(mat->m_hasHeightMap)
+	    f.WriteLine("has_height_map");
 
 	f.WriteLine("shininess " + std::to_string(mat->m_shininess));
 
@@ -190,18 +190,6 @@ map<string, Material*> ReadMaterialFile(const std::string& infile) {
 	    matlib[tokens[1]] = new Material;
 	    currentMaterial = matlib[tokens[1]];
 
-	    // default diffuse map is an empty diffuse map.
-	    // same thing applies for all the other map types.
-	    currentMaterial->m_textureFilename = "";
-	    currentMaterial->m_normalMapFilename = "";
-	    currentMaterial->m_specularMapFilename = "";
-	    currentMaterial->m_heightMapFilename = "";
-
-	    currentMaterial->m_shininess = 1; // default shininess.
-
-	    // default specular color is black
-	    // (which means there is no specular lighting at all)
-	    currentMaterial->m_specularColor = Vector3f(0);
 
 	} else if(firstToken == "diff_map") {
 	    assert(tokens.size() == 2);
@@ -215,10 +203,11 @@ map<string, Material*> ReadMaterialFile(const std::string& infile) {
 	    assert(tokens.size() == 2);
 
 	    currentMaterial->m_specularMapFilename = tokens[1];
-	} else if(firstToken == "height_map") {
-	    assert(tokens.size() == 2);
+	} else if(firstToken == "has_height_map") {
+	    assert(tokens.size() == 1);
 
-	    currentMaterial->m_heightMapFilename = tokens[1];
+	    currentMaterial->m_hasHeightMap = true;
+
 	} else if(firstToken == "shininess") {
 	    assert(tokens.size() == 2);
 	    currentMaterial->m_shininess = StrToFloat(tokens[1]);

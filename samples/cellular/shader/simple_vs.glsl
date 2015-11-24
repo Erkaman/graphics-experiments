@@ -2,7 +2,7 @@ layout (location = 0)in  vec3 positionIn;
 layout (location = 1)in vec2 texCoordIn;
 layout (location = 2)in vec3 normalIn;
 
-#ifdef NORMAL_MAPPING
+#if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
 layout (location = 3)in vec3 tangentIn;
 #endif
 
@@ -15,7 +15,7 @@ uniform vec3 viewSpaceLightPosition;
 out vec3 viewSpacePixelPositionOut;
 
 out vec3 normalOut;
-#ifdef NORMAL_MAPPING
+#if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
 out vec3 tangentOut;
 out vec3 bitangentOut;
 #endif
@@ -33,7 +33,7 @@ void main()
     lightpos = viewSpaceLightPosition;
 
     normalOut = normalize(  (normalMatrix * vec4(normalIn, 0.0)).xyz );
-#ifdef NORMAL_MAPPING
+#if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
     tangentOut = normalize(  (normalMatrix * vec4(tangentIn, 0.0)).xyz );
     bitangentOut = normalize(     (normalMatrix * vec4(cross(normalIn, tangentIn), 0.0)).xyz    );
 #endif

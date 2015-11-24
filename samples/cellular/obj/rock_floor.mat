@@ -1,6 +1,7 @@
 new_mat Material.001
 diff_map rockbump_d.png
 norm_map rockbump_n.png
+has_height_map
 //spec_map rock_floor_s.png
 //height_map rock_floor_h.png
 shininess 1
