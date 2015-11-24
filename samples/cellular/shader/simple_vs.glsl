@@ -15,8 +15,10 @@ uniform vec3 viewSpaceLightPosition;
 out vec3 viewSpacePixelPositionOut;
 
 out vec3 normalOut;
+#ifdef NORMAL_MAPPING
 out vec3 tangentOut;
 out vec3 bitangentOut;
+#endif
 out vec2 texcoordOut;
 
 out vec3 lightpos;
@@ -31,9 +33,10 @@ void main()
     lightpos = viewSpaceLightPosition;
 
     normalOut = normalize(  (normalMatrix * vec4(normalIn, 0.0)).xyz );
+#ifdef NORMAL_MAPPING
     tangentOut = normalize(  (normalMatrix * vec4(tangentIn, 0.0)).xyz );
     bitangentOut = normalize(     (normalMatrix * vec4(cross(normalIn, tangentIn), 0.0)).xyz    );
-
+#endif
     texcoordOut = texCoordIn;
 
 //#ifdef NORMAL_MAPPING

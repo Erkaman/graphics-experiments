@@ -1,8 +1,10 @@
 in vec3 viewSpacePixelPositionOut;
 
 in vec3 normalOut;
+#ifdef NORMAL_MAPPING
 in vec3 tangentOut;
 in vec3 bitangentOut;
+#endif
 in vec2 texcoordOut;
 
 in vec3 lightpos;
@@ -11,7 +13,7 @@ uniform sampler2D normalMap;
 uniform sampler2D diffMap;
 out vec4 fragmentColor;
 
-// #ifdef HEIGHT_MAPPING
+#ifdef NORMAL_MAPPING
 float ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds) {
 
     const int linear_search_steps=10; // 10
@@ -46,7 +48,7 @@ float ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds) {
     }
     return best_depth;
 }
-// #endif
+#endif
 
 void main(void) {
 
@@ -55,16 +57,14 @@ void main(void) {
     vec4 diffuse = vec4(vec3(1.0), 1.0);
     vec4 specular = vec4(vec3(0.5), 1.0);
 
+    vec3 p = viewSpacePixelPositionOut; // pixel position in eye space
+    vec3 v = normalize(p); // view vector in eye space
 
-
-
-
+#ifdef NORMAL_MAPPING
 
     float depth = 0.1;
     float tile = 1.0;
 
-    vec3 p = viewSpacePixelPositionOut; // pixel position in eye space
-    vec3 v = normalize(p); // view vector in eye space
 
     // view vector in tangent space
     vec3 s = normalize(vec3(dot(v,tangentOut.xyz),
@@ -82,22 +82,10 @@ void main(void) {
     vec4 finalNormal = texture(normalMap,uv);
     vec4 finalDiffuse=texture(diffMap,uv);
 
-
-
-
-
-
-
-
-
-    finalNormal.xyz=finalNormal.xyz*2.0-1.0;
-     // expand normal to eye space(from tangent space)
-    finalNormal.xyz=normalize(finalNormal.x*tangentOut.xyz+
-		    finalNormal.y*bitangentOut.xyz+finalNormal.z*normalOut);
-
     // compute light direction
     p += v*d*s.z;
     vec3 l=normalize(p-lightpos.xyz);
+
 
     /*
       Depth correct.
@@ -107,6 +95,30 @@ void main(void) {
     float planes_x=-far/(far-near);
     float planes_y =-far*near/(far-near);
     gl_FragDepth=((planes_x*p.z+planes_y)/-p.z);
+
+#else
+
+    vec4 finalNormal = texture(normalMap,texcoordOut);
+    vec4 finalDiffuse=texture(diffMap,texcoordOut);
+
+    vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
+
+#endif
+
+    finalNormal.xyz=finalNormal.xyz*2.0-1.0;
+
+
+#ifdef NORMAL_MAPPING
+
+     // expand normal to eye space(from tangent space)
+    finalNormal.xyz=normalize(finalNormal.x*tangentOut.xyz+
+		    finalNormal.y*bitangentOut.xyz+finalNormal.z*normalOut);
+
+#else
+
+    finalNormal.xyz = finalNormal.xyz;
+
+#endif
 
 
     // compute diffuse and specular terms

@@ -51,11 +51,11 @@ Vector3f(-0.50, 1.0, 1.50),Vector3f(0.0, -0.50, -1.0)
     m_stoneFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,0,0)));
 
-/*    m_woodFloor = new GeometryObject();
+    m_woodFloor = new GeometryObject();
     m_woodFloor->Init("obj/wood_floor.eob");
     m_woodFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(10,0,0)));
-*/
+
     const float SCALE3 = 0.2f;
 
 }
@@ -69,7 +69,7 @@ void CellularApplication::Render() {
 
     m_stoneFloor->Render(*m_camera, m_lightPosition);
 
-    // m_woodFloor->Render(*m_camera, m_lightPosition);
+    m_woodFloor->Render(*m_camera, m_lightPosition);
 
 }
 
