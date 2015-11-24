@@ -50,8 +50,8 @@ Vector3f(-0.50, 1.0, 1.50),Vector3f(0.0, -0.50, -1.0)
     m_stoneFloor->Init("obj/rock_floor.eob");
     m_stoneFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,0,0)));
-/*
-    m_woodFloor = new GeometryObject();
+
+/*    m_woodFloor = new GeometryObject();
     m_woodFloor->Init("obj/wood_floor.eob");
     m_woodFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(10,0,0)));
