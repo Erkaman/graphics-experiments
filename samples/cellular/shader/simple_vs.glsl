@@ -6,7 +6,6 @@ layout (location = 2)in vec3 normalIn;
 layout (location = 3)in vec3 tangentIn;
 #endif
 
-
 uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
 uniform mat4 normalMatrix;
@@ -21,12 +20,6 @@ out vec3 bitangentOut;
 out vec2 texcoordOut;
 
 out vec3 lightpos;
-
-#ifdef NORMAL_MAPPING
-// we have tangentIn
-#else
-out vec3 normalOut;
-#endif
 
 void main()
 {
@@ -46,7 +39,6 @@ void main()
 //#ifdef NORMAL_MAPPING
 /*
     vec3 bitangent = cross(normalIn,tangentIn); // both tangent and normal are normalized I think
-
 
     vec3 tmpVec = viewSpaceLightPosition - viewSpacePosition;
 

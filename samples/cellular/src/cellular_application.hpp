@@ -21,6 +21,8 @@ private:
     Cube* m_cube;
 
     GeometryObject* m_stoneFloor;
+    GeometryObject* m_woodFloor;
+
     GeometryObject* m_sun;
     GeometryObject* m_ball;
 

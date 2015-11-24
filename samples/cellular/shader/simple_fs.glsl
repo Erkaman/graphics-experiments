@@ -17,8 +17,8 @@ out vec4 fragmentColor;
 
 float ray_intersect_rm(in sampler2D reliefmap, in vec2 dp, in vec2 ds)
 {
-    const int linear_search_steps=10;
-    const int binary_search_steps=5;
+    const int linear_search_steps=20;
+    const int binary_search_steps=10;
     float depth_step=1.0/linear_search_steps;
     float size=depth_step; // current size of search window
     float depth=0.0; // current depth position
@@ -99,7 +99,9 @@ void main(void) {
     p += v*d*s.z; // p will now become the point where the ray intersect.
     l=normalize(p-lightpos.xyz);
 
-//#ifdef RM DEPTHCORRECT
+    /*
+      Depth correct.
+     */
     const float near = 0.1;
     const float far  = 1024.0;
 
@@ -107,7 +109,6 @@ void main(void) {
     float planes_y =-far*near/(far-near);
 
     gl_FragDepth=((planes_x*p.z+planes_y)/-p.z);
-//#endif
 
 
 
