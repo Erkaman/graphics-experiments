@@ -16,6 +16,8 @@ out vec4 fragmentColor;
 #ifdef HEIGHT_MAPPING
 float ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds) {
 
+    // TODO: use the angle to determine number of steps!
+
     const int linear_search_steps=10; // 10
     const int binary_search_steps=5; // 5
 
@@ -31,12 +33,13 @@ float ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds) {
 	depth+=size;
 	float height=texture(reliefmap,dp+ds*depth).w;
 	if (best_depth>0.996) // if no depth found yet
-	    if (depth >= height)
+	    if (depth >= height) {
 		best_depth=depth; // store best depth
+	    }
     }
     depth=best_depth;
 
-    // binary search to improve the precision of the result.
+
     for ( int i=0; i<binary_search_steps;i++) {
 	size*=0.5;
 	float height=texture(reliefmap,dp+ds*depth).w;
@@ -45,13 +48,13 @@ float ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds) {
 	    depth -= 2*size;
 	}
 	depth+=size;
+
     }
     return best_depth;
 }
 #endif
 
 void main(void) {
-
 
     vec4 ambient = vec4(vec3(0.3), 1.0);
     vec4 diffuse = vec4(vec3(1.0), 1.0);
@@ -64,7 +67,6 @@ void main(void) {
 
     float depth = 0.1;
     float tile = 1.0;
-
 
     // view vector in tangent space
     vec3 s = normalize(vec3(dot(v,tangentOut.xyz),
