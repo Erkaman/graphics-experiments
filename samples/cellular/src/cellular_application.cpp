@@ -21,7 +21,7 @@ void ToClipboard(const std::string& str) {
     system(command.c_str());
 }
 
-CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_lightPosition(Vector4f(9,5, -15, 1.0f)), m_time(0.0){ }
+CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_lightPosition(Vector4f(7,8, -9, 1.0f)), m_time(0.0){ }
 
 CellularApplication::~CellularApplication() {
     MY_DELETE(m_camera);

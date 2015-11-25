@@ -22,7 +22,7 @@ void ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds, out vec2 finalTexCo
 
     // TODO: use the angle to determine number of steps!
 
-    const int linear_search_steps=40; // 10
+    const int linear_search_steps=30; // 10
     //  const int binary_search_steps=5; // 5
 
     float size=1.0/linear_search_steps; // current size of search window
@@ -111,16 +111,17 @@ void main(void) {
 
     float rayDepth;
     vec2 rayTexcoord;
-    float d = ray_intersect_rm(normalMap,dp,ds, rayTexcoord, rayDepth);
+    ray_intersect_rm(normalMap,dp,ds, rayTexcoord, rayDepth);
 
-    // get normal and color at intersection point
+
+// get normal and color at intersection point
 //    vec2 uv=dp+ds*d;
     vec2 uv = rayTexcoord;
     vec4 finalNormal = texture(normalMap,uv);
     vec4 finalDiffuse=texture(diffMap,uv);
 
     // compute light direction
-    p += v*d*s.z;
+    p += v*rayDepth*s.z;
     vec3 l=normalize(p-lightpos.xyz);
 
 
@@ -166,11 +167,33 @@ void main(void) {
     // compute diffuse and specular terms
     float diff=clamp(dot(-l,finalNormal.xyz),0,1);
 
-
     // -l, because the light vector goes from the light TO the point!
     float spec=clamp(dot(normalize(-l-v),finalNormal.xyz),0,1);
 
+#if defined HEIGHT_MAPPING
+    // shadows. DOES NOT WORK YET.
+/*
+    float foundRayDepth = rayDepth;
+
+    dp+= ds*foundRayDepth;
+
+    s = normalize(vec3(dot(l,tangentOut.xyz),
+		       dot(l,bitangentOut.xyz),dot(normalOut,-l)));
+
+    // move dp, so that we start ray tracing from the light source, instead of from the viewer.
+    ds = s.xy*depth/s.z;
+    dp-= ds*foundRayDepth;
+
+    ray_intersect_rm(normalMap,dp,ds, rayTexcoord, rayDepth);
+    if (rayDepth<foundRayDepth-0.05) { // if pixel in shadow.
+	diff*=dot(ambient.xyz,vec3(1.0,1.0,1.0))*0.3333;
+	spec=0;
+	}*/
+
+#endif
     vec4 finalcolor=ambient*finalDiffuse;
+
+
 
     finalcolor.xyz+=(finalDiffuse.xyz*diffuse.xyz*diff+
 			 specColor*pow(spec,specShiny));
