@@ -14,12 +14,12 @@ uniform sampler2D diffMap;
 out vec4 fragmentColor;
 
 #ifdef HEIGHT_MAPPING
-float ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds) {
+void ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds, out vec2 finalTexCoords, out float parallaxHeight) {
 
     // TODO: use the angle to determine number of steps!
 
-    const int linear_search_steps=10; // 10
-    const int binary_search_steps=5; // 5
+    const int linear_search_steps=40; // 10
+//    const int binary_search_steps=5; // 5
 
     float size=1.0/linear_search_steps; // current size of search window
 
@@ -40,6 +40,33 @@ float ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds) {
     depth=best_depth;
 
 
+    vec2 currentTextureCoords = dp+ds*depth;
+
+    // previous texture coordinates
+    vec2 prevTCoords = dp+ds*(depth-size); // currentTextureCoords + texStep;
+
+    // heights for linear interpolation
+
+    float nextH	= texture(reliefmap,dp+ds*depth).w - depth; //heightFromTexture - curLayerHeight;
+	float prevH	= texture(reliefmap, prevTCoords).w // texture(u_heightTexture, prevTCoords).r
+	    - depth + size;                         // - curLayerHeight + layerHeight;
+
+   // proportions for linear interpolation
+   float weight = nextH / (nextH - prevH);
+
+   // interpolation of texture coordinates
+   finalTexCoords = prevTCoords * weight + currentTextureCoords * (1.0-weight);
+
+   // interpolation of depth values
+   parallaxHeight = depth + prevH * weight + nextH * (1.0 - weight);
+       //curLayerHeight + prevH * weight + nextH * (1.0 - weight);
+
+
+
+
+
+//    return best_depth;
+/*
     for ( int i=0; i<binary_search_steps;i++) {
 	size*=0.5;
 	float height=texture(reliefmap,dp+ds*depth).w;
@@ -51,6 +78,7 @@ float ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds) {
 
     }
     return best_depth;
+*/
 }
 #endif
 
@@ -77,10 +105,14 @@ void main(void) {
     // ray origin
     vec2 dp = texcoordOut*tile;
     // get intersection distance
-    float d = ray_intersect_rm(normalMap,dp,ds);
+
+    float rayDepth;
+    vec2 rayTexcoord;
+    float d = ray_intersect_rm(normalMap,dp,ds, rayTexcoord, rayDepth);
 
     // get normal and color at intersection point
-    vec2 uv=dp+ds*d;
+//    vec2 uv=dp+ds*d;
+    vec2 uv = rayTexcoord;
     vec4 finalNormal = texture(normalMap,uv);
     vec4 finalDiffuse=texture(diffMap,uv);
 
@@ -142,3 +174,15 @@ void main(void) {
     finalcolor.w=1.0;
     fragmentColor=finalcolor;
 }
+
+
+/*
+nextH =  heightFromTexture - curLayerHeight;
+
+ prevH	= texture(u_heightTexture, prevTCoords).r - curLayerHeight + layerHeight;
+
+ nextH - prevH =
+
+ heightFromTexture - texture(u_heightTexture, prevTCoords).r - layerHeight
+
+*/
