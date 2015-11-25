@@ -72,10 +72,25 @@ Vector3f(0.754520f, -0.075467f, 0.651923f)
     m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
 
+    m_stoneFloor = new GeometryObject();
+    m_stoneFloor->Init("obj/rock_floor.eob");
+    m_stoneFloor->SetModelMatrix(
+	Matrix4f::CreateTranslation(Vector3f(0,0,0)));
+
+    m_flatWoodFloor = new GeometryObject();
+    m_flatWoodFloor->Init("obj/flat_wood_floor.eob");
+    m_flatWoodFloor->SetModelMatrix(
+	Matrix4f::CreateTranslation(Vector3f(10,0,0)));
+
+    m_woodFloor = new GeometryObject();
+    m_woodFloor->Init("obj/wood_floor.eob");
+    m_woodFloor->SetModelMatrix(
+	Matrix4f::CreateTranslation(Vector3f(-10,0,0)));
+
+
 
     OpenAL::Init();
 
-    
     m_windSound = new Sound("audio/wind2.wav");
     m_windSound->SetGain(1.0f);
     m_windSound->SetLooping(true);
@@ -97,6 +112,13 @@ void TuhuApplication::Render() {
     m_smoke->Render(m_camera->GetMvp(), m_camera->GetPosition());
    m_snow->Render(m_camera->GetMvp(), m_camera->GetPosition());
     m_fire->Render(m_camera->GetMvp(), m_camera->GetPosition());
+
+    m_stoneFloor->Render(*m_camera, lightPosition);
+
+    m_flatWoodFloor->Render(*m_camera, lightPosition);
+
+    m_woodFloor->Render(*m_camera, lightPosition);
+
 }
 
 void TuhuApplication::Update(const float delta) {

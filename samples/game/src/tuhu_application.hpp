@@ -9,6 +9,7 @@ class Skydome;
 class Grass;
 class Sound;
 class ParticleSystem;
+class GeometryObject;
 
 class TuhuApplication : public Application{
 
@@ -26,6 +27,10 @@ private:
     ParticleSystem* m_smoke;
     ParticleSystem* m_snow;
     ParticleSystem* m_fire;
+
+    GeometryObject* m_stoneFloor;
+    GeometryObject* m_flatWoodFloor;
+    GeometryObject* m_woodFloor;
 
 public:
 
