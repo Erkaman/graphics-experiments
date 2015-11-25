@@ -1,8 +1,3 @@
-optimize shader.
-add shadowing to POM shader.
-optimize POM SHADer.
-fix specular lightning.
-move code to main project.
 
 
 

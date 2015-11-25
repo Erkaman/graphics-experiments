@@ -189,7 +189,6 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 	    shader.SetUniform("specColor", chunk->m_specularColor);
 	}
 
-
 	shader.SetUniform("specShiny", chunk->m_shininess);
 
 	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
