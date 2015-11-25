@@ -9,6 +9,7 @@ layout (location = 3)in vec3 tangentIn;
 uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
 uniform mat4 normalMatrix;
+uniform vec3 eyePos;
 
 uniform vec3 viewSpaceLightPosition;
 
@@ -21,14 +22,17 @@ out vec3 bitangentOut;
 #endif
 out vec2 texcoordOut;
 
-out vec3 lightpos;
+out vec3 viewSpaceLightPositionOut;
+
+out mat4 modelViewMatrixOut;
+out vec3 eyePosOut;
 
 void main()
 {
     // vertex position
     viewSpacePixelPositionOut = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
-    lightpos = viewSpaceLightPosition;
+    viewSpaceLightPositionOut = viewSpaceLightPosition;
 
     normalOut = normalize(  (normalMatrix * vec4(normalIn, 0.0)).xyz );
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
@@ -38,4 +42,8 @@ void main()
     texcoordOut = texCoordIn;
 
     gl_Position = mvp * vec4(positionIn,1);
+
+    eyePosOut = eyePos;
+
+    modelViewMatrixOut = modelViewMatrix;
 }

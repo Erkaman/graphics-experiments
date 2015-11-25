@@ -7,7 +7,9 @@ in vec3 bitangentOut;
 #endif
 in vec2 texcoordOut;
 
-in vec3 lightpos;
+in vec3 viewSpaceLightPositionOut;
+in mat4 modelViewMatrixOut;
+in vec3 eyePosOut;
 
 uniform sampler2D normalMap;
 uniform sampler2D diffMap;
@@ -22,7 +24,12 @@ void ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds, out vec2 finalTexCo
 
     // TODO: use the angle to determine number of steps!
 
-    const int linear_search_steps=30; // 10
+    float factor = 1.0 - abs(dot( vec3(0, 1, 0) ,  normalize(eyePosOut) ));
+
+     float linear_search_steps= mix(10.0, 30.0,
+					 factor
+					 );
+
     //  const int binary_search_steps=5; // 5
 
     float size=1.0/linear_search_steps; // current size of search window
@@ -87,6 +94,8 @@ void ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds, out vec2 finalTexCo
 #endif
 
 void main(void) {
+    vec3 lightpos = viewSpaceLightPositionOut;
+
 
     vec4 ambient = vec4(vec3(0.3), 1.0);
     vec4 diffuse = vec4(vec3(0.5), 1.0);
@@ -119,6 +128,7 @@ void main(void) {
     vec2 uv = rayTexcoord;
     vec4 finalNormal = texture(normalMap,uv);
     vec4 finalDiffuse=texture(diffMap,uv);
+
 
     // compute light direction
     p += v*rayDepth*s.z;
@@ -197,20 +207,9 @@ void main(void) {
 
     finalcolor.xyz+=(finalDiffuse.xyz*diffuse.xyz*diff+
 			 specColor*pow(spec,specShiny));
-
-//    finalcolor.xyz+=(specular.xyz*pow(spec,specular.w));
-
     finalcolor.w=1.0;
+
+
+
     fragmentColor=finalcolor;
 }
-
-/*
-nextH =  heightFromTexture - curLayerHeight;
-
- prevH	= texture(u_heightTexture, prevTCoords).r - curLayerHeight + layerHeight;
-
- nextH - prevH =
-
- heightFromTexture - texture(u_heightTexture, prevTCoords).r - layerHeight
-
-*/
