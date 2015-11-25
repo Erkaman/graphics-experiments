@@ -13,13 +13,17 @@ uniform sampler2D normalMap;
 uniform sampler2D diffMap;
 out vec4 fragmentColor;
 
+uniform vec3 specColor;
+uniform float specShiny;
+
+
 #ifdef HEIGHT_MAPPING
 void ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds, out vec2 finalTexCoords, out float parallaxHeight) {
 
     // TODO: use the angle to determine number of steps!
 
     const int linear_search_steps=40; // 10
-//    const int binary_search_steps=5; // 5
+    //  const int binary_search_steps=5; // 5
 
     float size=1.0/linear_search_steps; // current size of search window
 
@@ -65,7 +69,6 @@ void ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds, out vec2 finalTexCo
 
 
 
-//    return best_depth;
 /*
     for ( int i=0; i<binary_search_steps;i++) {
 	size*=0.5;
@@ -79,14 +82,14 @@ void ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds, out vec2 finalTexCo
     }
     return best_depth;
 */
+
 }
 #endif
 
 void main(void) {
 
     vec4 ambient = vec4(vec3(0.3), 1.0);
-    vec4 diffuse = vec4(vec3(1.0), 1.0);
-    vec4 specular = vec4(vec3(0.5), 1.0);
+    vec4 diffuse = vec4(vec3(0.5), 1.0);
 
     vec3 p = viewSpacePixelPositionOut; // pixel position in eye space
     vec3 v = normalize(p); // view vector in eye space
@@ -163,18 +166,20 @@ void main(void) {
     // compute diffuse and specular terms
     float diff=clamp(dot(-l,finalNormal.xyz),0,1);
 
+
     // -l, because the light vector goes from the light TO the point!
     float spec=clamp(dot(normalize(-l-v),finalNormal.xyz),0,1);
 
     vec4 finalcolor=ambient*finalDiffuse;
 
-    finalcolor.xyz+=0.3*(finalDiffuse.xyz*diffuse.xyz*diff+
-			 specular.xyz*pow(spec,specular.w));
+    finalcolor.xyz+=(finalDiffuse.xyz*diffuse.xyz*diff+
+			 specColor*pow(spec,specShiny));
+
+//    finalcolor.xyz+=(specular.xyz*pow(spec,specular.w));
 
     finalcolor.w=1.0;
     fragmentColor=finalcolor;
 }
-
 
 /*
 nextH =  heightFromTexture - curLayerHeight;
