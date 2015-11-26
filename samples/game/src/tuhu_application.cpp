@@ -46,11 +46,15 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
 
-	 const Vector3f pos = Vector3f(10.614038f, -2.656145f, 9.056442f);
+    const Vector3f pos = Vector3f(5.997801, 5.711470, -3.929811);
     m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,
-pos,
-Vector3f(0.754520f, -0.075467f, 0.651923f)
+
+
+pos,Vector3f(-0.758915, -0.464640, 0.456243)
+
 , true);
+
+
 
     m_snow = new SnowEffect(pos);
     m_snow->Init();
@@ -88,12 +92,13 @@ Vector3f(0.754520f, -0.075467f, 0.651923f)
 	Matrix4f::CreateTranslation(Vector3f(-10,0,0)));
 
 
-
+    /*
     OpenAL::Init();
 
     m_windSound = new Sound("audio/wind2.wav");
     m_windSound->SetGain(1.0f);
     m_windSound->SetLooping(true);
+*/
 }
 
 void TuhuApplication::Render() {
@@ -112,6 +117,7 @@ void TuhuApplication::Render() {
     m_smoke->Render(m_camera->GetMvp(), m_camera->GetPosition());
    m_snow->Render(m_camera->GetMvp(), m_camera->GetPosition());
     m_fire->Render(m_camera->GetMvp(), m_camera->GetPosition());
+
 
     m_stoneFloor->Render(*m_camera, lightPosition);
 

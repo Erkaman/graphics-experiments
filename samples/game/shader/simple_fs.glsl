@@ -1,33 +1,21 @@
 
-#include "shader_lib/shading_lib.glsl"
 
-in vec3 viewSpacePixelPositionOut;
-
-in vec3 normalOut;
-#if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
-in vec3 tangentOut;
-in vec3 bitangentOut;
-#endif
-in vec2 texcoordOut;
-
-in vec3 viewSpaceLightPositionOut;
-in mat4 modelViewMatrixOut;
-in vec3 eyePosOut;
-
-uniform sampler2D normalMap;
-uniform sampler2D diffMap;
-out vec4 fragmentColor;
-
-uniform vec3 specColor;
-uniform float specShiny;
 
 
 #ifdef HEIGHT_MAPPING
-void ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds, out vec2 finalTexCoords, out float parallaxHeight) {
+void rayTrace(
+    sampler2D reliefmap,
+    vec2 dp, // ray origin in tangent space
+    vec2 ds, // ray direction in tangent space.
+
+    vec3 eyePos, // eye position in world space
+
+
+    out vec2 finalTexCoords, out float parallaxHeight) {
 
     // TODO: use the angle to determine number of steps!
 
-    float factor = 1.0 - abs(dot( vec3(0, 1, 0) ,  normalize(eyePosOut) ));
+    float factor = 1.0 - abs(dot( vec3(0, 1, 0) ,  normalize(eyePos) ));
 
      float linear_search_steps= mix(10.0, 30.0,
 					 factor
@@ -96,6 +84,28 @@ void ray_intersect_rm(sampler2D reliefmap, vec2 dp, vec2 ds, out vec2 finalTexCo
 }
 #endif
 
+in vec3 viewSpacePixelPositionOut;
+
+in vec3 normalOut;
+#if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
+in vec3 tangentOut;
+in vec3 bitangentOut;
+#endif
+in vec2 texcoordOut;
+
+in vec3 viewSpaceLightPositionOut;
+in mat4 modelViewMatrixOut;
+in vec3 eyePosOut;
+
+uniform sampler2D normalMap;
+uniform sampler2D diffMap;
+out vec4 fragmentColor;
+
+uniform vec3 specColor;
+uniform float specShiny;
+
+
+
 void main(void) {
     vec3 lightpos = viewSpaceLightPositionOut;
 
@@ -123,7 +133,10 @@ void main(void) {
 
     float rayDepth;
     vec2 rayTexcoord;
-    ray_intersect_rm(normalMap,dp,ds, rayTexcoord, rayDepth);
+    rayTrace(normalMap,dp,ds,
+	     eyePosOut,
+
+	     rayTexcoord, rayDepth);
 
 
 // get normal and color at intersection point

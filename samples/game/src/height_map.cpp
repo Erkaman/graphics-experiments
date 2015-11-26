@@ -158,6 +158,9 @@ void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
 
 
+    // set textures and stuff.
+
+
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
