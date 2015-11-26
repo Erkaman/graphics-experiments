@@ -1,6 +1,9 @@
 
 
 
+vec4 sample(sampler2D tex, vec2 uv) {
+    return texture(tex, vec2(uv.x, 1.0-uv.y) );
+}
 
 #ifdef HEIGHT_MAPPING
 void rayTrace(
@@ -33,7 +36,7 @@ void rayTrace(
     // linear search for first point within object.
     for ( int i=0; i< linear_search_steps-1;i++){
 	depth+=size;
-	float height=texture(reliefmap,dp+ds*depth).w;
+	float height=sample(reliefmap,dp+ds*depth).w;
 	if (best_depth>0.996) // if no depth found yet
 	    if (depth >= height) {
 		best_depth=depth; // store best depth
@@ -49,8 +52,8 @@ void rayTrace(
 
     // heights for linear interpolation
 
-    float nextH	= texture(reliefmap,dp+ds*depth).w - depth; //heightFromTexture - curLayerHeight;
-	float prevH	= texture(reliefmap, prevTCoords).w // texture(u_heightTexture, prevTCoords).r
+    float nextH	= sample(reliefmap,dp+ds*depth).w - depth; //heightFromTexture - curLayerHeight;
+	float prevH	= sample(reliefmap, prevTCoords).w // texture(u_heightTexture, prevTCoords).r
 	    - depth + size;                         // - curLayerHeight + layerHeight;
 
    // proportions for linear interpolation
@@ -84,6 +87,8 @@ void rayTrace(
 }
 #endif
 
+
+
 in vec3 viewSpacePixelPositionOut;
 
 in vec3 normalOut;
@@ -103,8 +108,6 @@ out vec4 fragmentColor;
 
 uniform vec3 specColor;
 uniform float specShiny;
-
-
 
 void main(void) {
     vec3 lightpos = viewSpaceLightPositionOut;
@@ -142,8 +145,8 @@ void main(void) {
 // get normal and color at intersection point
 //    vec2 uv=dp+ds*d;
     vec2 uv = rayTexcoord;
-    vec4 finalNormal = texture(normalMap,uv);
-    vec4 finalDiffuse=texture(diffMap,uv);
+    vec4 finalNormal = sample(normalMap,uv);
+    vec4 finalDiffuse=sample(diffMap, uv );
 
 
     // compute light direction
@@ -162,22 +165,24 @@ void main(void) {
 
 #elif defined NORMAL_MAPPING
 
-    vec4 finalNormal = texture(normalMap,texcoordOut);
-    vec4 finalDiffuse=texture(diffMap,texcoordOut);
+    vec4 finalNormal = sample(normalMap,texcoordOut);
+    vec4 finalDiffuse=sample(diffMap,texcoordOut);
 
     vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
 #else // no normal or height map
 
     vec4 finalNormal = vec4(normalOut,0.0);
-    vec4 finalDiffuse=texture(diffMap,texcoordOut);
+    vec4 finalDiffuse=sample(diffMap,texcoordOut);
 
+    // lightpos in view space
+    // p in view space.
     vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
 
 #endif
 
-    finalNormal.xyz=finalNormal.xyz*2.0-1.0;
-
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
+
+    finalNormal.xyz=finalNormal.xyz*2.0-1.0;
 
      // expand normal to eye space(from tangent space)
     finalNormal.xyz=normalize(finalNormal.x*tangentOut.xyz+
@@ -219,13 +224,9 @@ void main(void) {
 #endif
     vec4 finalcolor=ambient*finalDiffuse;
 
-
-
     finalcolor.xyz+=(finalDiffuse.xyz*diffuse.xyz*diff+
 			 specColor*pow(spec,specShiny));
     finalcolor.w=1.0;
 
-
-
-    fragmentColor=finalcolor;
+    fragmentColor= /*vec4(vec3(specColor*pow(spec,specShiny)),1 );*/  finalcolor;
 }

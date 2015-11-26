@@ -91,6 +91,12 @@ pos,Vector3f(-0.758915, -0.464640, 0.456243)
     m_woodFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(-10,0,0)));
 
+    m_sphere = new GeometryObject();
+    m_sphere->Init("obj/sunball.eob");
+    m_sphere->SetModelMatrix(
+	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
+
+
 
     /*
     OpenAL::Init();
@@ -124,6 +130,7 @@ void TuhuApplication::Render() {
     m_flatWoodFloor->Render(*m_camera, lightPosition);
 
     m_woodFloor->Render(*m_camera, lightPosition);
+    m_sphere->Render(*m_camera, lightPosition);
 
 }
 

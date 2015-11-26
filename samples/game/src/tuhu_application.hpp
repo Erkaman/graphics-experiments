@@ -31,6 +31,7 @@ private:
     GeometryObject* m_stoneFloor;
     GeometryObject* m_flatWoodFloor;
     GeometryObject* m_woodFloor;
+    GeometryObject* m_sphere;
 
 public:
 
