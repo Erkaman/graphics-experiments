@@ -1,4 +1,4 @@
 new_mat None
 diff_map sunball_d.png
-shininess 40.0
-spec_color 0.5 0.5 0.5
+shininess 10.0
+spec_color 0.2 0.2 0.2

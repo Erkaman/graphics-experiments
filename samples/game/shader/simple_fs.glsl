@@ -145,7 +145,7 @@ void main(void) {
 // get normal and color at intersection point
 //    vec2 uv=dp+ds*d;
     vec2 uv = rayTexcoord;
-    vec4 finalNormal = sample(normalMap,uv);
+    vec4 finalNormal = normalize(sample(normalMap,uv));
     vec4 finalDiffuse=sample(diffMap, uv );
 
 
@@ -171,7 +171,7 @@ void main(void) {
     vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
 #else // no normal or height map
 
-    vec4 finalNormal = vec4(normalOut,0.0);
+    vec4 finalNormal = normalize(vec4(normalOut,0.0));
     vec4 finalDiffuse=sample(diffMap,texcoordOut);
 
     // lightpos in view space
@@ -190,7 +190,7 @@ void main(void) {
 
 #else
 
-    finalNormal.xyz = finalNormal.xyz;
+    finalNormal.xyz = normalize(finalNormal.xyz);
 
 #endif
 
@@ -228,5 +228,5 @@ void main(void) {
 			 specColor*pow(spec,specShiny));
     finalcolor.w=1.0;
 
-    fragmentColor= /*vec4(vec3(specColor*pow(spec,specShiny)),1 );*/  finalcolor;
+    fragmentColor= /*vec4(vec3(specColor*pow(spec,specShiny)),1 );*/   finalcolor;
 }
