@@ -4,6 +4,7 @@
 #include <string>
 
 #include "file.hpp"
+#include "gl/shader_program.hpp"
 
 // Singelton
 class ResourceManager {
@@ -32,5 +33,11 @@ public:
     static std::string LocateAndReadResource(const std::string& resourcePath);
 
     static File OpenResourceForReading(const std::string& resourcePath);
+
+
+    static ShaderProgram* LoadShader(
+	std::string vertexShaderPath,
+	std::string fragmentShaderPath,
+	std::vector<std::string> defines);
 
 };

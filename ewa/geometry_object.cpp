@@ -12,6 +12,7 @@
 #include "resource_manager.hpp"
 
 using std::string;
+using std::vector;
 
 Texture* LoadTexture(const string& filename) {
     Texture* texture = new Texture2D(filename);
@@ -65,25 +66,20 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 
     if(!useCustomShader) {
 	string shaderName = "shader/simple";
-	string vertexSource = ResourceManager::LocateAndReadResource(shaderName + "_vs.glsl");
-	string fragmentSource = ResourceManager::LocateAndReadResource(shaderName + "_fs.glsl");
 
-
+	vector<string> defines;
 
 	if(m_hasSpecularMap) {
-	    vertexSource = string("#define SPEC_MAPPING\n\n") + vertexSource;
-	    fragmentSource = string("#define SPEC_MAPPING\n\n") + fragmentSource;
+	    defines.push_back("SPEC_MAPPING");
 	}
 
 	if(m_hasHeightMap) {
-	    vertexSource = string("#define HEIGHT_MAPPING\n\n") + vertexSource;
-	    fragmentSource = string("#define HEIGHT_MAPPING\n\n") + fragmentSource;
-	} else if(m_hasNormalMap) {
-	    vertexSource = string("#define NORMAL_MAPPING\n\n") + vertexSource;
-	    fragmentSource = string("#define NORMAL_MAPPING\n\n") + fragmentSource;
+	    defines.push_back("HEIGHT_MAPPING");
+	} else if(m_hasNormalMap) { // only a normal map, no height map.
+	    defines.push_back("NORMAL_MAPPING");
 	}
 
-	m_defaultShader = new ShaderProgram(vertexSource, fragmentSource);
+	m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
     }
 
     for(size_t i = 0; i < data.m_chunks.size(); ++i) {

@@ -4,6 +4,8 @@
 
 #include "log.hpp"
 
+using std::string;
+
 ResourceManager& ResourceManager::GetInstance() {
     static ResourceManager instance;
     return instance;
@@ -76,4 +78,20 @@ File ResourceManager::OpenResourceForReading(const std::string& resourcePath) {
     }
 
     return f;
+}
+
+ShaderProgram* ResourceManager::LoadShader(
+    string vertexShaderPath,
+    string fragmentShaderPath,
+    std::vector<string> defines) {
+
+    string vertexSource = ResourceManager::LocateAndReadResource(vertexShaderPath);
+    string fragmentSource = ResourceManager::LocateAndReadResource(fragmentShaderPath);
+
+    for(int i = 0; i < defines.size(); ++i) {
+	vertexSource = string("#define ") + defines[i] +  string("\n\n") + vertexSource;
+	fragmentSource = string("#define ") + defines[i] +  string("\n\n") + fragmentSource;
+    }
+
+    return new ShaderProgram(vertexSource, fragmentSource);
 }

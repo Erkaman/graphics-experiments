@@ -1,2 +1,2 @@
 ll:
-	make -C samples/cellular
+	make -C samples/game

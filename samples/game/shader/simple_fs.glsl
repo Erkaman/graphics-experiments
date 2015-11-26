@@ -1,3 +1,6 @@
+
+#include "shader_lib/shading_lib.glsl"
+
 in vec3 viewSpacePixelPositionOut;
 
 in vec3 normalOut;
