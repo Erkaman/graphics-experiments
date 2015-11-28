@@ -130,6 +130,13 @@ void TuhuApplication::Render() {
     m_flatWoodFloor->Render(*m_camera, lightPosition);
 
     m_woodFloor->Render(*m_camera, lightPosition);
+
+    m_sphere->SetModelMatrix(
+	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
+    m_sphere->Render(*m_camera, lightPosition);
+
+    m_sphere->SetModelMatrix(
+	Matrix4f::CreateTranslation(Vector3f(lightPosition)));
     m_sphere->Render(*m_camera, lightPosition);
 
 }
