@@ -6,7 +6,6 @@
 #include "ewa/math/vector4f.hpp"
 #include "ewa/keyboard_state.hpp"
 
-#include "plane.hpp"
 #include "cube.hpp"
 
 #include <math.h>
@@ -21,12 +20,10 @@ void ToClipboard(const std::string& str) {
     system(command.c_str());
 }
 
-CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_cellularPlane(NULL), m_perlinPlane(NULL), m_lightPosition(Vector4f(7,8, -9, 1.0f)), m_time(0.0){ }
+CellularApplication::CellularApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_lightPosition(Vector4f(7,8, -9, 1.0f)), m_time(0.0){ }
 
 CellularApplication::~CellularApplication() {
     MY_DELETE(m_camera);
-/*    MY_DELETE(m_cellularPlane);
-      MY_DELETE(m_perlinPlane);*/
 
       MY_DELETE(m_sun);
       MY_DELETE(m_ball);

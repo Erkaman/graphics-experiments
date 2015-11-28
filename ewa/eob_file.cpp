@@ -5,11 +5,14 @@
 #include "file.hpp"
 
 #include "buffered_file_reader.hpp"
+#include "resource_manager.hpp"
+
 #include "ewa/str.hpp"
 
 
 #include <map>
 #include <vector>
+#include <assert.h>
 
 using std::string;
 using std::map;
@@ -231,7 +234,7 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 
     GeometryObjectData data;
 
-    File f(infile, FileModeReading);
+    File f(ResourceManager::GetInstance().FindResource(infile), FileModeReading);
 
     map<string, Material*> matlib = ReadMaterialFile(infile);
 
@@ -254,10 +257,14 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 
     // read vertex attrib size array
     uint32 length = f.Read32u();
-    std::vector<GLuint> vertexAttribsSizes;
-    vertexAttribsSizes.reserve(length / sizeof(GLuint));
-    f.ReadArray(&vertexAttribsSizes[0], length);
+    //std::vector<GLuint> vertexAttribsSizes;
+	GLuint* vertexAttribsSizes = new GLuint[length / sizeof(GLuint)];
+
+   // vertexAttribsSizes.reserve(length / sizeof(GLuint));
+
+    f.ReadArray(vertexAttribsSizes, length);
     data.m_vertexAttribsSizes = std::vector<GLuint>(&vertexAttribsSizes[0]+0, &vertexAttribsSizes[0]+length / sizeof(GLuint));
+	delete []vertexAttribsSizes; 
 
         // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
 

@@ -2,6 +2,8 @@
 
 #include "log.hpp"
 
+#include <algorithm>
+
 using std::string;
 
 std::vector<std::string> SplitString(const std::string& str,

@@ -19,7 +19,7 @@
 
 using std::vector;
 
-Skydome::Skydome(const float radius, const int slices, const int stacks): GeometryObject(Vector3f(0), Vector3f(1)), m_delta(0) {
+Skydome::Skydome(const float radius, const int slices, const int stacks): m_delta(0) {
 
     /*
       Create the skydome.

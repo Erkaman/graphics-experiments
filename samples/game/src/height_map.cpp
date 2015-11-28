@@ -12,6 +12,7 @@
 #include "math/matrix4f.hpp"
 #include "camera.hpp"
 #include "file.hpp"
+#include "resource_manager.hpp"
 
 #include "math/vector2f.hpp"
 #include "math/vector3f.hpp"
@@ -24,6 +25,7 @@
 #include "lodepng.h"
 
 using std::vector;
+using std::string;
 
 constexpr int WIDTH = 256;
 constexpr int HEIGHT = 256;
@@ -227,13 +229,16 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     */
 
     std::vector<unsigned char> buffer;
-    lodepng::load_file(buffer, path);
+	string fullPath = ResourceManager::GetInstance().FindResource(path);
+
+	lodepng::load_file(buffer, fullPath);
 
     lodepng::State state;
     std::vector<unsigned char> imageData;
     unsigned int width;
     unsigned int depth;
 
+	
     unsigned error = lodepng::decode(imageData, width, depth, state, buffer);
 
     if(error != 0){

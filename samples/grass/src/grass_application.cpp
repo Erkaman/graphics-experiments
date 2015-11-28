@@ -11,6 +11,7 @@
 #include "ewa/gl/shader_program.hpp"
 
 #include "ewa/math/vector4f.hpp"
+#include "ewa/math/vector2f.hpp"
 
 #include "plane.hpp"
 #include "grass.hpp"

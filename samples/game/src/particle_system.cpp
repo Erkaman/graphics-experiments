@@ -269,22 +269,22 @@ void ParticleSystem::RenderParticles(const Matrix4f& VP, const Vector3f& CameraP
 
     m_particleBuffer[m_currTFB]->Bind();
 
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
+	GL_C(glEnableVertexAttribArray(0));
+	GL_C(glEnableVertexAttribArray(1));
+	GL_C(glEnableVertexAttribArray(2));
+	GL_C(glEnableVertexAttribArray(3));
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)4);  // position
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)0);  // type
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)32);  // size
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)36);  // color
+	GL_C(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)4));  // position
+	GL_C(glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)0));  // type
+	GL_C(glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)32));  // size
+	GL_C(glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)36));  // color
 
     GL_C(glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]));
 
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(2);
-    glDisableVertexAttribArray(3);
+	GL_C(glDisableVertexAttribArray(0));
+	GL_C(glDisableVertexAttribArray(1));
+	GL_C(glDisableVertexAttribArray(2));
+	GL_C(glDisableVertexAttribArray(3));
 
     GL_C(glDisable(GL_BLEND));
 

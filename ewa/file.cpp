@@ -106,7 +106,7 @@ void* File::ReadArray(const size_t& dataSize) {
     return ptr;
 }
 
-size_t File::ReadArray(void* outData, const size_t& dataSize) {
+size_t File::ReadArray(void* outData, const size_t dataSize) {
     return fread(outData, 1, dataSize, m_fp);
 }
 
@@ -255,5 +255,6 @@ bool File::IsEof() {
 }
 
 void File::ReadLine(char* buffer, int bufferSize) {
+
     fgets(buffer, bufferSize, m_fp);
 }

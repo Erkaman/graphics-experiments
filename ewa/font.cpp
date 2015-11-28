@@ -49,9 +49,6 @@ Font::Font(
 
     char buffer[40];
 
-
-    printf("bla\n");
-
     while(!atlasFile.IsEof()){
 
 	atlasFile.ReadLine(buffer, 40);
@@ -61,12 +58,13 @@ Font::Font(
 	// first char is always the character.
 	char ch = str[0];
 
-
 	vector<string> tokens = SplitString(str.substr(2), ",");
+
+	assert(tokens.size() == 5);
 
 	// the character of the token.
 
-
+	
 	AtlasEntry entry;
 	entry.x = stoi(tokens[0]);
 	entry.y = stoi(tokens[1]);

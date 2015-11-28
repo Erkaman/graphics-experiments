@@ -1,13 +1,12 @@
 #pragma once
 
-#include "ewa/geometry_object.hpp"
 
 class VBO;
 class ShaderProgram;
 class Camera;
 class ValueNoiseSeed;
 
-class Skydome : public GeometryObject{
+class Skydome{
 
 private:
 
