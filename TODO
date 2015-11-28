@@ -1,86 +1,70 @@
 
+Todo:
 
 
-
-implement text:
-https://github.com/rougier/freetype-py/blob/master/examples/opengl.py
-
-
-SIMD
-
-The format will need the following:
-
-map_Bump normal.png
-map_Kd diffuse.png
-map_spec specular.png
-map_height height.png
-
-matColorSpecular, the specular color, will be used as specular if no
-specular texture is specified
-
-materialShininess, is ammlunt of shininess for material. should always
-be specified.
-
-
-* bump mapping.
-* http://www.valvesoftware.com/publications/2006/SIGGRAPH06_Course_ShadingInValvesSourceEngine.pdf
-* read about ambient cube.
-
-misc todo:
 * implement precomputed radiance transfer for prebaked global illuminatin
 * shadow mapping.
 * create an efficient terrain system.
 * water rendering
 * shadows.
-* make prettier text.
+* Deferred rendering, multiple materials:
+* Make better unit testing framework.
 
 
-* detail textures to improve the grass texture. http://blogs.msdn.com/b/shawnhar/archive/2008/11/03/detail-textures.aspx
-https://developer.valvesoftware.com/wiki/$detail
+links:
 
-* trees.
+glsl worley and perlin
+http://drilian.com/2007/10/27/jpeg-buoys-amidst-a-sea-of-text/
 
 
-* HDR
-* make bmp loader.
-*bsp vs octtree http://stackoverflow.com/questions/99796/when-to-use-binary-space-partitioning-quadtree-octree
+valve graphics
+http://www.valvesoftware.com/publications/2006/SIGGRAPH06_Course_ShadingInValvesSourceEngine.pdf
+
+
+spatial data structures.
 http://gamedev.stackexchange.com/questions/5493/whats-the-state-of-the-art-in-space-partitioning-for-games
 
 
 
-
-http://freespace.virgin.net/hugo.elias/models/m_perlin.htm
-https://graphics.ethz.ch/teaching/imsynth12/competition//2nd%20Place..%20Adrian%20Blumer/report.html
-http://www.sci.utah.edu/~leenak/IndStudy_reportfall/Perlin%20Noise%20on%20GPU.html
-https://skybase.wordpress.com/2012/01/26/how-to-creating-super-simple-procedural-wood-textures-in-filter-forge/
-http://amber.rc.arizona.edu/darktree/cellular.html
-
-animated perlin:
-
-This was produced by viewing a slice of 3D noise. For animation, the viewing area moves in two dimensions (z and y). One dimension makes the fire flicker, the other makes it look like it's rising. A simple gradient was applied to the resulting noise to fade away towards the top.
+* detail textures to improve the grass texture.
+http://blogs.msdn.com/b/shawnhar/archive/2008/11/03/detail-textures.aspx
+https://developer.valvesoftware.com/wiki/$detail
 
 
 
-perlin article:
-http://http.developer.nvidia.com/GPUGems/gpugems_ch05.html
 
-http://theorangeduck.com/page/avoiding-shader-conditionals
+* deferred rendering notes:
 
+http://www.cse.chalmers.se/~uffe/bachelor/kandidatarbetestartpaket/DATx02-14-81.pdf
+page 16 has a very nice formula!
 
+emissive component, light calculation.
 
-has a very clean implementation of 3d noise: use this base!
-http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter26.html
-also use
-noise1234.c as base
+http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter09.html
 
-
-GUI design.
+http://gamedev.stackexchange.com/questions/19575/is-there-a-way-to-use-an-arbitrary-number-of-lights-in-a-fragment-shader
 
 
-http://drilian.com/2007/10/27/jpeg-buoys-amidst-a-sea-of-text/
-http://drilian.com/wp-content/uploads/2010/01/SimpleBrick.jpg
+to handle materials with multiple brdfs, store material id in buffer.
 
 
-polka and cubism noise:
-https://briansharpe.wordpress.com/2011/12/24/polkadot-and-star-noises/
-http://www.swineworld.org/2015/08/fast-voronoi-f2f1-in-blender-cycles-on.html
+We don't need to store the position in a texture:
+
+"The position is usually not stored. It is instead reconstituted in
+the second pass by math that's too complex to get into here. Suffice
+it to say, we use the depth buffer and the screen-space fragment
+position as the input to figure out the camera-space position of the
+point on a surface."
+
+we want to render to four render targets. in total, we get 16 floating
+point numbers to play around with!
+
+
+* doom 3 map format:
+
+http://doomwiki.org/wiki/Thing
+
+doom3 map format:
+http://web.archive.org/web/20080220062502/http://www.gamers.org/dEngine/quake/QDP/qmapspec.html
+
+https://developer.valvesoftware.com/wiki/MAP_file_format

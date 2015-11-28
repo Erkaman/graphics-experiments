@@ -37,7 +37,7 @@ TuhuApplication::~TuhuApplication() {
 void TuhuApplication::Init() {
     m_smoke = new SmokeEffect(Vector3f(11.5,-3,10));
     m_smoke->Init();
-	
+
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
@@ -48,25 +48,25 @@ void TuhuApplication::Init() {
 
 , true);
 
-	
+
 
     m_snow = new SnowEffect(pos);
     m_snow->Init();
-	
 
-	
+
+
     m_fire = new FireEffect(Vector3f(12,-3,10));
     m_fire->Init();
-	
+
 
     m_heightMap = new HeightMap("img/combined.png");
 
-	
+
 
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
-	
+
     m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
 
@@ -79,17 +79,17 @@ void TuhuApplication::Init() {
     m_flatWoodFloor->Init("obj/flat_wood_floor.eob");
     m_flatWoodFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(10,0,0)));
-	
+
     m_woodFloor = new GeometryObject();
     m_woodFloor->Init("obj/wood_floor.eob");
     m_woodFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(-10,0,0)));
-	
+
     m_sphere = new GeometryObject();
     m_sphere->Init("obj/sunball.eob");
     m_sphere->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
-	
+
 
 
     /*
@@ -106,19 +106,19 @@ void TuhuApplication::Render() {
     SetViewport();
 
     Clear(0.0f, 1.0f, 1.0f);
-	
+
     m_skydome->Draw(*m_camera);
-	
+
     Vector4f lightPosition(93,10.0f,93, 1.0f);
    m_heightMap->Draw(*m_camera, lightPosition);
-   
+
     m_grass->Draw(*m_camera, lightPosition);
 
     m_smoke->Render(m_camera->GetMvp(), m_camera->GetPosition());
-  
-	
+
+
 	m_snow->Render(m_camera->GetMvp(), m_camera->GetPosition());
-    
+
 	m_fire->Render(m_camera->GetMvp(), m_camera->GetPosition());
 
 
@@ -127,17 +127,17 @@ void TuhuApplication::Render() {
     m_flatWoodFloor->Render(*m_camera, lightPosition);
 
     m_woodFloor->Render(*m_camera, lightPosition);
-	
+
     m_sphere->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
     m_sphere->Render(*m_camera, lightPosition);
-	
 
-	
+
+
     m_sphere->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(lightPosition)));
     m_sphere->Render(*m_camera, lightPosition);
-	
+
 }
 
 void TuhuApplication::Update(const float delta) {
@@ -149,11 +149,11 @@ void TuhuApplication::Update(const float delta) {
     m_fire->Update(delta);
 
       m_skydome->Update(delta);
-	  
+
       m_grass->Update(delta);
-	  
+
     const KeyboardState& kbs = KeyboardState::GetInstance();
-	
+
     if( kbs.IsPressed(GLFW_KEY_P) ) {
 
 	string out = "Vector3f" +tos(m_camera->GetPosition()) + ",";
@@ -172,5 +172,6 @@ void TuhuApplication::Update(const float delta) {
 }
 
 void TuhuApplication::RenderText()  {
-  //  m_font->DrawString(*m_fontShader, 600,150, "hello world" );
+
+    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
 }
