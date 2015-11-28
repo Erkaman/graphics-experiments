@@ -23,12 +23,14 @@ void ResourceManager::AddResourcePath(const std::string& path) {
 
 std::string ResourceManager::FindResource(const std::string& resourceName) {
 
+
     std::string foundResource;
-    if(!ResourceExists(resourceName, foundResource)) {
-	LOG_E("The resource %s could not be found", resourceName.c_str());
-    } else {
+    if(!ResourceExists(resourceName, foundResource)) 
+		LOG_E("The resource %s could not be found", resourceName.c_str());
+
+
 	return foundResource;
-    }
+    
 }
 
 bool ResourceManager::ResourceExists(const std::string& resourceName, std::string& foundResource) {
@@ -88,7 +90,7 @@ ShaderProgram* ResourceManager::LoadShader(
     string vertexSource = ResourceManager::LocateAndReadResource(vertexShaderPath);
     string fragmentSource = ResourceManager::LocateAndReadResource(fragmentShaderPath);
 
-    for(int i = 0; i < defines.size(); ++i) {
+    for(size_t i = 0; i < defines.size(); ++i) {
 	vertexSource = string("#define ") + defines[i] +  string("\n\n") + vertexSource;
 	fragmentSource = string("#define ") + defines[i] +  string("\n\n") + fragmentSource;
     }

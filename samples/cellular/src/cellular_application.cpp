@@ -68,7 +68,7 @@ void CellularApplication::Render() {
     SetViewport();
     Clear(0.0f, 0.3f, 0.5f);
 
-    angle += 0.2;
+    angle += 0.2f;
 
     m_stoneFloor->Render(*m_camera, m_lightPosition);
 

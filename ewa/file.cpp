@@ -251,10 +251,12 @@ void File::WriteLine(const std::string& str) {
 }
 
 bool File::IsEof() {
-    return feof(m_fp);
+    return feof(m_fp) != 0;
 }
 
 void File::ReadLine(char* buffer, int bufferSize) {
+
+	//LOG_I("feof: %d", feof(m_fp));
 
     fgets(buffer, bufferSize, m_fp);
 }

@@ -308,10 +308,6 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 	chunk->m_vertices= ReadArray(f, temp);
 	chunk->m_verticesSize = temp;
 
-
-	float*vs = (float *) chunk->m_vertices;
-
-
 	uint32 indexMagic = f.Read32u();
 	if(indexMagic != INDX) {
 	    LOG_E("%s is not a EOB file: chunk number %d has an invalid index magic number %d", infile.c_str(), i, indexMagic);

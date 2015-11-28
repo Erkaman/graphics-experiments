@@ -12,6 +12,7 @@
 #include "ewa/math/vector2f.hpp"
 
 #include <map>
+#include <assert.h>
 
 
 using std::vector;
@@ -173,11 +174,11 @@ int main (int argc, char * argv[]) {
 
 	}else if(firstToken == "f") {
 
-	    GLushort one = ParseFEntry(tokens[1]);
-	    GLushort two = ParseFEntry(tokens[2]);
+	    GLushort one = (GLushort)ParseFEntry(tokens[1]);
+	    GLushort two = (GLushort)ParseFEntry(tokens[2]);
 
 	    for(size_t i = 3; i < tokens.size(); ++i) {
-		GLushort three = ParseFEntry(tokens[i]);
+		GLushort three = (GLushort)ParseFEntry(tokens[i]);
 
 
 		// add the indices of a single triangle
@@ -235,7 +236,6 @@ int main (int argc, char * argv[]) {
 }
 
 map<string, Material*> ParseMtllib(const string& filename) {
-    map<string, Material*> mtllib;
     Material* currentMaterial = NULL;
 
     BufferedFileReader reader(File::AppendPaths(basePath, filename) );
@@ -306,8 +306,8 @@ int ParseFEntry(const string& entry) {
 
     vector<string> tokens =SplitString(entry, "/");
 
-    Vector3f point = points[ stof(tokens[0])-1 ];
-    Vector2f texCoord = texCoords[ stof(tokens[1])-1 ];
+    Vector3f point = points[ stoi(tokens[0])-1 ];
+    Vector2f texCoord = texCoords[ stoi(tokens[1])-1 ];
 
 
     Vector3f normal;
@@ -315,7 +315,7 @@ int ParseFEntry(const string& entry) {
     if(noNormals) {
 	normal = Vector3f(0);
     } else {
-	normal = normals[ stof(tokens[2])-1 ];
+	normal = normals[ stoi(tokens[2])-1 ];
     }
 
     point.Add(currentChunk->m_vertices);
@@ -328,7 +328,7 @@ int ParseFEntry(const string& entry) {
 	tangent.Add(currentChunk->m_vertices);
     }
 
-    GLushort index = indexTable.size();
+    GLushort index = (GLushort)indexTable.size();
 
     indexTable[entry] = index;
 

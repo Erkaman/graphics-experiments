@@ -47,11 +47,11 @@ void Application::Start() {
 
     m_fontShader = new ShaderProgram("shader_lib/font_render");
 
-  /*  m_font = new Font(
+   /* m_font = new Font(
 	"img_lib/Ubuntu-B-64.png",
 	"img_lib/Ubuntu-B-64.amf",
 	GetWindowWidth(),GetWindowHeight(),
-	0.3);
+	0.3f);
 	*/
 
     KeyboardState::GetInstance().Init(m_window);
