@@ -16,7 +16,7 @@ vec3 calculateDiffuse(vec3 diffuseLight, vec3 materialDiffuse,
     return diffuseLight * materialDiffuse * max(0,dot(normal, directionToLight));
 }
 
-vec3 phongVertex(vec3 diffuseTextureSample, vec3 viewSpaceNormal, vec3 viewSpaceLightPosition, vec3 viewSpacePosition) {
+vec3 phongVertex(vec3 diffuseTextureSample, vec3 viewSpaceNormal, vec3 viewSpaceLightDirection, vec3 viewSpacePosition) {
 
     vec3 ambient = diffuseTextureSample;
 
@@ -24,8 +24,9 @@ vec3 phongVertex(vec3 diffuseTextureSample, vec3 viewSpaceNormal, vec3 viewSpace
 
     vec3 normal = normalize(viewSpaceNormal);
 
-    vec3 directionToLight =
-	normalize(viewSpaceLightPosition - viewSpacePosition);
+//    vec3 directionToLight =
+//	normalize(viewSpaceLightPosition - viewSpacePosition);
+    vec3 directionToLight = viewSpaceLightDirection;
 
     vec3 directionFromEye = normalize(viewSpacePosition);
 

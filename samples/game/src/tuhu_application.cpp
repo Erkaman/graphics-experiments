@@ -23,8 +23,9 @@ void ToClipboard(const std::string& str) {
     std::string command = "echo '" + str + "' | pbcopy";
     system(command.c_str());
 }
+
 //(0.705072, 0.0758142, 0.705072)
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL),m_skydome(NULL), m_lightPosition(93,10.0f,93, 1.0f){ }
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL),m_skydome(NULL), m_lightPosition(-0.705072f, -0.0758142f, -0.705072f , 0.0f){ }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_camera);

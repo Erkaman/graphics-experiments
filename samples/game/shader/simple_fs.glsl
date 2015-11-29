@@ -98,7 +98,7 @@ in vec3 bitangentOut;
 #endif
 in vec2 texcoordOut;
 
-in vec3 viewSpaceLightPositionOut;
+uniform vec3 viewSpaceLightDirection;
 in mat4 modelViewMatrixOut;
 in vec3 eyePosOut;
 
@@ -111,8 +111,7 @@ uniform float specShiny;
 
 void main(void) {
     // since it is directional light, minus.
-    vec3 lightpos = -viewSpaceLightPositionOut;
-
+    vec3 lightpos = -viewSpaceLightDirection;
 
     vec4 ambient = vec4(vec3(0.3), 1.0);
     vec4 diffuse = vec4(vec3(0.5), 1.0);
@@ -151,9 +150,10 @@ void main(void) {
 
 
     // compute light direction
-    p += v*rayDepth*s.z;
-    vec3 l=normalize(p-lightpos.xyz);
-
+//    p += v*rayDepth*s.z;
+//    vec3 l=normalize(p-lightpos.xyz);
+    // NOTE: use the above when point light.
+    vec3 l= -lightpos.xyz;
     /*
       Depth correct.
     */
@@ -168,7 +168,8 @@ void main(void) {
     vec4 finalNormal = sample(normalMap,texcoordOut);
     vec4 finalDiffuse=sample(diffMap,texcoordOut);
 
-    vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
+    // vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
+    vec3 l=-lightpos.xyz;
 #else // no normal or height map
 
     vec4 finalNormal = normalize(vec4(normalOut,0.0));
@@ -176,7 +177,8 @@ void main(void) {
 
     // lightpos in view space
     // p in view space.
-    vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
+//    vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
+    vec3 l= -lightpos.xyz; // view vector in eye space.
 
 #endif
 
@@ -199,7 +201,8 @@ void main(void) {
     float diff=clamp(dot(-l,finalNormal.xyz),0,1);
 
     // -l, because the light vector goes from the light TO the point!
-    float spec=clamp(dot(normalize(-l-v),finalNormal.xyz),0,1);
+    float spec=
+	clamp(dot(normalize(-l-v),finalNormal.xyz),0,1);
 
 #if defined HEIGHT_MAPPING
     // shadows. DOES NOT WORK YET.

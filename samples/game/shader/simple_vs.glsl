@@ -11,8 +11,6 @@ uniform mat4 modelViewMatrix;
 uniform mat4 normalMatrix;
 uniform vec3 eyePos;
 
-uniform vec3 viewSpaceLightPosition;
-
 out vec3 viewSpacePixelPositionOut;
 
 out vec3 normalOut;
@@ -31,8 +29,6 @@ void main()
 {
     // vertex position
     viewSpacePixelPositionOut = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
-
-    viewSpaceLightPositionOut = viewSpaceLightPosition;
 
     normalOut = normalize(  (normalMatrix * vec4(normalIn, 0.0)).xyz );
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING

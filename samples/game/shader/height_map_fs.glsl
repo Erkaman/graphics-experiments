@@ -4,7 +4,7 @@ in vec3 position;
 
 out vec4 fragmentColor;
 
-uniform vec3 viewSpaceLightPosition;
+uniform vec3 viewSpaceLightDirection;
 
 //in vec3 vertexColor;
 in vec2 texCoord;
@@ -60,7 +60,7 @@ void main()
 {
 
     vec3 shading = phongVertex(sampleDiffuseTexture(), viewSpaceNormal,
-			       -viewSpaceLightPosition // minus, because its a directional light.
+			       viewSpaceLightDirection // minus, because its a directional light.
 			       , viewSpacePosition);
     fragmentColor = vec4(shading, 1.0);
 }
