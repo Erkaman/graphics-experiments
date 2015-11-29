@@ -148,6 +148,8 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Vector3f& v
 
 void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& camera, const Vector4f& lightPosition) {
 
+//    Vector4f lightPositionn = Vector4f(0.705072, 0.0758142, 0.705072, 0);
+
     const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
 	modelMatrix);
 
@@ -157,7 +159,7 @@ void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& 
     SetUniform("modelViewMatrix", modelViewMatrix);
     SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
 
-    SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * lightPosition) );
+    SetUniform("viewSpaceLightPosition", Vector3f(camera.GetViewMatrix() * (-lightPosition)  ) );
     SetUniform("eyePos", camera.GetPosition() );
 
 }

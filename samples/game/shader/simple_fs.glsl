@@ -110,7 +110,8 @@ uniform vec3 specColor;
 uniform float specShiny;
 
 void main(void) {
-    vec3 lightpos = viewSpaceLightPositionOut;
+    // since it is directional light, minus.
+    vec3 lightpos = -viewSpaceLightPositionOut;
 
 
     vec4 ambient = vec4(vec3(0.3), 1.0);
@@ -152,7 +153,6 @@ void main(void) {
     // compute light direction
     p += v*rayDepth*s.z;
     vec3 l=normalize(p-lightpos.xyz);
-
 
     /*
       Depth correct.

@@ -23,9 +23,8 @@ void ToClipboard(const std::string& str) {
     std::string command = "echo '" + str + "' | pbcopy";
     system(command.c_str());
 }
-
-
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL),m_skydome(NULL){ }
+//(0.705072, 0.0758142, 0.705072)
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL),m_skydome(NULL), m_lightPosition(93,10.0f,93, 1.0f){ }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_camera);
@@ -66,8 +65,7 @@ void TuhuApplication::Init() {
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
-
-    m_grass = new Grass(Vector2f(10,10), m_heightMap);
+//    m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
 
     m_stoneFloor = new GeometryObject();
@@ -101,18 +99,21 @@ void TuhuApplication::Init() {
 	*/
 }
 
-void TuhuApplication::Render() {
 
-    SetViewport();
+void TuhuApplication::RenderShadowMap() {
 
-    Clear(0.0f, 1.0f, 1.0f);
+    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void TuhuApplication::RenderScene() {
+
 
     m_skydome->Draw(*m_camera);
 
-    Vector4f lightPosition(93,10.0f,93, 1.0f);
-   m_heightMap->Draw(*m_camera, lightPosition);
 
-    m_grass->Draw(*m_camera, lightPosition);
+   m_heightMap->Draw(*m_camera, m_lightPosition);
+
+//    m_grass->Draw(*m_camera, m_lightPosition);
 
     m_smoke->Render(m_camera->GetMvp(), m_camera->GetPosition());
 
@@ -122,21 +123,36 @@ void TuhuApplication::Render() {
 	m_fire->Render(m_camera->GetMvp(), m_camera->GetPosition());
 
 
-    m_stoneFloor->Render(*m_camera, lightPosition);
+    m_stoneFloor->Render(*m_camera, m_lightPosition);
 
-    m_flatWoodFloor->Render(*m_camera, lightPosition);
+    m_flatWoodFloor->Render(*m_camera, m_lightPosition);
 
-    m_woodFloor->Render(*m_camera, lightPosition);
+    m_woodFloor->Render(*m_camera, m_lightPosition);
 
     m_sphere->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
-    m_sphere->Render(*m_camera, lightPosition);
+    m_sphere->Render(*m_camera, m_lightPosition);
 
-
-
+/*
     m_sphere->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(lightPosition)));
-    m_sphere->Render(*m_camera, lightPosition);
+	Matrix4f::CreateTranslation(
+
+	    Vector3f(0.705072, 0.0758142, 0.705072)
+
+));
+    m_sphere->Render(*m_camera, m_lightPosition);*/
+
+
+}
+
+void TuhuApplication::Render() {
+
+    SetViewport();
+
+    RenderShadowMap();
+    RenderScene();
+
+
 
 }
 

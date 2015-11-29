@@ -3,6 +3,8 @@
 #include "ewa/application.hpp"
 #include "ewa/common.hpp"
 
+#include "ewa/math/vector4f.hpp"
+
 class Camera;
 class HeightMap;
 class Skydome;
@@ -33,6 +35,8 @@ private:
     GeometryObject* m_woodFloor;
     GeometryObject* m_sphere;
 
+    Vector4f m_lightPosition;
+
 public:
 
     TuhuApplication(int argc, char *argv[]);
@@ -42,5 +46,8 @@ public:
     void Render() override;
     void RenderText() override;
     void Update(const float delta) override;
+
+    void RenderShadowMap();
+    void RenderScene();
 
 };
