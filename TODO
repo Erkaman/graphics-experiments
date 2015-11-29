@@ -1,3 +1,25 @@
+* target polygon count:
+10000 is way too many.
+3000 can be fine depending on the model. if it is a complex model.
+
+also, texture sizes should be 256x256 to 512x512
+
+https://forum.beyond3d.com/threads/yes-but-how-many-polygons-an-artist-blog-entry-with-interesting-numbers.39321/
+http://www.gameartisans.org/forums/threads/23520-Historical-Poly-Counts
+http://www.rsart.co.uk/2007/08/27/yes-but-how-many-polygons/
+
+Race Game:
+Environment map on car.
+fire particle effect out pipe at back.
+particle effect at goal to mark the goal.
+use railings to make sure car is in track.
+sparkles fly when you land?
+* rain effect
+* snow effect.
+https://www.youtube.com/watch?v=r1CT9wTQiwc
+*water
+
+
 
 Todo:
 
@@ -9,6 +31,8 @@ Todo:
 * shadows.
 * Deferred rendering, multiple materials:
 * Make better unit testing framework.
+* make program for converting shader to png texture.
+* make better clouds. See here for inspiration: https://www.shadertoy.com/view/XlSSRd
 
 
 links:
