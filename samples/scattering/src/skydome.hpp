@@ -9,7 +9,7 @@ class ShaderProgram;
 class Camera;
 class Vector4f;
 
-class Skydome : public GeometryObject{
+class Skydome {
 
 private:
 

@@ -2,6 +2,7 @@
 
 #include "gl/shader_program.hpp"
 #include "gl/fbo.hpp"
+#include "gl/color_fbo.hpp"
 #include "gl/texture.hpp"
 
 #include "ewa/camera.hpp"
@@ -36,8 +37,8 @@ void ScatteringApplication::Init() {
 
     m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,Vector3f(0,0.0f,0), Vector3f(1.0f,-0.5f,1.0f), true);
 
-    m_fullscreenFbo = new FBO(9,
-			      GetFramebufferWidth(), GetFramebufferHeight());
+    m_fullscreenFbo = new ColorFBO();
+    m_fullscreenFbo->Init(9, GetFramebufferWidth(), GetFramebufferHeight());
 
     m_quad = new Quad(Vector2f(-1.0f), Vector2f(1.0f));
 

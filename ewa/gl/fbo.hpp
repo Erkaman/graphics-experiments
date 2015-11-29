@@ -8,14 +8,14 @@ class Texture;
 
 class FBO{
 
-private:
+protected:
 
     FBO(const FBO&);
     FBO& operator=(const FBO&);
 
     GLuint m_fboHandle;
     const GLenum m_target;
-    const GLenum m_targetTextureUnit;
+    GLenum m_targetTextureUnit;
 
     RenderBuffer* m_depthBuffer;
 
@@ -28,19 +28,20 @@ private:
 
     void CheckFramebufferStatus();
 
+
 public:
 
-    FBO(const GLenum targetTextureUnit, const GLsizei width, const GLsizei height);
+    FBO();
+    void Init(const GLenum targetTextureUnit, const GLsizei width, const GLsizei height);
 
-    ~FBO();
+    virtual ~FBO();
 
     GLenum GetTargetTextureUnit();
-
 
     /**
      * This method MUST be called every time the window is resized!
      */
-    void RecreateBuffers(const GLsizei width, const GLsizei height);
+    virtual void RecreateBuffers(const GLsizei width, const GLsizei height) = 0;
 
     void BindForWriting() {
 	GL_C(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboHandle));

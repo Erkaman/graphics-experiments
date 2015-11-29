@@ -1,47 +1,10 @@
 #include "fbo.hpp"
 
-#include "gl/texture.hpp"
-#include "gl/render_buffer.hpp"
 
 #include "log.hpp"
 
-
-void FBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
-    Bind();
-    {
-	// first we create a render target, and attach it the FBO.
-	m_renderTargetTexture = new Texture(GL_TEXTURE_2D, width, height, GL_RGBA8, GL_UNSIGNED_BYTE);
-
-	Texture::SetActiveTextureUnit(m_targetTextureUnit);
-	m_renderTargetTexture->Bind();
-	{
-	    m_renderTargetTexture->SetMagMinFilters(GL_LINEAR);
-	    m_renderTargetTexture->SetTextureClamping();
-
-	    // attach the target texture to the FBO.
-	    Attach(GL_COLOR_ATTACHMENT0, *m_renderTargetTexture);
-
-	}
-	m_renderTargetTexture->Unbind();
-
-	// next we create a depth buffer, and attach it to the FBO.
-
-	m_depthBuffer = new RenderBuffer();
-	m_depthBuffer->Bind();
-	{
-	    m_depthBuffer->RenderbufferStorage(GL_DEPTH_COMPONENT, width, height);
-
-	    // attach the depth buffer to the FBO.
-	    glFramebufferRenderbuffer(m_target, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,m_depthBuffer->GetHandle());
-	}
-	m_depthBuffer->Unbind();
-
-	CheckFramebufferStatus();
-
-    }
-    // switch to default frame buffer.
-    Unbind();
-}
+#include "gl/render_buffer.hpp"
+#include "gl/texture.hpp"
 
 void FBO::CheckFramebufferStatus(const GLenum target)  {
     GLenum status;
@@ -55,9 +18,12 @@ void FBO::CheckFramebufferStatus(const GLenum target)  {
 FBO::~FBO()  {
     GL_C(glDeleteFramebuffers(1, &m_fboHandle));
 
-    delete m_depthBuffer;
+    if(m_depthBuffer != NULL)
+	delete m_depthBuffer;
 
-    delete m_renderTargetTexture;
+    if(m_renderTargetTexture != NULL)
+
+	delete m_renderTargetTexture;
 }
 
 
@@ -70,8 +36,15 @@ void FBO::CheckFramebufferStatus()  {
 }
 
 
-FBO::FBO(const GLenum targetTextureUnit, const GLsizei width, const GLsizei height): m_target(GL_FRAMEBUFFER), m_targetTextureUnit(targetTextureUnit) {
+FBO::FBO(): m_target(GL_FRAMEBUFFER), m_depthBuffer(NULL), m_renderTargetTexture(NULL) {
+
+}
+
+void FBO::Init(const GLenum targetTextureUnit, const GLsizei width, const GLsizei height) {
     GL_C(glGenFramebuffers(1, &m_fboHandle));
+
+    m_targetTextureUnit = targetTextureUnit;
+
     RecreateBuffers(width, height);
 }
 

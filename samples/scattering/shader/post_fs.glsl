@@ -39,5 +39,5 @@ void main()
 
     sample = 1.0 - exp(sample * -1.4);
 
-    fragmentColor = sample;
+    fragmentColor = vec4(sample.a,0,0, sample.a);
 }
