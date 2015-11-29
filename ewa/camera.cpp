@@ -20,21 +20,34 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
     m_right = Vector3f::Cross(m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
     m_up = Vector3f(0,1.0f,0);//Vector3f::Cross(m_right, m_viewDir).Normalize();
 
+
     m_projectionMatrix =
 	usePerspectiveProjection ?
 	Matrix4f::CreatePerspective (45.0f, (float)windowWidth/(float)windowHeight, NEAR, FAR) :
 	Matrix4f::CreateOrthographic((float)-windowWidth, (float)+windowWidth, (float)-windowHeight, (float)+windowHeight, -1.0f, 1.0f);
 
+
+    /*
+    float S = 20.0f;
+
+    m_projectionMatrix =
+	Matrix4f::CreateOrthographic(-S, +S, -S, +S, -S, +S);
+    */
+
     ComputeViewMatrix();
 }
 
 
-Matrix4f Camera::GetMvp() const {
-
+Matrix4f Camera::GetMvpFromM() const {
     return (m_projectionMatrix) * (m_viewMatrix);
 }
 
-Matrix4f Camera::GetMvp(const Matrix4f& modelViewMatrix) const {
+
+Matrix4f Camera::GetMvpFromM(const Matrix4f& m) const {
+    return (m_projectionMatrix) * (m_viewMatrix) * (m);
+}
+
+Matrix4f Camera::GetMvpFromMv(const Matrix4f& modelViewMatrix) const {
     return (m_projectionMatrix) * modelViewMatrix;
 }
 

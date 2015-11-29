@@ -42,7 +42,7 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     const Vector3f pos = Vector3f(5.997801, 5.711470, -3.929811);
-    m_camera = new Camera(GetWindowWidth()*2,GetWindowHeight()*2,
+    m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),
 
 		pos,Vector3f(-0.758915, -0.464640, 0.456243)
 
@@ -104,6 +104,19 @@ void TuhuApplication::Init() {
 void TuhuApplication::RenderShadowMap() {
 
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    m_heightMap->RenderShadowMap(*m_camera);
+
+
+    m_stoneFloor->RenderShadowMap(*m_camera);
+
+    m_flatWoodFloor->RenderShadowMap(*m_camera);
+
+    m_woodFloor->RenderShadowMap(*m_camera);
+
+
+    m_sphere->RenderShadowMap(*m_camera);
+
 }
 
 void TuhuApplication::RenderScene() {
@@ -112,16 +125,16 @@ void TuhuApplication::RenderScene() {
     m_skydome->Draw(*m_camera);
 
 
-   m_heightMap->Draw(*m_camera, m_lightPosition);
+   m_heightMap->Render(*m_camera, m_lightPosition);
 
 //    m_grass->Draw(*m_camera, m_lightPosition);
 
-    m_smoke->Render(m_camera->GetMvp(), m_camera->GetPosition());
+    m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 
-	m_snow->Render(m_camera->GetMvp(), m_camera->GetPosition());
+	m_snow->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
-	m_fire->Render(m_camera->GetMvp(), m_camera->GetPosition());
+	m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 
     m_stoneFloor->Render(*m_camera, m_lightPosition);
@@ -130,18 +143,9 @@ void TuhuApplication::RenderScene() {
 
     m_woodFloor->Render(*m_camera, m_lightPosition);
 
-    m_sphere->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
+
     m_sphere->Render(*m_camera, m_lightPosition);
 
-/*
-    m_sphere->SetModelMatrix(
-	Matrix4f::CreateTranslation(
-
-	    Vector3f(0.705072, 0.0758142, 0.705072)
-
-));
-    m_sphere->Render(*m_camera, m_lightPosition);*/
 
 
 }
@@ -151,7 +155,7 @@ void TuhuApplication::Render() {
     SetViewport();
 
     RenderShadowMap();
-    RenderScene();
+    //RenderScene();
 
 
 

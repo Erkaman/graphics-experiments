@@ -151,7 +151,7 @@ void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& 
     const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
 	modelMatrix);
 
-    const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
+    const Matrix4f mvp = camera.GetMvpFromMv(modelViewMatrix);
 
     SetUniform("mvp", mvp);
     SetUniform("modelViewMatrix", modelViewMatrix);

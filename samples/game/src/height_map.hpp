@@ -33,6 +33,7 @@ private:
     VBO* m_indexBuffer;
 
     ShaderProgram* m_shader;
+    ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
 
     float m_movement;
 
@@ -49,12 +50,15 @@ private:
 
     static void CreateHeightmap(const std::string& path);
 
+    void Render();
+
 public:
 
     HeightMap(const std::string& path);
     ~HeightMap();
 
-    void Draw(const Camera& camera, const Vector4f& lightPosition);
+    void Render(const Camera& camera, const Vector4f& lightPosition);
+    void RenderShadowMap(const Camera& camera);
 
     void SetWireframe(const bool wireframe);
 

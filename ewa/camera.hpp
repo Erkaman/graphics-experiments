@@ -22,8 +22,9 @@ public:
 
     Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir, bool usePerspectiveProjection);
 
-    Matrix4f GetMvp() const;
-    Matrix4f GetMvp(const Matrix4f& modelViewMatrix) const;
+    Matrix4f GetMvpFromM(const Matrix4f& m) const;
+    Matrix4f GetMvpFromM() const;
+    Matrix4f GetMvpFromMv(const Matrix4f& modelViewMatrix) const;
 
     Matrix4f GetViewMatrix() const;
     Matrix4f GetModelViewMatrix() const; // with the identity matrix as the model matrix.

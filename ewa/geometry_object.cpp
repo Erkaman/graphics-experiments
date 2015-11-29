@@ -7,6 +7,7 @@
 #include "ewa/gl/texture2d.hpp"
 
 #include "ewa/common.hpp"
+#include "ewa/camera.hpp"
 #include "ewa/file.hpp"
 #include "eob_file.hpp"
 #include "resource_manager.hpp"
@@ -82,6 +83,9 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
     }
 
+    m_depthShader = new ShaderProgram("shader/output_depth");
+
+
     for(size_t i = 0; i < data.m_chunks.size(); ++i) {
 	GeometryObjectData::Chunk* baseChunk = data.m_chunks[i];
 
@@ -143,49 +147,59 @@ GeometryObject::~GeometryObject() {
     }
 }
 
+void GeometryObject::RenderShadowMap(const Camera& camera) {
+
+    m_depthShader->Bind();
+
+    const Matrix4f mvp = camera.GetMvpFromM(m_modelMatrix);
+    m_depthShader->SetUniform("mvp", mvp  );
+
+    for(size_t i = 0; i < m_chunks.size(); ++i) {
+	Chunk* chunk = m_chunks[i];
+
+	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+    }
+
+    m_depthShader->Unbind();
+
+}
 
 void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition) {
-        m_defaultShader->Bind();
+
+    m_defaultShader->Bind();
 
     m_defaultShader->SetPhongUniforms(
 
 	m_modelMatrix
 	 , camera, lightPosition);
 
-    RenderVertices(*m_defaultShader);
-
-    m_defaultShader->Unbind();
-
-}
-
-void GeometryObject::RenderVertices(ShaderProgram& shader) {
 
     for(size_t i = 0; i < m_chunks.size(); ++i) {
 	Chunk* chunk = m_chunks[i];
 
 
 	if(chunk->m_texture != NULL) {
-	    shader.SetUniform("diffMap", 0);
+	    m_defaultShader->SetUniform("diffMap", 0);
 	    Texture::SetActiveTextureUnit(0);
 	    chunk->m_texture->Bind();
 	}
 
 	if(chunk->m_normalMap != NULL) {
-	    shader.SetUniform("normalMap", 1);
+	    m_defaultShader->SetUniform("normalMap", 1);
 	    Texture::SetActiveTextureUnit(1);
 	    chunk->m_normalMap->Bind();
 	}
 
 	if(chunk->m_specularMap != NULL) {
-	    shader.SetUniform("specMap", 2);
+	    m_defaultShader->SetUniform("specMap", 2);
 	    Texture::SetActiveTextureUnit(2);
 	    chunk->m_specularMap->Bind();
 	} else {
 	    // if no spec map, the model has the same specular color all over the texture.
-	    shader.SetUniform("specColor", chunk->m_specularColor);
+	    m_defaultShader->SetUniform("specColor", chunk->m_specularColor);
 	}
 
-	shader.SetUniform("specShiny", chunk->m_shininess);
+	m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
 
 	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 
@@ -200,9 +214,10 @@ void GeometryObject::RenderVertices(ShaderProgram& shader) {
 	if(chunk->m_specularMap != NULL) {
 	    chunk->m_specularMap->Unbind();
 	}
-
-
     }
+
+    m_defaultShader->Unbind();
+
 }
 
 void  GeometryObject::SetModelMatrix(Matrix4f modelMatrix) {

@@ -12,7 +12,6 @@ Matrix4f Matrix4f::CreatePerspective( const float fov, const float aspectRatio, 
     float ymax = near * tan(fov * PI/360.0f);
     float xmax = ymax * aspectRatio;
 
-
     float left = -xmax;
     float right = +xmax;
 
@@ -456,11 +455,22 @@ Matrix4f Matrix4f::CreateOrthographic( const float left, const float right, cons
 
 //    return Matrix4f::CreateIdentity();
 
+    /*
      return Matrix4f(
 	 2.0f/(right-left), 0.0f, 0.0f, -(right + left) / (right - left),
 	0.0f, 2.0f / (top - bottom), 0.0f, -(top + bottom) / (top - bottom),
 	 0.0f, 0.0f, 2.0f / (far - near) ,  -(far +near) / (far - near),
 	 0.0f, 0.0f,      0.0f  , 1.0f);
+
+    */
+
+     return Matrix4f(
+	 2.0f/(right-left)               , 0.0f                             , 0.0f                          , 0.0f,
+	 0.0f                            , 2.0f / (top - bottom)            , 0.0f                          , 0.0f,
+	 0.0f                            , 0.0f                             , 2.0f / (far - near)           , 0.0f ,
+	-(right + left) / (right - left) , -(top + bottom) / (top - bottom) , -(far +near) / (far - near)   , 1.0f);
+
+
 }
 
 Matrix4f Matrix4f::CreateRotate(const float angle, const Vector3f& axis) {

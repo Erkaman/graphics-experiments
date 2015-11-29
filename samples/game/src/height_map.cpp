@@ -97,6 +97,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     */
     m_shader = new ShaderProgram("shader/height_map");
 
+    m_depthShader = new ShaderProgram("shader/output_depth");
+
 
     if(! (File::Exists(VERTEX_FILE) && File::Exists(INDEX_FILE) )) {
 	CreateHeightmap(path);
@@ -139,7 +141,37 @@ HeightMap::~HeightMap() {
 }
 
 
-void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
+void HeightMap::Render() {
+
+    // setup vertex buffers.
+    m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
+
+    m_indexBuffer->Bind();
+
+    // DRAW.
+    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+
+    // unsetup vertex buffer.
+
+    m_indexBuffer->Unbind();
+
+    m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
+
+}
+
+void HeightMap::RenderShadowMap(const Camera& camera) {
+    m_depthShader->Bind();
+
+    const Matrix4f mvp = camera.GetMvpFromM(Matrix4f::CreateTranslation(0,0,0));
+    m_depthShader->SetUniform("mvp", mvp  );
+
+    Render();
+
+    m_depthShader->Unbind();
+
+}
+
+void HeightMap::Render(const Camera& camera, const Vector4f& lightPosition) {
 
     m_shader->Bind();
 
@@ -166,19 +198,8 @@ void HeightMap::Draw(const Camera& camera, const Vector4f& lightPosition) {
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-    // setup vertex buffers.
-    m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
 
-    m_indexBuffer->Bind();
-
-    // DRAW.
-    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
-
-    // unsetup vertex buffer.
-
-    m_indexBuffer->Unbind();
-
-    m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
+    Render();
 
 
     if(m_isWireframe)
@@ -238,7 +259,7 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     unsigned int width;
     unsigned int depth;
 
-	
+
     unsigned error = lodepng::decode(imageData, width, depth, state, buffer);
 
     if(error != 0){

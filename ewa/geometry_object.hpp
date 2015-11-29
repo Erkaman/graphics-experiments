@@ -31,6 +31,7 @@ private:
     std::vector<Chunk*> m_chunks;
 
     ShaderProgram* m_defaultShader;
+    ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
 
     bool m_hasNormalMap;
     bool m_hasSpecularMap;
@@ -52,6 +53,9 @@ public:
 
     // if a custom shader is necessary, set useCustomShader=true, and override this method to bind to the shader.
     virtual void Render(const Camera& camera, const Vector4f& lightPosition);
+    virtual void RenderShadowMap(const Camera& camera);
+
+
 
     void  SetModelMatrix(Matrix4f modelMatrix);
 };
