@@ -26,7 +26,10 @@ float Texture::GetMaxAnisotropic() {
 
 
 
-Texture::Texture(const GLenum target, const GLsizei width, const GLsizei height, const GLint internalFormat, const GLenum type):
+Texture::Texture(const GLenum target, const GLsizei width, const GLsizei height, const GLint internalFormat,
+
+		 const GLenum format,
+		 const GLenum type):
     Texture(target) {
 
     Bind();
@@ -34,7 +37,7 @@ Texture::Texture(const GLenum target, const GLsizei width, const GLsizei height,
     m_width = width;
     m_height = height;
 
-    GL_C(glTexImage2D(m_target, 0, internalFormat, width, height, 0, GL_RGBA, type, NULL));
+    GL_C(glTexImage2D(m_target, 0, internalFormat, width, height, 0, format, type, NULL));
 
     Unbind();
 }
@@ -164,6 +167,58 @@ void Texture::WriteToFile(const std::string& filename) {
 
     delete pixels;
 }
+
+void Texture::WriteDepthToFile(const std::string& filename) {
+
+    // first, get the raw pixel data from opengl
+    Bind();
+    size_t size = m_width* m_height;
+    float* depths = new float[size];
+    GL_C(glGetTexImage(m_target, 0, GL_DEPTH_COMPONENT, GL_FLOAT, depths));
+    Unbind();
+
+    // flip the image.
+/*
+    unsigned int* intPixels = (unsigned int*)pixels;
+
+    for (int i=0;i<m_width;++i){
+	for (int j=0;j<m_height/2;++j){
+	    unsigned int temp = intPixels[j * m_width + i];
+
+	    intPixels[j * m_width + i] = intPixels[ (m_height-j-1)*m_width + i];
+	    intPixels[(m_height-j-1)*m_width + i] = temp;
+	}
+    }
+
+    unsigned char* charPixels = (unsigned char*)intPixels;
+*/
+
+
+    unsigned char* rgbaPixels = new unsigned char[m_width* m_height * 4];
+    int j = 0;
+
+    for(int i = 0; i < size; ++i) {
+
+	float depth = depths[i];
+
+	char c = (unsigned char)(255.0f * depth);
+	rgbaPixels[j++]  = c; // R
+	rgbaPixels[j++]  = c; // G
+	rgbaPixels[j++]  = c; // B
+	rgbaPixels[j++]  = 255; // A
+
+
+    }
+
+    WriteToFile(rgbaPixels, m_width, m_height, filename);
+
+    delete depths;
+    delete rgbaPixels;
+
+
+
+}
+
 
 void Texture::WriteToFile(unsigned char* pixels, const size_t width, const size_t height, const std::string& filename) {
 

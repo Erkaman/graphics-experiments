@@ -2,16 +2,15 @@
 
 #include "fbo.hpp"
 
-class ColorFBO : public FBO{
+class DepthFBO : public FBO{
 
 public:
 
-    ColorFBO();
+    DepthFBO();
 
-    virtual ~ColorFBO() {}
+    virtual ~DepthFBO() {}
 
     void RecreateBuffers(const GLsizei width, const GLsizei height);
-
 
 
 };

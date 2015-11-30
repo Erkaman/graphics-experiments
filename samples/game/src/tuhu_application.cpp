@@ -5,6 +5,8 @@
 #include "ewa/font.hpp"
 #include "ewa/keyboard_state.hpp"
 
+#include "ewa/gl/depth_fbo.hpp"
+#include "ewa/gl/texture.hpp"
 
 #include "ewa/audio/sound.hpp"
 #include "ewa/audio/wave_loader.hpp"
@@ -41,10 +43,18 @@ void TuhuApplication::Init() {
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
-    const Vector3f pos = Vector3f(5.997801, 5.711470, -3.929811);
+    const Vector3f pos =
+
+	Vector3f(0.783787, 3.190002, -0.814632);
+
+
+
+	Vector3f(5.997801, 5.711470, -3.929811);
     m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),
 
-		pos,Vector3f(-0.758915, -0.464640, 0.456243)
+
+
+		pos,Vector3f(-0.798476, -0.265228, 0.540454)
 
 , true);
 
@@ -66,7 +76,7 @@ void TuhuApplication::Init() {
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
-//    m_grass = new Grass(Vector2f(10,10), m_heightMap);
+    m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
 
     m_stoneFloor = new GeometryObject();
@@ -90,9 +100,19 @@ void TuhuApplication::Init() {
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
 
 
+/*
+    m_plane = new GeometryObject();
+    m_plane->Init("obj/color.eob");
+    m_plane->SetModelMatrix(
+	Matrix4f::CreateTranslation(Vector3f(0,-1.0,0)));
+    */
+
+    m_depthFbo = new DepthFBO();
+    m_depthFbo->Init(9, 1024, 1024);
+
 
     /*
-    OpenAL::Init();
+    OpenAL::Initp();
 
     m_windSound = new Sound("audio/wind2.wav");
     m_windSound->SetGain(1.0f);
@@ -103,23 +123,36 @@ void TuhuApplication::Init() {
 
 void TuhuApplication::RenderShadowMap() {
 
-    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    m_heightMap->RenderShadowMap(*m_camera);
+    //    m_depthFbo->Bind();
+    {
 
+	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    m_stoneFloor->RenderShadowMap(*m_camera);
-
-    m_flatWoodFloor->RenderShadowMap(*m_camera);
-
-    m_woodFloor->RenderShadowMap(*m_camera);
+	m_heightMap->RenderShadowMap(*m_camera);
 
 
-    m_sphere->RenderShadowMap(*m_camera);
+	m_stoneFloor->RenderShadowMap(*m_camera);
 
+	m_flatWoodFloor->RenderShadowMap(*m_camera);
+
+	m_woodFloor->RenderShadowMap(*m_camera);
+
+
+	m_sphere->RenderShadowMap(*m_camera);
+
+    }
+    /*  m_depthFbo->Unbind();
+
+    m_depthFbo->GetRenderTargetTexture().WriteDepthToFile("depth.png");
+
+    exit(1);
+    */
 }
 
 void TuhuApplication::RenderScene() {
+
+    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
     m_skydome->Draw(*m_camera);
@@ -127,7 +160,7 @@ void TuhuApplication::RenderScene() {
 
    m_heightMap->Render(*m_camera, m_lightPosition);
 
-//    m_grass->Draw(*m_camera, m_lightPosition);
+    m_grass->Draw(*m_camera, m_lightPosition);
 
     m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
@@ -135,6 +168,7 @@ void TuhuApplication::RenderScene() {
 	m_snow->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 	m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+
 
 
     m_stoneFloor->Render(*m_camera, m_lightPosition);
@@ -145,17 +179,14 @@ void TuhuApplication::RenderScene() {
 
 
     m_sphere->Render(*m_camera, m_lightPosition);
-
-
-
 }
 
 void TuhuApplication::Render() {
 
     SetViewport();
 
-    RenderShadowMap();
-    //RenderScene();
+//   RenderShadowMap();
+    RenderScene();
 
 
 
@@ -163,7 +194,7 @@ void TuhuApplication::Render() {
 
 void TuhuApplication::Update(const float delta) {
 
-    m_camera->HandleInput(delta);
+      m_camera->HandleInput(delta);
 
     m_smoke->Update(delta);
     m_snow->Update(delta);
@@ -189,7 +220,7 @@ void TuhuApplication::Update(const float delta) {
 	m_windSound->Play();
 
 	b = true;
-    }
+	}
 }
 
 void TuhuApplication::RenderText()  {

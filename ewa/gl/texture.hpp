@@ -38,7 +38,7 @@ public:
     Texture(const GLenum target);
 
     // create an empty texture.
-    Texture(const GLenum target, const GLsizei width, const GLsizei height, const GLint internalFormat, const GLenum type);
+    Texture(const GLenum target, const GLsizei width, const GLsizei height, const GLint internalFormat, const GLenum format,const GLenum type);
 
     ~Texture();
 
@@ -83,6 +83,9 @@ public:
       Load the pixeldata of this texture from OpenGL and write it to a file.
      */
     void WriteToFile(const std::string& filename);
+
+    void WriteDepthToFile(const std::string& filename);
+
 
     static void WriteToFile(unsigned char* pixels, const size_t width, const size_t height, const std::string& filename);
 

@@ -12,6 +12,7 @@ class Grass;
 class Sound;
 class ParticleSystem;
 class GeometryObject;
+class DepthFBO;
 
 class TuhuApplication : public Application{
 
@@ -34,6 +35,9 @@ private:
     GeometryObject* m_flatWoodFloor;
     GeometryObject* m_woodFloor;
     GeometryObject* m_sphere;
+    GeometryObject* m_plane;
+
+    DepthFBO* m_depthFbo;
 
     Vector4f m_lightPosition;
 
