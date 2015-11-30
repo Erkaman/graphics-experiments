@@ -53,7 +53,8 @@ public:
 
     // if a custom shader is necessary, set useCustomShader=true, and override this method to bind to the shader.
     virtual void Render(const Camera& camera, const Vector4f& lightPosition);
-    virtual void RenderShadowMap(const Camera& camera);
+
+    virtual void RenderShadowMap(const Matrix4f& vp); // vp = view projection matrix.
 
 
 

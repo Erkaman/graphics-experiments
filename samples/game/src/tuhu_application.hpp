@@ -40,7 +40,7 @@ private:
 
     DepthFBO* m_depthFbo;
 
-    Vector4f m_lightPosition;
+    Vector4f m_lightDirection;
 
 public:
 

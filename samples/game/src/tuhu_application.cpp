@@ -27,7 +27,12 @@ void ToClipboard(const std::string& str) {
 }
 
 //(0.705072, 0.0758142, 0.705072)
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL),m_skydome(NULL), m_lightPosition(-0.705072f, -0.0758142f, -0.705072f , 0.0f){ }
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL),m_skydome(NULL), m_lightDirection(
+
+    -0.705072, -0.458142, -0.705072,
+//    -0.705072f, -0.0758142f, -0.705072f ,
+
+    0.0f){ }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_camera);
@@ -151,16 +156,29 @@ void TuhuApplication::RenderShadowMap() {
 
 //	m_heightMap->RenderShadowMap(*m_camera);
 
+//	Matrix4f vp = m_camera->GetMvpFromM();
 
-	m_stoneFloor->RenderShadowMap(*m_camera);
+	//glm::lookAt(lightInvDir, glm::vec3(0,0,0), glm::vec3(0,1,0));
 
-	m_flatWoodFloor->RenderShadowMap(*m_camera);
+	Matrix4f viewMatrix = Matrix4f::CreateLookAt(
+	    -Vector3f(m_lightDirection),
+	    Vector3f(0.0f),
+	    Vector3f(0.0, 1.0, 0.0)
+	    );
 
-	m_woodFloor->RenderShadowMap(*m_camera);
+	Matrix4f projectionMatrix = Matrix4f::CreateOrthographic(-20, 20, -20, 20, -20, 20);
 
+	Matrix4f vp = projectionMatrix * viewMatrix;
+/*
+	m_stoneFloor->RenderShadowMap(vp);
 
-	m_sphere->RenderShadowMap(*m_camera);
+	m_flatWoodFloor->RenderShadowMap(vp);
 
+	m_woodFloor->RenderShadowMap(vp);
+*/
+	m_sphere->RenderShadowMap(vp);
+
+	m_tree->RenderShadowMap(vp);
     }
     /*  m_depthFbo->Unbind();
 
@@ -178,9 +196,9 @@ void TuhuApplication::RenderScene() {
     m_skydome->Draw(*m_camera);
 
 
-//   m_heightMap->Render(*m_camera, m_lightPosition);
+//   m_heightMap->Render(*m_camera, m_lightDirection);
 
-//    m_grass->Draw(*m_camera, m_lightPosition);
+//    m_grass->Draw(*m_camera, m_lightDirection);
 
     m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
@@ -190,19 +208,19 @@ void TuhuApplication::RenderScene() {
 	m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 
+/*
+    m_stoneFloor->Render(*m_camera, m_lightDirection);
 
-    m_stoneFloor->Render(*m_camera, m_lightPosition);
+    m_flatWoodFloor->Render(*m_camera, m_lightDirection);
 
-    m_flatWoodFloor->Render(*m_camera, m_lightPosition);
+    m_woodFloor->Render(*m_camera, m_lightDirection);
+*/
 
-    m_woodFloor->Render(*m_camera, m_lightPosition);
+    m_sphere->Render(*m_camera, m_lightDirection);
 
+    m_plane->Render(*m_camera, m_lightDirection);
 
-    m_sphere->Render(*m_camera, m_lightPosition);
-
-    m_plane->Render(*m_camera, m_lightPosition);
-
-    m_tree->Render(*m_camera, m_lightPosition);
+    m_tree->Render(*m_camera, m_lightDirection);
 
 
 }
@@ -212,7 +230,7 @@ void TuhuApplication::Render() {
     SetViewport();
 
 //   RenderShadowMap();
-    RenderScene();
+ RenderScene();
 
 
 

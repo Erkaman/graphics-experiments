@@ -147,11 +147,11 @@ GeometryObject::~GeometryObject() {
     }
 }
 
-void GeometryObject::RenderShadowMap(const Camera& camera) {
+void GeometryObject::RenderShadowMap(const Matrix4f& vp) {
 
     m_depthShader->Bind();
 
-    const Matrix4f mvp = camera.GetMvpFromM(m_modelMatrix);
+    const Matrix4f mvp = vp * m_modelMatrix;
     m_depthShader->SetUniform("mvp", mvp  );
 
     for(size_t i = 0; i < m_chunks.size(); ++i) {
