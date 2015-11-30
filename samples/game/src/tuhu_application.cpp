@@ -45,7 +45,8 @@ void TuhuApplication::Init() {
 
     const Vector3f pos =
 
-	Vector3f(0.783787, 3.190002, -0.814632);
+	Vector3f(16.225868, 15.782454, -3.545918);
+
 
 
 
@@ -54,7 +55,7 @@ void TuhuApplication::Init() {
 
 
 
-		pos,Vector3f(-0.798476, -0.265228, 0.540454)
+			  pos,Vector3f(-0.657543, -0.605913, 0.447781)
 
 , true);
 
@@ -69,14 +70,14 @@ void TuhuApplication::Init() {
     m_fire->Init();
 
 
-    m_heightMap = new HeightMap("img/combined.png");
+    // m_heightMap = new HeightMap("img/combined.png");
 
 
 
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
-    m_grass = new Grass(Vector2f(10,10), m_heightMap);
+//    m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
 
     m_stoneFloor = new GeometryObject();
@@ -100,12 +101,31 @@ void TuhuApplication::Init() {
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
 
 
-/*
     m_plane = new GeometryObject();
     m_plane->Init("obj/color.eob");
     m_plane->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(0,-1.0,0)));
-    */
+
+Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
+	Matrix4f::CreateTranslation(Vector3f(0,-2.5,0))
+
+
+		      );
+
+
+    m_tree = new GeometryObject();
+    m_tree->Init("obj/tree.eob");
+    m_tree->SetModelMatrix(
+	Matrix4f::CreateTranslation(Vector3f(10,-2.5,10)));
+
+
+
+
+/*    Matrix4f m = Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
+	Matrix4f::CreateTranslation(Vector3f(0,-2.0,0));
+*/
+    // LOG_I("m:\n %s", string(m).c_str() );
+
+
 
     m_depthFbo = new DepthFBO();
     m_depthFbo->Init(9, 1024, 1024);
@@ -129,7 +149,7 @@ void TuhuApplication::RenderShadowMap() {
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	m_heightMap->RenderShadowMap(*m_camera);
+//	m_heightMap->RenderShadowMap(*m_camera);
 
 
 	m_stoneFloor->RenderShadowMap(*m_camera);
@@ -158,9 +178,9 @@ void TuhuApplication::RenderScene() {
     m_skydome->Draw(*m_camera);
 
 
-   m_heightMap->Render(*m_camera, m_lightPosition);
+//   m_heightMap->Render(*m_camera, m_lightPosition);
 
-    m_grass->Draw(*m_camera, m_lightPosition);
+//    m_grass->Draw(*m_camera, m_lightPosition);
 
     m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
@@ -179,6 +199,12 @@ void TuhuApplication::RenderScene() {
 
 
     m_sphere->Render(*m_camera, m_lightPosition);
+
+    m_plane->Render(*m_camera, m_lightPosition);
+
+    m_tree->Render(*m_camera, m_lightPosition);
+
+
 }
 
 void TuhuApplication::Render() {
@@ -202,7 +228,7 @@ void TuhuApplication::Update(const float delta) {
 
       m_skydome->Update(delta);
 
-      m_grass->Update(delta);
+//      m_grass->Update(delta);
 
     const KeyboardState& kbs = KeyboardState::GetInstance();
 

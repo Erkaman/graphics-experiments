@@ -306,7 +306,16 @@ int ParseFEntry(const string& entry) {
 
     vector<string> tokens =SplitString(entry, "/");
 
+    if(texCoords.size() == 0) {
+	LOG_E("Found f(ace), but no points have been specified yet");
+    }
+
     Vector3f point = points[ stoi(tokens[0])-1 ];
+
+    if(texCoords.size() == 0) {
+	LOG_E("Found f(ace), but no texcoords have been specified yet");
+    }
+
     Vector2f texCoord = texCoords[ stoi(tokens[1])-1 ];
 
 

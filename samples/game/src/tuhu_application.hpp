@@ -36,6 +36,7 @@ private:
     GeometryObject* m_woodFloor;
     GeometryObject* m_sphere;
     GeometryObject* m_plane;
+    GeometryObject* m_tree;
 
     DepthFBO* m_depthFbo;
 
