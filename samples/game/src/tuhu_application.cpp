@@ -55,14 +55,14 @@ void TuhuApplication::Init() {
 
 
 
-	Vector3f(5.997801, 5.711470, -3.929811);
+    Vector3f(5.997801, 5.711470, -3.929811);
     m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),
 
 
 
 			  pos,Vector3f(-0.657543, -0.605913, 0.447781)
 
-, true);
+			  , true);
 
 
 
@@ -110,11 +110,11 @@ void TuhuApplication::Init() {
     m_plane->Init("obj/color.eob");
     m_plane->SetModelMatrix(
 
-Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
+	Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
 	Matrix4f::CreateTranslation(Vector3f(0,-2.5,0))
 
 
-		      );
+	);
 
 
     m_tree = new GeometryObject();
@@ -126,7 +126,7 @@ Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
 
 
 /*    Matrix4f m = Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
-	Matrix4f::CreateTranslation(Vector3f(0,-2.0,0));
+      Matrix4f::CreateTranslation(Vector3f(0,-2.0,0));
 */
     // LOG_I("m:\n %s", string(m).c_str() );
 
@@ -137,19 +137,19 @@ Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
 
 
     /*
-    OpenAL::Initp();
+      OpenAL::Initp();
 
-    m_windSound = new Sound("audio/wind2.wav");
-    m_windSound->SetGain(1.0f);
-    m_windSound->SetLooping(true);
-	*/
+      m_windSound = new Sound("audio/wind2.wav");
+      m_windSound->SetGain(1.0f);
+      m_windSound->SetLooping(true);
+    */
 }
 
 
 void TuhuApplication::RenderShadowMap() {
 
 
-    //    m_depthFbo->Bind();
+    m_depthFbo->Bind();
     {
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -160,38 +160,53 @@ void TuhuApplication::RenderShadowMap() {
 
 	//glm::lookAt(lightInvDir, glm::vec3(0,0,0), glm::vec3(0,1,0));
 
-	Matrix4f viewMatrix = Matrix4f::CreateLookAt(
+	m_lightViewMatrix = Matrix4f::CreateLookAt(
 	    -Vector3f(m_lightDirection),
 	    Vector3f(0.0f),
 	    Vector3f(0.0, 1.0, 0.0)
 	    );
 
-	Matrix4f projectionMatrix = Matrix4f::CreateOrthographic(-20, 20, -20, 20, -20, 20);
+	m_lightProjectionMatrix = Matrix4f::CreateOrthographic(-20, 20, -20, 20, -20, 20);
 
-	Matrix4f vp = projectionMatrix * viewMatrix;
+	Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
+
+//	LOG_I("testing: %s" ,string(vp * Vector4f(0,0,0, 1)).c_str() );
+
+//	LOG_I("view: %s" ,string(m_lightViewMatrix).c_str() );
+//	LOG_I("proj: %s" ,string(m_lightProjectionMatrix).c_str() );
+
+
+	// seems like there are points inside the orthgonal  frustrum of the light that gets assigned
+	//values over 1 or below -1. this should not happen, this should happen to points outside clip space!
+//	    so they would not be processed to begin with,
+
+//	LOG_I("testing: %s" ,string(m_lightProjectionMatrix * Vector4f(-10,20,0, 1)).c_str() );
+
+
+//	LOG_I("testing3: %s" ,string( Matrix4f::CreateTranslation(3,2,-1) * Vector4f(30,-2,30, 1)).c_str() );
+
+
 /*
-	m_stoneFloor->RenderShadowMap(vp);
+  m_stoneFloor->RenderShadowMap(vp);
 
-	m_flatWoodFloor->RenderShadowMap(vp);
+  m_flatWoodFloor->RenderShadowMap(vp);
 
-	m_woodFloor->RenderShadowMap(vp);
+  m_woodFloor->RenderShadowMap(vp);
 */
 	m_sphere->RenderShadowMap(vp);
 
 	m_tree->RenderShadowMap(vp);
     }
-    /*  m_depthFbo->Unbind();
+    m_depthFbo->Unbind();
 
-    m_depthFbo->GetRenderTargetTexture().WriteDepthToFile("depth.png");
+//   m_depthFbo->GetRenderTargetTexture().WriteDepthToFile("depth.png");
+//   exit(1);
 
-    exit(1);
-    */
 }
 
 void TuhuApplication::RenderScene() {
 
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
     m_skydome->Draw(*m_camera);
 
@@ -200,51 +215,71 @@ void TuhuApplication::RenderScene() {
 
 //    m_grass->Draw(*m_camera, m_lightDirection);
 
+
+
     m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 
-	m_snow->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+    // m_snow->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
-	m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+    m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 
 /*
-    m_stoneFloor->Render(*m_camera, m_lightDirection);
+  m_stoneFloor->Render(*m_camera, m_lightDirection);
 
-    m_flatWoodFloor->Render(*m_camera, m_lightDirection);
+  m_flatWoodFloor->Render(*m_camera, m_lightDirection);
 
-    m_woodFloor->Render(*m_camera, m_lightDirection);
+  m_woodFloor->Render(*m_camera, m_lightDirection);
 */
 
-    m_sphere->Render(*m_camera, m_lightDirection);
 
-    m_plane->Render(*m_camera, m_lightDirection);
+    Matrix4f biasMatrix(
+	0.5f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.5f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.5f, 0.0f,
+	0.5f, 0.5f, 0.5f, 1.0f
+	);
 
-    m_tree->Render(*m_camera, m_lightDirection);
+    Matrix4f lightVp =  biasMatrix*  m_lightProjectionMatrix * m_lightViewMatrix;
+
+    m_sphere->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 
 
+
+
+    m_sphere->SetModelMatrix(
+	Matrix4f::CreateTranslation(  Vector3f(-30 * m_lightDirection) ));
+    m_sphere->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+    m_sphere->SetModelMatrix(
+	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
+
+
+    m_plane->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+
+    m_tree->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 }
 
 void TuhuApplication::Render() {
 
+
     SetViewport();
 
-//   RenderShadowMap();
- RenderScene();
+    RenderShadowMap();
 
 
-
+    RenderScene();
 }
 
 void TuhuApplication::Update(const float delta) {
 
-      m_camera->HandleInput(delta);
+    m_camera->HandleInput(delta);
 
     m_smoke->Update(delta);
-    m_snow->Update(delta);
+    //   m_snow->Update(delta);
     m_fire->Update(delta);
 
-      m_skydome->Update(delta);
+    m_skydome->Update(delta);
 
 //      m_grass->Update(delta);
 
@@ -264,7 +299,7 @@ void TuhuApplication::Update(const float delta) {
 	m_windSound->Play();
 
 	b = true;
-	}
+    }
 }
 
 void TuhuApplication::RenderText()  {

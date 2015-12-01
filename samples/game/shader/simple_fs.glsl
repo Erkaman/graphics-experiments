@@ -101,9 +101,12 @@ in vec2 texcoordOut;
 uniform vec3 viewSpaceLightDirection;
 in mat4 modelViewMatrixOut;
 in vec3 eyePosOut;
+in vec4 shadowCoordOut;
 
 uniform sampler2D normalMap;
 uniform sampler2D diffMap;
+uniform sampler2D shadowMap;
+
 out vec4 fragmentColor;
 
 uniform vec3 specColor;
@@ -118,6 +121,15 @@ void main(void) {
 
     vec3 p = viewSpacePixelPositionOut; // pixel position in eye space
     vec3 v = normalize(p); // view vector in eye space
+
+    /*
+      Shadow Mapping
+     */
+    float visibility = 1.0;
+/*    if ( texture( shadowMap, shadowCoordOut.xy ).z  <  (shadowCoordOut.z)  ){
+	visibility = 0.0;
+    }
+*/
 
 #ifdef HEIGHT_MAPPING
 
@@ -225,11 +237,26 @@ void main(void) {
 	}*/
 
 #endif
-    vec4 finalcolor=ambient*finalDiffuse;
 
-    finalcolor.xyz+=(finalDiffuse.xyz*diffuse.xyz*diff+
-			 specColor*pow(spec,specShiny));
+    vec4 finalcolor=ambient*finalDiffuse; // ambient
+
+    finalcolor.xyz+=(finalDiffuse.xyz*diffuse.xyz*diff * visibility+
+			 specColor*pow(spec,specShiny) * visibility );
     finalcolor.w=1.0;
 
     fragmentColor= /*vec4(vec3(specColor*pow(spec,specShiny)),1 );*/   finalcolor;
+
+/*    if(shadowCoordOut.z < 0.00) {
+	fragmentColor = vec4(vec3(1,0,0), 1);
+    }else {
+	fragmentColor = vec4(vec3(shadowCoordOut.z), 1);
+	}*/
+
+    // can be negative!
+//    fragmentColor = vec4(vec3(abs(shadowCoordOut.z) ), 1);
+
+//    fragmentColor =
+//	vec4(vec3(shadowCoordOut.z), 1);
+
+//    fragmentColor = vec4(vec3(abs(texture( shadowMap, shadowCoordOut.xy).x) / 4), 1);
 }

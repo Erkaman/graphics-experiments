@@ -147,11 +147,11 @@ GeometryObject::~GeometryObject() {
     }
 }
 
-void GeometryObject::RenderShadowMap(const Matrix4f& vp) {
+void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
 
     m_depthShader->Bind();
 
-    const Matrix4f mvp = vp * m_modelMatrix;
+    const Matrix4f mvp = lightVp * m_modelMatrix;
     m_depthShader->SetUniform("mvp", mvp  );
 
     for(size_t i = 0; i < m_chunks.size(); ++i) {
@@ -164,14 +164,19 @@ void GeometryObject::RenderShadowMap(const Matrix4f& vp) {
 
 }
 
-void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition) {
+void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
 
     m_defaultShader->Bind();
 
     m_defaultShader->SetPhongUniforms(
 
 	m_modelMatrix
-	 , camera, lightPosition);
+	, camera, lightPosition,
+	lightVp);
+
+    m_defaultShader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
+    Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
+    shadowMap.GetRenderTargetTexture().Bind();
 
 
     for(size_t i = 0; i < m_chunks.size(); ++i) {
@@ -215,6 +220,9 @@ void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition)
 	    chunk->m_specularMap->Unbind();
 	}
     }
+
+    shadowMap.GetRenderTargetTexture().Unbind();
+
 
     m_defaultShader->Unbind();
 

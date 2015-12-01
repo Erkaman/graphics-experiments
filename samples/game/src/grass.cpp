@@ -168,7 +168,7 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
 
 	const Matrix4f model =  Matrix4f::CreateIdentity();
 
-	m_grassShader->SetPhongUniforms(model, camera, lightPosition);
+	m_grassShader->SetPhongUniforms(model, camera, lightPosition, Matrix4f::CreateIdentity() );
 
 	m_grassShader->SetUniform("tex", 0);
 	Texture::SetActiveTextureUnit(0);

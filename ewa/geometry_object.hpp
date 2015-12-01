@@ -4,6 +4,9 @@
 
 #include "geometry_object_data.hpp"
 
+#include "gl/depth_fbo.hpp"
+
+
 class Vector3f;
 class VBO;
 class ShaderProgram;
@@ -52,11 +55,9 @@ public:
     virtual ~GeometryObject();
 
     // if a custom shader is necessary, set useCustomShader=true, and override this method to bind to the shader.
-    virtual void Render(const Camera& camera, const Vector4f& lightPosition);
+    virtual void Render(const Camera& camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
 
-    virtual void RenderShadowMap(const Matrix4f& vp); // vp = view projection matrix.
-
-
+    virtual void RenderShadowMap(const Matrix4f& lightVp); // vp = view projection matrix.
 
     void  SetModelMatrix(Matrix4f modelMatrix);
 };

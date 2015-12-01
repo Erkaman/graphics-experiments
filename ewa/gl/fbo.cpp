@@ -48,6 +48,6 @@ void FBO::Init(const GLenum targetTextureUnit, const GLsizei width, const GLsize
     RecreateBuffers(width, height);
 }
 
-GLenum FBO::GetTargetTextureUnit() {
+GLenum FBO::GetTargetTextureUnit()const {
     return m_targetTextureUnit;
 }

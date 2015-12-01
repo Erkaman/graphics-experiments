@@ -146,14 +146,23 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Vector3f& v
     }
 }
 
-void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& camera, const Vector4f& lightDirection) {
+void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const Camera& camera, const Vector4f& lightDirection, const Matrix4f& lightVp) {
 
-    const Matrix4f modelViewMatrix = camera.GetModelViewMatrix(
-	modelMatrix);
+    const Matrix4f modelViewMatrix = /*Matrix4f::CreateLookAt(
+	-Vector3f(  Vector3f(-0.705072, -0.458142, -0.705072)),
+	    Vector3f(0.0f),
+	    Vector3f(0.0, 1.0, 0.0)
+	) * modelMatrix;*/
+    camera.GetModelViewMatrix(modelMatrix);
 
-    const Matrix4f mvp = camera.GetMvpFromMv(modelViewMatrix);
+    const Matrix4f mvp =
+//	Matrix4f::CreateOrthographic(-20,20, -20, 20, -20, 20) * modelViewMatrix;
+    camera.GetMvpFromMv(modelViewMatrix);
 
     SetUniform("mvp", mvp);
+    SetUniform("lightMvp", lightVp * modelMatrix);
+
+
     SetUniform("modelViewMatrix", modelViewMatrix);
     SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
 

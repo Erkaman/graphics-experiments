@@ -10,6 +10,7 @@ uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
 uniform mat4 normalMatrix;
 uniform vec3 eyePos;
+uniform mat4 lightMvp;
 
 out vec3 viewSpacePixelPositionOut;
 
@@ -25,10 +26,18 @@ out vec3 viewSpaceLightPositionOut;
 out mat4 modelViewMatrixOut;
 out vec3 eyePosOut;
 
+out vec4 shadowCoordOut;
+
+
 void main()
 {
     // vertex position
     viewSpacePixelPositionOut = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
+
+    shadowCoordOut = (lightMvp * vec4(positionIn,1));
+
+    // DepthBiasMVP
+    //shadowcoord == depthbiasmvp * position.
 
     normalOut = normalize(  (normalMatrix * vec4(normalIn, 0.0)).xyz );
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING

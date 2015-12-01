@@ -4,6 +4,7 @@
 #include "ewa/common.hpp"
 
 #include "ewa/math/vector4f.hpp"
+#include "ewa/math/matrix4f.hpp"
 
 class Camera;
 class HeightMap;
@@ -41,6 +42,9 @@ private:
     DepthFBO* m_depthFbo;
 
     Vector4f m_lightDirection;
+
+    Matrix4f m_lightProjectionMatrix;
+    Matrix4f m_lightViewMatrix;
 
 public:
 

@@ -175,7 +175,7 @@ void HeightMap::Render(const Camera& camera, const Vector4f& lightPosition) {
 
     m_shader->Bind();
 
-    m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition);
+    m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition, Matrix4f::CreateIdentity());
 
     m_shader->SetUniform("grass", 0);
     Texture::SetActiveTextureUnit(0);

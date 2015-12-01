@@ -36,7 +36,7 @@ public:
 
     virtual ~FBO();
 
-    GLenum GetTargetTextureUnit();
+    GLenum GetTargetTextureUnit() const;
 
     /**
      * This method MUST be called every time the window is resized!
