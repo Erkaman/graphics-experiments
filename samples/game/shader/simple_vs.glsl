@@ -34,7 +34,10 @@ void main()
     // vertex position
     viewSpacePixelPositionOut = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
+
+
     shadowCoordOut = (lightMvp * vec4(positionIn,1));
+
 
     // DepthBiasMVP
     //shadowcoord == depthbiasmvp * position.
@@ -46,7 +49,7 @@ void main()
 #endif
     texcoordOut = texCoordIn;
 
-    gl_Position = mvp * vec4(positionIn,1);
+    gl_Position =mvp * vec4(positionIn,1);
 
     eyePosOut = eyePos;
 

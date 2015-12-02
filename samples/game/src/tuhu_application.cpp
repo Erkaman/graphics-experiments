@@ -143,6 +143,27 @@ void TuhuApplication::Init() {
       m_windSound->SetGain(1.0f);
       m_windSound->SetLooping(true);
     */
+
+/*
+    Vector3f lightInvDir = Vector3f(0.5f,2,2);
+
+    Matrix4f depthViewMatrix = Matrix4f::CreateLookAt(lightInvDir, Vector3f(0,0,0), Vector3f(0,1,0));
+
+
+    LOG_I("depthviewmatrix: %s", string(depthViewMatrix).c_str() );
+
+
+    Matrix4f projMatrix = Matrix4f::CreateOrthographic(-10,10,-10,10,-10,20);
+
+    LOG_I("projmatrix: %s", string(projMatrix).c_str() );
+
+    Matrix4f prod = projMatrix * depthViewMatrix;
+
+    LOG_I("mvo: %s", string(prod.Transpose()).c_str() );
+
+
+     exit(1);
+*/
 }
 
 
@@ -199,16 +220,16 @@ void TuhuApplication::RenderShadowMap() {
     }
     m_depthFbo->Unbind();
 
-//   m_depthFbo->GetRenderTargetTexture().WriteDepthToFile("depth.png");
-//   exit(1);
-
 }
 
 void TuhuApplication::RenderScene() {
 
+
+
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    m_skydome->Draw(*m_camera);
+
+    //m_skydome->Draw(*m_camera);
 
 
 //   m_heightMap->Render(*m_camera, m_lightDirection);
@@ -217,12 +238,12 @@ void TuhuApplication::RenderScene() {
 
 
 
-    m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+    //  m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 
     // m_snow->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
-    m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+    //  m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 
 /*
@@ -235,17 +256,25 @@ void TuhuApplication::RenderScene() {
 
 
     Matrix4f biasMatrix(
-	0.5f, 0.0f, 0.0f, 0.0f,
-	0.0f, 0.5f, 0.0f, 0.0f,
-	0.0f, 0.0f, 0.5f, 0.0f,
-	0.5f, 0.5f, 0.5f, 1.0f
+	0.5f, 0.0f, 0.0f, 0.5f,
+	0.0f, 0.5f, 0.0f, 0.5f,
+	0.0f, 0.0f, 0.5f, 0.5f,
+	0.0f, 0.0f, 0.0f, 1.0f
 	);
 
     Matrix4f lightVp =  biasMatrix*  m_lightProjectionMatrix * m_lightViewMatrix;
 
-    m_sphere->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+/*
+    GL_C(glEnable(GL_BLEND));
+    GL_C(glBlendFunc(GL_ONE, GL_ONE));
+    GL_C(glBlendEquation(GL_FUNC_ADD));
+*/
+    m_tree->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+
+      m_sphere->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 
 
+     m_plane->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 
 
     m_sphere->SetModelMatrix(
@@ -255,9 +284,9 @@ void TuhuApplication::RenderScene() {
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
 
 
-    m_plane->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 
-    m_tree->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+
+
 }
 
 void TuhuApplication::Render() {

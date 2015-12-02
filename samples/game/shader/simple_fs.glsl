@@ -105,7 +105,10 @@ in vec4 shadowCoordOut;
 
 uniform sampler2D normalMap;
 uniform sampler2D diffMap;
+
+
 uniform sampler2D shadowMap;
+
 
 out vec4 fragmentColor;
 
@@ -125,11 +128,12 @@ void main(void) {
     /*
       Shadow Mapping
      */
+
+
     float visibility = 1.0;
-/*    if ( texture( shadowMap, shadowCoordOut.xy ).z  <  (shadowCoordOut.z)  ){
+    if ( texture( shadowMap, shadowCoordOut.xy ).x  <  (shadowCoordOut.z)  ){
 	visibility = 0.0;
     }
-*/
 
 #ifdef HEIGHT_MAPPING
 
@@ -259,4 +263,10 @@ void main(void) {
 //	vec4(vec3(shadowCoordOut.z), 1);
 
 //    fragmentColor = vec4(vec3(abs(texture( shadowMap, shadowCoordOut.xy).x) / 4), 1);
+
+//    fragmentColor = vec4(vec3(abs(texture( shadowMap, shadowCoordOut.xy ).x) * 0.2 ), 1);
+
+/*    if(shadowCoordOut.x < 0) {
+	fragmentColor = vec4(vec3(1,0,0), 1.0);
+	}*/
 }
