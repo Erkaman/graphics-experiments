@@ -129,11 +129,13 @@ void main(void) {
       Shadow Mapping
      */
 
-
     float visibility = 1.0;
-    if ( texture( shadowMap, shadowCoordOut.xy ).x  <  (shadowCoordOut.z)  ){
+
+    if ( texture( shadowMap, shadowCoordOut.xy ).x  <  (shadowCoordOut.z) ){
 	visibility = 0.0;
     }
+
+//    float visibility = textureProj( shadowMap, shadowCoordOut );
 
 #ifdef HEIGHT_MAPPING
 

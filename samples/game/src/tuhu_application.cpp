@@ -159,7 +159,18 @@ void TuhuApplication::Init() {
 
     Matrix4f prod = projMatrix * depthViewMatrix;
 
-    LOG_I("mvo: %s", string(prod.Transpose()).c_str() );
+    LOG_I("mvo: %s", string(prod).c_str() );
+
+    Matrix4f bias = Matrix4f(
+	0.5f, 0.0f, 0.0f, 0.5f,
+	0.0f, 0.5f, 0.0f, 0.5f,
+	0.0f, 0.0f, 0.5f, 0.5f,
+	0.0f, 0.0f, 0.0f, 1.0f
+	);
+
+    Matrix4f a = bias * prod;
+
+    LOG_I("a: %s", string(a).c_str() );
 
 
      exit(1);
@@ -187,7 +198,7 @@ void TuhuApplication::RenderShadowMap() {
 	    Vector3f(0.0, 1.0, 0.0)
 	    );
 
-	m_lightProjectionMatrix = Matrix4f::CreateOrthographic(-20, 20, -20, 20, -20, 20);
+	m_lightProjectionMatrix = Matrix4f::CreateOrthographic(-30, 30, -20, 20, -30, 50);
 
 	Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
 
@@ -218,7 +229,9 @@ void TuhuApplication::RenderShadowMap() {
 
 	m_tree->RenderShadowMap(vp);
     }
-    m_depthFbo->Unbind();
+   m_depthFbo->Unbind();
+
+
 
 }
 
@@ -295,6 +308,7 @@ void TuhuApplication::Render() {
     SetViewport();
 
     RenderShadowMap();
+
 
 
     RenderScene();
