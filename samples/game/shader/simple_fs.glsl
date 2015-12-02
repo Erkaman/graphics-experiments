@@ -131,7 +131,7 @@ void main(void) {
 
     float visibility = 1.0;
 
-    if ( texture( shadowMap, shadowCoordOut.xy ).x  <  (shadowCoordOut.z) ){
+    if ( texture( shadowMap, shadowCoordOut.xy ).x  <  (shadowCoordOut.z / shadowCoordOut.w) ){
 	visibility = 0.0;
     }
 
@@ -264,11 +264,11 @@ void main(void) {
 //    fragmentColor =
 //	vec4(vec3(shadowCoordOut.z), 1);
 
-//    fragmentColor = vec4(vec3(abs(texture( shadowMap, shadowCoordOut.xy).x) / 4), 1);
 
 //    fragmentColor = vec4(vec3(abs(texture( shadowMap, shadowCoordOut.xy ).x) * 0.2 ), 1);
 
 /*    if(shadowCoordOut.x < 0) {
 	fragmentColor = vec4(vec3(1,0,0), 1.0);
 	}*/
+
 }

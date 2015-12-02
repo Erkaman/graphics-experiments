@@ -34,10 +34,9 @@ void main()
     // vertex position
     viewSpacePixelPositionOut = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
-
-
     shadowCoordOut = (lightMvp * vec4(positionIn,1));
-
+    shadowCoordOut *=  0.5;
+    shadowCoordOut +=  0.5;
 
     // DepthBiasMVP
     //shadowcoord == depthbiasmvp * position.

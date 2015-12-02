@@ -112,10 +112,7 @@ void TuhuApplication::Init() {
 
 	Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
 	Matrix4f::CreateTranslation(Vector3f(0,-2.5,0))
-
-
 	);
-
 
     m_tree = new GeometryObject();
     m_tree->Init("obj/tree.eob");
@@ -181,8 +178,11 @@ void TuhuApplication::Init() {
 void TuhuApplication::RenderShadowMap() {
 
 
-    m_depthFbo->Bind();
+      m_depthFbo->Bind();
     {
+
+
+	::SetViewport(0,0,1024,1024);
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -194,18 +194,26 @@ void TuhuApplication::RenderShadowMap() {
 
 	m_lightViewMatrix = Matrix4f::CreateLookAt(
 	    -Vector3f(m_lightDirection),
-	    Vector3f(0.0f),
+	    Vector3f(0.0f, 0.0f, 0.0f),
 	    Vector3f(0.0, 1.0, 0.0)
 	    );
 
-	m_lightProjectionMatrix = Matrix4f::CreateOrthographic(-30, 30, -20, 20, -30, 50);
+	m_lightProjectionMatrix = Matrix4f::CreateOrthographic(-20, 20, -12, 12, -20, 50);
 
 	Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
 
+/*
+	Matrix4f copy = m_lightViewMatrix;
+	copy.Transpose();
+	LOG_I("view: %s" ,string(copy).c_str() );
+	copy = m_lightProjectionMatrix;
+	copy.Transpose();
+	LOG_I("proj: %s" ,string(copy).c_str() );
+	exit(1);
+*/
+
 //	LOG_I("testing: %s" ,string(vp * Vector4f(0,0,0, 1)).c_str() );
 
-//	LOG_I("view: %s" ,string(m_lightViewMatrix).c_str() );
-//	LOG_I("proj: %s" ,string(m_lightProjectionMatrix).c_str() );
 
 
 	// seems like there are points inside the orthgonal  frustrum of the light that gets assigned
@@ -229,7 +237,7 @@ void TuhuApplication::RenderShadowMap() {
 
 	m_tree->RenderShadowMap(vp);
     }
-   m_depthFbo->Unbind();
+       m_depthFbo->Unbind();
 
 
 
@@ -267,7 +275,6 @@ void TuhuApplication::RenderScene() {
   m_woodFloor->Render(*m_camera, m_lightDirection);
 */
 
-
     Matrix4f biasMatrix(
 	0.5f, 0.0f, 0.0f, 0.5f,
 	0.0f, 0.5f, 0.0f, 0.5f,
@@ -275,7 +282,15 @@ void TuhuApplication::RenderScene() {
 	0.0f, 0.0f, 0.0f, 1.0f
 	);
 
-    Matrix4f lightVp =  biasMatrix*  m_lightProjectionMatrix * m_lightViewMatrix;
+    Matrix4f lightVp =  /*biasMatrix*/  m_lightProjectionMatrix * m_lightViewMatrix;
+
+/*    LOG_I("a1\n: %s", string(lightVp * Vector4f(-10.0f,-2.5f,-10.0f,1.0) ).c_str() );
+    LOG_I("a1\n: %s", string(lightVp * Vector4f(10.0f,-2.5f,-10.0f,1.0) ).c_str() );
+    LOG_I("a1\n: %s", string(lightVp * Vector4f(-10.0f,-2.5f,10.0f,1.0) ).c_str() );
+    LOG_I("a1\n: %s", string(lightVp * Vector4f(10.0f,-2.5f,10.0f,1.0) ).c_str() );
+
+    exit(1);
+*/
 
 /*
     GL_C(glEnable(GL_BLEND));
@@ -298,8 +313,6 @@ void TuhuApplication::RenderScene() {
 
 
 
-
-
 }
 
 void TuhuApplication::Render() {
@@ -307,9 +320,10 @@ void TuhuApplication::Render() {
 
     SetViewport();
 
+
     RenderShadowMap();
 
-
+    SetViewport();
 
     RenderScene();
 }
