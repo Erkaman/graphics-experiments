@@ -229,3 +229,8 @@ void Texture::WriteToFile(unsigned char* pixels, const size_t width, const size_
     if(error)
       LOG_E("PNG encoder error: %d: %s", error, lodepng_error_text(error) );
 }
+
+void Texture::ConfigureForPCF() {
+    GL_C(glTexParameteri(m_target, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL));
+    GL_C(glTexParameteri(m_target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE));
+}

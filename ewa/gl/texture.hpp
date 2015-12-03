@@ -79,6 +79,8 @@ public:
 
     void SetMinFilter(const GLint filter);
 
+    void ConfigureForPCF();
+
     /*
       Load the pixeldata of this texture from OpenGL and write it to a file.
      */

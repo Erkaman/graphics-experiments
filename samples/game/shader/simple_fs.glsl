@@ -107,7 +107,8 @@ uniform sampler2D normalMap;
 uniform sampler2D diffMap;
 
 
-uniform sampler2D shadowMap;
+//uniform sampler2D shadowMap;
+uniform sampler2DShadow shadowMap;
 
 
 out vec4 fragmentColor;
@@ -244,11 +245,11 @@ void main(void) {
 
 //    float bias = 0.001*tan(acos(cosTheta));
 
-    if ( texture( shadowMap, shadowCoordOut.xy ).x  < ( (shadowCoordOut.z / shadowCoordOut.w)-bias )  ){
+/*    if ( texture( shadowMap, shadowCoordOut.xy ).x  < ( (shadowCoordOut.z / shadowCoordOut.w)-bias )  ){
 	visibility = 0.0;
     }
-
-//    visibility = 1.0 - texture( shadowMap, vec3(shadowCoordOut.xy, ( (shadowCoordOut.z) / shadowCoordOut.w) )  );
+*/
+    visibility = texture( shadowMap, vec3(shadowCoordOut.xy, ( (shadowCoordOut.z-bias) / shadowCoordOut.w) )  );
 
     vec4 finalcolor=ambient*finalDiffuse; // ambient
 

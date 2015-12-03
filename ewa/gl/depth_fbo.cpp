@@ -20,8 +20,9 @@ void DepthFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
 	Texture::SetActiveTextureUnit(m_targetTextureUnit);
 	m_renderTargetTexture->Bind();
 	{
-	    m_renderTargetTexture->SetMagMinFilters(GL_NEAREST);
+	    m_renderTargetTexture->SetMagMinFilters(GL_LINEAR);
 	    m_renderTargetTexture->SetTextureClamping();
+	    m_renderTargetTexture->ConfigureForPCF();
 
 	    // attach the target texture to the FBO.
 	    Attach(GL_DEPTH_ATTACHMENT, *m_renderTargetTexture);

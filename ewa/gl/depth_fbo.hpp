@@ -2,6 +2,7 @@
 
 #include "fbo.hpp"
 
+// used for shadow mapping
 class DepthFBO : public FBO{
 
 public:
