@@ -145,8 +145,6 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 */
     // LOG_I("m:\n %s", string(m).c_str() );
 
-
-
     m_depthFbo = new DepthFBO();
 m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 

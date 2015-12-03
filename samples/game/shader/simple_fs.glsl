@@ -129,11 +129,6 @@ void main(void) {
       Shadow Mapping
      */
 
-    float visibility = 1.0;
-
-    if ( texture( shadowMap, shadowCoordOut.xy ).x  < ( (shadowCoordOut.z / shadowCoordOut.w)-0.001 )  ){
-	visibility = 0.0;
-    }
 
 #ifdef HEIGHT_MAPPING
 
@@ -242,6 +237,19 @@ void main(void) {
 
 #endif
 
+    float visibility = 1.0;
+
+    float cosTheta = diff;
+    float bias = 0.001*tan(acos(cosTheta))+0.001;
+
+//    float bias = 0.001*tan(acos(cosTheta));
+
+    if ( texture( shadowMap, shadowCoordOut.xy ).x  < ( (shadowCoordOut.z / shadowCoordOut.w)-bias )  ){
+	visibility = 0.0;
+    }
+
+//    visibility = 1.0 - texture( shadowMap, vec3(shadowCoordOut.xy, ( (shadowCoordOut.z) / shadowCoordOut.w) )  );
+
     vec4 finalcolor=ambient*finalDiffuse; // ambient
 
     finalcolor.xyz+=(finalDiffuse.xyz*diffuse.xyz*diff * visibility+
@@ -249,5 +257,7 @@ void main(void) {
     finalcolor.w=1.0;
 
     fragmentColor= finalcolor;
+
+    //  fragmentColor = vec4( vec3(cosTheta), 1.0  );
 
 }
