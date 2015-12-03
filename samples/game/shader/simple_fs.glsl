@@ -1,6 +1,7 @@
 
 
 
+
 vec4 sample(sampler2D tex, vec2 uv) {
     return texture(tex, vec2(uv.x, 1.0-uv.y) );
 }
@@ -115,6 +116,13 @@ out vec4 fragmentColor;
 
 uniform vec3 specColor;
 uniform float specShiny;
+
+vec2 poissonDisk[4] = vec2[](
+   vec2( -0.94201624, -0.39906216 ),
+   vec2( 0.94558609, -0.76890725 ),
+   vec2( -0.094184101, -0.92938870 ),
+   vec2( 0.34495938, 0.29387760 )
+ );
 
 void main(void) {
     // since it is directional light, minus.
@@ -238,7 +246,6 @@ void main(void) {
 
 #endif
 
-    float visibility = 1.0;
 
     float cosTheta = diff;
     float bias = 0.001*tan(acos(cosTheta))+0.001;
@@ -249,7 +256,16 @@ void main(void) {
 	visibility = 0.0;
     }
 */
-    visibility = texture( shadowMap, vec3(shadowCoordOut.xy, ( (shadowCoordOut.z-bias) / shadowCoordOut.w) )  );
+
+    float visibility = 1.0;
+
+     for (int i=0;i<4;i++){
+
+	 visibility -=
+	     0.2 * (1.0-texture( shadowMap, vec3(shadowCoordOut.xy+poissonDisk[i]/700.0, ( (shadowCoordOut.z-bias) / shadowCoordOut.w) )  ));
+     }
+
+//    visibility = texture( shadowMap, vec3(shadowCoordOut.xy, ( (shadowCoordOut.z-bias) / shadowCoordOut.w) )  );
 
     vec4 finalcolor=ambient*finalDiffuse; // ambient
 
