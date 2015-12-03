@@ -21,6 +21,9 @@
 
 using namespace std;
 
+constexpr int SHADOW_MAP_SIZE = 1024;
+
+
 void ToClipboard(const std::string& str) {
     std::string command = "echo '" + str + "' | pbcopy";
     system(command.c_str());
@@ -130,7 +133,7 @@ void TuhuApplication::Init() {
 
 
     m_depthFbo = new DepthFBO();
-    m_depthFbo->Init(9, 1024, 1024);
+m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
 
     /*
@@ -177,20 +180,11 @@ void TuhuApplication::Init() {
 
 void TuhuApplication::RenderShadowMap() {
 
-
-      m_depthFbo->Bind();
+    m_depthFbo->Bind();
     {
-
-
-	::SetViewport(0,0,1024,1024);
+	::SetViewport(0,0,SHADOW_MAP_SIZE,SHADOW_MAP_SIZE);
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-//	m_heightMap->RenderShadowMap(*m_camera);
-
-//	Matrix4f vp = m_camera->GetMvpFromM();
-
-	//glm::lookAt(lightInvDir, glm::vec3(0,0,0), glm::vec3(0,1,0));
 
 	m_lightViewMatrix = Matrix4f::CreateLookAt(
 	    -Vector3f(m_lightDirection),
@@ -198,33 +192,9 @@ void TuhuApplication::RenderShadowMap() {
 	    Vector3f(0.0, 1.0, 0.0)
 	    );
 
-	m_lightProjectionMatrix = Matrix4f::CreateOrthographic(-20, 20, -12, 12, -20, 50);
+	m_lightProjectionMatrix = Matrix4f::CreateOrthographic(-7, 8, -12, 12, -20, 50);
 
 	Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
-
-/*
-	Matrix4f copy = m_lightViewMatrix;
-	copy.Transpose();
-	LOG_I("view: %s" ,string(copy).c_str() );
-	copy = m_lightProjectionMatrix;
-	copy.Transpose();
-	LOG_I("proj: %s" ,string(copy).c_str() );
-	exit(1);
-*/
-
-//	LOG_I("testing: %s" ,string(vp * Vector4f(0,0,0, 1)).c_str() );
-
-
-
-	// seems like there are points inside the orthgonal  frustrum of the light that gets assigned
-	//values over 1 or below -1. this should not happen, this should happen to points outside clip space!
-//	    so they would not be processed to begin with,
-
-//	LOG_I("testing: %s" ,string(m_lightProjectionMatrix * Vector4f(-10,20,0, 1)).c_str() );
-
-
-//	LOG_I("testing3: %s" ,string( Matrix4f::CreateTranslation(3,2,-1) * Vector4f(30,-2,30, 1)).c_str() );
-
 
 /*
   m_stoneFloor->RenderShadowMap(vp);
@@ -237,7 +207,7 @@ void TuhuApplication::RenderShadowMap() {
 
 	m_tree->RenderShadowMap(vp);
     }
-       m_depthFbo->Unbind();
+   m_depthFbo->Unbind();
 
 
 
@@ -245,19 +215,17 @@ void TuhuApplication::RenderShadowMap() {
 
 void TuhuApplication::RenderScene() {
 
-
+    // set the viewport to the size of the window.
+    SetViewport();
 
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
     //m_skydome->Draw(*m_camera);
 
-
 //   m_heightMap->Render(*m_camera, m_lightDirection);
 
 //    m_grass->Draw(*m_camera, m_lightDirection);
-
-
 
     //  m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
@@ -282,21 +250,8 @@ void TuhuApplication::RenderScene() {
 	0.0f, 0.0f, 0.0f, 1.0f
 	);
 
-    Matrix4f lightVp =  /*biasMatrix*/  m_lightProjectionMatrix * m_lightViewMatrix;
+    Matrix4f lightVp =  biasMatrix *  m_lightProjectionMatrix * m_lightViewMatrix;
 
-/*    LOG_I("a1\n: %s", string(lightVp * Vector4f(-10.0f,-2.5f,-10.0f,1.0) ).c_str() );
-    LOG_I("a1\n: %s", string(lightVp * Vector4f(10.0f,-2.5f,-10.0f,1.0) ).c_str() );
-    LOG_I("a1\n: %s", string(lightVp * Vector4f(-10.0f,-2.5f,10.0f,1.0) ).c_str() );
-    LOG_I("a1\n: %s", string(lightVp * Vector4f(10.0f,-2.5f,10.0f,1.0) ).c_str() );
-
-    exit(1);
-*/
-
-/*
-    GL_C(glEnable(GL_BLEND));
-    GL_C(glBlendFunc(GL_ONE, GL_ONE));
-    GL_C(glBlendEquation(GL_FUNC_ADD));
-*/
     m_tree->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 
       m_sphere->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
@@ -310,22 +265,14 @@ void TuhuApplication::RenderScene() {
     m_sphere->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
     m_sphere->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
-
-
-
 }
 
 void TuhuApplication::Render() {
 
-
-    SetViewport();
-
-
     RenderShadowMap();
 
-    SetViewport();
 
-    RenderScene();
+  RenderScene();
 }
 
 void TuhuApplication::Update(const float delta) {

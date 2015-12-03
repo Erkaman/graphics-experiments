@@ -35,11 +35,6 @@ void main()
     viewSpacePixelPositionOut = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
     shadowCoordOut = (lightMvp * vec4(positionIn,1));
-    shadowCoordOut *=  0.5;
-    shadowCoordOut +=  0.5;
-
-    // DepthBiasMVP
-    //shadowcoord == depthbiasmvp * position.
 
     normalOut = normalize(  (normalMatrix * vec4(normalIn, 0.0)).xyz );
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING

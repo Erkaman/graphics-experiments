@@ -135,8 +135,6 @@ void main(void) {
 	visibility = 0.0;
     }
 
-//    float visibility = textureProj( shadowMap, shadowCoordOut );
-
 #ifdef HEIGHT_MAPPING
 
     float depth = 0.1;
@@ -250,25 +248,6 @@ void main(void) {
 			 specColor*pow(spec,specShiny) * visibility );
     finalcolor.w=1.0;
 
-    fragmentColor= /*vec4(vec3(specColor*pow(spec,specShiny)),1 );*/   finalcolor;
-
-/*    if(shadowCoordOut.z < 0.00) {
-	fragmentColor = vec4(vec3(1,0,0), 1);
-    }else {
-	fragmentColor = vec4(vec3(shadowCoordOut.z), 1);
-	}*/
-
-    // can be negative!
-//    fragmentColor = vec4(vec3(abs(shadowCoordOut.z) ), 1);
-
-//    fragmentColor =
-//	vec4(vec3(shadowCoordOut.z), 1);
-
-
-//    fragmentColor = vec4(vec3(abs(texture( shadowMap, shadowCoordOut.xy ).x) * 0.2 ), 1);
-
-/*    if(shadowCoordOut.x < 0) {
-	fragmentColor = vec4(vec3(1,0,0), 1.0);
-	}*/
+    fragmentColor= finalcolor;
 
 }
