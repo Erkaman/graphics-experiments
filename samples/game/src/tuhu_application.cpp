@@ -23,7 +23,6 @@ using namespace std;
 
 constexpr int SHADOW_MAP_SIZE = 1024;
 
-
 void ToClipboard(const std::string& str) {
     std::string command = "echo '" + str + "' | pbcopy";
     system(command.c_str());
@@ -53,7 +52,7 @@ void TuhuApplication::Init() {
 
     const Vector3f pos =
 
-	Vector3f(16.225868, 15.782454, -3.545918);
+	Vector3f(17.328205, 15.360136, 14.091190);
 
 
 
@@ -63,7 +62,9 @@ void TuhuApplication::Init() {
 
 
 
-			  pos,Vector3f(-0.657543, -0.605913, 0.447781)
+
+			  pos,
+Vector3f(-0.597377, -0.590989, -0.542100)
 
 			  , true);
 
@@ -122,8 +123,22 @@ void TuhuApplication::Init() {
     m_tree->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(10,-2.5,10)));
 
+    m_wall = new GeometryObject();
+    m_wall->Init("obj/wall.eob");
+    m_wall->SetModelMatrix(
+	Matrix4f::CreateTranslation(Vector3f(-5,-2.5,-5)));
+
+    m_wall2 = new GeometryObject();
+    m_wall2->Init("obj/wall.eob");
+    m_wall2->SetModelMatrix(
+	Matrix4f::CreateScale(Vector3f(1,0.4,1))   *
+	Matrix4f::CreateTranslation(Vector3f(20,-6.5,-5)));
 
 
+    m_ball2 = new GeometryObject();
+    m_ball2->Init("obj/sunball.eob");
+    m_ball2->SetModelMatrix(
+    Matrix4f::CreateTranslation(Vector3f(20,-1.0,-7)));
 
 /*    Matrix4f m = Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
       Matrix4f::CreateTranslation(Vector3f(0,-2.0,0));
@@ -192,7 +207,7 @@ void TuhuApplication::RenderShadowMap() {
 	    Vector3f(0.0, 1.0, 0.0)
 	    );
 
-	m_lightProjectionMatrix = Matrix4f::CreateOrthographic(-7, 8, -12, 12, -20, 50);
+	m_lightProjectionMatrix = Matrix4f::CreateOrthographic(-30, 30, -12, 12, -20, 50);
 
 	Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
 
@@ -206,6 +221,12 @@ void TuhuApplication::RenderShadowMap() {
 	m_sphere->RenderShadowMap(vp);
 
 	m_tree->RenderShadowMap(vp);
+
+	m_wall->RenderShadowMap(vp);
+	m_wall2->RenderShadowMap(vp);
+
+	m_ball2->RenderShadowMap(vp);
+
     }
    m_depthFbo->Unbind();
 
@@ -265,11 +286,17 @@ void TuhuApplication::RenderScene() {
     m_sphere->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
     m_sphere->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
+
+     m_wall->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+     m_wall2->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+
+     m_ball2->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+
 }
 
 void TuhuApplication::Render() {
 
-    RenderShadowMap();
+  RenderShadowMap();
 
 
   RenderScene();

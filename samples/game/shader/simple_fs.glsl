@@ -131,7 +131,7 @@ void main(void) {
 
     float visibility = 1.0;
 
-    if ( texture( shadowMap, shadowCoordOut.xy ).x  <  (shadowCoordOut.z / shadowCoordOut.w) ){
+    if ( texture( shadowMap, shadowCoordOut.xy ).x  < ( (shadowCoordOut.z / shadowCoordOut.w)-0.001 )  ){
 	visibility = 0.0;
     }
 

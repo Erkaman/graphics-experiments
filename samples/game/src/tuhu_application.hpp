@@ -38,6 +38,9 @@ private:
     GeometryObject* m_sphere;
     GeometryObject* m_plane;
     GeometryObject* m_tree;
+    GeometryObject* m_wall;
+    GeometryObject* m_wall2;
+    GeometryObject* m_ball2;
 
     DepthFBO* m_depthFbo;
 
