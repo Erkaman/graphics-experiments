@@ -21,6 +21,7 @@
 
 #include "ewa/line.hpp"
 #include "ewa/points.hpp"
+#include "ewa/cube.hpp"
 
 using namespace std;
 
@@ -67,12 +68,12 @@ void TuhuApplication::Init() {
 
     m_points = new Points(points, 7.0, Vector3f(1,0,0) );
 
+    m_cube = new Cube();
+
 
     const Vector3f pos =
 
 	Vector3f(17.328205, 15.360136, 14.091190);
-
-
 
 
     Vector3f(5.997801, 5.711470, -3.929811);
@@ -310,6 +311,7 @@ void TuhuApplication::RenderScene() {
 
      m_line->Render(m_camera->GetMvpFromM());
      m_points->Render(m_camera->GetMvpFromM());
+     m_cube->Render(m_camera->GetMvpFromM());
 
 }
 

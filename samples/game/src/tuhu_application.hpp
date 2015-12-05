@@ -16,6 +16,7 @@ class GeometryObject;
 class DepthFBO;
 class Line;
 class Points;
+class Cube;
 
 class TuhuApplication : public Application{
 
@@ -48,6 +49,7 @@ private:
 
     Line* m_line;
     Points* m_points;
+    Cube* m_cube;
 
     Vector4f m_lightDirection;
 
