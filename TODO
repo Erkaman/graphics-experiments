@@ -1,3 +1,6 @@
+
+
+
 * target polygon count:
 10000 is way too many.
 3000 can be fine depending on the model. if it is a complex model.
@@ -23,7 +26,7 @@ https://www.youtube.com/watch?v=r1CT9wTQiwc
 
 Todo:
 
-
+* implement simple line drawing and square drawing, and point drawing for debugging
 * implement precomputed radiance transfer for prebaked global illuminatin
 * shadow mapping.
 * create an efficient terrain system.

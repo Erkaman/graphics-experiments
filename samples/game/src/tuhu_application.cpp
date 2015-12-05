@@ -19,6 +19,8 @@
 #include "snow_effect.hpp"
 #include "fire_effect.hpp"
 
+#include "ewa/line.hpp"
+
 using namespace std;
 
 constexpr int SHADOW_MAP_SIZE = 1024;
@@ -44,11 +46,16 @@ TuhuApplication::~TuhuApplication() {
 }
 
 void TuhuApplication::Init() {
+
+    m_totalDelta = 0;
+
     m_smoke = new SmokeEffect(Vector3f(11.5,-3,10));
     m_smoke->Init();
 
     ::SetDepthTest(true);
     ::SetCullFace(true);
+
+    m_line = new Line(Vector3f(00,-2.0,0), Vector3f(0,-2.0,30));
 
     const Vector3f pos =
 
@@ -290,6 +297,8 @@ void TuhuApplication::RenderScene() {
 
      m_ball2->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 
+     m_line->Render(m_camera->GetMvpFromM());
+
 }
 
 void TuhuApplication::Render() {
@@ -301,6 +310,18 @@ void TuhuApplication::Render() {
 }
 
 void TuhuApplication::Update(const float delta) {
+
+    m_totalDelta += delta;
+
+    const float RADIUS = 30.0;
+    const float ROT_SPEED = 0.4;
+
+    m_line->SetEnd( Vector3f(
+
+			/*0*/ sin(m_totalDelta*ROT_SPEED)*RADIUS,
+			-2.0,
+
+			cos(m_totalDelta*ROT_SPEED)*RADIUS  )  );
 
     m_camera->HandleInput(delta);
 

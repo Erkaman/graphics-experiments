@@ -14,6 +14,7 @@ class Sound;
 class ParticleSystem;
 class GeometryObject;
 class DepthFBO;
+class Line;
 
 class TuhuApplication : public Application{
 
@@ -44,10 +45,15 @@ private:
 
     DepthFBO* m_depthFbo;
 
+    Line* m_line;
+
     Vector4f m_lightDirection;
 
+    // used in shadow mapping for rendering all object from the perspective of the light source.
     Matrix4f m_lightProjectionMatrix;
     Matrix4f m_lightViewMatrix;
+
+    float m_totalDelta;
 
 public:
 

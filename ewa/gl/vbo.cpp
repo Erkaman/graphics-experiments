@@ -35,15 +35,12 @@ VBO* VBO::CreateInterleaved(const std::vector<GLuint>& sizes, const GLenum usage
     buffer->SetType(GL_FLOAT);
     buffer->SetUsage(usage);
 
-//    buffer->m_vertexAttribs = std::move(vertexAttribs);
     buffer->m_sizes = sizes;
 
     buffer->m_offsets.reserve(sizes.size());
 
     GLuint totalOffset = 0;
     for(size_t i = 0; i <buffer->m_sizes.size(); ++i) {
-
-//	LOG_I("offset: %d", totalOffset);
 
 	buffer->m_offsets.push_back(totalOffset);
         totalOffset += buffer->m_sizes[i] * sizeof(GLfloat);
