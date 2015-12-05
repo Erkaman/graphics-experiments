@@ -20,6 +20,7 @@
 #include "fire_effect.hpp"
 
 #include "ewa/line.hpp"
+#include "ewa/points.hpp"
 
 using namespace std;
 
@@ -56,6 +57,16 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     m_line = new Line(Vector3f(00,-2.0,0), Vector3f(0,-2.0,30));
+
+    vector<Vector3f> points;
+
+    for(int i = 0; i < 20; ++i) {
+
+	points.emplace_back(i,0,0);
+    }
+
+    m_points = new Points(points, 7.0, Vector3f(1,0,0) );
+
 
     const Vector3f pos =
 
@@ -298,6 +309,7 @@ void TuhuApplication::RenderScene() {
      m_ball2->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 
      m_line->Render(m_camera->GetMvpFromM());
+     m_points->Render(m_camera->GetMvpFromM());
 
 }
 

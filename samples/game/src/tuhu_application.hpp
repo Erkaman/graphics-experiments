@@ -15,6 +15,7 @@ class ParticleSystem;
 class GeometryObject;
 class DepthFBO;
 class Line;
+class Points;
 
 class TuhuApplication : public Application{
 
@@ -46,6 +47,7 @@ private:
     DepthFBO* m_depthFbo;
 
     Line* m_line;
+    Points* m_points;
 
     Vector4f m_lightDirection;
 

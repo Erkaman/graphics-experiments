@@ -11,7 +11,7 @@ Line::Line(const Vector3f& start, const Vector3f& end, const Vector3f& color) {
 	vector<GLuint>{3} // pos.
 	);
 
-    m_shader = new ShaderProgram("shader_lib/line");
+    m_shader = new ShaderProgram("shader_lib/primitive");
 
     SetStartEnd(start,end);
     SetColor(color);
@@ -53,8 +53,6 @@ void Line::SetStartEnd(const Vector3f& start, const Vector3f& end) {
 }
 
 void Line::Render(const Matrix4f& vp) {
-
-    GL_C(glLineWidth(0.5));
 
     m_shader->Bind();
 
