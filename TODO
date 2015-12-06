@@ -25,17 +25,31 @@ https://www.youtube.com/watch?v=r1CT9wTQiwc
 
 
 Todo:
-
-* implement simple line drawing and square drawing, and point drawing for debugging
-* implement precomputed radiance transfer for prebaked global illuminatin
+* gaussian filter.
+* bloom?
+* SSAO
+* god rays?
+* environment mapping.
+* car camera movement.
+* make level editor
+https://www.youtube.com/watch?v=QaXFpVu5YEw
+https://www.youtube.com/watch?v=U7zJ1Ai8YAo
+Some basic algorithms(like lightning and such) in
+Focus on 3D Terrain Programming
+https://github.com/SonyWWS/LevelEditor
+* implement geometry clipmapping
+* efficient view frustum culling(hierarchy, )
+* road drawing.
+* lod models.
+http://www.gamedev.net/topic/652777-geometry-clipmaps-terrain-tutorial-with-source/
+* physic
 * shadow mapping.
-* create an efficient terrain system.
 * water rendering
-* shadows.
-* Deferred rendering, multiple materials:
+* Deferred rendering.
 * Make better unit testing framework.
 * make program for converting shader to png texture.
 * make better clouds. See here for inspiration: https://www.shadertoy.com/view/XlSSRd
+* implement precomputed radiance transfer for prebaked global illuminatin
 
 
 links:
