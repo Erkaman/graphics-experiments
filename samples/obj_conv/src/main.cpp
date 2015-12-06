@@ -95,13 +95,16 @@ int main (int argc, char * argv[]) {
     // the path where all output files will be put.
     basePath = File::GetFilePath(objFilename);
 
-    BufferedFileReader reader(  objFilename);
+    BufferedFileReader* reader = BufferedFileReader::Load(  objFilename);
+    if(!reader) {
+	PrintErrorExit();
+    }
 
     currentChunk = NULL;
 
-    while(!reader.IsEof()) {
+    while(!reader->IsEof()) {
 
-	string line = reader.ReadLine();
+	string line = reader->ReadLine();
 
 	vector<string> tokens =StringUtil::SplitString(line, " ");
 
@@ -226,7 +229,9 @@ int main (int argc, char * argv[]) {
     string f = File::GetFile(objFilename);
     string outfile = File::AppendPaths(basePath, f.substr(0, f.size()-4 ) + ".eob" );
 
-    EobFile::Write(data, outfile);
+    if(!EobFile::Write(data, outfile)) {
+	PrintErrorExit();
+    }
 
     LogDispose();
 
@@ -236,11 +241,11 @@ int main (int argc, char * argv[]) {
 map<string, Material*> ParseMtllib(const string& filename) {
     Material* currentMaterial = NULL;
 
-    BufferedFileReader reader(File::AppendPaths(basePath, filename) );
+    BufferedFileReader* reader = BufferedFileReader::Load(File::AppendPaths(basePath, filename) );
 
-    while(!reader.IsEof()) {
+    while(!reader->IsEof()) {
 
-	string line = reader.ReadLine();
+	string line = reader->ReadLine();
 	vector<string> tokens =StringUtil::SplitString(line, " ");
 	string firstToken = tokens[0];
 

@@ -25,11 +25,9 @@ using std::vector;
 #define VETX 0x58544556
 #define INDX 0x58444E49
 
-// https://www.opengl.org/registry/doc/glspec33.core.20100311.withchanges.pdf#page=32
 struct FileHeader {
     int32 m_magic; // Always has the value "EOBF"
 
-//    uint32 m_numTriangles; //GLuint is 32-bit
     int32 m_indexType; // GLenum is 32-bit
 };
 
@@ -43,8 +41,6 @@ struct MaterialHeader {
     int32 m_magic; // Always has the value "MATS"
 };
 
-
-// 32-bit size, then GLvoid data, then cast.
 
 float StrToFloat(const string& str) {
     string::size_type size;
@@ -91,7 +87,6 @@ bool WriteMaterialFile(const GeometryObjectData& data, const std::string& outfil
 	return false;
     }
 
-
     for(GeometryObjectData::Chunk* chunk : data.m_chunks) {
 
 	Material* mat = chunk->m_material;
@@ -100,7 +95,6 @@ bool WriteMaterialFile(const GeometryObjectData& data, const std::string& outfil
 
 	if(mat->m_textureFilename != "")
 	    f->WriteLine("diff_map " + mat->m_textureFilename);
-
 
 	if(mat->m_normalMapFilename != "")
 	    f->WriteLine("norm_map " + mat->m_normalMapFilename);
@@ -116,9 +110,9 @@ bool WriteMaterialFile(const GeometryObjectData& data, const std::string& outfil
 	Vector3f v = mat->m_specularColor;
 
 	f->WriteLine("spec_color "
-		    + std::to_string(v.x) + " "
-		    + std::to_string(v.y) + " "
-		    + std::to_string(v.z));
+		     + std::to_string(v.x) + " "
+		     + std::to_string(v.y) + " "
+		     + std::to_string(v.z));
     }
 
     return true;
@@ -135,7 +129,8 @@ bool EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
     WriteMaterialFile(data, outfile);
 
     if(data.m_indexType != GL_UNSIGNED_SHORT) {
-	SetError("We only support storing indices are GLushorts!");
+
+	SetError("We only support storing indices as GLushorts!");
 	return false;
     }
 
@@ -252,7 +247,6 @@ map<string, Material*>* ReadMaterialFile(const std::string& infile) {
 }
 
 // TODO: clean up the memory allocated in this method.
-// TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED(for storing the number of vertices). UNSIGNED INTS ARE NOT YET HANDLED.
 GeometryObjectData* EobFile::Read(const std::string& infile) {
 
     GeometryObjectData* data = new GeometryObjectData();
@@ -268,10 +262,7 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
 	return NULL;
     }
 
-        // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
     f->ReadArray(&fileHeader, sizeof(fileHeader));
-
-    //LOG_I("init read");
 
     if(fileHeader.m_magic != EOBF) {
 	SetError("%s is not a EOB file: invalid magic number %d", infile.c_str(), fileHeader.m_magic );
@@ -281,22 +272,16 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
     data->m_indexType = fileHeader.m_indexType;
 
     if(data->m_indexType != GL_UNSIGNED_SHORT) {
-	SetError("Invalid file: We only support storing indices are GLushorts!");
+	SetError("%s is not a EOB file: We only support storing indices are GLushorts!", infile.c_str() );
 	return NULL;
     }
 
     // read vertex attrib size array
     uint32 length = f->Read32u();
-    //std::vector<GLuint> vertexAttribsSizes;
-	GLuint* vertexAttribsSizes = new GLuint[length / sizeof(GLuint)];
-
-   // vertexAttribsSizes.reserve(length / sizeof(GLuint));
-
+    GLuint* vertexAttribsSizes = new GLuint[length / sizeof(GLuint)];
     f->ReadArray(vertexAttribsSizes, length);
     data->m_vertexAttribsSizes = std::vector<GLuint>(&vertexAttribsSizes[0]+0, &vertexAttribsSizes[0]+length / sizeof(GLuint));
-	delete []vertexAttribsSizes;
-
-        // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
+    delete []vertexAttribsSizes;
 
     uint32 numChunks = f->Read32u();
     for(uint32 i = 0; i < numChunks; ++i) {
@@ -325,8 +310,7 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
 	Material* mat = matlib[materialName];
 
 	if(mat == NULL) {
-
-	    SetError("The material %s could not be found", materialName.c_str());
+	    SetError("%s is not a EOB file: The material %s could not be found", infile.c_str(), materialName.c_str());
 	    return NULL;
 	} else {
 	    chunk->m_material = mat;
@@ -362,5 +346,5 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
 
 
 /*debugging tip:
-draw the colors of the uv on the cube. does the uv map really look like it is supposed to?
+  draw the colors of the uv on the cube. does the uv map really look like it is supposed to?
 */

@@ -24,11 +24,9 @@ struct Material{
 	this->m_shininess = 1; // default shininess.
 	this->m_hasHeightMap = false;
 
-
 	// default specular color is black
 	// (which means there is no specular lighting at all)
 	this->m_specularColor = Vector3f(0);
-
     }
 };
 
@@ -53,5 +51,6 @@ struct GeometryObjectData {
     std::vector<GLuint> m_vertexAttribsSizes;
 
     // type of the integer used to store vertex indices.
+    // But right now we only allow GL_UNSIGNED_SHORT.
     GLenum m_indexType;
 };

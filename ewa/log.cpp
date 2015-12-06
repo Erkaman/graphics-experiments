@@ -30,7 +30,7 @@ void LogDispose() {
 void SetError(const char * format, ...) {
     va_list args;
     va_start (args, format);
-    sprintf (errorBuffer, format, args);
+    vsprintf (errorBuffer, format, args);
     va_end (args);
 
     errorStr = string(errorBuffer);
