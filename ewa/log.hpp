@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 
 
 #pragma warning( disable : 4996 )
@@ -23,3 +24,8 @@ extern char* logBuffer;
 
 #define LOG_W(...)							\
     do { sprintf(logBuffer, __VA_ARGS__); ; Log("WARNING", __FILE__, __LINE__, __func__, (logBuffer));  } while (0)
+
+void SetError(const char * format, ...);
+std::string GetError();
+
+void PrintErrorExit();
