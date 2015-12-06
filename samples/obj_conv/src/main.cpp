@@ -29,35 +29,38 @@ struct Chunk {
     Material* m_material;
 };
 
-// TODO: should it not be GLuint?
+
+/*
+  Global variables
+ */
+
 map<string, GLushort> indexTable;
 
 vector<Vector3f> points;
 vector<Vector2f> texCoords;
 vector<Vector3f> normals;
+
 Chunk* currentChunk;
 map<string, Chunk*>  chunks;
 map<string, Material*> mtllib;
-
-
-bool noNormals;
-
 bool generateTangents;
 
+string basePath;
 
+/*
+  Function declarations
+ */
+
+// parse the material library of the .obj-file
 map<string, Material*> ParseMtllib(const string& filename);
 
 int ParseFEntry(const string& entry);
 
-//void CalculateNornmals();
-
+// compute the tangents of the model.
 void GenerateTangents();
 
-GeometryObjectData CreateGeometryObjectData();
-
+// print command line help.
 void PrintHelp();
-
-string basePath;
 
 int main (int argc, char * argv[]) {
 
@@ -137,19 +140,16 @@ int main (int argc, char * argv[]) {
 	    }
 	}else if(firstToken == "v") {
 
-	    //assert(tokens.size() == 4);
+	    assert(tokens.size() == 4);
 
-	    if(tokens.size() != 4) {
-
-		LOG_E("fail: %s", line.c_str() );
-	    }
 
 	    Vector3f point = Vector3f(stof(tokens[1]),stof(tokens[2]),stof(tokens[3]) );
 	    points.push_back(point);
 
 	}else if(firstToken == "vt") {
 
-//	    assert(tokens.size() == 3 );
+	    assert(tokens.size() == 3 );
+
 	    Vector2f point = Vector2f(stof(tokens[1]),stof(tokens[2]) );
 	    texCoords.push_back(point);
 
@@ -167,7 +167,6 @@ int main (int argc, char * argv[]) {
 	    for(size_t i = 3; i < tokens.size(); ++i) {
 		GLushort three = (GLushort)ParseFEntry(tokens[i]);
 
-
 		// add the indices of a single triangle
 		currentChunk->m_indices.push_back(one);
 		currentChunk->m_indices.push_back(two);
@@ -184,13 +183,25 @@ int main (int argc, char * argv[]) {
 	GenerateTangents();
     }
 
+    /*
+      With that, we have parsed the .obj file.
+      Now we transfer all the data of the .obj to a GeometryObjectData object.
+
+      Then we can use the engine to output the GeometryObjectData object to a file.
+     */
+
     GeometryObjectData data;
 
-    vector<GLuint> vas{3,2,3}; // point, texcoord, normal
+    /*
+      Vertex Attributes Sizes.
+     */
+    vector<GLuint> vas{3,2,3}; // point(3 floats), texcoord(2 floats), normal(3 floats)
     if(generateTangents) // if tangents are stored, add another size.
 	vas.push_back(3); // tangent.
 
     data.m_vertexAttribsSizes = vas;
+
+    // all indices are specified as GLushorts.
     data.m_indexType = GL_UNSIGNED_SHORT;
 
     map<string, Chunk*>::iterator it;
@@ -277,18 +288,13 @@ int ParseFEntry(const string& entry) {
     // count number of forward slashes.
     size_t slashCount = std::count(entry.begin(), entry.end(), '/');
 
-    noNormals = false;
-
     if(slashCount != 2 && slashCount != 1) {
-
 	// we will allow faces only on the form v/vt/vn and v/vt.
-
 	LOG_E("only indices on the form v/vt/vn or v/vt are allowed");
     }
 
     if(slashCount == 1) {
-	noNormals = true;
-	LOG_E("no normals in the obj file.");
+	LOG_E("no normals in the obj file. This is not handled by this program");
     }
 
     vector<string> tokens =StringUtil::SplitString(entry, "/");
@@ -308,11 +314,8 @@ int ParseFEntry(const string& entry) {
 
     Vector3f normal;
 
-    if(noNormals) {
-	normal = Vector3f(0);
-    } else {
-	normal = normals[ stoi(tokens[2])-1 ];
-    }
+
+    normal = normals[ stoi(tokens[2])-1 ];
 
     point.Add(currentChunk->m_vertices);
     texCoord.Add(currentChunk->m_vertices);
@@ -322,6 +325,12 @@ int ParseFEntry(const string& entry) {
 	// add an empty tangent for now. we will compute it later.
 	Vector3f tangent(0);
 	tangent.Add(currentChunk->m_vertices);
+    }
+
+    const size_t GLushortMax = (GLushort)-1;
+
+    if(indexTable.size() >= GLushortMax ) {
+	LOG_E("There are more indices than will fit into a GLushort: %ld", indexTable.size()   );
     }
 
     GLushort index = (GLushort)indexTable.size();
@@ -338,7 +347,6 @@ void PrintHelp() {
     printf("\t-t\tGenerate tangents\n");
 }
 
-
 void GenerateTangents() {
 
 
@@ -351,6 +359,8 @@ void GenerateTangents() {
     };
 
     map<string, Chunk*>::iterator it;
+
+    // generate tangents for all the chunks.
     for ( it = chunks.begin(); it != chunks.end(); it++ ) {
 	Chunk* chunk = it->second;
 
@@ -362,7 +372,6 @@ void GenerateTangents() {
 
 	    Vector3f v1 = vertices[indices[i*3+2]].m_point - vertices[indices[i*3]].m_point;
 	    Vector3f v2 = vertices[indices[i*3+1]].m_point - vertices[indices[i*3]].m_point;
-
 
 	    Vector2f st1 = vertices[indices[i*3+2]].m_texCoord - vertices[indices[i*3]].m_texCoord;
 	    Vector2f st2 = vertices[indices[i*3+1]].m_texCoord - vertices[indices[i*3]].m_texCoord;
@@ -382,8 +391,6 @@ void GenerateTangents() {
 
 	for(size_t i = 0; i < (chunk->m_vertices.size() / (sizeof(Vertex)/sizeof(float))  ); i+=1) {
 	    vertices[i].m_tangent = Vector3f::Normalize(vertices[i].m_tangent);
-
-	    // normal should be (0,-1,0)
 	}
 
     }

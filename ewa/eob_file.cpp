@@ -124,6 +124,10 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 
     WriteMaterialFile(data, outfile);
 
+    if(data.m_indexType != GL_UNSIGNED_SHORT) {
+	LOG_E("We only support storing indices are GLushorts!");
+    }
+
     FileHeader fileHeader;
     fileHeader.m_magic = EOBF;
     fileHeader.m_indexType = data.m_indexType;
@@ -255,6 +259,10 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 
     data.m_indexType = fileHeader.m_indexType;
 
+    if(data.m_indexType != GL_UNSIGNED_SHORT) {
+	LOG_E("Invalid file: We only support storing indices are GLushorts!");
+    }
+
     // read vertex attrib size array
     uint32 length = f.Read32u();
     //std::vector<GLuint> vertexAttribsSizes;
@@ -267,7 +275,6 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 	delete []vertexAttribsSizes;
 
         // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
-
 
     uint32 numChunks = f.Read32u();
     for(uint32 i = 0; i < numChunks; ++i) {
@@ -294,7 +301,7 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 	Material* mat = matlib[materialName];
 
 	if(mat == NULL) {
-	    LOG_I("The material %s could not be found", materialName.c_str());
+	    LOG_E("The material %s could not be found", materialName.c_str());
 	} else {
 	    chunk->m_material = mat;
 	}

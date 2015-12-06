@@ -98,14 +98,14 @@ Vector3f(-0.597377, -0.590989, -0.542100)
     m_fire->Init();
 
 
-    // m_heightMap = new HeightMap("img/combined.png");
+   m_heightMap = new HeightMap("img/combined.png");
 
 
 
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
-//    m_grass = new Grass(Vector2f(10,10), m_heightMap);
+   m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
 
     m_stoneFloor = new GeometryObject();
@@ -262,18 +262,18 @@ void TuhuApplication::RenderScene() {
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    //m_skydome->Draw(*m_camera);
+    m_skydome->Draw(*m_camera);
 
-//   m_heightMap->Render(*m_camera, m_lightDirection);
+   m_heightMap->Render(*m_camera, m_lightDirection);
 
-//    m_grass->Draw(*m_camera, m_lightDirection);
+    m_grass->Draw(*m_camera, m_lightDirection);
 
-    //  m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+   m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 
-    // m_snow->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+    m_snow->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
-    //  m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+    m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 
 /*

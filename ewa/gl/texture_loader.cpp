@@ -33,16 +33,6 @@ TextureInfo TextureLoader::Load(const std::string& texturePath) {
 	LOG_E("could not load png %s: %s", resourcePath.c_str(), lodepng_error_text(error));
     }
 
-/*    const LodePNGInfo info = state.info_png;
-    const LodePNGColorMode& color = info.color;
-*/
-
-/*    if(! (LCT_RGBA == color.colortype &&
-	  32 == lodepng_get_bpp(&color) // bits per pixel.
-	   ) ) {
-	LOG_E("unsupported png format");
-    }*/
-
     vector<unsigned char>& imageData = textureInfo.imageData;
 
     for(size_t i = 0; i < imageData.size(); i += 4) {
