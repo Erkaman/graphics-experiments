@@ -1,4 +1,4 @@
-#include "str.hpp"
+#include "string_util.hpp"
 
 #include "framework.hpp"
 
@@ -11,9 +11,9 @@ using std::vector;
 static void TestBeginsWith() {
     string str = "eric elias";
 
-    AssertTrue(BeginsWith(str, "eric"));
-    AssertNotTrue(BeginsWith(str, "ric"));
-    AssertNotTrue(BeginsWith(str, "elias"));
+    AssertTrue(StringUtil::BeginsWith(str, "eric"));
+    AssertNotTrue(StringUtil::BeginsWith(str, "ric"));
+    AssertNotTrue(StringUtil::BeginsWith(str, "elias"));
 }
 
 static void TestGetFilePath() {
@@ -37,13 +37,13 @@ static void TestAppendPaths() {
 
 static void TestSplitString() {
 
-    vector<string> strs = SplitString("v  23 33  ", " ");
+    vector<string> strs = StringUtil::SplitString("v  23 33  ", " ");
 
     AssertEquals(strs[0], string("v") );
     AssertEquals(strs[1], string("23") );
     AssertEquals(strs[2], string("33") );
 
-    strs = SplitString("v  23", " ", true);
+    strs = StringUtil::SplitString("v  23", " ", true);
 
     AssertEquals(strs[0], string("v") );
     AssertEquals(strs[1], string(" ") );

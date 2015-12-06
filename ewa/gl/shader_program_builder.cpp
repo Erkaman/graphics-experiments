@@ -5,7 +5,7 @@
 #include "resource_manager.hpp"
 
 #include <vector>
-#include "str.hpp"
+#include "string_util.hpp"
 
 using namespace std;
 
@@ -106,7 +106,7 @@ std::vector<std::string> SplitShaderSource(const std::string& str)
 string FormatCompilerErrorOutput(const GLuint shader, const string& shaderStr)  {
     string result = "";
 
-    vector<string> errors =  SplitString(GetShaderLogInfo(shader), "\n");
+    vector<string> errors =  StringUtil::SplitString(GetShaderLogInfo(shader), "\n");
 
     vector<string> shaderLines = SplitShaderSource(shaderStr);
 
@@ -224,11 +224,11 @@ string ParseShader(const std::string& shaderSource, const std::string& path) {
     parsedShader +=  "#version 330\n";
 
     // File::GetFileContents(
-    vector<string> shaderLines = SplitString(shaderSource, "\n");
+    vector<string> shaderLines = StringUtil::SplitString(shaderSource, "\n");
 
     for(const string& line: shaderLines) {
 
-	if(BeginsWith(line, "#include")) {
+	if(StringUtil::BeginsWith(line, "#include")) {
 
 		const size_t firstQuoteIndex = line.find("\"");
 		const size_t secondQuoteIndex = line.find("\"", firstQuoteIndex + 1);

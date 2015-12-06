@@ -6,7 +6,7 @@
 
 #include "camera.hpp"
 #include "log.hpp"
-#include "str.hpp"
+#include "string_util.hpp"
 #include "common.hpp"
 
 #include "math/color.hpp"

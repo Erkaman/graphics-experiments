@@ -1,4 +1,4 @@
-#include "str.hpp"
+#include "string_util.hpp"
 
 #include "log.hpp"
 
@@ -6,7 +6,7 @@
 
 using std::string;
 
-std::vector<std::string> SplitString(const std::string& str,
+std::vector<std::string> StringUtil::SplitString(const std::string& str,
 				     const std::string& delimiter, const bool keepDelimiters)
 {
     std::vector<std::string> strings;
@@ -36,11 +36,11 @@ std::vector<std::string> SplitString(const std::string& str,
     return strings;
 }
 
-bool BeginsWith(const std::string& str,
+bool StringUtil::BeginsWith(const std::string& str,
 		const std::string& substr) {
     return substr == str.substr(0, substr.length());
 }
 
-void ToLowercase(std::string& str)  {
+void StringUtil::ToLowercase(std::string& str)  {
     std::transform(str.begin(), str.end(), str.begin(), ::tolower);
 }

@@ -7,7 +7,7 @@
 #include "buffered_file_reader.hpp"
 #include "resource_manager.hpp"
 
-#include "ewa/str.hpp"
+#include "ewa/string_util.hpp"
 
 
 #include <map>
@@ -182,10 +182,10 @@ map<string, Material*> ReadMaterialFile(const std::string& infile) {
     while(!reader.IsEof()) {
 
 	string line = reader.ReadLine();
-	vector<string> tokens =SplitString(line, " ");
+	vector<string> tokens =StringUtil::SplitString(line, " ");
 	string firstToken = tokens[0];
 
-	ToLowercase(firstToken);
+	StringUtil::ToLowercase(firstToken);
 
 	if(firstToken == "new_mat") {
 	    assert(tokens.size() == 2);
@@ -264,7 +264,7 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 
     f.ReadArray(vertexAttribsSizes, length);
     data.m_vertexAttribsSizes = std::vector<GLuint>(&vertexAttribsSizes[0]+0, &vertexAttribsSizes[0]+length / sizeof(GLuint));
-	delete []vertexAttribsSizes; 
+	delete []vertexAttribsSizes;
 
         // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
 

@@ -1,7 +1,7 @@
 #include "ewa/log.hpp"
 
 #include "ewa/gl/gl_common.hpp"
-#include "ewa/str.hpp"
+#include "ewa/string_util.hpp"
 
 #include "ewa/geometry_object_data.hpp"
 #include "ewa/eob_file.hpp"
@@ -100,7 +100,7 @@ int main (int argc, char * argv[]) {
 
 	string line = reader.ReadLine();
 
-	vector<string> tokens =SplitString(line, " ");
+	vector<string> tokens =StringUtil::SplitString(line, " ");
 
 	string firstToken = tokens[0];
 
@@ -230,10 +230,10 @@ map<string, Material*> ParseMtllib(const string& filename) {
     while(!reader.IsEof()) {
 
 	string line = reader.ReadLine();
-	vector<string> tokens =SplitString(line, " ");
+	vector<string> tokens =StringUtil::SplitString(line, " ");
 	string firstToken = tokens[0];
 
-	ToLowercase(firstToken);
+	StringUtil::ToLowercase(firstToken);
 
 	if(firstToken == "newmtl") {
 	    assert(tokens.size() == 2);
@@ -291,7 +291,7 @@ int ParseFEntry(const string& entry) {
 	LOG_E("no normals in the obj file.");
     }
 
-    vector<string> tokens =SplitString(entry, "/");
+    vector<string> tokens =StringUtil::SplitString(entry, "/");
 
     if(points.size() == 0) {
 	LOG_E("Found f(ace), but no points have been specified yet");

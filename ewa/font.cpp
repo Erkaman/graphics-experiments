@@ -7,7 +7,7 @@
 #include "math/vector3f.hpp"
 
 #include "file.hpp"
-#include "str.hpp"
+#include "string_util.hpp"
 #include "resource_manager.hpp"
 
 #define START_CHAR 32
@@ -58,13 +58,13 @@ Font::Font(
 	// first char is always the character.
 	char ch = str[0];
 
-	vector<string> tokens = SplitString(str.substr(2), ",");
+	vector<string> tokens = StringUtil::SplitString(str.substr(2), ",");
 
 	assert(tokens.size() == 5);
 
 	// the character of the token.
 
-	
+
 	AtlasEntry entry;
 	entry.x = stoi(tokens[0]);
 	entry.y = stoi(tokens[1]);
