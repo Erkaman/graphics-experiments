@@ -24,10 +24,11 @@ public:
     void AddResourcePath(const std::string& path);
 
 
-	/*
-	Search for a resource, if found, return the fully expanded resource path. 
-	*/
-    std::string FindResource(const std::string& resourceName);
+
+    /*
+      Search for a resource, if found, return the fully expanded resource path.
+    */
+    std::string* FindResource(const std::string& resourceName);
 
     bool ResourceExists(const std::string& resourceName, std::string& foundResource);
 
@@ -36,7 +37,7 @@ public:
     // locate a resource, fully read it into a string, then return the string.
     static std::string LocateAndReadResource(const std::string& resourcePath);
 
-    static File OpenResourceForReading(const std::string& resourcePath);
+    static File* OpenResourceForReading(const std::string& resourcePath);
 
 
     static ShaderProgram* LoadShader(

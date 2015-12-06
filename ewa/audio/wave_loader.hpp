@@ -8,5 +8,5 @@ class WaveLoader {
 
 public:
 
-    static WaveData Load(const std::string& filename);
+    static WaveData* Load(const std::string& filename);
 };

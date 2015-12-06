@@ -117,14 +117,14 @@ void ParticleSystem::Init(){
     LOG_I("linking update");
 
 
-    m_particleUpdateShader = new ShaderProgram("shader/part_update", beforeLinkingHook);
+    m_particleUpdateShader = ShaderProgram::Load("shader/part_update", beforeLinkingHook);
 
     LOG_I("linked update");
 
     m_randomTexture = new RandomTexture(1000, 2);
 
 
-    m_particleBillboardShader = new ShaderProgram("shader/part_billboard");
+    m_particleBillboardShader = ShaderProgram::Load("shader/part_billboard");
 
     LOG_I("linked billboard");
 

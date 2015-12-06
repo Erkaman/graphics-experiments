@@ -37,6 +37,7 @@ Application::Application(int argc, char *argv[], int width, int height): m_width
     for(int i = 1; i < argc; ++i) {
 	ResourceManager::GetInstance().AddResourcePath(argv[i]);
     }
+
 }
 
 void Application::Start() {
@@ -45,13 +46,21 @@ void Application::Start() {
 
     this->SetupOpenGL();
 
-    m_fontShader = new ShaderProgram("shader_lib/font_render");
+    m_fontShader = ShaderProgram::Load("shader_lib/font_render");
 
-    m_font = new Font(
+    if(!m_fontShader) {
+	PrintErrorExit();
+    }
+
+    m_font = Font::Load(
 	"img_lib/Ubuntu-B-64.png",
 	"img_lib/Ubuntu-B-64.amf",
 	GetWindowWidth(),GetWindowHeight(),
 	0.3f);
+
+    if(!m_font) {
+	PrintErrorExit();
+    }
 
 
     KeyboardState::GetInstance().Init(m_window);

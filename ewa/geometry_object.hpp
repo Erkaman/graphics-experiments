@@ -40,6 +40,8 @@ private:
     bool m_hasSpecularMap;
     bool m_hasHeightMap;
 
+    GeometryObject() {}
+
 protected:
 
     Matrix4f m_modelMatrix;
@@ -48,10 +50,8 @@ protected:
 
 public:
 
-    void Init(GeometryObjectData&  data, const bool useCustomShader = false);
-    void Init(const std::string& filename, const bool useCustomShader = false);
+    static GeometryObject* Load(const std::string& filename);
 
-    GeometryObject() {}
     virtual ~GeometryObject();
 
     // if a custom shader is necessary, set useCustomShader=true, and override this method to bind to the shader.

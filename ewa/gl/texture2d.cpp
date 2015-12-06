@@ -2,8 +2,31 @@
 
 #include "texture_loader.hpp"
 
+
+ Texture2D* Texture2D::Load(const std::string& texturePath) {
+
+    TextureInfo* ti = TextureLoader::Load(texturePath);
+
+    if(!ti) {
+	return NULL;
+    }
+
+    Texture2D* texture = new Texture2D(
+	&ti->imageData[0],
+	ti->width,
+	ti->height,
+	ti->internalFormat,
+	ti->format,
+	ti->type
+	);
+
+    return texture;
+
+}
+
+
+/*
 Texture2D::Texture2D(const std::string& texturePath): Texture(GL_TEXTURE_2D) {
-    TextureInfo ti = TextureLoader::Load(texturePath);
 
     Bind();
     {
@@ -14,6 +37,7 @@ Texture2D::Texture2D(const std::string& texturePath): Texture(GL_TEXTURE_2D) {
     Unbind();
 
 }
+*/
 
 Texture2D::Texture2D(GLvoid* data, GLsizei width, GLsizei height, GLint internalFormat, GLenum format, GLenum type): Texture(GL_TEXTURE_2D) {
      Bind();

@@ -58,10 +58,15 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
     m_grassNumTriangles = 0;
     m_billboardNumTriangles = 0;
 
-    m_grassShader = new ShaderProgram("shader/grass");
-    m_billboardShader = new ShaderProgram("shader/grass_billboard");
+    m_grassShader = ShaderProgram::Load("shader/grass");
 
-    m_grassTexture = new Texture2D("img/grass_billboard.png");
+    m_billboardShader = ShaderProgram::Load("shader/grass_billboard");
+
+    m_grassTexture = Texture2D::Load("img/grass_billboard.png");
+
+    if(!m_grassTexture) {
+	PrintErrorExit();
+    }
 
     m_grassTexture->Bind();
     m_grassTexture->SetTextureClamping();

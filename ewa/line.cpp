@@ -5,13 +5,26 @@
 
 using std::vector;
 
-Line::Line(const Vector3f& start, const Vector3f& end, const Vector3f& color) {
+
+Line* Line::Load(const Vector3f& start, const Vector3f& end, const Vector3f& color) {
+
+    ShaderProgram* shader = ShaderProgram::Load("shader_lib/primitive");
+
+    if(!shader) {
+	return NULL;
+    }
+
+    return new Line(start, end, color, shader);
+}
+
+Line::Line(const Vector3f& start, const Vector3f& end, const Vector3f& color, ShaderProgram* shader) {
+
+    m_shader = shader;
 
     m_vertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{3} // pos.
 	);
 
-    m_shader = new ShaderProgram("shader_lib/primitive");
 
     SetStartEnd(start,end);
     SetColor(color);

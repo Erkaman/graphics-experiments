@@ -26,10 +26,14 @@ private:
 
     GLushort m_numVertices;
 
+    Cube(ShaderProgram* shader);
+
 public:
 
-    Cube( );
+    static Cube* Load();
+
     ~Cube();
+
 
     void Render(const Matrix4f& vp);
 };

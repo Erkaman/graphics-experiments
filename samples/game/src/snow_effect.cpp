@@ -1,6 +1,7 @@
 #include "snow_effect.hpp"
 
 #include "ewa/gl/texture2d.hpp"
+#include "ewa/log.hpp"
 
 const Vector3f SNOW_HEIGHT = Vector3f(0,1.0,0) ;
 
@@ -17,7 +18,10 @@ SnowEffect::SnowEffect( const Vector3f& CameraPos) {
     SetEmitCount(10);
     SetColor(Color(1,1,1,1));
 
-    Texture* texture = new Texture2D("img/snow.png");
+    Texture* texture = Texture2D::Load("img/snow.png");
+    if(!texture) {
+	PrintErrorExit();
+    }
 
     texture->Bind();
     texture->SetTextureRepeat();

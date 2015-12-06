@@ -62,7 +62,10 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
 
 HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f) {
 
-    m_grassTexture = new Texture2D("img/grass.png");
+    m_grassTexture = Texture2D::Load("img/grass.png");
+    if(!m_grassTexture) {
+	PrintErrorExit();
+    }
 
     m_grassTexture->Bind();
     m_grassTexture->SetTextureRepeat();
@@ -71,7 +74,10 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     m_grassTexture->SetMagFilter(GL_LINEAR);
     m_grassTexture->Unbind();
 
-    m_sandTexture = new Texture2D("img/sand.png");
+    m_sandTexture = Texture2D::Load("img/sand.png");
+    if(!m_sandTexture) {
+	PrintErrorExit();
+    }
 
     m_sandTexture->Bind();
     m_sandTexture->SetTextureRepeat();
@@ -82,7 +88,10 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
 
 
-    m_snowTexture = new Texture2D("img/snow.png");
+    m_snowTexture = Texture2D::Load("img/snow.png");
+    if(!m_snowTexture) {
+	PrintErrorExit();
+    }
 
     m_snowTexture->Bind();
     m_snowTexture->SetTextureRepeat();
@@ -95,9 +104,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     /*
       load the shader
     */
-    m_shader = new ShaderProgram("shader/height_map");
+    m_shader = ShaderProgram::Load("shader/height_map");
 
-    m_depthShader = new ShaderProgram("shader/output_depth");
+    m_depthShader = ShaderProgram::Load("shader/output_depth");
 
 
     if(! (File::Exists(VERTEX_FILE) && File::Exists(INDEX_FILE) )) {
@@ -250,9 +259,13 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     */
 
     std::vector<unsigned char> buffer;
-	string fullPath = ResourceManager::GetInstance().FindResource(path);
 
-	lodepng::load_file(buffer, fullPath);
+    string* fullPath = ResourceManager::GetInstance().FindResource(path);
+    if(!fullPath) {
+	PrintErrorExit();
+    }
+
+	lodepng::load_file(buffer, *fullPath);
 
     lodepng::State state;
     std::vector<unsigned char> imageData;

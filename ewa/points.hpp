@@ -21,9 +21,14 @@ private:
 
     ShaderProgram* m_shader;
 
+    Points(
+	std::vector<Vector3f> points, const GLfloat pointSize, const Vector3f& color, ShaderProgram* shader );
+
 public:
 
-    Points(std::vector<Vector3f> points, const GLfloat pointSize = 7.0, const Vector3f& color = Vector3f(1.0f,1.0f,0.0f) );
+    static Points* Load(
+	std::vector<Vector3f> points, const GLfloat pointSize = 7.0, const Vector3f& color = Vector3f(1.0f,1.0f,0.0f) );
+
     ~Points();
 
     void SetPoints(std::vector<Vector3f> points);

@@ -25,9 +25,11 @@ private:
     ShaderProgram* m_shader;
 
 
+    Line(const Vector3f& start, const Vector3f& end, const Vector3f& color, ShaderProgram* shader);
+
 public:
 
-    Line(const Vector3f& start, const Vector3f& end, const Vector3f& color = Vector3f(1.0f,1.0f,0.0f) );
+    static Line* Load(const Vector3f& start, const Vector3f& end, const Vector3f& color = Vector3f(1.0f,1.0f,0.0f) );
     ~Line();
 
     void SetStartEnd(const Vector3f& start, const Vector3f& end);

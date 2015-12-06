@@ -14,8 +14,8 @@ constexpr int DATA_UPPER = 0x64617461; // 'DATA'
 constexpr int DATA_LOWER = 0x64617461; // 'data'
 
 
-int ReadInt(File& file) {
-    char *bytes = (char *)file.ReadArray(4);
+int ReadInt(File* file) {
+    char *bytes = (char *)file->ReadArray(4);
 
     return
 	bytes[0] << 24 |
@@ -24,22 +24,21 @@ int ReadInt(File& file) {
 	bytes[3] << 0;
 }
 
-int ReadLittleEndianInt(File& file) {
-    return  *((int *)file.ReadArray(4));
+int ReadLittleEndianInt(File* file) {
+    return  *((int *)file->ReadArray(4));
 }
 
-short ReadLittleEndianShort(File& file) {
-    return  *((short *)file.ReadArray(2));
+short ReadLittleEndianShort(File* file) {
+    return  *((short *)file->ReadArray(2));
 }
 
+WaveData* WaveLoader::Load(const std::string& filename) {
 
-WaveData WaveLoader::Load(const std::string& filename) {
+    File* file = File::Load(filename, FileModeReading);
 
-    std::string resourcePath = ResourceManager::GetInstance().FindResource(filename);
-
-    LOG_I("found file: %s", resourcePath.c_str());
-
-    File file(resourcePath, FileModeReading);
+    if(!file) {
+	return NULL;
+    }
 
     const int chunkID = ReadInt(file);
     if(chunkID != RIFF) {
@@ -68,7 +67,7 @@ WaveData WaveLoader::Load(const std::string& filename) {
     bool readFmtChunk = false;
 
 
-    WaveData waveData;
+    WaveData* waveData = new WaveData();
 
 
 
@@ -116,32 +115,18 @@ WaveData WaveLoader::Load(const std::string& filename) {
 
 				void* buffer =malloc(numsubchunkBytes);
 
-				buffer = file.ReadArray(numsubchunkBytes);
+				buffer = file->ReadArray(numsubchunkBytes);
 
-
-				// TOOD: conevrt here.
-
-/*
-				if(bitsPerSample == 16) {
-				    LOG_E("16 bits per sample not yet supported!");
-				}*/
 
 				audioData = buffer;
-				waveData.audioDataSize = numsubchunkBytes;
+				waveData->audioDataSize = numsubchunkBytes;
 
-/*				char* bs = (char *)audioData;
-
-				for(int i = 0; i < 10; ++i) {
-				    LOG_I("b: %d", bs[i]);
-				    }*/
-
-				//audioData =convertAudioDataToLittleEndian(buffer, sampleRate == 16);
 
 			} else {
 
 				// unknown chunk. skip it.
 			    LOG_I("skipped chunk: %d", subchunkID);
-			    file.Skip(numsubchunkBytes);
+			    file->Skip(numsubchunkBytes);
 
 			}
 		}
@@ -177,9 +162,9 @@ WaveData WaveLoader::Load(const std::string& filename) {
 		LOG_I("sample rate: %d", sampleRate);
 		LOG_I("channels: %d", channels);
 
-		waveData.audioData = audioData;
-		waveData.sampleRate = sampleRate;
-		waveData.channels = channels;
+		waveData->audioData = audioData;
+		waveData->sampleRate = sampleRate;
+		waveData->channels = channels;
 
 		return waveData;
 

@@ -6,17 +6,18 @@ class BufferedFileReader {
 
 private:
 
-    File m_file;
+    File* m_file;
     char* m_buffer;
 
     size_t m_iBuffer;
     size_t m_readBufferSize;
     bool m_eof;
 
+    BufferedFileReader(File* file);
 
 public:
 
-    BufferedFileReader(const std::string& filename);
+    static BufferedFileReader* Load(const std::string& filename);
     ~BufferedFileReader();
 
     char Read8();

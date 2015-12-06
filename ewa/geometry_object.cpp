@@ -16,7 +16,7 @@ using std::string;
 using std::vector;
 
 Texture* LoadTexture(const string& filename) {
-    Texture* texture = new Texture2D(filename);
+    Texture* texture = Texture2D::Load(filename);
 
     texture->Bind();
     texture->SetTextureRepeat();
@@ -28,19 +28,24 @@ Texture* LoadTexture(const string& filename) {
     return texture;
 }
 
-void GeometryObject::Init(const std::string& filename, const bool useCustomShader) {
+GeometryObject* GeometryObject::Load(const std::string& filename) {
 
-    GeometryObjectData data = EobFile::Read(filename);
+    GeometryObjectData* data = EobFile::Read(filename);
 
+    if(!data) {
+	return NULL;
+    }
+
+    GeometryObject* geoObj = new GeometryObject();
 
     string basePath = File::GetFilePath(filename);
 
-    m_hasNormalMap = false;
-    m_hasSpecularMap = false;
-    m_hasHeightMap = false;
+    geoObj->m_hasNormalMap = false;
+    geoObj->m_hasSpecularMap = false;
+    geoObj->m_hasHeightMap = false;
 
-    for(size_t i = 0; i < data.m_chunks.size(); ++i) {
-	Material* mat = data.m_chunks[i]->m_material;
+    for(size_t i = 0; i < data->m_chunks.size(); ++i) {
+	Material* mat = data->m_chunks[i]->m_material;
 
 	if(mat->m_textureFilename != ""){ // empty textures should remain empty.
 	    mat->m_textureFilename = File::AppendPaths(basePath, mat->m_textureFilename);
@@ -48,53 +53,56 @@ void GeometryObject::Init(const std::string& filename, const bool useCustomShade
 
 	if(mat->m_normalMapFilename != ""){ // empty textures should remain empty->
 	    mat->m_normalMapFilename = File::AppendPaths(basePath, mat->m_normalMapFilename);
-	    m_hasNormalMap = true;
-	    m_hasHeightMap = mat->m_hasHeightMap;
+	    geoObj->m_hasNormalMap = true;
+	    geoObj->m_hasHeightMap = mat->m_hasHeightMap;
 	}
 
 	if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
 	    mat->m_specularMapFilename = File::AppendPaths(basePath, mat->m_specularMapFilename);
-	    m_hasSpecularMap = true;
+	    geoObj->m_hasSpecularMap = true;
 	}
 
     }
 
-    Init(data, useCustomShader);
-}
 
 
-void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) {
 
-    if(!useCustomShader) {
-	string shaderName = "shader/simple";
+        string shaderName = "shader/simple";
 
-	vector<string> defines;
+    vector<string> defines;
 
-	if(m_hasSpecularMap) {
-	    defines.push_back("SPEC_MAPPING");
-	}
-
-	if(m_hasHeightMap) {
-	    defines.push_back("HEIGHT_MAPPING");
-	} else if(m_hasNormalMap) { // only a normal map, no height map.
-	    defines.push_back("NORMAL_MAPPING");
-	}
-
-	m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    if(geoObj->m_hasSpecularMap) {
+	defines.push_back("SPEC_MAPPING");
     }
 
-    m_depthShader = new ShaderProgram("shader/output_depth");
+    if(geoObj->m_hasHeightMap) {
+	defines.push_back("HEIGHT_MAPPING");
+    } else if(geoObj->m_hasNormalMap) { // only a normal map, no height map.
+	defines.push_back("NORMAL_MAPPING");
+    }
+
+    geoObj->m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+
+    if(!geoObj->m_defaultShader) {
+	return NULL;
+    }
+
+    geoObj->m_depthShader = ShaderProgram::Load("shader/output_depth");
+
+    if(!geoObj->m_depthShader) {
+	return NULL;
+    }
 
 
-    for(size_t i = 0; i < data.m_chunks.size(); ++i) {
-	GeometryObjectData::Chunk* baseChunk = data.m_chunks[i];
+    for(size_t i = 0; i < data->m_chunks.size(); ++i) {
+	GeometryObjectData::Chunk* baseChunk = data->m_chunks[i];
 
 	Chunk* newChunk = new Chunk;
 
 	newChunk->m_vertexBuffer = VBO::CreateInterleaved(
-	    data.m_vertexAttribsSizes);
+	    data->m_vertexAttribsSizes);
 
-	newChunk->m_indexBuffer = VBO::CreateIndex(data.m_indexType);
+	newChunk->m_indexBuffer = VBO::CreateIndex(data->m_indexType);
 
 
 	newChunk->m_numTriangles = baseChunk->m_numTriangles;
@@ -114,13 +122,13 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	    newChunk->m_texture = NULL;
 	}
 
-	if(m_hasNormalMap) {
+	if(geoObj->m_hasNormalMap) {
 	    newChunk->m_normalMap = LoadTexture(baseChunk->m_material->m_normalMapFilename);
 	} else {
 	    newChunk->m_normalMap = NULL;
 	}
 
-	if(m_hasSpecularMap) {
+	if(geoObj->m_hasSpecularMap) {
 	    newChunk->m_specularMap = LoadTexture(baseChunk->m_material->m_specularMapFilename);
 	} else {
 	    newChunk->m_specularMap = NULL;
@@ -129,8 +137,10 @@ void GeometryObject::Init(GeometryObjectData& data, const bool useCustomShader) 
 	newChunk->m_shininess = baseChunk->m_material->m_shininess;
 	newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
 
-	m_chunks.push_back(newChunk);
+	geoObj->m_chunks.push_back(newChunk);
     }
+
+    return geoObj;
 
 }
 

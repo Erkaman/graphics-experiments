@@ -26,19 +26,41 @@ static const char * getError() {
     return strerror(errno);
 }
 
-File::File(const std::string& filename, const FileMode fileMode): m_fp(NULL), m_filename(filename), m_errorMessage("") {
+File* File::Load(const std::string& filename, const FileMode fileMode) {
+
+    File* file = new File();
+    file->m_fp = NULL;
+    file->m_errorMessage = "";
 
 
     // create the directory of the file if necessary.
-    if(FileModeWriting == fileMode && !File::PathExists(File::GetFilePath(filename)) ) {
-	CreatePath(File::GetFilePath(filename));
+    if(FileModeWriting == fileMode) {
+	if(!File::PathExists(File::GetFilePath(filename)))
+	    CreatePath(File::GetFilePath(filename));
+
+	file->m_filename = filename;
+
+    } else {
+
+	std::string* resourcePath = ResourceManager::GetInstance().FindResource(filename);
+
+	if(!resourcePath) {
+	    return NULL;
+	}
+	file->m_filename = *resourcePath;
+
     }
 
-    m_fp = fopen(filename.c_str(), fileMode == FileModeReading ? "rb" : "wb ");
+    file->m_fp = fopen(filename.c_str(), fileMode == FileModeReading ? "rb" : "wb ");
 
-    if(!m_fp) {
-	m_errorMessage = "could not open the file " + m_filename + ":" + std::string(getError());
+    if(!file->m_fp) {
+
+	SetError( "could not open the file " + file->m_filename + ":" + std::string(getError())  );
+
+	return NULL;
     }
+
+    return file;
 }
 
 File::~File() {
@@ -97,7 +119,8 @@ void File::WriteArray(const void* data, size_t dataSize) {
 }
 
 void File::WriteArray(const std::string& filename, const void* data, const size_t dataSize) {
-    File(filename, FileModeWriting).WriteArray(data, dataSize);
+    // writing to a file never fails, so this works
+    File::Load(filename, FileModeWriting)->WriteArray(data, dataSize);
 }
 
 void* File::ReadArray(const size_t& dataSize) {
@@ -115,9 +138,13 @@ void File::Skip(const size_t& skipSize) {
 }
 
 void* File::ReadArray(const std::string& filename, size_t& dataSize) {
-    File file(filename, FileModeReading);
-    dataSize = file.GetFileSize();
-    return file.ReadArray(dataSize);
+    File* file = File::Load(filename, FileModeReading);
+
+    if(!file)
+	return NULL;
+
+    dataSize = file->GetFileSize();
+    return file->ReadArray(dataSize);
 }
 
 bool File::HasError()const {

@@ -30,9 +30,7 @@ ShaderProgram::~ShaderProgram() {
     glDeleteProgram(m_shaderProgram);
 }
 
-ShaderProgram::ShaderProgram(const std::string& shaderName, void (*beforeLinkingHook)(GLuint)){
-
-
+ShaderProgram* ShaderProgram::Load(const std::string& shaderName, void (*beforeLinkingHook)(GLuint) ) {
 
     string geometryShaderPath = shaderName + "_gs.glsl";
 
@@ -44,7 +42,8 @@ ShaderProgram::ShaderProgram(const std::string& shaderName, void (*beforeLinking
 	geometryShaderSource = ResourceManager::LocateAndReadResource(geometryShaderPath);
     }
 
-    CompileShaderProgram(
+    ShaderProgram* shaderProgram = new ShaderProgram();
+    shaderProgram->CompileShaderProgram(
 
 	ResourceManager::LocateAndReadResource(shaderName + "_vs.glsl"),
 	ResourceManager::LocateAndReadResource(shaderName + "_fs.glsl"),
@@ -52,19 +51,23 @@ ShaderProgram::ShaderProgram(const std::string& shaderName, void (*beforeLinking
 	File::GetFilePath(shaderName + "_vs.glsl"),
 	beforeLinkingHook);
 
+    return shaderProgram;
+
 
 }
 
-ShaderProgram::ShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource) {
-    CompileShaderProgram(
+ShaderProgram* ShaderProgram::Load(const std::string& vertexShaderSource, const std::string& fragmentShaderSource) {
+    ShaderProgram* shaderProgram = new ShaderProgram();
+
+    shaderProgram->CompileShaderProgram(
 
 	vertexShaderSource,
 	fragmentShaderSource,
 	"",
 	"", NULL);
 
+    return shaderProgram;
 }
-
 
 void ShaderProgram::CompileShaderProgram(const string& vertexShaderSource, const string& fragmentShaderSource,const string& geometryShaderSource, const std::string& path, void (*beforeLinkingHook)(GLuint)) {
     // link shader program.
@@ -73,8 +76,6 @@ void ShaderProgram::CompileShaderProgram(const string& vertexShaderSource, const
     m_shaderProgram = shaderBuilder.GetLinkedShaderProgram();
 
     m_uniformLocationStore = new UniformLocationStore(m_shaderProgram);
-
-
 }
 
 void ShaderProgram::Bind() {

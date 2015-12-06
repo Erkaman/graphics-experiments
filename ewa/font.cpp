@@ -25,33 +25,44 @@ Font::~Font() {
     delete m_vertexBuffer;
 }
 
-Font::Font(
+Font::Font(const unsigned int windowWidth, const unsigned int windowHeight,
+     const float fontScale):
+    m_windowScaleX(2.0f / windowWidth), m_windowScaleY(2.0f / windowHeight),
+    atlasTable(END_CHAR-START_CHAR), m_fontScale(fontScale) {}
+
+
+Font* Font::Load(
     const std::string& atlasPath,
     const std::string& amfPath,
     const unsigned int windowWidth, const unsigned int windowHeight,
     const float fontScale
-    ):
-    m_windowScaleX(2.0f / windowWidth), m_windowScaleY(2.0f / windowHeight),
-    atlasTable(END_CHAR-START_CHAR), m_fontScale(fontScale){
+    )
+{
 
-    m_fontTexture = new Texture2D(atlasPath);
-    m_fontTexture->Bind();
-    m_fontTexture->SetTextureClamping();
-    m_fontTexture->SetMagMinFilters(GL_LINEAR);
-    m_fontTexture->Unbind();
+    Font* font = new Font(windowWidth, windowHeight, fontScale);
 
-    m_atlasWidth = m_fontTexture->GetWidth();
-    m_atlasHeight = m_fontTexture->GetHeight();
+    font->m_fontTexture = Texture2D::Load(atlasPath);
+    font->m_fontTexture->Bind();
+    font->m_fontTexture->SetTextureClamping();
+    font->m_fontTexture->SetMagMinFilters(GL_LINEAR);
+    font->m_fontTexture->Unbind();
+
+    font->m_atlasWidth = font->m_fontTexture->GetWidth();
+    font->m_atlasHeight = font->m_fontTexture->GetHeight();
 
     // The .amf format is described in the README of this repo:
     // https://github.com/Erkaman/font_creator_cpp
-    File atlasFile = ResourceManager::OpenResourceForReading(amfPath);
+    File* atlasFile = ResourceManager::OpenResourceForReading(amfPath);
+
+    if(!atlasFile) {
+	return NULL;
+    }
 
     char buffer[40];
 
-    while(!atlasFile.IsEof()){
+    while(!atlasFile->IsEof()){
 
-	atlasFile.ReadLine(buffer, 40);
+	atlasFile->ReadLine(buffer, 40);
 
 	string str = string(buffer);
 
@@ -72,18 +83,18 @@ Font::Font(
 	entry.ySize = stoi(tokens[3]);
 	entry.preAdvance = stoi(tokens[4]);
 
-	atlasTable[ch-START_CHAR] = entry;
+        font->atlasTable[ch-START_CHAR] = entry;
 
     }
 
     // allocate vbo.
 
-    m_vertexBuffer = VBO::CreateInterleaved(
+    font->m_vertexBuffer = VBO::CreateInterleaved(
 					      vector<GLuint>{2,2}, // position, tex
 					      GL_DYNAMIC_DRAW
 					      );
 
-
+    return font;
 
 
 }

@@ -57,7 +57,7 @@ void TuhuApplication::Init() {
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
-    m_line = new Line(Vector3f(00,-2.0,0), Vector3f(0,-2.0,30));
+    m_line = Line::Load(Vector3f(00,-2.0,0), Vector3f(0,-2.0,30));
 
     vector<Vector3f> points;
 
@@ -66,9 +66,9 @@ void TuhuApplication::Init() {
 	points.emplace_back(i,0,0);
     }
 
-    m_points = new Points(points, 7.0, Vector3f(1,0,0) );
+    m_points = Points::Load(points, 7.0, Vector3f(1,0,0) );
 
-    m_cube = new Cube();
+    m_cube = Cube::Load();
 
 
     const Vector3f pos =
@@ -108,54 +108,45 @@ Vector3f(-0.597377, -0.590989, -0.542100)
    m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
 
-    m_stoneFloor = new GeometryObject();
-    m_stoneFloor->Init("obj/rock_floor.eob");
+   m_stoneFloor = GeometryObject::Load("obj/rock_floor.eob");
     m_stoneFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,0,0)));
 
-    m_flatWoodFloor = new GeometryObject();
-    m_flatWoodFloor->Init("obj/flat_wood_floor.eob");
+    m_flatWoodFloor = GeometryObject::Load("obj/flat_wood_floor.eob");
     m_flatWoodFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(10,0,0)));
 
-    m_woodFloor = new GeometryObject();
-    m_woodFloor->Init("obj/wood_floor.eob");
+    m_woodFloor = GeometryObject::Load("obj/wood_floor.eob");
     m_woodFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(-10,0,0)));
 
-    m_sphere = new GeometryObject();
-    m_sphere->Init("obj/sunball.eob");
+    m_sphere = GeometryObject::Load("obj/sunball.eob");
     m_sphere->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
 
 
-    m_plane = new GeometryObject();
-    m_plane->Init("obj/color.eob");
+    m_plane = GeometryObject::Load("obj/color.eob");
     m_plane->SetModelMatrix(
 
 	Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
 	Matrix4f::CreateTranslation(Vector3f(0,-2.5,0))
 	);
 
-    m_tree = new GeometryObject();
-    m_tree->Init("obj/tree.eob");
+    m_tree = GeometryObject::Load("obj/tree.eob");
     m_tree->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(10,-2.5,10)));
 
-    m_wall = new GeometryObject();
-    m_wall->Init("obj/wall.eob");
+    m_wall = GeometryObject::Load("obj/wall.eob");
     m_wall->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(-5,-2.5,-5)));
 
-    m_wall2 = new GeometryObject();
-    m_wall2->Init("obj/wall.eob");
+    m_wall2 = GeometryObject::Load("obj/wall.eob");
     m_wall2->SetModelMatrix(
 	Matrix4f::CreateScale(Vector3f(1,0.4,1))   *
 	Matrix4f::CreateTranslation(Vector3f(20,-6.5,-5)));
 
 
-    m_ball2 = new GeometryObject();
-    m_ball2->Init("obj/sunball.eob");
+    m_ball2 = GeometryObject::Load("obj/sunball.eob");
     m_ball2->SetModelMatrix(
     Matrix4f::CreateTranslation(Vector3f(20,-1.0,-7)));
 

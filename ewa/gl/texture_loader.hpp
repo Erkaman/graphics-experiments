@@ -18,6 +18,6 @@ class TextureLoader {
 
 public:
 
-    static TextureInfo Load(const std::string& texturePath);
+    static TextureInfo* Load(const std::string& texturePath);
 
 };

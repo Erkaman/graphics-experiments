@@ -4,9 +4,12 @@
 #include <stdarg.h>
 #include <string>
 
+using std::string;
+
 char* logBuffer;
 
 char* errorBuffer;
+string errorStr;
 
 void Log(const char* logLevel, const char* file, int line, const char* func, const char* logStr ) {
     fprintf(stderr, "%s: %s:%d:%s:%s\n", logLevel, file,
@@ -29,7 +32,15 @@ void SetError(const char * format, ...) {
     va_start (args, format);
     sprintf (errorBuffer, format, args);
     va_end (args);
+
+    errorStr = string(errorBuffer);
 }
+
+
+void SetError(const std::string& str) {
+    errorStr = str;
+}
+
 
 std::string GetError(){
     return errorBuffer;

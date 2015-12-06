@@ -2,6 +2,8 @@
 
 #include "ewa/gl/texture2d.hpp"
 
+#include "ewa/log.hpp"
+
 
 SmokeEffect::SmokeEffect(const Vector3f& position) {
 
@@ -26,7 +28,10 @@ SmokeEffect::SmokeEffect(const Vector3f& position) {
     SetEndColor(Color(C,C,C,0.0));
 
 
-    Texture* texture = new Texture2D("img/smoke2.png" );
+    Texture* texture = Texture2D::Load("img/smoke2.PNG" );
+    if(!texture) {
+	PrintErrorExit();
+    }
 
     texture->Bind();
     texture->SetTextureRepeat();

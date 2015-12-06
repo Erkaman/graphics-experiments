@@ -5,14 +5,25 @@
 //  "conditional expression is constant"
 #pragma warning (disable : 4127)
 
-
-Sound::Sound(const std::string& filename) {
+Sound::Sound(WaveData* waveData) {
     AL_C(alGenBuffers(1, &m_buffer));
-    WaveData waveData = WaveLoader::Load(filename);
-    AL_C(alBufferData(m_buffer, waveData.channels, waveData.audioData, waveData.audioDataSize, waveData.sampleRate));
+
+    AL_C(alBufferData(m_buffer, waveData->channels, waveData->audioData, waveData->audioDataSize, waveData->sampleRate));
 
     AL_C(alGenSources(1, &m_source));
     AL_C(alSourcei(m_source, AL_BUFFER, m_buffer));
+
+}
+
+Sound* Sound::Load(const std::string& filename) {
+
+
+    WaveData* waveData = WaveLoader::Load(filename);
+
+    if(!waveData)
+	return NULL;
+
+    return new Sound(waveData);
 }
 
 Sound::~Sound() {

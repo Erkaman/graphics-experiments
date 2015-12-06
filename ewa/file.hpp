@@ -19,8 +19,11 @@ private:
     std::string m_filename;
     std::string m_errorMessage;
 
+    File(){}
+
 public:
-    File(const std::string& filename, const FileMode fileMode );
+    static File* Load(const std::string& filename, const FileMode fileMode );
+
     ~File();
 
     long GetFileSize();

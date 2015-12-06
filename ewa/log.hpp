@@ -26,6 +26,8 @@ extern char* logBuffer;
     do { sprintf(logBuffer, __VA_ARGS__); ; Log("WARNING", __FILE__, __LINE__, __func__, (logBuffer));  } while (0)
 
 void SetError(const char * format, ...);
+void SetError(const std::string& str);
+
 std::string GetError();
 
 void PrintErrorExit();

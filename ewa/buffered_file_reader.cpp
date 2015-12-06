@@ -1,24 +1,32 @@
 #include "buffered_file_reader.hpp"
 
-#include "resource_manager.hpp"
-
 
 using std::string;
 
 constexpr size_t BUFFER_SIZE = 4096;
 
-BufferedFileReader::BufferedFileReader(const std::string& filename): m_file(
-	ResourceManager::GetInstance().FindResource(filename), FileModeReading) {
-    if(m_file.HasError()) {
-	LOG_E("error opening file %s: %s", filename.c_str(), m_file.GetError().c_str());
-    }
+
+BufferedFileReader::BufferedFileReader(File* file) {
+
+    m_file = file;
 
     m_buffer = new char[BUFFER_SIZE];
 
     m_iBuffer = BUFFER_SIZE + 1;
     m_readBufferSize = 0;
     m_eof = false;
+}
 
+
+BufferedFileReader* BufferedFileReader::Load(const std::string& filename) {
+
+    File* file = File::Load(filename, FileModeReading );
+
+    if(!file) {
+	return NULL;
+    }
+
+    return new BufferedFileReader(file);
 }
 
 BufferedFileReader::~BufferedFileReader() {
@@ -29,7 +37,7 @@ BufferedFileReader::~BufferedFileReader() {
 char BufferedFileReader::Read8() {
     if(m_iBuffer == (BUFFER_SIZE + 1) || m_iBuffer==m_readBufferSize) {
 
-	m_readBufferSize = m_file.ReadArray (m_buffer, BUFFER_SIZE);
+	m_readBufferSize = m_file->ReadArray (m_buffer, BUFFER_SIZE);
 	m_iBuffer = 0;
     }
 
@@ -57,7 +65,7 @@ std::string BufferedFileReader::ReadLine() {
 	bool readCr = false; // read carriage return?
 
     while(true) {
-	
+
 		ch = Read8();
 
 		if (IsEof())
@@ -75,7 +83,7 @@ std::string BufferedFileReader::ReadLine() {
 		if (ch == '\n')
 			break;
 
-		
+
 
 		if (ch == '\r')
 			readCr = true;

@@ -206,15 +206,15 @@ string GetProgramLogInfo(GLuint shaderProgram) {
     return logInfoStr;
 }
 
-
 static std::string GetShaderContents(const std::string& shaderPath) {
-    File f(shaderPath, FileModeReading);
+    File *f = File::Load(shaderPath, FileModeReading);
 
-    if(f.HasError()) {
-	LOG_E("Could not include the shader %s: %s", shaderPath.c_str(), f.GetError().c_str() );
+    if(!f) {
+
+	PrintErrorExit();
     }
 
-    return f.GetFileContents();
+    return f->GetFileContents();
 }
 
 string ParseShader(const std::string& shaderSource, const std::string& path) {
@@ -244,7 +244,7 @@ string ParseShader(const std::string& shaderSource, const std::string& path) {
 		if(File::Exists(defaultPath) ){
 		    includeStr = GetShaderContents(defaultPath);
 		} else {
-		    includeStr = GetShaderContents(ResourceManager::GetInstance().FindResource(includePath));
+		    includeStr = GetShaderContents(*ResourceManager::GetInstance().FindResource(includePath));
 		}
 
 		parsedShader += includeStr + "\n";

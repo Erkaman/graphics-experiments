@@ -5,21 +5,32 @@
 
 using std::vector;
 
-Points::Points(std::vector<Vector3f> points, const GLfloat pointSize, const Vector3f& color) {
+Points* Points::Load(std::vector<Vector3f> points, const GLfloat pointSize, const Vector3f& color) {
 
+    ShaderProgram* shader = ShaderProgram::Load("shader_lib/primitive");
 
+    if(!shader) {
+	return NULL;
+    }
+
+    return new Points(points, pointSize, color, shader);
+}
+
+Points::Points(std::vector<Vector3f> points, const GLfloat pointSize, const Vector3f& color, ShaderProgram* shader) {
+
+    m_shader = shader;
 
     m_vertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{3} // pos.
 	);
 
-    m_shader = new ShaderProgram("shader_lib/primitive");
 
     SetPoints(points);
     m_color = color;
     m_pointSize = pointSize;
 
 }
+
 
 Points::~Points() {
     MY_DELETE(m_vertexBuffer);

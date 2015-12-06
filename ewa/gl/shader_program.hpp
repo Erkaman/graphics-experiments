@@ -29,16 +29,18 @@ private:
 
     void CompileShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource,const std::string& geometryShaderSource, const std::string& path, void (*beforeLinkingHook)(GLuint));
 
-    ShaderProgram();
-
     void SetUniformWarn(const std::string& uniformName);
+
+    ShaderProgram();
 
 public:
 
-    ShaderProgram(const std::string& shaderName, void (*beforeLinkingHook)(GLuint) = NULL );
+    static ShaderProgram* Load(const std::string& shaderName, void (*beforeLinkingHook)(GLuint) = NULL );
 
     // create shader from source code.
-    ShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
+    static ShaderProgram* Load(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
+
+
 
     ~ShaderProgram();
 

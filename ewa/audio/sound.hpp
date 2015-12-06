@@ -4,6 +4,8 @@
 
 #include <string>
 
+class WaveData;
+
 class Sound{
 
 private:
@@ -11,9 +13,14 @@ private:
     ALuint m_buffer;
     ALuint m_source;
 
+    Sound(WaveData* waveData);
+
+
 public:
 
-    Sound(const std::string& filename);
+    static Sound* Load(const std::string& filename);
+
+
     ~Sound();
 
     void Play();

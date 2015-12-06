@@ -70,7 +70,7 @@ Skydome::Skydome(const float radius, const int slices, const int stacks): /*Geom
 
     MakeSky(radius, slices, stacks);
 
-    m_billboardShader = new ShaderProgram("shader/billboard");
+    m_billboardShader = ShaderProgram::Load("shader/billboard");
 
     MakeSun();
     MakeClouds();
@@ -78,7 +78,7 @@ Skydome::Skydome(const float radius, const int slices, const int stacks): /*Geom
 }
 
 void Skydome::MakeSky(const float radius, const int slices, const int stacks) {
-    m_domeShader = new ShaderProgram("shader/skydome");
+    m_domeShader = ShaderProgram::Load("shader/skydome");
 
     m_domeVertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{3,3} // pos, tex
@@ -100,7 +100,10 @@ void Skydome::MakeClouds() {
 	CloudGroup* cloudGroup = new CloudGroup();
 
 	string textureFilename = string("img/cloud") + std::to_string(i) + string(".png");
-	Texture* cloudTexture= new Texture2D(textureFilename);
+	Texture* cloudTexture= Texture2D::Load(textureFilename);
+	if(!cloudTexture) {
+	    PrintErrorExit();
+	}
 
 	cloudGroup->m_width = cloudTexture->GetWidth();
 	cloudGroup->m_height = cloudTexture->GetHeight();
@@ -215,7 +218,10 @@ void Skydome::MakeSun() {
 
     GenerateBillboardVertices(m_sunVertexBuffer, m_sunIndexBuffer, 0.06f, 0.06f);
 
-    m_sunTexture = new Texture2D("img/sun.png");
+    m_sunTexture = Texture2D::Load("img/sun.png");
+    if(!m_sunTexture) {
+	PrintErrorExit();
+    }
 
     m_sunTexture->Bind();
     m_sunTexture->SetTextureClamping();

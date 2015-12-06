@@ -5,7 +5,6 @@
 #include "file.hpp"
 
 #include "buffered_file_reader.hpp"
-#include "resource_manager.hpp"
 
 #include "ewa/string_util.hpp"
 
@@ -52,80 +51,92 @@ float StrToFloat(const string& str) {
     return std::stof(str, &size) ;
 }
 
-void WriteArray(File& file, void* data, uint32 size) {
-    file.Write32u(size);
-    file.WriteArray(data, size);
+void WriteArray(File* file, void* data, uint32 size) {
+    file->Write32u(size);
+    file->WriteArray(data, size);
 }
 
-void WriteString(File& file, const std::string& str) {
-    file.Write32u(str.size()+1); // +1, because we want to include the NULL-character as well.
-    file.WriteArray(str.c_str(), str.size()+1);
+void WriteString(File* file, const std::string& str) {
+    file->Write32u(str.size()+1); // +1, because we want to include the NULL-character as well.
+    file->WriteArray(str.c_str(), str.size()+1);
 }
 
-std::string ReadString(File& file) {
-    uint32 size = file.Read32u();
+std::string ReadString(File* file) {
+    uint32 size = file->Read32u();
     char* buffer = (char *)malloc(size * sizeof(char));
-    file.ReadArray(buffer, size);
+    file->ReadArray(buffer, size);
     string str(buffer);
     free(buffer);
 
     return str;
 }
 
-void* ReadArray(File& file, uint32& size) {
-    size = file.Read32u();
+void* ReadArray(File* file, uint32& size) {
+    size = file->Read32u();
     void* data = malloc(size);
 
-    file.ReadArray(data, size);
+    file->ReadArray(data, size);
     return data;
 }
 
-void WriteMaterialFile(const GeometryObjectData& data, const std::string& outfile) {
+bool WriteMaterialFile(const GeometryObjectData& data, const std::string& outfile) {
 
     assert( outfile.substr(outfile.size()-4, 4 ) == string(".eob") );
     // strip ".eob" extension,
     string materialFile = outfile.substr(0, outfile.size()-4 ) + ".mat" ;
-    File f(materialFile, FileModeWriting);
+
+    File* f = File::Load(materialFile, FileModeWriting);
+
+    if(!f) {
+	return false;
+    }
 
 
     for(GeometryObjectData::Chunk* chunk : data.m_chunks) {
 
 	Material* mat = chunk->m_material;
 
-	f.WriteLine("new_mat " + mat->m_materialName);
+	f->WriteLine("new_mat " + mat->m_materialName);
 
 	if(mat->m_textureFilename != "")
-	    f.WriteLine("diff_map " + mat->m_textureFilename);
+	    f->WriteLine("diff_map " + mat->m_textureFilename);
 
 
 	if(mat->m_normalMapFilename != "")
-	    f.WriteLine("norm_map " + mat->m_normalMapFilename);
+	    f->WriteLine("norm_map " + mat->m_normalMapFilename);
 
 	if(mat->m_specularMapFilename != "")
-	    f.WriteLine("spec_map " + mat->m_specularMapFilename);
+	    f->WriteLine("spec_map " + mat->m_specularMapFilename);
 
 	if(mat->m_hasHeightMap)
-	    f.WriteLine("has_height_map");
+	    f->WriteLine("has_height_map");
 
-	f.WriteLine("shininess " + std::to_string(mat->m_shininess));
+	f->WriteLine("shininess " + std::to_string(mat->m_shininess));
 
 	Vector3f v = mat->m_specularColor;
 
-	f.WriteLine("spec_color "
+	f->WriteLine("spec_color "
 		    + std::to_string(v.x) + " "
 		    + std::to_string(v.y) + " "
 		    + std::to_string(v.z));
     }
+
+    return true;
 }
 
-void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) {
+bool EobFile::Write(const GeometryObjectData& data, const std::string& outfile) {
 
-    File f(outfile, FileModeWriting);
+    File* f = File::Load(outfile, FileModeWriting);
+
+    if(!f) {
+	return false;
+    }
 
     WriteMaterialFile(data, outfile);
 
     if(data.m_indexType != GL_UNSIGNED_SHORT) {
-	LOG_E("We only support storing indices are GLushorts!");
+	SetError("We only support storing indices are GLushorts!");
+	return false;
     }
 
     FileHeader fileHeader;
@@ -134,14 +145,14 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 
 
     // first write fileHeader.
-    f.WriteArray(&fileHeader, sizeof(fileHeader));
+    f->WriteArray(&fileHeader, sizeof(fileHeader));
 
     // next we write vertex attrib sizes.
     WriteArray(f, (void*)&data.m_vertexAttribsSizes[0], sizeof(GLuint) * data.m_vertexAttribsSizes.size() );
 
     // next write chunk count.
 
-    f.Write32u(data.m_chunks.size());
+    f->Write32u(data.m_chunks.size());
     for(uint32 i = 0; i < data.m_chunks.size(); ++i) {
 
 	GeometryObjectData::Chunk* chunk = data.m_chunks[i];
@@ -151,41 +162,49 @@ void EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 	// write chunk header
 	chunkHeader.m_magic = CHNK;
 	chunkHeader.m_numTriangles = chunk->m_numTriangles;
-	f.WriteArray(&chunkHeader, sizeof(chunkHeader));
+	f->WriteArray(&chunkHeader, sizeof(chunkHeader));
 
 
 	// write chunk material.
 	MaterialHeader materialHeader;
 	materialHeader.m_magic = MATS;
-	f.WriteArray(&materialHeader, sizeof(materialHeader));
+	f->WriteArray(&materialHeader, sizeof(materialHeader));
 
 	WriteString(f, chunk->m_material->m_materialName);
 
 	// write chunk vertex and index data.
-	f.Write32u(VETX);
+	f->Write32u(VETX);
 	WriteArray(f, chunk->m_vertices, chunk->m_verticesSize );
-	f.Write32u(INDX);
+	f->Write32u(INDX);
 	WriteArray(f, chunk->m_indices, chunk->m_indicesSize );
     }
+
+    return true;
 }
 
 // for every eob filed named XYZ.eob, we store a material file in the same directory.
 // It is name XYZ.mat
-map<string, Material*> ReadMaterialFile(const std::string& infile) {
+map<string, Material*>* ReadMaterialFile(const std::string& infile) {
 
     assert( infile.substr(infile.size()-4, 4 ) == string(".eob") );
 
     // strip ".eob" extension,
     string materialFile = infile.substr(0, infile.size()-4 ) + ".mat" ;
 
-    BufferedFileReader reader(materialFile);
+    BufferedFileReader* reader = BufferedFileReader::Load(materialFile);
+    if(!reader) {
+	return NULL;
+    }
 
-    map<string, Material*> matlib;
+    map<string, Material*>* matlibPtr = new map<string, Material*>;
+    map<string, Material*>& matlib = *matlibPtr;
+
+
     Material* currentMaterial = NULL;
 
-    while(!reader.IsEof()) {
+    while(!reader->IsEof()) {
 
-	string line = reader.ReadLine();
+	string line = reader->ReadLine();
 	vector<string> tokens =StringUtil::SplitString(line, " ");
 	string firstToken = tokens[0];
 
@@ -229,70 +248,75 @@ map<string, Material*> ReadMaterialFile(const std::string& infile) {
 	}
     }
 
-    return matlib;
+    return matlibPtr;
 }
 
 // TODO: clean up the memory allocated in this method.
 // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED(for storing the number of vertices). UNSIGNED INTS ARE NOT YET HANDLED.
-GeometryObjectData EobFile::Read(const std::string& infile) {
+GeometryObjectData* EobFile::Read(const std::string& infile) {
 
-    GeometryObjectData data;
+    GeometryObjectData* data = new GeometryObjectData();
 
-    File f(ResourceManager::GetInstance().FindResource(infile), FileModeReading);
+    File* f = File::Load(infile, FileModeReading);
 
-    map<string, Material*> matlib = ReadMaterialFile(infile);
+    map<string, Material*>* matlibPtr = ReadMaterialFile(infile);
+    map<string, Material*>& matlib = *matlibPtr;
 
     FileHeader fileHeader;
 
-    if(f.HasError()) {
-	LOG_E("Could not open the file %s: %s", infile.c_str(), f.GetError().c_str() );
+    if(!f) {
+	return NULL;
     }
 
         // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
-    f.ReadArray(&fileHeader, sizeof(fileHeader));
+    f->ReadArray(&fileHeader, sizeof(fileHeader));
 
     //LOG_I("init read");
 
     if(fileHeader.m_magic != EOBF) {
-	LOG_E("%s is not a EOB file: invalid magic number %d", infile.c_str(), fileHeader.m_magic );
+	SetError("%s is not a EOB file: invalid magic number %d", infile.c_str(), fileHeader.m_magic );
+	return NULL;
     }
 
-    data.m_indexType = fileHeader.m_indexType;
+    data->m_indexType = fileHeader.m_indexType;
 
-    if(data.m_indexType != GL_UNSIGNED_SHORT) {
-	LOG_E("Invalid file: We only support storing indices are GLushorts!");
+    if(data->m_indexType != GL_UNSIGNED_SHORT) {
+	SetError("Invalid file: We only support storing indices are GLushorts!");
+	return NULL;
     }
 
     // read vertex attrib size array
-    uint32 length = f.Read32u();
+    uint32 length = f->Read32u();
     //std::vector<GLuint> vertexAttribsSizes;
 	GLuint* vertexAttribsSizes = new GLuint[length / sizeof(GLuint)];
 
    // vertexAttribsSizes.reserve(length / sizeof(GLuint));
 
-    f.ReadArray(vertexAttribsSizes, length);
-    data.m_vertexAttribsSizes = std::vector<GLuint>(&vertexAttribsSizes[0]+0, &vertexAttribsSizes[0]+length / sizeof(GLuint));
+    f->ReadArray(vertexAttribsSizes, length);
+    data->m_vertexAttribsSizes = std::vector<GLuint>(&vertexAttribsSizes[0]+0, &vertexAttribsSizes[0]+length / sizeof(GLuint));
 	delete []vertexAttribsSizes;
 
         // TOOD: ALSO NOTE THAT ONLY UNSIGNED SHORTS ARE HANDLED. UNSIGNED INTS ARE NOT YET HANDLED.
 
-    uint32 numChunks = f.Read32u();
+    uint32 numChunks = f->Read32u();
     for(uint32 i = 0; i < numChunks; ++i) {
 
 	GeometryObjectData::Chunk* chunk = new GeometryObjectData::Chunk();
 	ChunkHeader chunkHeader;
-	f.ReadArray(&chunkHeader, sizeof(chunkHeader));
+	f->ReadArray(&chunkHeader, sizeof(chunkHeader));
 
 	if(chunkHeader.m_magic != CHNK) {
-	    LOG_E("%s is not a EOB file: chunk number %d has an invalid magic number %d", infile.c_str(), i, chunkHeader.m_magic );
+	    SetError("%s is not a EOB file: chunk number %d has an invalid magic number %d", infile.c_str(), i, chunkHeader.m_magic );
+	    return NULL;
 	}
 
 	chunk->m_numTriangles = chunkHeader.m_numTriangles;
 
 	MaterialHeader materialHeader;
-	f.ReadArray(&materialHeader, sizeof(materialHeader));
+	f->ReadArray(&materialHeader, sizeof(materialHeader));
 	if(materialHeader.m_magic != MATS) {
-	    LOG_E("%s is not a EOB file: chunk number %d has an invalid material magic number %d", infile.c_str(), i, materialHeader.m_magic );
+	    SetError("%s is not a EOB file: chunk number %d has an invalid material magic number %d", infile.c_str(), i, materialHeader.m_magic );
+	    return NULL;
 	}
 
 
@@ -301,30 +325,34 @@ GeometryObjectData EobFile::Read(const std::string& infile) {
 	Material* mat = matlib[materialName];
 
 	if(mat == NULL) {
-	    LOG_E("The material %s could not be found", materialName.c_str());
+
+	    SetError("The material %s could not be found", materialName.c_str());
+	    return NULL;
 	} else {
 	    chunk->m_material = mat;
 	}
 
-	uint32 vertexMagic = f.Read32u();
+	uint32 vertexMagic = f->Read32u();
 	if(vertexMagic != VETX) {
-	    LOG_E("%s is not a EOB file: chunk number %d has an invalid vertex magic number %d", infile.c_str(), i, vertexMagic);
+	    SetError("%s is not a EOB file: chunk number %d has an invalid vertex magic number %d", infile.c_str(), i, vertexMagic);
+	    return NULL;
 	}
 
 	uint32 temp = 0;
 	chunk->m_vertices= ReadArray(f, temp);
 	chunk->m_verticesSize = temp;
 
-	uint32 indexMagic = f.Read32u();
+	uint32 indexMagic = f->Read32u();
 	if(indexMagic != INDX) {
-	    LOG_E("%s is not a EOB file: chunk number %d has an invalid index magic number %d", infile.c_str(), i, indexMagic);
+	    SetError("%s is not a EOB file: chunk number %d has an invalid index magic number %d", infile.c_str(), i, indexMagic);
+	    return NULL;
 	}
 
 	temp = 0;
 	chunk->m_indices= ReadArray(f, temp);
 	chunk->m_indicesSize = temp;
 
-	data.m_chunks.push_back(chunk);
+	data->m_chunks.push_back(chunk);
 
     }
 

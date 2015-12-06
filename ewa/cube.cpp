@@ -30,13 +30,27 @@ void Cube::AddQuad(
     m_numVertices += 8;
 }
 
-Cube::Cube() {
+
+Cube* Cube::Load() {
+
+
+    ShaderProgram* shader = ShaderProgram::Load("shader_lib/primitive");
+
+    if(!shader) {
+	return NULL;
+    }
+
+    return new Cube(shader);
+}
+
+Cube::Cube(ShaderProgram* shader) {
+
+    m_shader = shader;
 
     m_vertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{3} // pos.
 	);
 
-    m_shader = new ShaderProgram("shader_lib/primitive");
 
     FloatVector vertices;
     m_numVertices = 0;

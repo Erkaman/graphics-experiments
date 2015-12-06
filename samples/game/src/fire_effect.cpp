@@ -2,6 +2,8 @@
 
 #include "ewa/gl/texture2d.hpp"
 
+#include "ewa/log.hpp"
+
 
 FireEffect::FireEffect(const Vector3f& position) {
 
@@ -31,7 +33,11 @@ FireEffect::FireEffect(const Vector3f& position) {
     SetEmitPosition(position);
     SetEmitPositionVariance(Vector3f(0.0f,0.0f,0.0f));
 
-    Texture* texture = new Texture2D("img/particle_post.png");
+    Texture* texture = Texture2D::Load("img/particle_post.png");
+
+    if(!texture) {
+	PrintErrorExit();
+    }
 
     texture->Bind();
     texture->SetTextureRepeat();

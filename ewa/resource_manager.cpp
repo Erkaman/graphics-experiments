@@ -21,16 +21,17 @@ void ResourceManager::AddResourcePath(const std::string& path) {
     resourcePaths.push_back(path);
 }
 
-std::string ResourceManager::FindResource(const std::string& resourceName) {
-
+std::string* ResourceManager::FindResource(const std::string& resourceName) {
 
     std::string foundResource;
-    if(!ResourceExists(resourceName, foundResource)) 
-		LOG_E("The resource %s could not be found", resourceName.c_str());
 
+    if(!ResourceExists(resourceName, foundResource)) {
+	SetError("The resource %s could not be found", resourceName.c_str());
+	return NULL;
+    }
 
-	return foundResource;
-    
+    return new string(foundResource);
+
 }
 
 bool ResourceManager::ResourceExists(const std::string& resourceName, std::string& foundResource) {
@@ -57,26 +58,33 @@ bool ResourceManager::ResourceExists(const std::string& resourceName) {
 
 
 std::string ResourceManager::LocateAndReadResource(const std::string& resourcePath) {
-    std::string fullResourcePath = ResourceManager::GetInstance().FindResource(resourcePath);
+    std::string* fullResourcePath = ResourceManager::GetInstance().FindResource(resourcePath);
 
-    File f(fullResourcePath, FileModeReading);
-
-    if(f.HasError()) {
-	LOG_E("Could not read the resource %s: %s", resourcePath.c_str(), f.GetError().c_str() );
+    if(!fullResourcePath) {
+	PrintErrorExit();
     }
 
-    return f.GetFileContents();
+    File *f = File::Load(*fullResourcePath, FileModeReading);
+
+    if(!f) {
+    	PrintErrorExit();
+    }
+
+    return f->GetFileContents();
 }
 
-File ResourceManager::OpenResourceForReading(const std::string& resourcePath) {
+File* ResourceManager::OpenResourceForReading(const std::string& resourcePath) {
 
-    std::string fullResourcePath = ResourceManager::GetInstance().FindResource(resourcePath);
+    std::string* fullResourcePath = ResourceManager::GetInstance().FindResource(resourcePath);
 
+    if(!fullResourcePath) {
+	return NULL;
+    }
 
-    File f(fullResourcePath, FileModeReading);
+    File *f = File::Load(*fullResourcePath, FileModeReading);
 
-    if(f.HasError()) {
-	LOG_E("Could not read the resource %s: %s", resourcePath.c_str(), f.GetError().c_str() );
+    if(!f) {
+	return NULL;
     }
 
     return f;
@@ -95,5 +103,5 @@ ShaderProgram* ResourceManager::LoadShader(
 	fragmentSource = string("#define ") + defines[i] +  string("\n\n") + fragmentSource;
     }
 
-    return new ShaderProgram(vertexSource, fragmentSource);
+    return ShaderProgram::Load(vertexSource, fragmentSource);
 }

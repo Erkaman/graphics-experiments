@@ -42,19 +42,22 @@ private:
     void DrawQuad(const float drawX, const float drawY, const float drawX2, const float drawY2,
 		  const float srcX, const float srcY, const float srcX2, const float srcY2);
 
-	/*
-	Copying is disallowed.
-	*/
-	Font(Font&);
-	Font& operator=(const Font&);
+    /*
+      Copying is disallowed.
+    */
+    Font(Font&);
+    Font& operator=(const Font&);
+
+    Font(const unsigned int windowWidth, const unsigned int windowHeight,
+	     const float fontScale);
 
 public:
 
     /*
       Load a texture atlas created by this program
       https://github.com/Erkaman/font_creator_cpp
-     */
-    Font(
+    */
+    static Font* Load(
 	const std::string& atlasPath,
 	const std::string& amfPath,
 	const unsigned int windowWidth, const unsigned int windowHeight,

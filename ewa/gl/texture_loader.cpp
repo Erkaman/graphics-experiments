@@ -9,31 +9,33 @@
 
 using std::vector;
 
-TextureInfo TextureLoader::Load(const std::string& texturePath) {
-    TextureInfo textureInfo;
+TextureInfo* TextureLoader::Load(const std::string& texturePath) {
+    TextureInfo* textureInfo = new TextureInfo();
 
     unsigned int width;
     unsigned int height;
 
-
-
-    std::string resourcePath = ResourceManager::GetInstance().FindResource(texturePath);
+    std::string* resourcePath = ResourceManager::GetInstance().FindResource(texturePath);
+    if(!resourcePath) {
+	return NULL;
+    }
 
 
     std::vector<unsigned char> buffer;
     lodepng::load_file(buffer,
 
 
-		       resourcePath);
+		       *resourcePath);
 
     lodepng::State state;
-    unsigned error = lodepng::decode(textureInfo.imageData, width, height, state, buffer);
+    unsigned error = lodepng::decode(textureInfo->imageData, width, height, state, buffer);
 
     if(error != 0){
-	LOG_E("could not load png %s: %s", resourcePath.c_str(), lodepng_error_text(error));
+	SetError("could not load png %s: %s", resourcePath->c_str(), lodepng_error_text(error));
+	return NULL;
     }
 
-    vector<unsigned char>& imageData = textureInfo.imageData;
+    vector<unsigned char>& imageData = textureInfo->imageData;
 
     for(size_t i = 0; i < imageData.size(); i += 4) {
 	unsigned char r = imageData[i+0];
@@ -45,11 +47,11 @@ TextureInfo TextureLoader::Load(const std::string& texturePath) {
 	imageData[i+2] = r;
     }
 
-    textureInfo.width = width;
-    textureInfo.height = height;
-    textureInfo.format =  GL_BGRA;
-    textureInfo.internalFormat = GL_RGBA8;
-    textureInfo.type =  GL_UNSIGNED_INT_8_8_8_8_REV;
+    textureInfo->width = width;
+    textureInfo->height = height;
+    textureInfo->format =  GL_BGRA;
+    textureInfo->internalFormat = GL_RGBA8;
+    textureInfo->type =  GL_UNSIGNED_INT_8_8_8_8_REV;
 
     return textureInfo;
 }
