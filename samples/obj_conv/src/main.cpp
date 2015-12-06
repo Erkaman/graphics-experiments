@@ -20,10 +20,6 @@ using std::string;
 using std::stof;
 using std::map;
 
-// we:
-// a buffered file parser that allows reading a single file.
-
-
 struct Chunk {
     vector<float> m_vertices;
     vector<GLushort> m_indices;
@@ -67,9 +63,7 @@ int main (int argc, char * argv[]) {
 
     LogInit();
 
-
     if(argc != 2 && argc!=3) {
-
 	printf("Not enough arguments specified\n\n");
 	PrintHelp();
 	exit(1);
@@ -92,22 +86,15 @@ int main (int argc, char * argv[]) {
 	    LOG_E("Unknown option specified: %s", option.c_str());
 	}
 
-
-
 	objFilename = string(argv[2]);
     }
 
-
-
-
+    // the path where all output files will be put.
     basePath = File::GetFilePath(objFilename);
-
-
 
     BufferedFileReader reader(  objFilename);
 
     currentChunk = NULL;
-
 
     while(!reader.IsEof()) {
 
@@ -306,7 +293,7 @@ int ParseFEntry(const string& entry) {
 
     vector<string> tokens =SplitString(entry, "/");
 
-    if(texCoords.size() == 0) {
+    if(points.size() == 0) {
 	LOG_E("Found f(ace), but no points have been specified yet");
     }
 
@@ -343,65 +330,6 @@ int ParseFEntry(const string& entry) {
 
     return index;
 }
-
-/*
-void CalculateNornmals() {
-
-    struct Vertex {
-	Vector3f m_point;
-	Vector2f m_texCoord;
-	Vector3f m_normal;
-    };
-
-    map<string, Chunk*>::iterator it;
-    for ( it = chunks.begin(); it != chunks.end(); it++ ) {
-	Chunk* chunk = it->second;
-
-	// create references for easy access.
-	Vertex* vertices = (Vertex*)&chunk->m_vertices[0];
-	vector<GLushort >& indices =  chunk->m_indices;
-
-	for(size_t i = 0; i < (indices.size() / 3); ++i) {
-
-	    LOG_I("i: %d", i);
-
-	    Vector3f v1 = vertices[indices[i*3]].m_point;
-	    Vector3f v2 = vertices[indices[i*3+1]].m_point;
-	    Vector3f v3 = vertices[indices[i*3+2]].m_point;
-
-//	    Vector3f v(-1.000000, -1.000000, -1.000000);
-
-	    LOG_I("v1: %s", string(v1).c_str() );
-	    LOG_I("v2: %s", string(v2).c_str() );
-	    LOG_I("v3: %s", string(v3).c_str() );
-
-	    Vector3f normal = Vector3f::Cross(v2-v1, v3-v1);
-
-	    LOG_I("normal: %s", string(normal).c_str() );
-	    LOG_I("");
-
-
-	    vertices[indices[i*3]].m_normal += normal;
-	    vertices[indices[i*3+1]].m_normal += normal;
-	    vertices[indices[i*3+2]].m_normal += normal;
-
-	}
-
-	LOG_I("final normals:");
-
-	for(size_t i = 0; i < (chunk->m_vertices.size() / (sizeof(Vertex)/sizeof(float))  ); i+=1) {
-	    vertices[i].m_normal = Vector3f::Normalize(vertices[i].m_normal);
-
-	    // LOG_I("point: %s", string(vertices[i].m_point).c_str() );
-	    LOG_I("normal: %s", string(vertices[i].m_normal).c_str() );
-
-	    // normal should be (0,-1,0)
-
-	}
-
-    }
-}
-*/
 
 void PrintHelp() {
     printf("Usage:\n");
@@ -452,35 +380,11 @@ void GenerateTangents() {
 	    vertices[indices[i*3+2]].m_tangent += currentTangent;
 	}
 
-//	LOG_I("final normals:");
-
 	for(size_t i = 0; i < (chunk->m_vertices.size() / (sizeof(Vertex)/sizeof(float))  ); i+=1) {
-	    //    vertices[i].m_normal = Vector3f::Normalize(vertices[i].m_normal);
-
-
 	    vertices[i].m_tangent = Vector3f::Normalize(vertices[i].m_tangent);
-
-//	    LOG_I("tangent: %s", tos(vertices[i].m_tangent).c_str()  );
 
 	    // normal should be (0,-1,0)
 	}
 
     }
 }
-
-/*
-
-    struct Vertex {
-	Vector3f m_point;
-	Vector2f m_texCoord;
-	Vector3f m_normal;
-    };
-
-we need to be able to handle also the format
-
-    struct Vertex {
-	Vector3f m_point;
-	Vector2f m_texCoord;
-	Vector3f m_normal;
-    Vector3f tangent.
-    };*/
