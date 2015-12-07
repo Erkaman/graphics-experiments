@@ -17,6 +17,7 @@ class DepthFBO;
 class Line;
 class Points;
 class Cube;
+class ViewFrustum;
 
 class TuhuApplication : public Application{
 
@@ -58,6 +59,10 @@ private:
     Matrix4f m_lightViewMatrix;
 
     float m_totalDelta;
+
+    ViewFrustum* m_viewFrustum;
+
+
 
 public:
 

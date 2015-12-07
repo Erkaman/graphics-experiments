@@ -22,6 +22,7 @@
 #include "ewa/line.hpp"
 #include "ewa/points.hpp"
 #include "ewa/cube.hpp"
+#include "ewa/view_frustum.hpp"
 
 using namespace std;
 
@@ -48,6 +49,8 @@ TuhuApplication::~TuhuApplication() {
 }
 
 void TuhuApplication::Init() {
+
+    m_viewFrustum = new ViewFrustum();
 
     m_totalDelta = 0;
 
@@ -266,6 +269,8 @@ void TuhuApplication::RenderShadowMap() {
 
 void TuhuApplication::RenderScene() {
 
+
+
     // set the viewport to the size of the window.
     SetViewport();
 
@@ -333,11 +338,12 @@ void TuhuApplication::Render() {
 
   RenderShadowMap();
 
-
   RenderScene();
 }
 
 void TuhuApplication::Update(const float delta) {
+
+    m_viewFrustum->Update( m_camera->GetVp() );
 
     m_totalDelta += delta;
 
