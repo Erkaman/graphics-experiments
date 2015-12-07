@@ -1,6 +1,7 @@
 #include "geometry_object.hpp"
 
 #include "math/vector3f.hpp"
+#include "math/vector4f.hpp"
 
 #include "ewa/gl/vbo.hpp"
 #include "ewa/gl/shader_program.hpp"
@@ -236,18 +237,48 @@ void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition,
 
     m_defaultShader->Unbind();
 
+
+/*
+    m_aabb.min = Vector3f((m_modelMatrix * Vector4f(m_aabb.min, 1.0f)));
+    m_aabb.max = Vector3f((m_modelMatrix * Vector4f(m_aabb.max, 1.0f)));
+
     Vector3f center = (m_aabb.min + m_aabb.max) * 0.5f;
 
     Vector3f radius = m_aabb.max - center;
 
     m_aabbWireframe->SetModelMatrix(
-	m_modelMatrix * Matrix4f::CreateTranslation(center) *
+//	Matrix4f::CreateTranslation(center) *
 	Matrix4f::CreateScale(radius)
 	);
+    */
+
+
+
+    Vector3f center = (m_aabb.min + m_aabb.max) * 0.5f;
+
+    Vector3f radius = m_aabb.max - center;
+
+    m_aabbWireframe->SetModelMatrix(
+	m_modelMatrix*
+	Matrix4f::CreateTranslation(center) *
+	Matrix4f::CreateScale(radius)
+	);
+
 
     m_aabbWireframe->Render(camera.GetVp() );
 }
 
-void  GeometryObject::SetModelMatrix(Matrix4f modelMatrix) {
+void  GeometryObject::SetModelMatrix(const Matrix4f& modelMatrix) {
     m_modelMatrix = modelMatrix;
+}
+
+
+AABB GeometryObject::GetAABB()const {
+
+    AABB temp;
+
+    temp.min = Vector3f((m_modelMatrix * Vector4f(m_aabb.min, 1.0f)));
+    temp.max = Vector3f((m_modelMatrix * Vector4f(m_aabb.max, 1.0f)));
+
+    return temp;
 }

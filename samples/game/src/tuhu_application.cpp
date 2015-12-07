@@ -26,6 +26,9 @@
 
 using namespace std;
 
+int nonCulledObjects = 0;
+int totalObjects = 0;
+
 constexpr int SHADOW_MAP_SIZE = 1024;
 
 void ToClipboard(const std::string& str) {
@@ -288,11 +291,18 @@ void TuhuApplication::RenderScene() {
 
 
 
+    nonCulledObjects = 0;
     for(GeometryObject* geoObj: m_geoObjs) {
 
-	geoObj->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetAABB())) {
+	    ++nonCulledObjects;
+	   geoObj->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+	}
 
     }
+
+    totalObjects = m_geoObjs.size();
+
 
      m_line->Render(m_camera->GetMvpFromM());
      m_points->Render(m_camera->GetMvpFromM());
@@ -353,7 +363,16 @@ void TuhuApplication::Update(const float delta) {
 
 void TuhuApplication::RenderText()  {
 
-    m_font->DrawString(*m_fontShader, 600,150, "hello world" );
+    string cull = std::to_string(nonCulledObjects) + "\\" + std::to_string(totalObjects);
+
+
+    m_font->DrawString(*m_fontShader, 600,150, cull);
+
+
+
+//    m_font->DrawString(*m_fontShader, 600,120, cull );
+
+
 }
 
 GeometryObject* TuhuApplication::LoadObj(const std::string& path) {

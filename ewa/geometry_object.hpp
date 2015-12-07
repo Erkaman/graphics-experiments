@@ -63,5 +63,7 @@ public:
 
     virtual void RenderShadowMap(const Matrix4f& lightVp); // vp = view projection matrix.
 
-    void  SetModelMatrix(Matrix4f modelMatrix);
+    void  SetModelMatrix(const Matrix4f& modelMatrix);
+
+    AABB GetAABB()const;
 };

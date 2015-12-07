@@ -28,6 +28,8 @@ public:
 
     Vector4f(const Vector4f& that): x(that.x), y(that.y), z(that.z),w(that.w){ }
 
+    Vector4f(const Vector3f& that, const float w_): x(that.x), y(that.y), z(that.z),w(w_){ }
+
     /*
       OPERATOR OVERLOADS
      */

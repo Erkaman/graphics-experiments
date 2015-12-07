@@ -1,6 +1,8 @@
 #include "view_frustum.hpp"
 
 #include "math/matrix4f.hpp"
+#include "aabb.hpp"
+
 #include <math.h>
 
 ViewFrustum::ViewFrustum() {
@@ -123,4 +125,16 @@ bool ViewFrustum::IsCuboidInFrustum( const float x, const float y, const float z
 	return false;
     }
     return true;
+}
+
+bool ViewFrustum::IsAABBInFrustum(const AABB& aabb ) {
+    Vector3f center = (aabb.min + aabb.max) * 0.5f;
+
+    Vector3f radius = (aabb.max - center);
+
+    return IsCuboidInFrustum(
+	center.x, center.y, center.z,
+	radius.x,radius.y,radius.z
+	);
+
 }

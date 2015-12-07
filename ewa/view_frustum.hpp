@@ -1,6 +1,7 @@
 #pragma once
 
 class Matrix4f;
+class AABB;
 
 class ViewFrustum {
 private:
@@ -13,6 +14,8 @@ public:
 
 
     void Update(const Matrix4f& vp);
+
+    bool IsAABBInFrustum(const AABB& aabb );
 
     bool IsCuboidInFrustum(
 	const float x, const float y, const float z,
