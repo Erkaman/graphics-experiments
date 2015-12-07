@@ -9,6 +9,7 @@
 #include "ewa/common.hpp"
 #include "ewa/camera.hpp"
 #include "ewa/file.hpp"
+#include "ewa/cube.hpp"
 #include "eob_file.hpp"
 #include "resource_manager.hpp"
 
@@ -37,6 +38,17 @@ GeometryObject* GeometryObject::Load(const std::string& filename) {
     }
 
     GeometryObject* geoObj = new GeometryObject();
+
+    geoObj->m_aabb = data->aabb;
+
+    if(data->aabb.min.x != 0) {
+	geoObj->m_aabbWireframe = Cube::Load();
+
+
+
+    } else {
+	geoObj->m_aabbWireframe = NULL;
+    }
 
     string basePath = File::GetFilePath(filename);
 
@@ -67,7 +79,8 @@ GeometryObject* GeometryObject::Load(const std::string& filename) {
 
 
 
-        string shaderName = "shader/simple";
+
+    string shaderName = "shader/simple";
 
     vector<string> defines;
 
@@ -235,6 +248,24 @@ void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition,
 
 
     m_defaultShader->Unbind();
+
+    if(m_aabbWireframe) {
+
+//	AABB& aabb = geoObj->m_aabb;
+
+	Vector3f center = (m_aabb.min + m_aabb.max) * 0.5f;
+
+//	LOG_I("center%s", string(center).c_str() );
+
+	Vector3f radius = m_aabb.max - center;
+
+	m_aabbWireframe->SetModelMatrix(
+	     m_modelMatrix * Matrix4f::CreateTranslation(center) *
+			 Matrix4f::CreateScale(radius)
+	    );
+
+	m_aabbWireframe->Render(camera.GetVp() );
+    }
 
 }
 

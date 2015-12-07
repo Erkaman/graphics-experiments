@@ -3,7 +3,6 @@
 #include "ewa/common.hpp"
 #include "ewa/gl/shader_program.hpp"
 
-#include "ewa/math/matrix4f.hpp"
 
 using std::vector;
 
@@ -30,7 +29,6 @@ void Cube::AddQuad(
     m_numVertices += 8;
 }
 
-
 Cube* Cube::Load() {
 
 
@@ -43,7 +41,13 @@ Cube* Cube::Load() {
     return new Cube(shader);
 }
 
+void Cube::SetModelMatrix(const Matrix4f& modelMatrix)  {
+    this->m_modelMatrix = modelMatrix;
+}
+
 Cube::Cube(ShaderProgram* shader) {
+
+    m_modelMatrix = Matrix4f::CreateIdentity();
 
     m_shader = shader;
 
@@ -51,63 +55,59 @@ Cube::Cube(ShaderProgram* shader) {
 	vector<GLuint>{3} // pos.
 	);
 
-
     FloatVector vertices;
     m_numVertices = 0;
 
     // top side
+
+    // top side
     AddQuad(
 	vertices,
-	Vector3f(0,0,0),
-	Vector3f(0,0,1),
-	Vector3f(1,0,1),
-	Vector3f(1,0,0)
+	Vector3f(-1,1,-1),
+	Vector3f(-1,1,1),
+	Vector3f(1,1,1),
+	Vector3f(1,1,-1)
 	);
 
-    // front
+    // front side.
     AddQuad(
 	vertices,
-	Vector3f(0,0,0),
-	Vector3f(1,0,0),
-	Vector3f(1,-1,0),
-	Vector3f(0,-1,0)
+	Vector3f(-1,1,-1),
+	Vector3f(1,1,-1),
+	Vector3f(1,-1,-1),
+	Vector3f(-1,-1,-1)
 	);
 
-    // back
+    // back side
     AddQuad(
 	vertices,
-	Vector3f(0,0,1),
-	Vector3f(1,0,1),
+	Vector3f(-1,1,1),
+	Vector3f(1,1,1),
 	Vector3f(1,-1,1),
-	Vector3f(0,-1,1)
+	Vector3f(-1,-1,1)
 	);
 
     // left side
     AddQuad(
 	vertices,
-	Vector3f(0,0,0),
-	Vector3f(0,0,1),
-	Vector3f(0,-1,1),
-	Vector3f(0,-1,0)
+	Vector3f(-1,-1,-1),
+	Vector3f(-1,-1,1),
+	Vector3f(-1,-1,1),
+	Vector3f(-1,-1,-1)
 	);
 
     // right side
     AddQuad(
 	vertices,
-	Vector3f(1,0,0),
-	Vector3f(1,0,1),
+	Vector3f(1,-1,-1),
 	Vector3f(1,-1,1),
-	Vector3f(1,-1,0)
+	Vector3f(1,-1,1),
+	Vector3f(1,-1,-1)
 	);
-
-
-
 
     m_vertexBuffer->Bind();
     m_vertexBuffer->SetBufferData(vertices);
     m_vertexBuffer->Unbind();
-
-
 }
 
 Cube::~Cube() {
@@ -118,9 +118,9 @@ void Cube::Render(const Matrix4f& vp) {
 
     m_shader->Bind();
 
-    m_shader->SetUniform("mvp", vp *
-			 Matrix4f::CreateTranslation(-2,0,0) *
-			 Matrix4f::CreateScale(4,2,1)
+    m_shader->SetUniform("mvp", vp * m_modelMatrix
+/*			 Matrix4f::CreateTranslation(-2,0,0) *
+			 Matrix4f::CreateScale(4,2,1) */
 	);
     m_shader->SetUniform("color", Vector3f(1.0,0.0,0.0) );
 

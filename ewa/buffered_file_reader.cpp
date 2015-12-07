@@ -31,6 +31,7 @@ BufferedFileReader* BufferedFileReader::Load(const std::string& filename) {
 
 BufferedFileReader::~BufferedFileReader() {
     delete[] m_buffer;
+    delete m_file;
 }
 
 

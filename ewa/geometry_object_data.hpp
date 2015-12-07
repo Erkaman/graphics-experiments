@@ -3,6 +3,8 @@
 #include "gl/gl_common.hpp"
 #include "math/vector3f.hpp"
 
+#include "aabb.hpp"
+
 #include <string>
 
 struct Material{
@@ -53,4 +55,6 @@ struct GeometryObjectData {
     // type of the integer used to store vertex indices.
     // But right now we only allow GL_UNSIGNED_SHORT.
     GLenum m_indexType;
+
+    AABB aabb;
 };

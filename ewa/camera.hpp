@@ -24,6 +24,7 @@ public:
 
     Matrix4f GetMvpFromM(const Matrix4f& m) const;
     Matrix4f GetMvpFromM() const;
+    Matrix4f GetVp() const;
     Matrix4f GetMvpFromMv(const Matrix4f& modelViewMatrix) const;
 
     Matrix4f GetViewMatrix() const;

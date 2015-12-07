@@ -177,11 +177,47 @@ bool EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
     return true;
 }
 
+AABB* ReadAABB(const std::string& infile) {
+
+    string aabbFile = infile.substr(0, infile.size()-4 ) + ".aabb" ;
+
+    BufferedFileReader* reader = BufferedFileReader::Load(  aabbFile);
+    if(!reader) {
+	return NULL;
+    }
+
+    AABB* aabb = new AABB();
+
+    string firstLine = reader->ReadLine();
+    vector<string> tokens =StringUtil::SplitString(firstLine, " ");
+
+    if(tokens[0] != "max" || tokens.size() != 4) {
+	SetError("%s is not a AABB file: invalid max line", aabbFile.c_str());
+	return NULL;
+    }
+    aabb->max = Vector3f(stof(tokens[1]),stof(tokens[2]),stof(tokens[3]) );
+
+
+    string secondLine = reader->ReadLine();
+    tokens =StringUtil::SplitString(secondLine, " ");
+
+    if(tokens[0] != "min" || tokens.size() != 4) {
+	SetError("%s is not a AABB file: invalid min line", aabbFile.c_str());
+	return NULL;
+    }
+    aabb->min = Vector3f(stof(tokens[1]),stof(tokens[2]),stof(tokens[3]) );
+
+    // close reader
+    delete reader;
+
+    return aabb;
+
+}
+
 // for every eob filed named XYZ.eob, we store a material file in the same directory.
 // It is name XYZ.mat
 map<string, Material*>* ReadMaterialFile(const std::string& infile) {
 
-    assert( infile.substr(infile.size()-4, 4 ) == string(".eob") );
 
     // strip ".eob" extension,
     string materialFile = infile.substr(0, infile.size()-4 ) + ".mat" ;
@@ -249,12 +285,33 @@ map<string, Material*>* ReadMaterialFile(const std::string& infile) {
 // TODO: clean up the memory allocated in this method.
 GeometryObjectData* EobFile::Read(const std::string& infile) {
 
+    if(infile.substr(infile.size()-4, 4 ) != string(".eob") ) {
+	SetError("%s is not a EOB file: wrong file extension" );
+	return NULL;
+    }
+
     GeometryObjectData* data = new GeometryObjectData();
 
     File* f = File::Load(infile, FileModeReading);
 
     map<string, Material*>* matlibPtr = ReadMaterialFile(infile);
     map<string, Material*>& matlib = *matlibPtr;
+
+
+    if(infile == "obj/sunball.eob") {
+
+	AABB* aabbPtr = ReadAABB(infile);
+	if(!aabbPtr) {
+	    return NULL;
+	}
+	data->aabb = *aabbPtr;
+
+    } else {
+	data->aabb.min.x=0;
+	data->aabb.min.y=0;
+	data->aabb.min.z=0;
+
+    }
 
     FileHeader fileHeader;
 

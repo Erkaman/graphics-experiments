@@ -12,6 +12,7 @@ class VBO;
 class ShaderProgram;
 class Camera;
 class Texture;
+class Cube;
 
 class GeometryObject {
 private:
@@ -39,6 +40,9 @@ private:
     bool m_hasNormalMap;
     bool m_hasSpecularMap;
     bool m_hasHeightMap;
+
+    AABB m_aabb;
+    Cube* m_aabbWireframe;
 
     GeometryObject() {}
 

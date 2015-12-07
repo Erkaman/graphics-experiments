@@ -43,7 +43,7 @@ void SetError(const std::string& str) {
 
 
 std::string GetError(){
-    return errorBuffer;
+    return errorStr;
 }
 
 void PrintErrorExit() {

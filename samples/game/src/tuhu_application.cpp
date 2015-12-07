@@ -305,7 +305,7 @@ void TuhuApplication::RenderScene() {
 
      m_line->Render(m_camera->GetMvpFromM());
      m_points->Render(m_camera->GetMvpFromM());
-     m_cube->Render(m_camera->GetMvpFromM());
+//     m_cube->Render(m_camera->GetMvpFromM());
 
 }
 

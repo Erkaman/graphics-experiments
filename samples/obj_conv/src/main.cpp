@@ -233,6 +233,14 @@ int main (int argc, char * argv[]) {
 	PrintErrorExit();
     }
 
+    string cmd = "source ~/.bashrc && bash -c ";
+    cmd += "\"";
+    cmd += "aabb_create " + objFilename;
+    cmd += "\"";
+
+    system( cmd.c_str() );
+
+
     LogDispose();
 
     return 0;

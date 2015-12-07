@@ -42,6 +42,10 @@ Matrix4f Camera::GetMvpFromM() const {
     return (m_projectionMatrix) * (m_viewMatrix);
 }
 
+Matrix4f Camera::GetVp() const {
+    return (m_projectionMatrix) * (m_viewMatrix);
+}
+
 
 Matrix4f Camera::GetMvpFromM(const Matrix4f& m) const {
     return (m_projectionMatrix) * (m_viewMatrix) * (m);
