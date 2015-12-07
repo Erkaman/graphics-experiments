@@ -182,6 +182,8 @@ AABB* ReadAABB(const std::string& infile) {
     string aabbFile = infile.substr(0, infile.size()-4 ) + ".aabb" ;
 
     BufferedFileReader* reader = BufferedFileReader::Load(  aabbFile);
+
+
     if(!reader) {
 	return NULL;
     }
@@ -298,20 +300,12 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
     map<string, Material*>& matlib = *matlibPtr;
 
 
-    if(infile == "obj/sunball.eob") {
-
-	AABB* aabbPtr = ReadAABB(infile);
-	if(!aabbPtr) {
-	    return NULL;
-	}
-	data->aabb = *aabbPtr;
-
-    } else {
-	data->aabb.min.x=0;
-	data->aabb.min.y=0;
-	data->aabb.min.z=0;
-
+    AABB* aabbPtr = ReadAABB(infile);
+    if(!aabbPtr) {
+	return NULL;
     }
+
+    data->aabb = *aabbPtr;
 
     FileHeader fileHeader;
 

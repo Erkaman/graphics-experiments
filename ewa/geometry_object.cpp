@@ -40,15 +40,8 @@ GeometryObject* GeometryObject::Load(const std::string& filename) {
     GeometryObject* geoObj = new GeometryObject();
 
     geoObj->m_aabb = data->aabb;
+    geoObj->m_aabbWireframe = Cube::Load();
 
-    if(data->aabb.min.x != 0) {
-	geoObj->m_aabbWireframe = Cube::Load();
-
-
-
-    } else {
-	geoObj->m_aabbWireframe = NULL;
-    }
 
     string basePath = File::GetFilePath(filename);
 
@@ -73,12 +66,7 @@ GeometryObject* GeometryObject::Load(const std::string& filename) {
 	    mat->m_specularMapFilename = File::AppendPaths(basePath, mat->m_specularMapFilename);
 	    geoObj->m_hasSpecularMap = true;
 	}
-
     }
-
-
-
-
 
     string shaderName = "shader/simple";
 
@@ -201,7 +189,6 @@ void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition,
     Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
     shadowMap.GetRenderTargetTexture().Bind();
 
-
     for(size_t i = 0; i < m_chunks.size(); ++i) {
 	Chunk* chunk = m_chunks[i];
 
@@ -249,24 +236,16 @@ void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition,
 
     m_defaultShader->Unbind();
 
-    if(m_aabbWireframe) {
+    Vector3f center = (m_aabb.min + m_aabb.max) * 0.5f;
 
-//	AABB& aabb = geoObj->m_aabb;
+    Vector3f radius = m_aabb.max - center;
 
-	Vector3f center = (m_aabb.min + m_aabb.max) * 0.5f;
+    m_aabbWireframe->SetModelMatrix(
+	m_modelMatrix * Matrix4f::CreateTranslation(center) *
+	Matrix4f::CreateScale(radius)
+	);
 
-//	LOG_I("center%s", string(center).c_str() );
-
-	Vector3f radius = m_aabb.max - center;
-
-	m_aabbWireframe->SetModelMatrix(
-	     m_modelMatrix * Matrix4f::CreateTranslation(center) *
-			 Matrix4f::CreateScale(radius)
-	    );
-
-	m_aabbWireframe->Render(camera.GetVp() );
-    }
-
+    m_aabbWireframe->Render(camera.GetVp() );
 }
 
 void  GeometryObject::SetModelMatrix(Matrix4f modelMatrix) {

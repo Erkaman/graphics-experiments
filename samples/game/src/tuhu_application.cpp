@@ -109,23 +109,34 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 
 
    m_stoneFloor = GeometryObject::Load("obj/rock_floor.eob");
+   if(!m_stoneFloor)
+       PrintErrorExit();
     m_stoneFloor->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(0,0,0)));
+	Matrix4f::CreateTranslation(Vector3f(0,0,40)));
 
     m_flatWoodFloor = GeometryObject::Load("obj/flat_wood_floor.eob");
+   if(!m_flatWoodFloor)
+       PrintErrorExit();
     m_flatWoodFloor->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(10,0,0)));
+	Matrix4f::CreateTranslation(Vector3f(10,0,40)));
+
 
     m_woodFloor = GeometryObject::Load("obj/wood_floor.eob");
+   if(!m_woodFloor)
+       PrintErrorExit();
     m_woodFloor->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(-10,0,0)));
+	Matrix4f::CreateTranslation(Vector3f(-10,0,40)));
 
     m_sphere = GeometryObject::Load("obj/sunball.eob");
+   if(!m_sphere)
+       PrintErrorExit();
     m_sphere->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
 
 
     m_plane = GeometryObject::Load("obj/color.eob");
+   if(!m_plane)
+       PrintErrorExit();
     m_plane->SetModelMatrix(
 
 	Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
@@ -133,14 +144,22 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 	);
 
     m_tree = GeometryObject::Load("obj/tree.eob");
+   if(!m_tree)
+       PrintErrorExit();
     m_tree->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(10,-2.5,10)));
 
     m_wall = GeometryObject::Load("obj/wall.eob");
+   if(!m_wall)
+       PrintErrorExit();
+
     m_wall->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(-5,-2.5,-5)));
 
     m_wall2 = GeometryObject::Load("obj/wall.eob");
+   if(!m_wall2)
+       PrintErrorExit();
+
     m_wall2->SetModelMatrix(
 	Matrix4f::CreateScale(Vector3f(1,0.4,1))   *
 	Matrix4f::CreateTranslation(Vector3f(20,-6.5,-5)));
@@ -267,14 +286,6 @@ void TuhuApplication::RenderScene() {
     m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 
-/*
-  m_stoneFloor->Render(*m_camera, m_lightDirection);
-
-  m_flatWoodFloor->Render(*m_camera, m_lightDirection);
-
-  m_woodFloor->Render(*m_camera, m_lightDirection);
-*/
-
     Matrix4f biasMatrix(
 	0.5f, 0.0f, 0.0f, 0.5f,
 	0.0f, 0.5f, 0.0f, 0.5f,
@@ -283,6 +294,15 @@ void TuhuApplication::RenderScene() {
 	);
 
     Matrix4f lightVp =  biasMatrix *  m_lightProjectionMatrix * m_lightViewMatrix;
+
+
+    m_stoneFloor->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+
+    m_flatWoodFloor->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+
+  m_woodFloor->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+
+
 
     m_tree->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 
