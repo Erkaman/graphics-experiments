@@ -71,7 +71,6 @@ void TuhuApplication::Init() {
 
     m_points = Points::Load(points, 7.0, Vector3f(1,0,0) );
 
-    m_cube = Cube::Load();
 
 
     const Vector3f pos =
@@ -111,64 +110,47 @@ Vector3f(-0.597377, -0.590989, -0.542100)
    m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
 
-   m_stoneFloor = GeometryObject::Load("obj/rock_floor.eob");
-   if(!m_stoneFloor)
-       PrintErrorExit();
+   m_stoneFloor = LoadObj("obj/rock_floor.eob");
     m_stoneFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,0,40)));
 
-    m_flatWoodFloor = GeometryObject::Load("obj/flat_wood_floor.eob");
-   if(!m_flatWoodFloor)
-       PrintErrorExit();
+    m_flatWoodFloor = LoadObj("obj/flat_wood_floor.eob");
     m_flatWoodFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(10,0,40)));
 
 
-    m_woodFloor = GeometryObject::Load("obj/wood_floor.eob");
-   if(!m_woodFloor)
-       PrintErrorExit();
+    m_woodFloor = LoadObj("obj/wood_floor.eob");
     m_woodFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(-10,0,40)));
 
-    m_sphere = GeometryObject::Load("obj/sunball.eob");
-   if(!m_sphere)
-       PrintErrorExit();
+    m_sphere = LoadObj("obj/sunball.eob");
     m_sphere->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
 
 
-    m_plane = GeometryObject::Load("obj/color.eob");
-   if(!m_plane)
-       PrintErrorExit();
+    m_plane = LoadObj("obj/color.eob");
     m_plane->SetModelMatrix(
 
 	Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
 	Matrix4f::CreateTranslation(Vector3f(0,-2.5,0))
 	);
 
-    m_tree = GeometryObject::Load("obj/tree.eob");
-   if(!m_tree)
-       PrintErrorExit();
+    m_tree = LoadObj("obj/tree.eob");
     m_tree->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(10,-2.5,10)));
 
-    m_wall = GeometryObject::Load("obj/wall.eob");
-   if(!m_wall)
-       PrintErrorExit();
+    m_wall = LoadObj("obj/wall.eob");
 
     m_wall->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(-5,-2.5,-5)));
 
-    m_wall2 = GeometryObject::Load("obj/wall.eob");
-   if(!m_wall2)
-       PrintErrorExit();
+    m_wall2 = LoadObj("obj/wall.eob");
 
     m_wall2->SetModelMatrix(
 	Matrix4f::CreateScale(Vector3f(1,0.4,1))   *
 	Matrix4f::CreateTranslation(Vector3f(20,-6.5,-5)));
 
-
-    m_ball2 = GeometryObject::Load("obj/sunball.eob");
+    m_ball2 = LoadObj("obj/sunball.eob");
     m_ball2->SetModelMatrix(
     Matrix4f::CreateTranslation(Vector3f(20,-1.0,-7)));
 
@@ -220,6 +202,9 @@ m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
      exit(1);
 */
+
+    m_sphere->SetModelMatrix(
+	Matrix4f::CreateTranslation(  Vector3f(-30 * m_lightDirection) ));
 
 
 
@@ -301,36 +286,16 @@ void TuhuApplication::RenderScene() {
     Matrix4f lightVp =  biasMatrix *  m_lightProjectionMatrix * m_lightViewMatrix;
 
 
-    m_stoneFloor->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
-
-    m_flatWoodFloor->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
-
-  m_woodFloor->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 
 
+    for(GeometryObject* geoObj: m_geoObjs) {
 
-    m_tree->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+	geoObj->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 
-      m_sphere->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
-
-
-     m_plane->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
-
-
-    m_sphere->SetModelMatrix(
-	Matrix4f::CreateTranslation(  Vector3f(-30 * m_lightDirection) ));
-    m_sphere->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
-    m_sphere->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
-
-     m_wall->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
-     m_wall2->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
-
-     m_ball2->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+    }
 
      m_line->Render(m_camera->GetMvpFromM());
      m_points->Render(m_camera->GetMvpFromM());
-//     m_cube->Render(m_camera->GetMvpFromM());
 
 }
 
@@ -389,4 +354,16 @@ void TuhuApplication::Update(const float delta) {
 void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 600,150, "hello world" );
+}
+
+GeometryObject* TuhuApplication::LoadObj(const std::string& path) {
+
+    GeometryObject* obj = GeometryObject::Load(path);
+
+    if(!obj)
+	PrintErrorExit();
+
+    m_geoObjs.push_back(obj);
+
+    return obj;
 }

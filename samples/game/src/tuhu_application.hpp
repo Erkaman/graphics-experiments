@@ -16,7 +16,6 @@ class GeometryObject;
 class DepthFBO;
 class Line;
 class Points;
-class Cube;
 class ViewFrustum;
 
 class TuhuApplication : public Application{
@@ -36,6 +35,7 @@ private:
     ParticleSystem* m_snow;
     ParticleSystem* m_fire;
 
+
     GeometryObject* m_stoneFloor;
     GeometryObject* m_flatWoodFloor;
     GeometryObject* m_woodFloor;
@@ -46,11 +46,11 @@ private:
     GeometryObject* m_wall2;
     GeometryObject* m_ball2;
 
+
     DepthFBO* m_depthFbo;
 
     Line* m_line;
     Points* m_points;
-    Cube* m_cube;
 
     Vector4f m_lightDirection;
 
@@ -62,7 +62,9 @@ private:
 
     ViewFrustum* m_viewFrustum;
 
+    std::vector<GeometryObject*> m_geoObjs;
 
+    GeometryObject* LoadObj(const std::string& path);
 
 public:
 
