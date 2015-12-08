@@ -28,7 +28,6 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
     m_projectionMatrix =
 	Matrix4f::CreatePerspective (45.0f, (float)windowWidth/(float)windowHeight, config.GetZNear(), config.GetZFar());
 
-
     /*
     float S = 20.0f;
 
@@ -128,7 +127,7 @@ void Camera::HandleInput(const float delta) {
     }
 
     if(   kbs.IsPressed(GLFW_KEY_M)  ) {
-	cameraSpeed = 5.0f;
+	cameraSpeed = 15.0f;
     }else {
 	cameraSpeed = 1.0f;
     }

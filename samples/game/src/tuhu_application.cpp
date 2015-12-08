@@ -219,6 +219,9 @@ m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
 Matrix4f TuhuApplication::MakeLightProj()const {
 
+    // TODO: does not yet fully work.
+    //http://www.gamedev.net/topic/505893-orthographic-projection-for-shadow-mapping/
+
 
     /*
       First we compute the world space location of all 8 corners of the view frustum.
@@ -227,45 +230,126 @@ Matrix4f TuhuApplication::MakeLightProj()const {
     Matrix4f invProj = m_camera->GetMvpFromM().Inverse();
 
     // left bottom near
-    const Vector3f lbn = Vector3f((invProj * Vector4f(-1,-1,-1,1.0f)));
+    const Vector3f lbf = Vector3f((invProj * Vector4f(-1,-1,-1,1.0f)));
 
-//    LOG_I("sanity: %s",  string(lbn).c_str() );
+
+
+/*
+    LOG_I("sanity: %s",
+	  string(m_camera->GetMvpFromM() * Vector4f(17.328205, 15.360136, 14.091190, 1.0)).c_str()
+
+	);
+
+    exit(1);*/
+
+//    	Vector3f(17.328205, 15.360136, 14.091190);
+
 
     // left top near
-    const Vector3f ltn = Vector3f((invProj * Vector4f(-1,+1,-1,1.0f)));
+    const Vector3f ltf = Vector3f((invProj * Vector4f(-1,+1,-1,1.0f)));
 
     // right bottom near
-    const Vector3f rbn = Vector3f((invProj * Vector4f(+1,-1,-1,1.0f)));
+    const Vector3f rbf = Vector3f((invProj * Vector4f(+1,-1,-1,1.0f)));
 
     // right top near
-    const Vector3f rtn = Vector3f((invProj * Vector4f(+1,+1,-1,1.0f)));
+    const Vector3f rtf = Vector3f((invProj * Vector4f(+1,+1,-1,1.0f)));
 
     // left bottom far
-    const Vector3f lbf = Vector3f((invProj * Vector4f(-1,-1,+1,1.0f)));
+    const Vector3f lbn = Vector3f((invProj * Vector4f(-1,-1,+1,1.0f)));
+
+
+
 
     // left top far
-    const Vector3f ltf = Vector3f((invProj * Vector4f(-1,+1,+1,1.0f)));
+    const Vector3f ltn = Vector3f((invProj * Vector4f(-1,+1,+1,1.0f)));
 
 
     // right bottom far
-    const Vector3f rbf = Vector3f((invProj * Vector4f(+1,-1,+1,1.0f)));
+    const Vector3f rbn = Vector3f((invProj * Vector4f(+1,-1,+1,1.0f)));
 
     // right top far
-    const Vector3f rtf = Vector3f((invProj * Vector4f(+1,+1,+1,1.0f)));
+    const Vector3f rtn = Vector3f((invProj * Vector4f(+1,+1,+1,1.0f)));
+
+
+    // LOG_I("lbf: %s",  string(lbf).c_str() );
+    //  LOG_I("lbn: %s",  string(lbn).c_str() );
+
+    Vector3f corners[8] =  {lbn , ltn , rbn , rtn ,
+			   lbf , ltf , rbf , rtf };
+
+    Vector3f centroid = Vector3f(0,0,0);
+    for(int i = 0; i < 8; ++i) {
+	centroid += corners[i];
+    }
+    centroid = centroid * (1.0f/8.0f);
+
+    //  LOG_I("centroid %s", string(centroid).c_str() );
 
 
 
+    Config& config = Config::GetInstance();
 
 
-    return invProj;
+    const float nearClipOffset = 50.0f;
+
+
+    Matrix4f viewMatrix =
+		Matrix4f::CreateLookAt(
+		    centroid + ( Vector3f(m_lightDirection) * (config.GetZFar() + nearClipOffset )   ),
+		    centroid,
+		    Vector3f(0,1,0));
+
+
+    // the frustum corners in lightspace.
+    Vector3f cornersLS[8];
+
+    for(int i = 0; i < 8; ++i) {
+	cornersLS[i] = Vector3f(viewMatrix * Vector4f(corners[i], 1.0));
+    }
+
+
+    Vector3f mins = cornersLS[0];
+
+    Vector3f maxes = cornersLS[0];
+
+    for (int i = 0; i < 8; i++){
+
+	if (cornersLS[i].x > maxes.x)
+	    maxes.x = cornersLS[i].x;
+	else if (cornersLS[i].x < mins.x)
+	    mins.x = cornersLS[i].x;
+
+	if (cornersLS[i].y > maxes.y)
+	    maxes.y = cornersLS[i].y;
+	else if (cornersLS[i].y < mins.y)
+	    mins.y = cornersLS[i].y;
+
+	if (cornersLS[i].z > maxes.z)
+	    maxes.z = cornersLS[i].z;
+	else if (cornersLS[i].z < mins.z)
+	    mins.z = cornersLS[i].z;
+    }
+
+/*
+    LOG_I("min x %f",  mins.x ); // -12
+    LOG_I("max x %f",  maxes.x  ); // 12
+
+    LOG_I("min y %f",  mins.y ); // -23
+    LOG_I("max y %f",  maxes.y  ); // 23
+
+    LOG_I("-mimin z %f", -mins.z   ); // 2
+    LOG_I("mymaxz %f",  maxes.z ); // -23
+
+//    exit(1);*/
+
+    // TODO: the problem probably lies in that we should flip maxz and minz or something.
+    return Matrix4f::CreateOrthographic(mins.x, maxes.x, mins.y, maxes.y, maxes.z, -mins.z );
 }
-
-
 
 
 void TuhuApplication::RenderShadowMap() {
 
-    m_depthFbo->Bind();
+     m_depthFbo->Bind();
     {
 	::SetViewport(0,0,SHADOW_MAP_SIZE,SHADOW_MAP_SIZE);
 
@@ -277,9 +361,9 @@ void TuhuApplication::RenderShadowMap() {
 	    Vector3f(0.0, 1.0, 0.0)
 	    );
 
-	MakeLightProj();
 
-	m_lightProjectionMatrix = Matrix4f::CreateOrthographic(-30, 30, -12, 12, -20, 50);
+	m_lightProjectionMatrix =  //MakeLightProj();
+	    Matrix4f::CreateOrthographic(-30, 30, -12, 12, -20, 30);
 
 	Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
 
@@ -300,7 +384,7 @@ void TuhuApplication::RenderShadowMap() {
 	m_ball2->RenderShadowMap(vp);
 
     }
-   m_depthFbo->Unbind();
+    m_depthFbo->Unbind();
 
 
 
@@ -420,6 +504,8 @@ void TuhuApplication::RenderText()  {
 
 
     m_font->DrawString(*m_fontShader, 600,150, cull);
+
+    m_font->DrawString(*m_fontShader, 400,120, tos(m_camera->GetPosition())  );
 
 
 
