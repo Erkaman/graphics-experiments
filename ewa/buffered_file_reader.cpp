@@ -69,8 +69,10 @@ std::string BufferedFileReader::ReadLine() {
 
 		ch = Read8();
 
-		if (IsEof())
+		if (IsEof()) {
+			//str += ch;
 			break;
+		}
 
 		if(readCr) {
 			if (ch != '\n') {
@@ -93,6 +95,12 @@ std::string BufferedFileReader::ReadLine() {
 	if(!readCr) // cr is part of newline, so not part of string.
 		str += ch;
     }
+
+
+
+	if (IsEof() && ch != '\r' &&  ch != '\n') {
+		str += ch;
+	}
 
     return str;
 }

@@ -20,7 +20,7 @@ extern char* logBuffer;
     do { sprintf(logBuffer, __VA_ARGS__) ; Log("INFO", __FILE__, __LINE__, __func__, (logBuffer));  } while (0)
 
 #define LOG_E(...)							\
-    do { sprintf(logBuffer, __VA_ARGS__); Log("ERROR", __FILE__, __LINE__, __func__, (logBuffer)); } while (0)
+    do { sprintf(logBuffer, __VA_ARGS__); Log("ERROR", __FILE__, __LINE__, __func__, (logBuffer)); system("pause");} while (0)
 
 #define LOG_W(...)							\
     do { sprintf(logBuffer, __VA_ARGS__); ; Log("WARNING", __FILE__, __LINE__, __func__, (logBuffer));  } while (0)

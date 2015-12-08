@@ -21,7 +21,7 @@ void ResourceManager::AddResourcePath(const std::string& path) {
     resourcePaths.push_back(path);
 }
 
-std::string* ResourceManager::FindResource(const std::string& resourceName) {
+std::string* ResourceManager::SearchResource(const std::string& resourceName) {
 
     std::string foundResource;
 
@@ -58,13 +58,13 @@ bool ResourceManager::ResourceExists(const std::string& resourceName) {
 
 
 std::string ResourceManager::LocateAndReadResource(const std::string& resourcePath) {
-    std::string* fullResourcePath = ResourceManager::GetInstance().FindResource(resourcePath);
+    std::string* fullResourcePath = ResourceManager::GetInstance().SearchResource(resourcePath);
 
     if(!fullResourcePath) {
 	PrintErrorExit();
     }
 
-    File *f = File::Load(*fullResourcePath, FileModeReading);
+    File *f = File::Load(resourcePath, FileModeReading);
 
     if(!f) {
     	PrintErrorExit();
@@ -75,13 +75,13 @@ std::string ResourceManager::LocateAndReadResource(const std::string& resourcePa
 
 File* ResourceManager::OpenResourceForReading(const std::string& resourcePath) {
 
-    std::string* fullResourcePath = ResourceManager::GetInstance().FindResource(resourcePath);
+    std::string* fullResourcePath = ResourceManager::GetInstance().SearchResource(resourcePath);
 
     if(!fullResourcePath) {
 	return NULL;
     }
 
-    File *f = File::Load(*fullResourcePath, FileModeReading);
+    File *f = File::Load(resourcePath, FileModeReading);
 
     if(!f) {
 	return NULL;

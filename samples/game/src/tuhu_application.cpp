@@ -56,6 +56,7 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
+	
     m_viewFrustum = new ViewFrustum();
 
     m_totalDelta = 0;
@@ -409,7 +410,7 @@ void TuhuApplication::RenderScene() {
    m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
 
-    m_snow->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+  //  m_snow->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
     m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 

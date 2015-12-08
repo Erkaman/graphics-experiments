@@ -244,7 +244,7 @@ string ParseShader(const std::string& shaderSource, const std::string& path) {
 		if(File::Exists(defaultPath) ){
 		    includeStr = GetShaderContents(defaultPath);
 		} else {
-		    includeStr = GetShaderContents(*ResourceManager::GetInstance().FindResource(includePath));
+		    includeStr = GetShaderContents(includePath);
 		}
 
 		parsedShader += includeStr + "\n";

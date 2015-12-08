@@ -28,7 +28,7 @@ public:
     /*
       Search for a resource, if found, return the fully expanded resource path.
     */
-    std::string* FindResource(const std::string& resourceName);
+    std::string* SearchResource(const std::string& resourceName);
 
     bool ResourceExists(const std::string& resourceName, std::string& foundResource);
 

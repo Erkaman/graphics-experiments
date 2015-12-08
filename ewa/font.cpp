@@ -9,6 +9,7 @@
 #include "file.hpp"
 #include "string_util.hpp"
 #include "resource_manager.hpp"
+#include "buffered_file_reader.hpp"
 
 #define START_CHAR 32
 #define END_CHAR 126
@@ -28,7 +29,7 @@ Font::~Font() {
 Font::Font(const unsigned int windowWidth, const unsigned int windowHeight,
      const float fontScale):
     m_windowScaleX(2.0f / windowWidth), m_windowScaleY(2.0f / windowHeight),
-    atlasTable(END_CHAR-START_CHAR), m_fontScale(fontScale) {}
+    atlasTable(END_CHAR-START_CHAR+1), m_fontScale(fontScale) {}
 
 
 Font* Font::Load(
@@ -52,26 +53,30 @@ Font* Font::Load(
 
     // The .amf format is described in the README of this repo:
     // https://github.com/Erkaman/font_creator_cpp
-    File* atlasFile = ResourceManager::OpenResourceForReading(amfPath);
+   // File* atlasFile = ResourceManager::OpenResourceForReading(amfPath);
+	BufferedFileReader* atlasFile = BufferedFileReader::Load(amfPath);
 
     if(!atlasFile) {
 	return NULL;
     }
 
-    char buffer[40];
-
+    
     while(!atlasFile->IsEof()){
 
-	atlasFile->ReadLine(buffer, 40);
-
-	string str = string(buffer);
+	string str = atlasFile->ReadLine();
 
 	// first char is always the character.
 	char ch = str[0];
 
 	vector<string> tokens = StringUtil::SplitString(str.substr(2), ",");
 
-	assert(tokens.size() == 5);
+
+
+	if (tokens.size() != 5) {
+
+		SetError("Error parsing amf file %s: found line with non-five tokens: %s", amfPath.c_str(), str.c_str() );
+		return NULL;
+	}
 
 	// the character of the token.
 

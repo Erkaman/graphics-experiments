@@ -52,11 +52,16 @@ void Application::Start() {
 	PrintErrorExit();
     }
 
+	LOG_I("about to load font");
+
+
     m_font = Font::Load(
 	"img_lib/Ubuntu-B-64.png",
 	"img_lib/Ubuntu-B-64.amf",
 	GetWindowWidth(),GetWindowHeight(),
 	0.3f);
+
+	LOG_I("successfully loaded font");
 
     if(!m_font) {
 	PrintErrorExit();

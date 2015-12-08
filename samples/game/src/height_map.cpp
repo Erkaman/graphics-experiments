@@ -260,7 +260,7 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
     std::vector<unsigned char> buffer;
 
-    string* fullPath = ResourceManager::GetInstance().FindResource(path);
+    string* fullPath = ResourceManager::GetInstance().SearchResource(path);
     if(!fullPath) {
 	PrintErrorExit();
     }

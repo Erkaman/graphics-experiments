@@ -42,7 +42,7 @@ File* File::Load(const std::string& filename, const FileMode fileMode) {
 
     } else {
 
-	std::string* resourcePath = ResourceManager::GetInstance().FindResource(filename);
+	std::string* resourcePath = ResourceManager::GetInstance().SearchResource(filename);
 
 	if(!resourcePath) {
 	    return NULL;
@@ -51,7 +51,7 @@ File* File::Load(const std::string& filename, const FileMode fileMode) {
 
     }
 
-    file->m_fp = fopen(filename.c_str(), fileMode == FileModeReading ? "rb" : "wb ");
+    file->m_fp = fopen(file->m_filename.c_str(), fileMode == FileModeReading ? "rb" : "wb ");
 
     if(!file->m_fp) {
 

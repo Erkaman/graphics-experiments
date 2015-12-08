@@ -48,5 +48,8 @@ std::string GetError(){
 
 void PrintErrorExit() {
     printf("Error: %s\n", GetError().c_str() );
-    exit(1);
+   // exit(1);
+	system("pause");
+	exit(1);
+	
 }
