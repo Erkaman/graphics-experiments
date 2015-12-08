@@ -24,6 +24,9 @@
 #include "ewa/cube.hpp"
 #include "ewa/view_frustum.hpp"
 
+#include "ewa/config.hpp"
+
+
 using namespace std;
 
 int nonCulledObjects = 0;
@@ -90,7 +93,7 @@ void TuhuApplication::Init() {
 			  pos,
 Vector3f(-0.597377, -0.590989, -0.542100)
 
-			  , true);
+			  );
 
 
 
@@ -214,6 +217,52 @@ m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 }
 
 
+Matrix4f TuhuApplication::MakeLightProj()const {
+
+
+    /*
+      First we compute the world space location of all 8 corners of the view frustum.
+     */
+
+    Matrix4f invProj = m_camera->GetMvpFromM().Inverse();
+
+    // left bottom near
+    const Vector3f lbn = Vector3f((invProj * Vector4f(-1,-1,-1,1.0f)));
+
+//    LOG_I("sanity: %s",  string(lbn).c_str() );
+
+    // left top near
+    const Vector3f ltn = Vector3f((invProj * Vector4f(-1,+1,-1,1.0f)));
+
+    // right bottom near
+    const Vector3f rbn = Vector3f((invProj * Vector4f(+1,-1,-1,1.0f)));
+
+    // right top near
+    const Vector3f rtn = Vector3f((invProj * Vector4f(+1,+1,-1,1.0f)));
+
+    // left bottom far
+    const Vector3f lbf = Vector3f((invProj * Vector4f(-1,-1,+1,1.0f)));
+
+    // left top far
+    const Vector3f ltf = Vector3f((invProj * Vector4f(-1,+1,+1,1.0f)));
+
+
+    // right bottom far
+    const Vector3f rbf = Vector3f((invProj * Vector4f(+1,-1,+1,1.0f)));
+
+    // right top far
+    const Vector3f rtf = Vector3f((invProj * Vector4f(+1,+1,+1,1.0f)));
+
+
+
+
+
+    return invProj;
+}
+
+
+
+
 void TuhuApplication::RenderShadowMap() {
 
     m_depthFbo->Bind();
@@ -227,6 +276,8 @@ void TuhuApplication::RenderShadowMap() {
 	    Vector3f(0.0f, 0.0f, 0.0f),
 	    Vector3f(0.0, 1.0, 0.0)
 	    );
+
+	MakeLightProj();
 
 	m_lightProjectionMatrix = Matrix4f::CreateOrthographic(-30, 30, -12, 12, -20, 50);
 
@@ -294,7 +345,7 @@ void TuhuApplication::RenderScene() {
     nonCulledObjects = 0;
     for(GeometryObject* geoObj: m_geoObjs) {
 
-	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetAABB())) {
+	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetModelSpaceAABB())) {
 	    ++nonCulledObjects;
 	   geoObj->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
 	}
@@ -302,6 +353,8 @@ void TuhuApplication::RenderScene() {
     }
 
     totalObjects = m_geoObjs.size();
+
+
 
 
      m_line->Render(m_camera->GetMvpFromM());

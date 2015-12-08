@@ -66,6 +66,8 @@ private:
 
     GeometryObject* LoadObj(const std::string& path);
 
+    Matrix4f MakeLightProj()const;
+
 public:
 
     TuhuApplication(int argc, char *argv[]);

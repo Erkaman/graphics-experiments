@@ -65,5 +65,5 @@ public:
 
     void  SetModelMatrix(const Matrix4f& modelMatrix);
 
-    AABB GetAABB()const;
+    AABB GetModelSpaceAABB()const;
 };

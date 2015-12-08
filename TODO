@@ -37,6 +37,9 @@ https://www.youtube.com/watch?v=U7zJ1Ai8YAo
 Some basic algorithms(like lightning and such) in
 Focus on 3D Terrain Programming
 https://github.com/SonyWWS/LevelEditor
+
+http://stackoverflow.com/a/21034664
+https://github.com/forexample/cocoa-app
 * implement geometry clipmapping
 * efficient view frustum culling(hierarchy, )
 * road drawing.

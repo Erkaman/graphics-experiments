@@ -100,12 +100,20 @@ void ViewFrustum::Update(const Matrix4f& vp) {
 
 }
 
+// solve for left, near, bottom.
+
 bool ViewFrustum::IsCuboidInFrustum( const float x, const float y, const float z, const float xSize, const float ySize, const float zSize )
 {
     int p;
 
     for( p = 0; p < 6; p++ )
     {
+
+	/*
+	  Let f be the equation of plane m_frustum[p]. We plug the corners of the cuboid into f,
+	  and if all corners have the same sign, and then the cuboid must be on the other side of the plane, and collision is not possible.
+	 */
+
 	if( m_frustum[p][0] * (x - xSize) + m_frustum[p][1] * (y - ySize) + m_frustum[p][2] * (z - zSize) + m_frustum[p][3] > 0 )
 	    continue;
 	if( m_frustum[p][0] * (x + xSize) + m_frustum[p][1] * (y - ySize) + m_frustum[p][2] * (z - zSize) + m_frustum[p][3] > 0 )

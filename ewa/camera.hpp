@@ -20,7 +20,7 @@ private:
 
 public:
 
-    Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir, bool usePerspectiveProjection);
+    Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir);
 
     Matrix4f GetMvpFromM(const Matrix4f& m) const;
     Matrix4f GetMvpFromM() const;

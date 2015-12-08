@@ -4,6 +4,7 @@
 
 #include "math/quat4f.hpp"
 #include "mouse.hpp"
+#include "config.hpp"
 #include "math/math_common.hpp"
 
 #include "keyboard_state.hpp"
@@ -11,20 +12,21 @@
 
 using std::string;
 
+/*
 constexpr float NEAR = 0.1f;
 constexpr float FAR = 100000.0f;
+*/
 
-Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir,bool usePerspectiveProjection): m_position(position), m_viewDir(viewDir){
+Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir): m_position(position), m_viewDir(viewDir){
 
     m_viewDir.Normalize();
     m_right = Vector3f::Cross(m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
     m_up = Vector3f(0,1.0f,0);//Vector3f::Cross(m_right, m_viewDir).Normalize();
 
+    Config& config = Config::GetInstance();
 
     m_projectionMatrix =
-	usePerspectiveProjection ?
-	Matrix4f::CreatePerspective (45.0f, (float)windowWidth/(float)windowHeight, NEAR, FAR) :
-	Matrix4f::CreateOrthographic((float)-windowWidth, (float)+windowWidth, (float)-windowHeight, (float)+windowHeight, -1.0f, 1.0f);
+	Matrix4f::CreatePerspective (45.0f, (float)windowWidth/(float)windowHeight, config.GetZNear(), config.GetZFar());
 
 
     /*

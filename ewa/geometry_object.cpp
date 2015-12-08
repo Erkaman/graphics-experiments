@@ -273,7 +273,7 @@ void  GeometryObject::SetModelMatrix(const Matrix4f& modelMatrix) {
 }
 
 
-AABB GeometryObject::GetAABB()const {
+AABB GeometryObject::GetModelSpaceAABB()const {
 
     AABB temp;
 
