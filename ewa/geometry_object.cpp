@@ -13,6 +13,7 @@
 #include "ewa/cube.hpp"
 #include "eob_file.hpp"
 #include "resource_manager.hpp"
+#include "config.hpp"
 
 using std::string;
 using std::vector;
@@ -190,14 +191,27 @@ void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition,
     Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
     shadowMap.GetRenderTargetTexture().Bind();
 
+
+
     for(size_t i = 0; i < m_chunks.size(); ++i) {
 	Chunk* chunk = m_chunks[i];
+
+
+	if(m_hasHeightMap) {
+	    Config& config = Config::GetInstance();
+
+	    m_defaultShader->SetUniform("zNear", config.GetZNear());
+	    m_defaultShader->SetUniform("zFar", config.GetZFar());
+	}
 
 
 	if(chunk->m_texture != NULL) {
 	    m_defaultShader->SetUniform("diffMap", 0);
 	    Texture::SetActiveTextureUnit(0);
 	    chunk->m_texture->Bind();
+
+
+
 	}
 
 	if(chunk->m_normalMap != NULL) {

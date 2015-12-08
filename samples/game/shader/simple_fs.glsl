@@ -107,6 +107,10 @@ in vec4 shadowCoordOut;
 uniform sampler2D normalMap;
 uniform sampler2D diffMap;
 
+uniform float zNear;
+uniform float zFar;
+
+
 
 //uniform sampler2D shadowMap;
 uniform sampler2DShadow shadowMap;
@@ -177,10 +181,8 @@ void main(void) {
     /*
       Depth correct.
     */
-    const float near = 0.1;
-    const float far  = 1024.0;
-    float planes_x=-far/(far-near);
-    float planes_y =-far*near/(far-near);
+    float planes_x=-zFar/(zFar-zNear);
+    float planes_y =-zFar*zNear/(zFar-zNear);
     gl_FragDepth=((planes_x*p.z+planes_y)/-p.z);
 
 #elif defined NORMAL_MAPPING
