@@ -56,7 +56,7 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
-	
+
     m_viewFrustum = new ViewFrustum();
 
     m_totalDelta = 0;
@@ -135,7 +135,7 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
 
 
-    m_plane = LoadObj("obj/color.eob");
+    m_plane = LoadObj("obj/plane.eob");
     m_plane->SetModelMatrix(
 
 	Matrix4f::CreateScale(Vector3f(10,1.0,10))   *

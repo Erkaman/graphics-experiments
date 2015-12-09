@@ -59,6 +59,11 @@ LIST(APPEND game_libs ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
 
 LIST(APPEND game_libs glfw3)
 
+FIND_PACKAGE(Bullet REQUIRED)
+
+LIST(APPEND game_libs ${BULLET_LIBRARIES})
+
+
 IF(APPLE)
   LINK_DIRECTORIES("deps/libs/mac")
   find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
@@ -70,7 +75,7 @@ IF(APPLE)
     "${COCOA_FRAMEWORK}"
     "${CORE_VIDEO_FRAMEWORK}"
     "${IOKIT_FRAMEWORK}")
-	
+
 	FIND_PACKAGE(OpenAL REQUIRED)
 	LIST(APPEND game_libs ${OPENAL_LIBRARY})
 
@@ -86,7 +91,7 @@ ELSEIF(WIN32)
 
 ENDIF()
 
-include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng" ".")
+include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng" "." ${BULLET_INCLUDE_DIRS} )
 
 set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
@@ -102,4 +107,4 @@ add_subdirectory("unit_test")
 
 
 # we should put al headers in deps/include.
-# put openal.lib in link directory. 
+# put openal.lib in link directory.
