@@ -26,6 +26,8 @@
 
 #include "ewa/config.hpp"
 
+#include "ewa/physics_world.hpp"
+
 
 using namespace std;
 
@@ -56,6 +58,7 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
+    m_physicsWorld = new PhysicsWorld();
 
     m_viewFrustum = new ViewFrustum();
 
@@ -133,7 +136,7 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 
    m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) );
 
-   m_ball2 = LoadObj("obj/sunball.eob", Vector3f(20,-1.0,-7) );
+//   m_ball2 = LoadObj("obj/sunball.eob", Vector3f(20,-1.0,-7) );
 
     m_depthFbo = new DepthFBO();
 m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
@@ -317,16 +320,13 @@ void TuhuApplication::RenderShadowMap() {
 	m_wall->RenderShadowMap(vp);
 	m_wall2->RenderShadowMap(vp);
 
-	m_ball2->RenderShadowMap(vp);
+//	m_ball2->RenderShadowMap(vp);
 
     }
     m_depthFbo->Unbind();
-
 }
 
 void TuhuApplication::RenderScene() {
-
-
 
     // set the viewport to the size of the window.
     SetViewport();
@@ -391,6 +391,8 @@ void TuhuApplication::Update(const float delta) {
 
     m_viewFrustum->Update( m_camera->GetVp() );
 
+    m_physicsWorld->Update(delta);
+
     m_totalDelta += delta;
 
     const float RADIUS = 30.0;
@@ -450,7 +452,7 @@ void TuhuApplication::RenderText()  {
 
 GeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position) {
 
-    GeometryObject* obj = GeometryObject::Load(path, position);
+    GeometryObject* obj = GeometryObject::Load(path, position, m_physicsWorld);
 
     if(!obj)
 	PrintErrorExit();

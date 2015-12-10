@@ -219,7 +219,11 @@ EntityInfo* ReadEntityInfo(const std::string& infile) {
 	    entityInfo->m_mass = StrToFloat(tokens[1]);
 	} else if(tokens[0] == "static") {
 	    entityInfo->m_isStatic = StrToBool(tokens[1]);
-	}else{
+	} else if(tokens[0] == "name") {
+
+
+	    entityInfo->m_name = line.substr(5);
+	} else{
 	    SetError("Undefined line in entity file %s:\n%s", entityFile.c_str(), line.c_str() );
 	    return NULL;
 	}

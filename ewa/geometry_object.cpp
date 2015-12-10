@@ -14,10 +14,48 @@
 #include "eob_file.hpp"
 #include "resource_manager.hpp"
 #include "config.hpp"
+#include "physics_world.hpp"
+
 #include <btBulletDynamicsCommon.h>
 
 using std::string;
 using std::vector;
+
+
+class MyMotionState : public btMotionState
+{
+protected:
+    GeometryObject* m_obj;
+    btTransform mInitialPosition;
+
+public:
+    MyMotionState(const btTransform &initialPosition, GeometryObject *obj)
+    {
+        m_obj = obj;
+	mInitialPosition = initialPosition;
+    }
+
+    virtual ~MyMotionState()
+    {
+    }
+
+    virtual void getWorldTransform(btTransform &worldTrans) const
+    {
+        worldTrans = mInitialPosition;
+    }
+
+    virtual void setWorldTransform(const btTransform &worldTrans)
+    {
+        if(m_obj == NULL)
+            return; // silently return before we set a node
+
+        btQuaternion rot = worldTrans.getRotation();
+
+        //mSceneNode ->setOrientation(rot.w(), rot.x(), rot.y(), rot.z());
+        btVector3 pos = worldTrans.getOrigin();
+        m_obj->SetPosition(Vector3f(pos.x(), pos.y(), pos.z()) );
+    }
+};
 
 btVector3 toBtVec(const Vector3f& v) {
     return btVector3(v.x,v.y,v.z);
@@ -42,7 +80,7 @@ Texture* LoadTexture(const string& filename) {
     return texture;
 }
 
-GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f& position) {
+GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f& position, PhysicsWorld* physicsWorld) {
 
 
     GeometryObjectData* data = EobFile::Read(filename);
@@ -59,8 +97,7 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
     /*
       Load collision shape into physics engine.
      */
-    geoObj->CreateCollisionShape(data->m_collisionShape, data->m_entityInfo);
-
+    geoObj->CreateCollisionShape(data->m_collisionShape, data->m_entityInfo, physicsWorld);
 
     /*
       Bounding Volume
@@ -339,7 +376,9 @@ void GeometryObject::SetPosition(const Vector3f& position) {
 }
 
 
-void GeometryObject::CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo) {
+void GeometryObject::CreateCollisionShape(
+    const CollisionShape* colShape, const EntityInfo* entityInfo,
+    PhysicsWorld* physicsWorld) {
 
     if(!colShape)
 	return; // do nothing for nothing.
@@ -369,9 +408,9 @@ void GeometryObject::CreateCollisionShape(const CollisionShape* colShape, const 
     /*
       Create motion state
      */
-    btDefaultMotionState* btMotionState = new btDefaultMotionState(btTransform(toBtQuat(colShape->m_rotate), toBtVec(m_position)));
 
-
+    btTransform transform(toBtQuat(colShape->m_rotate), toBtVec(m_position));
+    btMotionState* btMotionState = new MyMotionState(transform, this);
 
     btVector3 inertia(0, 0, 0);
 
@@ -380,13 +419,10 @@ void GeometryObject::CreateCollisionShape(const CollisionShape* colShape, const 
         btShape->calculateLocalInertia(entityInfo->m_mass, inertia);
     }
 
-
-
-
     btRigidBody::btRigidBodyConstructionInfo ci(entityInfo->m_mass, btMotionState, btShape, inertia);
 
     btRigidBody* rigidBody = new btRigidBody(ci);
-
+    physicsWorld->AddRigidBody(rigidBody);
 
 //    btCollisionShape* fallShape = new btSphereShape(1);
 

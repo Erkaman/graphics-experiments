@@ -40,9 +40,13 @@ public:
     // a static object wont move even if you collide into it.
     bool m_isStatic;
 
+    // descriptive name.
+    std::string m_name;
+
     EntityInfo() {
 	m_mass = 1.0f;
 	m_isStatic = true;
+	m_name = "Unnamed Object";
     }
 };
 
@@ -67,8 +71,6 @@ struct CollisionShape {
 	m_halfExtents = Vector3f(1.0f);
     }
 };
-
-
 
 struct GeometryObjectData {
 

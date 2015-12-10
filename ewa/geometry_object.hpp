@@ -13,6 +13,7 @@ class ShaderProgram;
 class Camera;
 class Texture;
 class Cube;
+class PhysicsWorld;
 
 class GeometryObject {
 private:
@@ -58,7 +59,7 @@ protected:
 
 public:
 
-    static GeometryObject* Load(const std::string& filename, const Vector3f& position);
+    static GeometryObject* Load(const std::string& filename, const Vector3f& position, PhysicsWorld* physicsWorld);
 
     virtual ~GeometryObject();
 
@@ -71,5 +72,5 @@ public:
 
     void SetPosition(const Vector3f& position);
 
-    void CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo);
+    void CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld);
 };

@@ -17,6 +17,7 @@ class DepthFBO;
 class Line;
 class Points;
 class ViewFrustum;
+class PhysicsWorld;
 
 class TuhuApplication : public Application{
 
@@ -63,6 +64,8 @@ private:
     ViewFrustum* m_viewFrustum;
 
     std::vector<GeometryObject*> m_geoObjs;
+
+    PhysicsWorld* m_physicsWorld;
 
     GeometryObject* LoadObj(const std::string& path, const Vector3f& position);
 
