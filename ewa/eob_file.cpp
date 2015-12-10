@@ -464,7 +464,6 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
 	    SetError("Could not parse yaml file: %s", infile.c_str() );
 	    return NULL;
 	}
-	LOG_I("parse yaml: %s", yamlFile.c_str() );
     }
 
 

@@ -11,6 +11,12 @@ std::string tos(const T& t) {
 	return std::string(t);
 }
 
+template <typename T>
+const char* tocstr(const T& t) {
+    return std::string(t).c_str();
+}
+
+
 #include "log.hpp"
 
 typedef unsigned int uint32;

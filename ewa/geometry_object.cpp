@@ -390,25 +390,15 @@ void GeometryObject::CreateCollisionShape(
       create collison shape.
      */
     if(colShape->m_shape == BoxShape) {
-
 	btShape = new btBoxShape(toBtVec(colShape->m_halfExtents) );
-
-	LOG_I("box ");
-	LOG_I("static %d",  entityInfo->m_isStatic  );
-
     } else if(colShape->m_shape == SphereShape) {
-
 	btShape = new btSphereShape(colShape->m_radius);
-	LOG_I("sphere ");
-	LOG_I("static %d", entityInfo->m_isStatic  );
     } else {
-	LOG_E("unhandled shape: %d", colShape->m_shape );
     }
 
     /*
       Create motion state
      */
-
     btTransform transform(toBtQuat(colShape->m_rotate), toBtVec(m_position));
     btMotionState* btMotionState = new MyMotionState(transform, this);
 

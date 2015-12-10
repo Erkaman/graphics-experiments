@@ -66,7 +66,7 @@ struct CollisionShape {
 
     CollisionShape() {
 	m_origin = Vector3f(0.0f);
-	m_rotate = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
+	m_rotate = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
 	m_radius = 1.0;
 	m_halfExtents = Vector3f(1.0f);
     }

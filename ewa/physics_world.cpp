@@ -36,5 +36,6 @@ void PhysicsWorld::AddRigidBody(btRigidBody* rigidBody) {
 }
 
 void PhysicsWorld::Update(const float delta) {
+//    LOG_I("delta: %f", delta);
     m_world->stepSimulation(delta, 10);
 }
