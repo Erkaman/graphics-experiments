@@ -6,8 +6,8 @@
 
 #include "buffered_file_reader.hpp"
 
-#include "ewa/string_util.hpp"
 
+#include "ewa/string_util.hpp"
 
 #include <map>
 #include <vector>
@@ -40,7 +40,6 @@ struct ChunkHeader {
 struct MaterialHeader {
     int32 m_magic; // Always has the value "MATS"
 };
-
 
 float StrToFloat(const string& str) {
     string::size_type size;
@@ -77,7 +76,6 @@ void* ReadArray(File* file, uint32& size) {
 
 bool WriteMaterialFile(const GeometryObjectData& data, const std::string& outfile) {
 
-    assert( outfile.substr(outfile.size()-4, 4 ) == string(".eob") );
     // strip ".eob" extension,
     string materialFile = outfile.substr(0, outfile.size()-4 ) + ".mat" ;
 
@@ -120,13 +118,21 @@ bool WriteMaterialFile(const GeometryObjectData& data, const std::string& outfil
 
 bool EobFile::Write(const GeometryObjectData& data, const std::string& outfile) {
 
+    if(outfile.substr(outfile.size()-4, 4 ) != string(".eob") ) {
+	SetError("outfile %s is not a EOB file: wrong file extension" );
+	return false;
+    }
+
     File* f = File::Load(outfile, FileModeWriting);
 
     if(!f) {
 	return false;
     }
 
-    WriteMaterialFile(data, outfile);
+    if(!WriteMaterialFile(data, outfile) ) {
+	SetError("Failed to write material file for %s", outfile.c_str() );
+	return false;
+    }
 
     if(data.m_indexType != GL_UNSIGNED_SHORT) {
 
@@ -177,12 +183,47 @@ bool EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
     return true;
 }
 
+EntityInfo* ReadEntityInfo(const std::string& infile) {
+
+    string entityFile = infile.substr(0, infile.size()-4 ) + ".ent" ;
+
+    BufferedFileReader* reader = BufferedFileReader::Load(entityFile);
+
+    if(!reader) {
+	return NULL;
+    }
+
+    EntityInfo* entityInfo = new EntityInfo();
+
+    while(!reader->IsEof()) {
+
+	string line = reader->ReadLine();
+
+
+	if(line[0] == ' ' || line == string("")  || line[0] == '\0' ) {
+	    continue; // empty line, ignore.
+	}
+
+	vector<string> tokens =StringUtil::SplitString(line, " ");
+
+	if(tokens[0] == "mass") {
+	    entityInfo->m_mass = StrToFloat(tokens[1]);
+	} else {
+	    SetError("Undefined line in entity file %s:\n%s", entityFile.c_str(), line.c_str() );
+	    return NULL;
+	}
+
+    }
+
+    return entityInfo;
+
+}
+
 AABB* ReadAABB(const std::string& infile) {
 
     string aabbFile = infile.substr(0, infile.size()-4 ) + ".aabb" ;
 
     BufferedFileReader* reader = BufferedFileReader::Load(  aabbFile);
-
 
     if(!reader) {
 	return NULL;
@@ -215,6 +256,8 @@ AABB* ReadAABB(const std::string& infile) {
     return aabb;
 
 }
+
+
 
 // for every eob filed named XYZ.eob, we store a material file in the same directory.
 // It is name XYZ.mat
@@ -284,9 +327,87 @@ map<string, Material*>* ReadMaterialFile(const std::string& infile) {
     return matlibPtr;
 }
 
+CollisionShape* ReadYaml(const std::string& infile, EntityInfo* entityInfo) {
+
+    string yamlFile = infile.substr(0, infile.size()-4 ) + ".yaml" ;
+
+    BufferedFileReader* reader = BufferedFileReader::Load(yamlFile);
+
+
+    if(!reader) {
+	return NULL;
+    }
+
+//    AABB* aabb = new AABB();
+
+
+    // ignore first two lines
+    reader->ReadLine();
+    reader->ReadLine();
+
+    CollisionShape* collisionShape = new CollisionShape();
+
+    string shapeLine = reader->ReadLine();
+
+    string shape = shapeLine.substr(shapeLine.find(":") + 2);
+
+    if(shape == "Sphere") {
+	collisionShape->m_shape = SphereShape;
+    } else if(shape == "Box") {
+	collisionShape->m_shape = BoxShape;
+    } else {
+
+	SetError("Unknown collision shape:\n %s", shapeLine.c_str() );
+	return NULL;
+
+    }
+
+    while(!reader->IsEof()) {
+
+	string line = reader->ReadLine();
+
+	vector<string> tokens = StringUtil::SplitString(line, " ");
+
+	if(tokens[0] == "radius:") {
+	    collisionShape->m_radius = StrToFloat(tokens[1]);
+	} else if(tokens[0] == "half-extents:") {
+
+
+	    // trim brackets.
+	    string trimmed = tokens[1].substr(1, tokens[1].size()-2);
+
+	    vector<string> extentTokens =  StringUtil::SplitString(trimmed, ",");
+
+	    collisionShape->m_halfExtents = Vector3f(
+		StrToFloat(extentTokens[0]),
+		StrToFloat(extentTokens[1]),
+		StrToFloat(extentTokens[2])
+
+		);
+	} else {
+	    SetError("Unsupported file %s", line.c_str() );
+	    return NULL;
+	}
+
+	/*LOG_I("count: %d", tokens.size() );
+
+	LOG_I("count1: %s", tokens[0].c_str() );
+	LOG_I("count2: %s", tokens[1].c_str() );
+	*/
+
+//	string shape = shapeLine.substr(shapeLine.find(":") + 2);
+    }
+
+
+    return collisionShape;
+
+
+}
+
 // TODO: clean up the memory allocated in this method.
 GeometryObjectData* EobFile::Read(const std::string& infile) {
 
+    // sanity check.
     if(infile.substr(infile.size()-4, 4 ) != string(".eob") ) {
 	SetError("%s is not a EOB file: wrong file extension" );
 	return NULL;
@@ -294,18 +415,57 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
 
     GeometryObjectData* data = new GeometryObjectData();
 
-    File* f = File::Load(infile, FileModeReading);
 
+    /*
+      Parse material file.
+     */
     map<string, Material*>* matlibPtr = ReadMaterialFile(infile);
+    if(!matlibPtr) {
+	SetError("Failed to read material file for %s", infile.c_str() );
+	return NULL;
+    }
     map<string, Material*>& matlib = *matlibPtr;
 
+    EntityInfo* entityInfo = ReadEntityInfo(infile);
+    if(!entityInfo) {
+	SetError("Failed to read entity info file for %s", infile.c_str() );
+	return NULL;
+    }
+    data->m_entityInfo = entityInfo;
+
+    /*
+      Parse AABB file
+     */
 
     AABB* aabbPtr = ReadAABB(infile);
     if(!aabbPtr) {
 	return NULL;
     }
-
     data->aabb = *aabbPtr;
+
+    /*
+      Parse collision shape(yaml), if it exists.
+     */
+    string yamlFile = infile.substr(0, infile.size()-4 ) + ".yaml" ;
+
+    if(File::Exists(yamlFile)) {
+
+	data->m_collisionShape = ReadYaml(infile, data->m_entityInfo);
+	if(!data->m_collisionShape) {
+	    SetError("Could not parse yaml file: %s", infile.c_str() );
+	    return NULL;
+	}
+	LOG_I("parse yaml: %s", yamlFile.c_str() );
+    }
+
+
+    /*
+      Actually parse eob file.
+     */
+
+
+    File* f = File::Load(infile, FileModeReading);
+
 
     FileHeader fileHeader;
 

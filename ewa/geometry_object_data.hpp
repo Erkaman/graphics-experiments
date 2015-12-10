@@ -2,6 +2,7 @@
 
 #include "gl/gl_common.hpp"
 #include "math/vector3f.hpp"
+#include "math/vector4f.hpp"
 
 #include "aabb.hpp"
 
@@ -32,6 +33,39 @@ struct Material{
     }
 };
 
+struct EntityInfo{
+public:
+    float m_mass;
+
+    EntityInfo() {
+	m_mass = 1.0f;
+    }
+};
+
+enum CollisionShapeEnum {
+    CylinderShape,
+    SphereShape,
+    ConeShape,
+    BoxShape
+};
+
+struct CollisionShape {
+    CollisionShapeEnum m_shape;
+    Vector3f m_origin;
+    Vector4f m_rotate; // quaternion rotation
+    float m_radius;
+    Vector3f m_halfExtents;
+
+    CollisionShape() {
+	m_origin = Vector3f(0.0f);
+	m_rotate = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
+	m_radius = 1.0;
+	m_halfExtents = Vector3f(1.0f);
+    }
+};
+
+
+
 struct GeometryObjectData {
 
     struct Chunk{
@@ -57,4 +91,8 @@ struct GeometryObjectData {
     GLenum m_indexType;
 
     AABB aabb;
+
+    EntityInfo* m_entityInfo;
+
+    CollisionShape* m_collisionShape;
 };

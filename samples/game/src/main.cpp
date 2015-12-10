@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-#include <btBulletDynamicsCommon.h>
 
 int main (int argc, char *argv[]) {
 

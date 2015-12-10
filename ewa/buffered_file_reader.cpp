@@ -40,6 +40,12 @@ char BufferedFileReader::Read8() {
 
 	m_readBufferSize = m_file->ReadArray (m_buffer, BUFFER_SIZE);
 	m_iBuffer = 0;
+
+
+	if(m_readBufferSize==0) { // end of file for sure
+	    m_eof = true;
+	}
+
     }
 
     char ret = m_buffer[m_iBuffer++];
@@ -66,8 +72,10 @@ std::string BufferedFileReader::ReadLine() {
 	bool readCr = false; // read carriage return?
 
     while(true) {
+//	LOG_I("LOOP");
 
 		ch = Read8();
+//		LOG_I("%c", ch);
 
 		if (IsEof()) {
 			//str += ch;
@@ -94,6 +102,10 @@ std::string BufferedFileReader::ReadLine() {
 
 	if(!readCr) // cr is part of newline, so not part of string.
 		str += ch;
+
+
+//	LOG_I("str: %s", str.c_str() );
+
     }
 
 
@@ -101,6 +113,8 @@ std::string BufferedFileReader::ReadLine() {
 	if (IsEof() && ch != '\r' &&  ch != '\n') {
 		str += ch;
 	}
+
+
 
     return str;
 }

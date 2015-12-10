@@ -19,6 +19,7 @@ void Log(const char* logLevel, const char* file, int line, const char* func, con
 void LogInit() {
     logBuffer = new char[1024];
     errorBuffer = new char[1024];
+    errorStr = "";
 
 }
 
@@ -33,12 +34,11 @@ void SetError(const char * format, ...) {
     vsprintf (errorBuffer, format, args);
     va_end (args);
 
-    errorStr = string(errorBuffer);
+    errorStr = errorStr + string(errorBuffer) + "\n\n";
 }
 
-
 void SetError(const std::string& str) {
-    errorStr = str;
+    errorStr = errorStr + str + "\n\n";
 }
 
 
@@ -51,5 +51,5 @@ void PrintErrorExit() {
    // exit(1);
 	system("pause");
 	exit(1);
-	
+
 }

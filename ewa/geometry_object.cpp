@@ -20,6 +20,8 @@ using std::vector;
 
 Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
+    if(!texture)
+	return NULL;
 
     texture->Bind();
     texture->SetTextureRepeat();
@@ -121,18 +123,27 @@ GeometryObject* GeometryObject::Load(const std::string& filename) {
 
 	if(baseChunk->m_material->m_textureFilename != "") {
 	    newChunk->m_texture = LoadTexture(baseChunk->m_material->m_textureFilename);
+	    if(!newChunk->m_texture) {
+		return NULL;
+	    }
 	} else {
 	    newChunk->m_texture = NULL;
 	}
 
 	if(geoObj->m_hasNormalMap) {
 	    newChunk->m_normalMap = LoadTexture(baseChunk->m_material->m_normalMapFilename);
+	    if(!newChunk->m_normalMap) {
+		return NULL;
+	    }
 	} else {
 	    newChunk->m_normalMap = NULL;
 	}
 
 	if(geoObj->m_hasSpecularMap) {
 	    newChunk->m_specularMap = LoadTexture(baseChunk->m_material->m_specularMapFilename);
+	    if(!newChunk->m_specularMap) {
+		return NULL;
+	    }
 	} else {
 	    newChunk->m_specularMap = NULL;
 	}
