@@ -1,4 +1,4 @@
 StaticMesh/plane:
   physics:
   - shape: Box
-    half-extents: [3.5,0.152114,3.5]
+    half-extents: [28.8,0.0851874,28.8]

@@ -125,20 +125,17 @@ Vector3f(-0.597377, -0.590989, -0.542100)
     m_flatWoodFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(10,0,40)));
 
-
     m_woodFloor = LoadObj("obj/wood_floor.eob");
     m_woodFloor->SetModelMatrix(
 	Matrix4f::CreateTranslation(Vector3f(-10,0,40)));
 
     m_sphere = LoadObj("obj/sunball.eob");
     m_sphere->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(0,3,0)));
+	Matrix4f::CreateTranslation(  Vector3f(-30 * m_lightDirection) ));
 
 
     m_plane = LoadObj("obj/plane.eob");
     m_plane->SetModelMatrix(
-
-	Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
 	Matrix4f::CreateTranslation(Vector3f(0,-2.5,0))
 	);
 
@@ -154,17 +151,11 @@ Vector3f(-0.597377, -0.590989, -0.542100)
     m_wall2 = LoadObj("obj/wall.eob");
 
     m_wall2->SetModelMatrix(
-	Matrix4f::CreateScale(Vector3f(1,0.4,1))   *
 	Matrix4f::CreateTranslation(Vector3f(20,-6.5,-5)));
 
     m_ball2 = LoadObj("obj/sunball.eob");
     m_ball2->SetModelMatrix(
     Matrix4f::CreateTranslation(Vector3f(20,-1.0,-7)));
-
-/*    Matrix4f m = Matrix4f::CreateScale(Vector3f(10,1.0,10))   *
-      Matrix4f::CreateTranslation(Vector3f(0,-2.0,0));
-*/
-    // LOG_I("m:\n %s", string(m).c_str() );
 
     m_depthFbo = new DepthFBO();
 m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
@@ -178,40 +169,6 @@ m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
       m_windSound->SetLooping(true);
     */
 
-/*
-    Vector3f lightInvDir = Vector3f(0.5f,2,2);
-
-    Matrix4f depthViewMatrix = Matrix4f::CreateLookAt(lightInvDir, Vector3f(0,0,0), Vector3f(0,1,0));
-
-
-    LOG_I("depthviewmatrix: %s", string(depthViewMatrix).c_str() );
-
-
-    Matrix4f projMatrix = Matrix4f::CreateOrthographic(-10,10,-10,10,-10,20);
-
-    LOG_I("projmatrix: %s", string(projMatrix).c_str() );
-
-    Matrix4f prod = projMatrix * depthViewMatrix;
-
-    LOG_I("mvo: %s", string(prod).c_str() );
-
-    Matrix4f bias = Matrix4f(
-	0.5f, 0.0f, 0.0f, 0.5f,
-	0.0f, 0.5f, 0.0f, 0.5f,
-	0.0f, 0.0f, 0.5f, 0.5f,
-	0.0f, 0.0f, 0.0f, 1.0f
-	);
-
-    Matrix4f a = bias * prod;
-
-    LOG_I("a: %s", string(a).c_str() );
-
-
-     exit(1);
-*/
-
-    m_sphere->SetModelMatrix(
-	Matrix4f::CreateTranslation(  Vector3f(-30 * m_lightDirection) ));
 
 
 
@@ -386,8 +343,6 @@ void TuhuApplication::RenderShadowMap() {
 
     }
     m_depthFbo->Unbind();
-
-
 
 }
 
