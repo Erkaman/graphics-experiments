@@ -411,9 +411,6 @@ void GeometryObject::CreateCollisionShape(
 
     btRigidBody::btRigidBodyConstructionInfo ci(entityInfo->m_mass, btMotionState, btShape, inertia);
 
-    btRigidBody* rigidBody = new btRigidBody(ci);
-    physicsWorld->AddRigidBody(rigidBody);
-
-//    btCollisionShape* fallShape = new btSphereShape(1);
-
+    m_rigidBody = new btRigidBody(ci);
+    physicsWorld->AddRigidBody(m_rigidBody);
 }

@@ -136,6 +136,9 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 
    m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) );
 
+   m_car = LoadObj("obj/car.eob", Vector3f(0,7,0) );
+
+
 //   m_ball2 = LoadObj("obj/sunball.eob", Vector3f(20,-1.0,-7) );
 
     m_depthFbo = new DepthFBO();

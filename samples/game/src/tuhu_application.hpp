@@ -47,6 +47,8 @@ private:
     GeometryObject* m_wall2;
     GeometryObject* m_ball2;
 
+    GeometryObject* m_car;
+
 
     DepthFBO* m_depthFbo;
 

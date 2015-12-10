@@ -14,6 +14,7 @@ class Camera;
 class Texture;
 class Cube;
 class PhysicsWorld;
+class btRigidBody;
 
 class GeometryObject {
 private:
@@ -44,6 +45,8 @@ private:
 
     AABB m_aabb;
     Cube* m_aabbWireframe;
+
+    btRigidBody* m_rigidBody;
 
     GeometryObject() {}
 
