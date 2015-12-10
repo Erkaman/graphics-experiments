@@ -37,8 +37,12 @@ struct EntityInfo{
 public:
     float m_mass;
 
+    // a static object wont move even if you collide into it.
+    bool m_isStatic;
+
     EntityInfo() {
 	m_mass = 1.0f;
+	m_isStatic = true;
     }
 };
 

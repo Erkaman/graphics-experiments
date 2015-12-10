@@ -46,15 +46,19 @@ private:
 
     GeometryObject() {}
 
-protected:
+    void  SetModelMatrix(const Matrix4f& modelMatrix);
 
     Matrix4f m_modelMatrix;
+
+    Vector3f m_position;
+
+protected:
 
     void RenderVertices(ShaderProgram& shader);
 
 public:
 
-    static GeometryObject* Load(const std::string& filename);
+    static GeometryObject* Load(const std::string& filename, const Vector3f& position);
 
     virtual ~GeometryObject();
 
@@ -63,7 +67,9 @@ public:
 
     virtual void RenderShadowMap(const Matrix4f& lightVp); // vp = view projection matrix.
 
-    void  SetModelMatrix(const Matrix4f& modelMatrix);
-
     AABB GetModelSpaceAABB()const;
+
+    void SetPosition(const Vector3f& position);
+
+    void CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo);
 };

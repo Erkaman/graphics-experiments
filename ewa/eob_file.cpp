@@ -46,6 +46,15 @@ float StrToFloat(const string& str) {
     return std::stof(str, &size) ;
 }
 
+float StrToBool(const string& str) {
+    if(str == "true") {
+	return true;
+    } else {
+	// default to false.
+	return false;
+    }
+}
+
 void WriteArray(File* file, void* data, uint32 size) {
     file->Write32u(size);
     file->WriteArray(data, size);
@@ -208,7 +217,9 @@ EntityInfo* ReadEntityInfo(const std::string& infile) {
 
 	if(tokens[0] == "mass") {
 	    entityInfo->m_mass = StrToFloat(tokens[1]);
-	} else {
+	} else if(tokens[0] == "static") {
+	    entityInfo->m_isStatic = StrToBool(tokens[1]);
+	}else{
 	    SetError("Undefined line in entity file %s:\n%s", entityFile.c_str(), line.c_str() );
 	    return NULL;
 	}
@@ -388,12 +399,6 @@ CollisionShape* ReadYaml(const std::string& infile, EntityInfo* entityInfo) {
 	    SetError("Unsupported file %s", line.c_str() );
 	    return NULL;
 	}
-
-	/*LOG_I("count: %d", tokens.size() );
-
-	LOG_I("count1: %s", tokens[0].c_str() );
-	LOG_I("count2: %s", tokens[1].c_str() );
-	*/
 
 //	string shape = shapeLine.substr(shapeLine.find(":") + 2);
     }

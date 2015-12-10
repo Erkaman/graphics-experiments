@@ -14,9 +14,18 @@
 #include "eob_file.hpp"
 #include "resource_manager.hpp"
 #include "config.hpp"
+#include <btBulletDynamicsCommon.h>
 
 using std::string;
 using std::vector;
+
+btVector3 toBtVec(const Vector3f& v) {
+    return btVector3(v.x,v.y,v.z);
+}
+
+btQuaternion toBtQuat(const Vector4f& v) {
+    return btQuaternion(v.x,v.y,v.z, v.w);
+}
 
 Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
@@ -33,7 +42,8 @@ Texture* LoadTexture(const string& filename) {
     return texture;
 }
 
-GeometryObject* GeometryObject::Load(const std::string& filename) {
+GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f& position) {
+
 
     GeometryObjectData* data = EobFile::Read(filename);
 
@@ -43,6 +53,18 @@ GeometryObject* GeometryObject::Load(const std::string& filename) {
 
     GeometryObject* geoObj = new GeometryObject();
 
+
+    geoObj->SetPosition(position);
+
+    /*
+      Load collision shape into physics engine.
+     */
+    geoObj->CreateCollisionShape(data->m_collisionShape, data->m_entityInfo);
+
+
+    /*
+      Bounding Volume
+     */
     geoObj->m_aabb = data->aabb;
     geoObj->m_aabbWireframe = Cube::Load();
 
@@ -306,4 +328,66 @@ AABB GeometryObject::GetModelSpaceAABB()const {
     temp.max = Vector3f((m_modelMatrix * Vector4f(m_aabb.max, 1.0f)));
 
     return temp;
+}
+
+void GeometryObject::SetPosition(const Vector3f& position) {
+    this->m_position = position;
+
+    // update model matrix.
+    this->SetModelMatrix(Matrix4f::CreateTranslation(position));
+
+}
+
+
+void GeometryObject::CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo) {
+
+    if(!colShape)
+	return; // do nothing for nothing.
+
+    btCollisionShape* btShape = NULL;
+
+
+    /*
+      create collison shape.
+     */
+    if(colShape->m_shape == BoxShape) {
+
+	btShape = new btBoxShape(toBtVec(colShape->m_halfExtents) );
+
+	LOG_I("box ");
+	LOG_I("static %d",  entityInfo->m_isStatic  );
+
+    } else if(colShape->m_shape == SphereShape) {
+
+	btShape = new btSphereShape(colShape->m_radius);
+	LOG_I("sphere ");
+	LOG_I("static %d", entityInfo->m_isStatic  );
+    } else {
+	LOG_E("unhandled shape: %d", colShape->m_shape );
+    }
+
+    /*
+      Create motion state
+     */
+    btDefaultMotionState* btMotionState = new btDefaultMotionState(btTransform(toBtQuat(colShape->m_rotate), toBtVec(m_position)));
+
+
+
+    btVector3 inertia(0, 0, 0);
+
+    // static objects dont move, so they have no intertia
+    if(!entityInfo->m_isStatic) {
+        btShape->calculateLocalInertia(entityInfo->m_mass, inertia);
+    }
+
+
+
+
+    btRigidBody::btRigidBodyConstructionInfo ci(entityInfo->m_mass, btMotionState, btShape, inertia);
+
+    btRigidBody* rigidBody = new btRigidBody(ci);
+
+
+//    btCollisionShape* fallShape = new btSphereShape(1);
+
 }

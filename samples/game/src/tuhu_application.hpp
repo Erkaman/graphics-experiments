@@ -64,7 +64,7 @@ private:
 
     std::vector<GeometryObject*> m_geoObjs;
 
-    GeometryObject* LoadObj(const std::string& path);
+    GeometryObject* LoadObj(const std::string& path, const Vector3f& position);
 
     Matrix4f MakeLightProj()const;
 

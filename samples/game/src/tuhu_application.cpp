@@ -116,46 +116,24 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 
    m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
+   m_stoneFloor = LoadObj("obj/rock_floor.eob", Vector3f(0,0,40));
 
-   m_stoneFloor = LoadObj("obj/rock_floor.eob");
-    m_stoneFloor->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(0,0,40)));
+   m_flatWoodFloor = LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40) );
 
-    m_flatWoodFloor = LoadObj("obj/flat_wood_floor.eob");
-    m_flatWoodFloor->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(10,0,40)));
+   m_woodFloor = LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40) );
 
-    m_woodFloor = LoadObj("obj/wood_floor.eob");
-    m_woodFloor->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(-10,0,40)));
-
-    m_sphere = LoadObj("obj/sunball.eob");
-    m_sphere->SetModelMatrix(
-	Matrix4f::CreateTranslation(  Vector3f(-30 * m_lightDirection) ));
+   m_sphere = LoadObj("obj/sunball.eob", Vector3f(-30 * m_lightDirection));
 
 
-    m_plane = LoadObj("obj/plane.eob");
-    m_plane->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(0,-2.5,0))
-	);
+   m_plane = LoadObj("obj/plane.eob", Vector3f(0,-2.5,0));
 
-    m_tree = LoadObj("obj/tree.eob");
-    m_tree->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(10,-2.5,10)));
+   m_tree = LoadObj("obj/tree.eob", Vector3f(10,-2.5,10) );
 
-    m_wall = LoadObj("obj/wall.eob");
+   m_wall = LoadObj("obj/wall.eob", Vector3f(-5,-2.5,-5)  );
 
-    m_wall->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(-5,-2.5,-5)));
+   m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) );
 
-    m_wall2 = LoadObj("obj/wall.eob");
-
-    m_wall2->SetModelMatrix(
-	Matrix4f::CreateTranslation(Vector3f(20,-6.5,-5)));
-
-    m_ball2 = LoadObj("obj/sunball.eob");
-    m_ball2->SetModelMatrix(
-    Matrix4f::CreateTranslation(Vector3f(20,-1.0,-7)));
+   m_ball2 = LoadObj("obj/sunball.eob", Vector3f(20,-1.0,-7) );
 
     m_depthFbo = new DepthFBO();
 m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
@@ -470,9 +448,9 @@ void TuhuApplication::RenderText()  {
 
 }
 
-GeometryObject* TuhuApplication::LoadObj(const std::string& path) {
+GeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position) {
 
-    GeometryObject* obj = GeometryObject::Load(path);
+    GeometryObject* obj = GeometryObject::Load(path, position);
 
     if(!obj)
 	PrintErrorExit();
