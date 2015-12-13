@@ -52,7 +52,6 @@ public:
 
         btQuaternion rot = worldTrans.getRotation();
 
-        //mSceneNode ->setOrientation(rot.w(), rot.x(), rot.y(), rot.z());
         btVector3 pos = worldTrans.getOrigin();
         m_obj->SetPosition(Vector3f(pos.x(), pos.y(), pos.z()) );
     }

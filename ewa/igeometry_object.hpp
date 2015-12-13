@@ -1,6 +1,7 @@
 #pragma once
 
 #include "aabb.hpp"
+#include "log.hpp"
 
 class Camera;
 class Matrix4f;
@@ -18,6 +19,7 @@ public:
 
     virtual void RenderShadowMap(const Matrix4f& lightVp) = 0;
 
-    virtual AABB GetModelSpaceAABB()const = 0;
+    virtual AABB GetModelSpaceAABB()const=0;
 
+    virtual ~IGeometryObject() {}
 };

@@ -18,6 +18,7 @@ class Line;
 class Points;
 class ViewFrustum;
 class PhysicsWorld;
+class Car;
 
 class TuhuApplication : public Application{
 
@@ -47,7 +48,7 @@ private:
     IGeometryObject* m_wall2;
     IGeometryObject* m_ball2;
 
-    IGeometryObject* m_car;
+    Car* m_car;
 
 
     DepthFBO* m_depthFbo;
