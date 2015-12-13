@@ -15,6 +15,7 @@
 #include "resource_manager.hpp"
 #include "config.hpp"
 #include "physics_world.hpp"
+#include "gl/depth_fbo.hpp"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -132,6 +133,8 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
     }
 
     string shaderName = "shader/simple";
+
+
 
     vector<string> defines;
 

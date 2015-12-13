@@ -361,10 +361,8 @@ void TuhuApplication::RenderScene() {
     Matrix4f lightVp =  biasMatrix *  m_lightProjectionMatrix * m_lightViewMatrix;
 
 
-
-
     nonCulledObjects = 0;
-    for(GeometryObject* geoObj: m_geoObjs) {
+    for(IGeometryObject* geoObj: m_geoObjs) {
 
 	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetModelSpaceAABB())) {
 	    ++nonCulledObjects;
@@ -453,9 +451,9 @@ void TuhuApplication::RenderText()  {
 
 }
 
-GeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position) {
+IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position) {
 
-    GeometryObject* obj = GeometryObject::Load(path, position, m_physicsWorld);
+    IGeometryObject* obj = GeometryObject::Load(path, position, m_physicsWorld);
 
     if(!obj)
 	PrintErrorExit();

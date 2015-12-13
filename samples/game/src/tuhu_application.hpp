@@ -12,7 +12,7 @@ class Skydome;
 class Grass;
 class Sound;
 class ParticleSystem;
-class GeometryObject;
+class IGeometryObject;
 class DepthFBO;
 class Line;
 class Points;
@@ -37,17 +37,17 @@ private:
     ParticleSystem* m_fire;
 
 
-    GeometryObject* m_stoneFloor;
-    GeometryObject* m_flatWoodFloor;
-    GeometryObject* m_woodFloor;
-    GeometryObject* m_sphere;
-    GeometryObject* m_plane;
-    GeometryObject* m_tree;
-    GeometryObject* m_wall;
-    GeometryObject* m_wall2;
-    GeometryObject* m_ball2;
+    IGeometryObject* m_stoneFloor;
+    IGeometryObject* m_flatWoodFloor;
+    IGeometryObject* m_woodFloor;
+    IGeometryObject* m_sphere;
+    IGeometryObject* m_plane;
+    IGeometryObject* m_tree;
+    IGeometryObject* m_wall;
+    IGeometryObject* m_wall2;
+    IGeometryObject* m_ball2;
 
-    GeometryObject* m_car;
+    IGeometryObject* m_car;
 
 
     DepthFBO* m_depthFbo;
@@ -65,11 +65,11 @@ private:
 
     ViewFrustum* m_viewFrustum;
 
-    std::vector<GeometryObject*> m_geoObjs;
+    std::vector<IGeometryObject*> m_geoObjs;
 
     PhysicsWorld* m_physicsWorld;
 
-    GeometryObject* LoadObj(const std::string& path, const Vector3f& position);
+    IGeometryObject* LoadObj(const std::string& path, const Vector3f& position);
 
     Matrix4f MakeLightProj()const;
 

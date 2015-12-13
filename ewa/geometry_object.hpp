@@ -4,19 +4,18 @@
 
 #include "geometry_object_data.hpp"
 
-#include "gl/depth_fbo.hpp"
+#include "igeometry_object.hpp"
 
 
 class Vector3f;
 class VBO;
 class ShaderProgram;
-class Camera;
 class Texture;
 class Cube;
 class PhysicsWorld;
 class btRigidBody;
 
-class GeometryObject {
+class GeometryObject : public IGeometryObject {
 private:
 
     struct Chunk {
@@ -56,6 +55,9 @@ private:
 
     Vector3f m_position;
 
+    void CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld);
+
+
 protected:
 
     void RenderVertices(ShaderProgram& shader);
@@ -66,7 +68,6 @@ public:
 
     virtual ~GeometryObject();
 
-    // if a custom shader is necessary, set useCustomShader=true, and override this method to bind to the shader.
     virtual void Render(const Camera& camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
 
     virtual void RenderShadowMap(const Matrix4f& lightVp); // vp = view projection matrix.
@@ -75,5 +76,5 @@ public:
 
     void SetPosition(const Vector3f& position);
 
-    void CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld);
+
 };
