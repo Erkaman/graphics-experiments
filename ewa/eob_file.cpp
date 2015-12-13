@@ -207,16 +207,25 @@ EntityInfo* ReadEntityInfo(const std::string& infile) {
     while(!reader->IsEof()) {
 
 	string line = reader->ReadLine();
+//	LOG_I("parse line %s", line.c_str() );
 
 
-	if(line[0] == ' ' || line == string("")  || line[0] == '\0' ) {
+	if(/*line[0] == ' ' || line == string("")  || */line[0] == '\0' ) {
 	    continue; // empty line, ignore.
 	}
 
+//	LOG_I("about to split");
 	vector<string> tokens =StringUtil::SplitString(line, " ");
+//	LOG_I("has split");
 
 	if(tokens[0] == "mass") {
+
+	    //   LOG_I("mass");
+
 	    entityInfo->m_mass = StrToFloat(tokens[1]);
+
+	    //  LOG_I("static");
+
 	} else if(tokens[0] == "static") {
 	    entityInfo->m_isStatic = StrToBool(tokens[1]);
 	} else if(tokens[0] == "name") {
@@ -246,7 +255,11 @@ AABB* ReadAABB(const std::string& infile) {
 
     AABB* aabb = new AABB();
 
+
     string firstLine = reader->ReadLine();
+
+//    LOG_I("read first line:%s", firstLine.c_str() );
+
     vector<string> tokens =StringUtil::SplitString(firstLine, " ");
 
     if(tokens[0] != "max" || tokens.size() != 4) {
@@ -416,6 +429,8 @@ CollisionShape* ReadYaml(const std::string& infile, EntityInfo* entityInfo) {
 // TODO: clean up the memory allocated in this method.
 GeometryObjectData* EobFile::Read(const std::string& infile) {
 
+//    LOG_I("now loading eob: %s", infile.c_str() );
+
     // sanity check.
     if(infile.substr(infile.size()-4, 4 ) != string(".eob") ) {
 	SetError("%s is not a EOB file: wrong file extension" );
@@ -428,12 +443,18 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
     /*
       Parse material file.
      */
+//    LOG_I("about to parse material:" );
+
     map<string, Material*>* matlibPtr = ReadMaterialFile(infile);
     if(!matlibPtr) {
 	SetError("Failed to read material file for %s", infile.c_str() );
 	return NULL;
     }
     map<string, Material*>& matlib = *matlibPtr;
+
+
+//    LOG_I("done parse material:" );
+
 
     EntityInfo* entityInfo = ReadEntityInfo(infile);
     if(!entityInfo) {
@@ -445,12 +466,15 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
     /*
       Parse AABB file
      */
+    //  LOG_I("about to parse aabb:" );
 
     AABB* aabbPtr = ReadAABB(infile);
     if(!aabbPtr) {
 	return NULL;
     }
     data->aabb = *aabbPtr;
+    //  LOG_I("done parse aabb:" );
+
 
     /*
       Parse collision shape(yaml), if it exists.

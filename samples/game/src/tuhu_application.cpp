@@ -121,7 +121,12 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 
    m_grass = new Grass(Vector2f(10,10), m_heightMap);
 
+//   LOG_I("now we start creating objs");
+
    m_stoneFloor = LoadObj("obj/rock_floor.eob", Vector3f(0,0,40));
+
+
+//   LOG_I("created one single obj");
 
    m_flatWoodFloor = LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40) );
 
@@ -129,10 +134,14 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 
    m_sphere = LoadObj("obj/sunball.eob", Vector3f(-30 * m_lightDirection));
 
+//   LOG_I("created some objs");
+
 
    m_plane = LoadObj("obj/plane.eob", Vector3f(0,-2.5,0));
 
    m_tree = LoadObj("obj/tree.eob", Vector3f(10,-2.5,10) );
+
+//   LOG_I("created some more objs");
 
    m_wall = LoadObj("obj/wall.eob", Vector3f(-5,-2.5,-5)  );
 
@@ -399,6 +408,8 @@ void TuhuApplication::Update(const float delta) {
     m_viewFrustum->Update( m_camera->GetVp() );
 
     m_physicsWorld->Update(delta);
+
+    m_car->Update(delta);
 
     m_totalDelta += delta;
 

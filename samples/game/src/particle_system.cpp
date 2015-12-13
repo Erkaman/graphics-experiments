@@ -114,19 +114,13 @@ void ParticleSystem::Init(){
         GL_C(glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_particleBuffer[i]->GetBuffer()));
     }
 
-    LOG_I("linking update");
-
 
     m_particleUpdateShader = ShaderProgram::Load("shader/part_update", beforeLinkingHook);
-
-    LOG_I("linked update");
 
     m_randomTexture = new RandomTexture(1000, 2);
 
 
     m_particleBillboardShader = ShaderProgram::Load("shader/part_billboard");
-
-    LOG_I("linked billboard");
 
     m_particleBillboardShader->Bind();
 

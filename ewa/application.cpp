@@ -52,7 +52,6 @@ void Application::Start() {
 	PrintErrorExit();
     }
 
-	LOG_I("about to load font");
 
 
     m_font = Font::Load(
@@ -61,7 +60,6 @@ void Application::Start() {
 	GetWindowWidth(),GetWindowHeight(),
 	0.3f);
 
-	LOG_I("successfully loaded font");
 
     if(!m_font) {
 	PrintErrorExit();

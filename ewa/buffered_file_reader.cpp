@@ -42,7 +42,7 @@ char BufferedFileReader::Read8() {
 	m_iBuffer = 0;
 
 
-	if(m_readBufferSize==0) { // end of file for sure
+	if(m_readBufferSize==0) { // end of file for sure, since no data could be read.
 	    m_eof = true;
 	}
 

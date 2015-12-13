@@ -97,7 +97,12 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
     /*
       Load collision shape into physics engine.
      */
+
+//    LOG_I("about to create collision shape");
+
     geoObj->CreateCollisionShape(data->m_collisionShape, data->m_entityInfo, physicsWorld);
+
+//    LOG_I("done create collision shape");
 
     /*
       Bounding Volume
@@ -415,4 +420,13 @@ void GeometryObject::CreateCollisionShape(
 
     m_rigidBody = new btRigidBody(ci);
     physicsWorld->AddRigidBody(m_rigidBody);
+}
+
+void GeometryObject::ApplyForce(const Vector3f& force) {
+
+//    LOG_I("apply: %s", tocstr(force) );
+
+//    LOG_I("apply force");
+
+    m_rigidBody->applyCentralForce(toBtVec(force));
 }

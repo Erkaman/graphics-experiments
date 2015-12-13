@@ -22,4 +22,6 @@ public:
     virtual AABB GetModelSpaceAABB()const=0;
 
     virtual ~IGeometryObject() {}
+
+    virtual void ApplyForce(const Vector3f& force) {LOG_E("ApplyForce not yet implemented!"); }
 };

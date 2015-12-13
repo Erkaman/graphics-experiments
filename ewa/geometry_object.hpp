@@ -77,4 +77,5 @@ public:
     void SetPosition(const Vector3f& position);
 
 
+    virtual void ApplyForce(const Vector3f& force);
 };

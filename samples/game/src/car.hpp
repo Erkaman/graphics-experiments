@@ -27,4 +27,6 @@ public:
 
     virtual AABB GetModelSpaceAABB()const;
 
+    void Update(const float delta);
+
 };
