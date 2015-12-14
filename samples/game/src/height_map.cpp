@@ -171,7 +171,7 @@ void HeightMap::Render() {
 void HeightMap::RenderShadowMap(const ICamera* camera) {
     m_depthShader->Bind();
 
-    const Matrix4f mvp = camera->GetMvpFromM(Matrix4f::CreateTranslation(0,0,0));
+    const Matrix4f mvp = camera->GetMvp(Matrix4f::CreateTranslation(0,0,0));
     m_depthShader->SetUniform("mvp", mvp  );
 
     Render();

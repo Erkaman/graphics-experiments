@@ -366,7 +366,7 @@ void Skydome::DrawBillboard(const ICamera* camera, VBO* m_vertexBuffer, VBO* m_i
 
     const Matrix4f model = rotationMatrix * elevationMatrix * orientationMatrix;
 
-    Matrix4f modelView =  camera->GetModelViewMatrix(model);
+    Matrix4f modelView =  camera->GetViewMatrix() * model;
     modelView.m03 = 0;
     modelView.m13 = 0;
     modelView.m23 = 0;

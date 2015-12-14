@@ -39,21 +39,15 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
 }
 
 
-Matrix4f Camera::GetMvpFromM() const {
-    return (m_projectionMatrix) * (m_viewMatrix);
-}
-
 Matrix4f Camera::GetVp() const {
     return (m_projectionMatrix) * (m_viewMatrix);
 }
 
 
-Matrix4f Camera::GetMvpFromM(const Matrix4f& m) const {
-    return (m_projectionMatrix) * (m_viewMatrix) * (m);
-}
 
-Matrix4f Camera::GetMvpFromMv(const Matrix4f& modelViewMatrix) const {
-    return (m_projectionMatrix) * modelViewMatrix;
+
+Matrix4f Camera::GetMvp(const Matrix4f& m) const {
+    return (m_projectionMatrix) * (m_viewMatrix) * (m);
 }
 
 
@@ -146,18 +140,6 @@ Vector3f Camera::GetPosition() const {
     return m_position;
 }
 
-Matrix4f Camera::GetModelViewMatrix() const {
-    return m_viewMatrix;
-}
-
-
-Matrix4f Camera::GetModelViewMatrix(const Matrix4f& modelMatrix) const {
-    Matrix4f ret =  (m_viewMatrix) * modelMatrix;
-
-//    LOG_I("ret: %s", tos(ret).c_str() );
-
-    return ret;
-}
 
 Vector3f Camera::GetViewDir() const {
     return m_viewDir;

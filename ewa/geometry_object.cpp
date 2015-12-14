@@ -361,7 +361,7 @@ void GeometryObject::Render(const ICamera* camera, const Vector4f& lightPosition
 	);
 
 
-    m_aabbWireframe->Render(camera->GetVp() );
+    m_aabbWireframe->Render(camera->GetVp());
 }
 
 void  GeometryObject::SetModelMatrix(const Matrix4f& modelMatrix) {

@@ -154,11 +154,10 @@ void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera*
 	    Vector3f(0.0f),
 	    Vector3f(0.0, 1.0, 0.0)
 	) * modelMatrix;*/
-    camera->GetModelViewMatrix(modelMatrix);
+	camera->GetViewMatrix() * modelMatrix;
 
-    const Matrix4f mvp =
+    const Matrix4f mvp = camera->GetProjectionMatrix() * modelViewMatrix;
 //	Matrix4f::CreateOrthographic(-20,20, -20, 20, -20, 20) * modelViewMatrix;
-    camera->GetMvpFromMv(modelViewMatrix);
 
     SetUniform("mvp", mvp);
     SetUniform("lightMvp", lightVp * modelMatrix);

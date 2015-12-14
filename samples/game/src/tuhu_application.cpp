@@ -181,7 +181,7 @@ Matrix4f TuhuApplication::MakeLightProj()const {
       First we compute the world space location of all 8 corners of the view frustum.
      */
 
-    Matrix4f invProj = m_camera->GetMvpFromM().Inverse();
+    Matrix4f invProj = m_camera->GetVp().Inverse();
 
     // left bottom near
     const Vector3f lbf = Vector3f((invProj * Vector4f(-1,-1,-1,1.0f)));
@@ -355,12 +355,12 @@ void TuhuApplication::RenderScene() {
 
     m_grass->Draw(m_camera, m_lightDirection);
 
-   m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+   m_smoke->Render(m_camera->GetVp(), m_camera->GetPosition());
 
 
   //  m_snow->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
-    m_fire->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+    m_fire->Render(m_camera->GetVp(), m_camera->GetPosition());
 
 
     Matrix4f biasMatrix(
@@ -388,8 +388,8 @@ void TuhuApplication::RenderScene() {
 
 
 
-     m_line->Render(m_camera->GetMvpFromM());
-     m_points->Render(m_camera->GetMvpFromM());
+     m_line->Render(m_camera->GetVp());
+     m_points->Render(m_camera->GetVp());
 
 }
 
