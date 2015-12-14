@@ -27,6 +27,8 @@
 #include "ewa/config.hpp"
 
 #include "ewa/physics_world.hpp"
+#include "car_camera.hpp"
+
 
 #include "car.hpp"
 
@@ -44,7 +46,7 @@ void ToClipboard(const std::string& str) {
 }
 
 //(0.705072, 0.0758142, 0.705072)
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_camera(NULL), m_heightMap(NULL),m_skydome(NULL), m_lightDirection(
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_curCamera(NULL), m_heightMap(NULL),m_skydome(NULL), m_lightDirection(
 
     -0.705072, -0.458142, -0.705072,
 //    -0.705072f, -0.0758142f, -0.705072f ,
@@ -52,7 +54,9 @@ TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv)
     0.0f){ }
 
 TuhuApplication::~TuhuApplication() {
-    MY_DELETE(m_camera);
+    MY_DELETE(m_carCamera);
+    MY_DELETE(m_freeCamera);
+
     MY_DELETE(m_heightMap);
     MY_DELETE(m_skydome);
     MY_DELETE(m_windSound);
@@ -91,7 +95,7 @@ void TuhuApplication::Init() {
 
 
     Vector3f(5.997801, 5.711470, -3.929811);
-    m_camera = new Camera(GetWindowWidth(),GetWindowHeight(),
+    m_freeCamera = new Camera(GetWindowWidth(),GetWindowHeight(),
 
 
 
@@ -160,6 +164,10 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
 
+    m_carCamera = new CarCamera(GetWindowWidth(),GetWindowHeight(),
+			     m_car
+			  );
+
     /*
       OpenAL::Initp();
 
@@ -167,6 +175,8 @@ m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
       m_windSound->SetGain(1.0f);
       m_windSound->SetLooping(true);
     */
+
+    m_curCamera = m_freeCamera;
 
 }
 
@@ -181,7 +191,7 @@ Matrix4f TuhuApplication::MakeLightProj()const {
       First we compute the world space location of all 8 corners of the view frustum.
      */
 
-    Matrix4f invProj = m_camera->GetVp().Inverse();
+    Matrix4f invProj = m_curCamera->GetVp().Inverse();
 
     // left bottom near
     const Vector3f lbf = Vector3f((invProj * Vector4f(-1,-1,-1,1.0f)));
@@ -349,18 +359,18 @@ void TuhuApplication::RenderScene() {
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    m_skydome->Draw(m_camera);
+    m_skydome->Draw(m_curCamera);
 
-   m_heightMap->Render(m_camera, m_lightDirection);
+   m_heightMap->Render(m_curCamera, m_lightDirection);
 
-    m_grass->Draw(m_camera, m_lightDirection);
+    m_grass->Draw(m_curCamera, m_lightDirection);
 
-   m_smoke->Render(m_camera->GetVp(), m_camera->GetPosition());
+   m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 
-  //  m_snow->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
+  //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
 
-    m_fire->Render(m_camera->GetVp(), m_camera->GetPosition());
+    m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 
     Matrix4f biasMatrix(
@@ -378,7 +388,7 @@ void TuhuApplication::RenderScene() {
 
 	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetModelSpaceAABB())) {
 	    ++nonCulledObjects;
-	   geoObj->Render(m_camera, m_lightDirection, lightVp, *m_depthFbo);
+	   geoObj->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
 	}
 
     }
@@ -388,8 +398,8 @@ void TuhuApplication::RenderScene() {
 
 
 
-     m_line->Render(m_camera->GetVp());
-     m_points->Render(m_camera->GetVp());
+     m_line->Render(m_curCamera->GetVp());
+     m_points->Render(m_curCamera->GetVp());
 
 }
 
@@ -402,7 +412,7 @@ void TuhuApplication::Render() {
 
 void TuhuApplication::Update(const float delta) {
 
-    m_viewFrustum->Update( m_camera->GetVp() );
+    m_viewFrustum->Update( m_curCamera->GetVp() );
 
     m_physicsWorld->Update(delta);
 
@@ -420,7 +430,7 @@ void TuhuApplication::Update(const float delta) {
 
 			cos(m_totalDelta*ROT_SPEED)*RADIUS  )  );
 
-    m_camera->Update(delta);
+    m_curCamera->Update(delta);
 
     m_smoke->Update(delta);
     //   m_snow->Update(delta);
@@ -434,8 +444,8 @@ void TuhuApplication::Update(const float delta) {
 
     if( kbs.IsPressed(GLFW_KEY_P) ) {
 
-	string out = "Vector3f" +tos(m_camera->GetPosition()) + ",";
-//	out += "Vector3f" + tos(m_camera->GetViewDir());
+	string out = "Vector3f" +tos(m_curCamera->GetPosition()) + ",";
+//	out += "Vector3f" + tos(m_curCamera->GetViewDir());
 	ToClipboard(out);
     }
 
@@ -447,6 +457,18 @@ void TuhuApplication::Update(const float delta) {
 
 	b = true;
     }
+
+
+    if( kbs.IsPressed(GLFW_KEY_N) ) {
+
+	if(m_curCamera == m_freeCamera) {
+	    m_curCamera = m_carCamera;
+	} else {
+	    m_curCamera = m_freeCamera;
+	}
+
+    }
+
 }
 
 void TuhuApplication::RenderText()  {
@@ -456,7 +478,7 @@ void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 600,150, cull);
 
-    m_font->DrawString(*m_fontShader, 400,120, tos(m_camera->GetPosition())  );
+    m_font->DrawString(*m_fontShader, 400,120, tos(m_curCamera->GetPosition())  );
 
 
 

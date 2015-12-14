@@ -19,12 +19,17 @@ class Points;
 class ViewFrustum;
 class PhysicsWorld;
 class Car;
+class CarCamera;
 
 class TuhuApplication : public Application{
 
 private:
 
-    ICamera* m_camera;
+    ICamera* m_freeCamera;
+    ICamera* m_carCamera;
+    ICamera* m_curCamera; // current camera.
+
+
     HeightMap* m_heightMap;
 
     Skydome* m_skydome;
