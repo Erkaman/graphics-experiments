@@ -52,7 +52,6 @@ public:
         if(m_obj == NULL)
             return; // silently return before we set a node
 
-//	btQuaternion rot = worldTrans.getRotation();
 	btMatrix3x3 r = worldTrans.getBasis();
 
 
@@ -62,8 +61,6 @@ public:
 	    r[2].x(),r[2].y(),r[2].z(),0,
 	    0            , 0           , 0           ,1
 	    );
-
-//	LOG_I("rot: %.2f,%.2f ,%.2f ,%.2f ", rot.x(), rot.y(), rot.z(), rot.w());
 
         btVector3 pos = worldTrans.getOrigin();
         m_obj->SetPosition(Vector3f(pos.x(), pos.y(), pos.z()) );
@@ -420,7 +417,7 @@ void GeometryObject::CreateCollisionShape(
       Create motion state
      */
     btTransform transform(toBtQuat(colShape->m_rotate), toBtVec(m_position));
-    btMotionState* btMotionState = new MyMotionState(transform, this);
+    m_motionState = new MyMotionState(transform, this);
 
     btVector3 inertia(0, 0, 0);
 
@@ -429,7 +426,7 @@ void GeometryObject::CreateCollisionShape(
         btShape->calculateLocalInertia(entityInfo->m_mass, inertia);
     }
 
-    btRigidBody::btRigidBodyConstructionInfo ci(entityInfo->m_mass, btMotionState, btShape, inertia);
+    btRigidBody::btRigidBodyConstructionInfo ci(entityInfo->m_mass, m_motionState, btShape, inertia);
 
     m_rigidBody = new btRigidBody(ci);
 
@@ -446,4 +443,13 @@ void GeometryObject::ApplyForce(const Vector3f& force, const Vector3f& relPos) {
 
 btRigidBody* GeometryObject::GetRigidBody() const {
     return m_rigidBody;
+}
+
+
+btMotionState* GeometryObject::GetMotionState() const {
+    return m_motionState;
+}
+
+Vector3f GeometryObject::GetPosition() const {
+    return m_position;
 }

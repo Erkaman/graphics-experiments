@@ -35,4 +35,9 @@ public:
 
     void Update(const float delta);
 
+    Vector3f GetForwardVector()const;
+
+    virtual Vector3f GetPosition() const;
+
+
 };

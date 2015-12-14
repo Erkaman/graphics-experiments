@@ -14,6 +14,7 @@ class Texture;
 class Cube;
 class PhysicsWorld;
 class btRigidBody;
+class btMotionState;
 
 class GeometryObject : public IGeometryObject {
 private:
@@ -46,6 +47,7 @@ private:
     Cube* m_aabbWireframe;
 
     btRigidBody* m_rigidBody;
+    btMotionState* m_motionState;
 
     GeometryObject() {}
 
@@ -83,5 +85,10 @@ public:
     virtual void ApplyForce(const Vector3f& force, const Vector3f& relPos);
 
     virtual btRigidBody* GetRigidBody() const;
+
+    virtual btMotionState* GetMotionState() const;
+
+
+    virtual Vector3f GetPosition() const;
 
 };

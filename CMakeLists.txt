@@ -79,6 +79,9 @@ IF(APPLE)
 	FIND_PACKAGE(OpenAL REQUIRED)
 	LIST(APPEND game_libs ${OPENAL_LIBRARY})
 
+   include_directories( ${BULLET_INCLUDE_DIRS} )
+
+
 ELSEIF(UNIX)
   LINK_DIRECTORIES("deps/libs/linux")
   find_package(X11 REQUIRED)
@@ -91,7 +94,7 @@ ELSEIF(WIN32)
 
 ENDIF()
 
-include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng" "." ${BULLET_INCLUDE_DIRS} )
+include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng" "." )
 
 set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
@@ -108,3 +111,5 @@ add_subdirectory("unit_test")
 
 # we should put al headers in deps/include.
 # put openal.lib in link directory.
+
+# bullet version: 2.83.4

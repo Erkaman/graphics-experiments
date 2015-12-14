@@ -4,6 +4,10 @@
 #include "ewa/keyboard_state.hpp"
 #include "ewa/physics_world.hpp"
 
+#include "ewa/bt_util.hpp"
+#include "ewa/common.hpp"
+
+
 #include <btBulletDynamicsCommon.h>
 
 // hard coded for now.
@@ -188,4 +192,18 @@ void Car::Update(const float delta) {
 
     m_raycastVehicle->setSteeringValue(vehicleSteering,0);
     m_raycastVehicle->setSteeringValue(vehicleSteering,1);
+
+
+//    LOG_I("forward. %s", tocstr(forwardVector) );
+
+//    LOG_I("pos. %s", tocstr(GetPosition()) );
+
+}
+
+Vector3f Car::GetForwardVector()const {
+    return fromBtVec(m_raycastVehicle->getForwardVector());
+}
+
+Vector3f Car::GetPosition() const {
+    return m_geoObj->GetPosition();
 }
