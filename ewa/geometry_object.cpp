@@ -410,7 +410,11 @@ void GeometryObject::CreateCollisionShape(
 	btShape = new btBoxShape(toBtVec(colShape->m_halfExtents) );
     } else if(colShape->m_shape == SphereShape) {
 	btShape = new btSphereShape(colShape->m_radius);
+    } else if(colShape->m_shape == CylinderShape) {
+	btShape = new btCylinderShape(toBtVec(colShape->m_halfExtents) );
     } else {
+
+	return;
     }
 
     /*

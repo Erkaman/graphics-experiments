@@ -396,6 +396,8 @@ CollisionShape* ReadYaml(const std::string& infile, EntityInfo* entityInfo) {
 	collisionShape->m_shape = SphereShape;
     } else if(shape == "Box") {
 	collisionShape->m_shape = BoxShape;
+    } else if(shape == "Cylinder") {
+	collisionShape->m_shape = CylinderShape;
     } else {
 
 	SetError("Unknown collision shape:\n %s", shapeLine.c_str() );

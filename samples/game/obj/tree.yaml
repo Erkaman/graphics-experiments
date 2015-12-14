@@ -1,0 +1,4 @@
+StaticMesh/tree:
+  physics:
+  - shape: Cylinder
+    half-extents: [0.19485,6,0.19485]
