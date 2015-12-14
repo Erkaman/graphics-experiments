@@ -50,10 +50,22 @@ public:
         if(m_obj == NULL)
             return; // silently return before we set a node
 
-        btQuaternion rot = worldTrans.getRotation();
+//	btQuaternion rot = worldTrans.getRotation();
+	btMatrix3x3 r = worldTrans.getBasis();
+
+
+	Matrix4f rot(
+	    r[0].x(),r[0].y(),r[0].z(),0,
+	    r[1].x(),r[1].y(),r[1].z(),0,
+	    r[2].x(),r[2].y(),r[2].z(),0,
+	    0            , 0           , 0           ,1
+	    );
+
+//	LOG_I("rot: %.2f,%.2f ,%.2f ,%.2f ", rot.x(), rot.y(), rot.z(), rot.w());
 
         btVector3 pos = worldTrans.getOrigin();
         m_obj->SetPosition(Vector3f(pos.x(), pos.y(), pos.z()) );
+	m_obj->SetRotation(rot);
     }
 };
 
@@ -380,8 +392,13 @@ void GeometryObject::SetPosition(const Vector3f& position) {
     // update model matrix.
     this->SetModelMatrix(Matrix4f::CreateTranslation(position));
 
+    //   this->SetModelMatrix(Matrix4f::CreateTranslation(m_position) * rotation );
+
 }
 
+void GeometryObject::SetRotation(const Matrix4f& rotation) {
+    this->SetModelMatrix(Matrix4f::CreateTranslation(m_position) * rotation );
+}
 
 void GeometryObject::CreateCollisionShape(
     const CollisionShape* colShape, const EntityInfo* entityInfo,
@@ -422,11 +439,10 @@ void GeometryObject::CreateCollisionShape(
     physicsWorld->AddRigidBody(m_rigidBody);
 }
 
-void GeometryObject::ApplyForce(const Vector3f& force) {
-
-//    LOG_I("apply: %s", tocstr(force) );
-
-//    LOG_I("apply force");
-
+void GeometryObject::ApplyCentralForce(const Vector3f& force) {
     m_rigidBody->applyCentralForce(toBtVec(force));
+}
+
+void GeometryObject::ApplyForce(const Vector3f& force, const Vector3f& relPos) {
+    m_rigidBody->applyForce(toBtVec(force), toBtVec(relPos) );
 }

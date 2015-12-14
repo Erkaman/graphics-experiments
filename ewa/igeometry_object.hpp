@@ -23,5 +23,8 @@ public:
 
     virtual ~IGeometryObject() {}
 
-    virtual void ApplyForce(const Vector3f& force) {LOG_E("ApplyForce not yet implemented!"); }
+    virtual void ApplyCentralForce(const Vector3f& force) {LOG_E("ApplyCentralForce not yet implemented!"); }
+
+    virtual void ApplyForce(const Vector3f& force, const Vector3f& relPos) {LOG_E("ApplyForce not yet implemented!"); }
+
 };

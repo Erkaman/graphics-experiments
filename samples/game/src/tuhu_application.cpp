@@ -132,7 +132,7 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 
    m_woodFloor = LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40) );
 
-   m_sphere = LoadObj("obj/sunball.eob", Vector3f(-30 * m_lightDirection));
+   m_sphere = LoadObj("obj/sunball.eob", Vector3f(21.152159, 13.744261, 21.152159));
 
 //   LOG_I("created some objs");
 

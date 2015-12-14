@@ -75,7 +75,10 @@ public:
     AABB GetModelSpaceAABB()const;
 
     void SetPosition(const Vector3f& position);
+    void SetRotation(const Matrix4f& rotation);
 
 
-    virtual void ApplyForce(const Vector3f& force);
+    virtual void ApplyCentralForce(const Vector3f& force);
+
+    virtual void ApplyForce(const Vector3f& force, const Vector3f& relPos);
 };
