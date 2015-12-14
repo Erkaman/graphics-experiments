@@ -416,7 +416,7 @@ void GeometryObject::CreateCollisionShape(
     /*
       Create motion state
      */
-    btTransform transform(toBtQuat(colShape->m_rotate), toBtVec(m_position));
+    btTransform transform(toBtQuat(colShape->m_rotate), toBtVec(m_position + colShape->m_origin));
     m_motionState = new MyMotionState(transform, this);
 
     btVector3 inertia(0, 0, 0);

@@ -355,6 +355,19 @@ map<string, Material*>* ReadMaterialFile(const std::string& infile) {
     return matlibPtr;
 }
 
+Vector3f ParseYamlVector(string str) {
+    string trimmed = str.substr(1, str.size()-2);
+
+    vector<string> extentTokens =  StringUtil::SplitString(trimmed, ",");
+
+    return Vector3f(
+	StrToFloat(extentTokens[0]),
+	StrToFloat(extentTokens[1]),
+	StrToFloat(extentTokens[2])
+	);
+
+}
+
 CollisionShape* ReadYaml(const std::string& infile, EntityInfo* entityInfo) {
 
     string yamlFile = infile.substr(0, infile.size()-4 ) + ".yaml" ;
@@ -369,7 +382,7 @@ CollisionShape* ReadYaml(const std::string& infile, EntityInfo* entityInfo) {
 //    AABB* aabb = new AABB();
 
 
-    // ignore first two lines
+   // ignore first two lines
     reader->ReadLine();
     reader->ReadLine();
 
@@ -399,19 +412,9 @@ CollisionShape* ReadYaml(const std::string& infile, EntityInfo* entityInfo) {
 	if(tokens[0] == "radius:") {
 	    collisionShape->m_radius = StrToFloat(tokens[1]);
 	} else if(tokens[0] == "half-extents:") {
-
-
-	    // trim brackets.
-	    string trimmed = tokens[1].substr(1, tokens[1].size()-2);
-
-	    vector<string> extentTokens =  StringUtil::SplitString(trimmed, ",");
-
-	    collisionShape->m_halfExtents = Vector3f(
-		StrToFloat(extentTokens[0]),
-		StrToFloat(extentTokens[1]),
-		StrToFloat(extentTokens[2])
-
-		);
+	    collisionShape->m_halfExtents  = ParseYamlVector(tokens[1]);
+	}else if(tokens[0] == "origin:") {
+	    collisionShape->m_origin  = ParseYamlVector(tokens[1]);
 	} else {
 	    SetError("Unsupported file %s", line.c_str() );
 	    return NULL;
