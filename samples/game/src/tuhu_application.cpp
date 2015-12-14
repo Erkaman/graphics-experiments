@@ -440,7 +440,7 @@ void TuhuApplication::Update(const float delta) {
 
 //      m_grass->Update(delta);
 
-    const KeyboardState& kbs = KeyboardState::GetInstance();
+    KeyboardState& kbs = KeyboardState::GetInstance();
 
     if( kbs.IsPressed(GLFW_KEY_P) ) {
 
@@ -459,7 +459,7 @@ void TuhuApplication::Update(const float delta) {
     }
 
 
-    if( kbs.IsPressed(GLFW_KEY_N) ) {
+    if( kbs.WasPressed(GLFW_KEY_N) ) {
 
 	if(m_curCamera == m_freeCamera) {
 	    m_curCamera = m_carCamera;
