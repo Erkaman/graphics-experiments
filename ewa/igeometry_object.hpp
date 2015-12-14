@@ -6,6 +6,7 @@
 class Camera;
 class Matrix4f;
 class DepthFBO;
+class btRigidBody;
 
 class IGeometryObject {
 
@@ -26,5 +27,7 @@ public:
     virtual void ApplyCentralForce(const Vector3f& force) {LOG_E("ApplyCentralForce not yet implemented!"); }
 
     virtual void ApplyForce(const Vector3f& force, const Vector3f& relPos) {LOG_E("ApplyForce not yet implemented!"); }
+
+    virtual btRigidBody* GetRigidBody() const {LOG_E("GetRigidBody not yet implemented!"); }
 
 };

@@ -39,3 +39,13 @@ void PhysicsWorld::Update(const float delta) {
 //    LOG_I("delta: %f", delta);
     m_world->stepSimulation(delta, 10);
 }
+
+
+void PhysicsWorld::AddVehicle(btActionInterface* vehicle) {
+    m_world->addVehicle(vehicle);
+}
+
+
+btVehicleRaycaster* PhysicsWorld::NewVehicleRaycaster() {
+    return new btDefaultVehicleRaycaster(m_world);
+}

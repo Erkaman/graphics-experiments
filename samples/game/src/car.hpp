@@ -3,14 +3,20 @@
 #include "ewa/igeometry_object.hpp"
 
 class PhysicsWorld;
+class btVehicleRaycaster;
+class btRaycastVehicle;
 
 class Car : public IGeometryObject{
 
 private:
 
-    IGeometryObject* geoObj;
+    IGeometryObject* m_geoObj;
 
-    Car() {}
+    Car(IGeometryObject* geoObj, PhysicsWorld* physicsWorld);
+
+    btVehicleRaycaster* m_vehicleRaycaster;
+
+    btRaycastVehicle* m_raycastVehicle;
 
 public:
 

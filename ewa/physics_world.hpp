@@ -1,17 +1,21 @@
 #pragma once
 
-class btDiscreteDynamicsWorld;
+class btDynamicsWorld;
+
 class btBroadphaseInterface;
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
 class btSequentialImpulseConstraintSolver;
 class btRigidBody;
+class btActionInterface;
+
+class btVehicleRaycaster;
 
 class PhysicsWorld {
 
 private:
 
-    btDiscreteDynamicsWorld* m_world;
+    btDynamicsWorld* m_world;
 
     btBroadphaseInterface* m_broadphase;
 
@@ -26,7 +30,9 @@ public:
     ~PhysicsWorld();
 
     void AddRigidBody(btRigidBody* rigidBody);
+    void AddVehicle(btActionInterface* vehicle);
+
+    btVehicleRaycaster* NewVehicleRaycaster();
 
     void Update(const float delta);
-
 };

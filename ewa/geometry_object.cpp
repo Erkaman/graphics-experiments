@@ -7,6 +7,8 @@
 #include "ewa/gl/shader_program.hpp"
 #include "ewa/gl/texture2d.hpp"
 
+#include "ewa/bt_util.hpp"
+
 #include "ewa/common.hpp"
 #include "ewa/camera.hpp"
 #include "ewa/file.hpp"
@@ -69,13 +71,7 @@ public:
     }
 };
 
-btVector3 toBtVec(const Vector3f& v) {
-    return btVector3(v.x,v.y,v.z);
-}
 
-btQuaternion toBtQuat(const Vector4f& v) {
-    return btQuaternion(v.x,v.y,v.z, v.w);
-}
 
 Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
@@ -436,6 +432,8 @@ void GeometryObject::CreateCollisionShape(
     btRigidBody::btRigidBodyConstructionInfo ci(entityInfo->m_mass, btMotionState, btShape, inertia);
 
     m_rigidBody = new btRigidBody(ci);
+
+    m_rigidBody->setActivationState(DISABLE_DEACTIVATION); // Needed for btRaycastVehicles
     physicsWorld->AddRigidBody(m_rigidBody);
 }
 
@@ -445,4 +443,8 @@ void GeometryObject::ApplyCentralForce(const Vector3f& force) {
 
 void GeometryObject::ApplyForce(const Vector3f& force, const Vector3f& relPos) {
     m_rigidBody->applyForce(toBtVec(force), toBtVec(relPos) );
+}
+
+btRigidBody* GeometryObject::GetRigidBody() const {
+    return m_rigidBody;
 }
