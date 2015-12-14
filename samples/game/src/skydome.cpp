@@ -11,7 +11,7 @@
 #include "ewa/math/matrix4f.hpp"
 
 #include "ewa/value_noise_seed.hpp"
-#include "ewa/camera.hpp"
+#include "ewa/icamera.hpp"
 
 #include "ewa/common.hpp"
 #include "ewa/util.hpp"
@@ -243,7 +243,7 @@ Skydome::~Skydome() {
     MY_DELETE(m_rng)
 }
 
-void Skydome::Draw(const Camera& camera) {
+void Skydome::Draw(const ICamera* camera) {
 
     SetDepthTest(false);
 
@@ -327,15 +327,15 @@ void GenerateBillboardVertices(VBO* m_vertexBuffer, VBO* m_indexBuffer, const fl
     m_indexBuffer->Unbind();
 }
 
-void Skydome::DrawDome(const Camera& camera) {
+void Skydome::DrawDome(const ICamera* camera) {
     m_domeShader->Bind();
 
-    Matrix4f modelView =  camera.GetViewMatrix();
+    Matrix4f modelView =  camera->GetViewMatrix();
     modelView.m03 = 0;
     modelView.m13 = 0;
     modelView.m23 = 0;
 
-    Matrix4f mvp = camera.GetProjectionMatrix() * modelView;
+    Matrix4f mvp = camera->GetProjectionMatrix() * modelView;
 
     m_domeShader->SetUniform("mvp", mvp);
 
@@ -346,7 +346,7 @@ void Skydome::DrawDome(const Camera& camera) {
 
 }
 
-void Skydome::DrawSun(const Camera& camera) {
+void Skydome::DrawSun(const ICamera* camera) {
 
     m_sunTexture->Bind();
 
@@ -356,7 +356,7 @@ void Skydome::DrawSun(const Camera& camera) {
 }
 
 
-void Skydome::DrawBillboard(const Camera& camera, VBO* m_vertexBuffer, VBO* m_indexBuffer,
+void Skydome::DrawBillboard(const ICamera* camera, VBO* m_vertexBuffer, VBO* m_indexBuffer,
 			    const float orientation, const float elevation, const float rotation) {
 
 
@@ -366,13 +366,12 @@ void Skydome::DrawBillboard(const Camera& camera, VBO* m_vertexBuffer, VBO* m_in
 
     const Matrix4f model = rotationMatrix * elevationMatrix * orientationMatrix;
 
-
-    Matrix4f modelView =  camera.GetModelViewMatrix(model);
+    Matrix4f modelView =  camera->GetModelViewMatrix(model);
     modelView.m03 = 0;
     modelView.m13 = 0;
     modelView.m23 = 0;
 
-    const Matrix4f mvp = camera.GetProjectionMatrix() * modelView;
+    const Matrix4f mvp = camera->GetProjectionMatrix() * modelView;
 
     m_billboardShader->SetUniform("mvp", mvp);
 
@@ -383,7 +382,7 @@ void Skydome::DrawBillboard(const Camera& camera, VBO* m_vertexBuffer, VBO* m_in
 
 }
 
-void Skydome::DrawClouds(const Camera& camera) {
+void Skydome::DrawClouds(const ICamera* camera) {
 
 
     for(const CloudGroup* cloudGroup : m_clouds ) {

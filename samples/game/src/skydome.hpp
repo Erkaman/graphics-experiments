@@ -6,7 +6,7 @@
 
 class VBO;
 class ShaderProgram;
-class Camera;
+class ICamera;
 class Texture;
 class CloudGroup;
 class Random;
@@ -50,15 +50,15 @@ private:
     /*
       PRIVATE INSTANCE METHODS
      */
-    void DrawDome(const Camera& camera);
-    void DrawSun(const Camera& camera);
-    void DrawClouds(const Camera& camera);
+    void DrawDome(const ICamera* camera);
+    void DrawSun(const ICamera* camera);
+    void DrawClouds(const ICamera* camera);
 
 
     /*
       orientation, elevation and rotation are all angles measured in degrees.
      */
-    void DrawBillboard(const Camera& camera, VBO* m_vertexBuffer, VBO* m_indexBuffer,
+    void DrawBillboard(const ICamera* camera, VBO* m_vertexBuffer, VBO* m_indexBuffer,
 		       const float orientation, const float elevation, const float rotation);
 
     void MakeSky(const float radius, const int slices, const int stacks);
@@ -71,7 +71,7 @@ public:
     Skydome(const float radius, const int slices, const int stacks);
     ~Skydome();
 
-    void Draw(const Camera& camera);
+    void Draw(const ICamera* camera);
     void Update(const float delta);
 
 

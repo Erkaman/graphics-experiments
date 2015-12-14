@@ -70,7 +70,7 @@ public:
 
     virtual ~GeometryObject();
 
-    virtual void Render(const Camera& camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
+    virtual void Render(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
 
     virtual void RenderShadowMap(const Matrix4f& lightVp); // vp = view projection matrix.
 

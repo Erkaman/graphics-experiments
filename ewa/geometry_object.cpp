@@ -10,7 +10,7 @@
 #include "ewa/bt_util.hpp"
 
 #include "ewa/common.hpp"
-#include "ewa/camera.hpp"
+#include "ewa/icamera.hpp"
 #include "ewa/file.hpp"
 #include "ewa/cube.hpp"
 #include "eob_file.hpp"
@@ -259,7 +259,7 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
 
 }
 
-void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
+void GeometryObject::Render(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
 
     m_defaultShader->Bind();
 
@@ -361,7 +361,7 @@ void GeometryObject::Render(const Camera& camera, const Vector4f& lightPosition,
 	);
 
 
-    m_aabbWireframe->Render(camera.GetVp() );
+    m_aabbWireframe->Render(camera->GetVp() );
 }
 
 void  GeometryObject::SetModelMatrix(const Matrix4f& modelMatrix) {

@@ -81,7 +81,7 @@ void Camera::Fly(const float amount) {
     ComputeViewMatrix();
 }
 
-void Camera::HandleInput(const float delta) {
+void Camera::Update(const float delta) {
 
 
 

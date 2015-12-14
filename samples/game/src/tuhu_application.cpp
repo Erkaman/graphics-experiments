@@ -168,9 +168,6 @@ m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
       m_windSound->SetLooping(true);
     */
 
-
-
-
 }
 
 
@@ -352,11 +349,11 @@ void TuhuApplication::RenderScene() {
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    m_skydome->Draw(*m_camera);
+    m_skydome->Draw(m_camera);
 
-   m_heightMap->Render(*m_camera, m_lightDirection);
+   m_heightMap->Render(m_camera, m_lightDirection);
 
-    m_grass->Draw(*m_camera, m_lightDirection);
+    m_grass->Draw(m_camera, m_lightDirection);
 
    m_smoke->Render(m_camera->GetMvpFromM(), m_camera->GetPosition());
 
@@ -381,7 +378,7 @@ void TuhuApplication::RenderScene() {
 
 	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetModelSpaceAABB())) {
 	    ++nonCulledObjects;
-	   geoObj->Render(*m_camera, m_lightDirection, lightVp, *m_depthFbo);
+	   geoObj->Render(m_camera, m_lightDirection, lightVp, *m_depthFbo);
 	}
 
     }
@@ -423,7 +420,7 @@ void TuhuApplication::Update(const float delta) {
 
 			cos(m_totalDelta*ROT_SPEED)*RADIUS  )  );
 
-    m_camera->HandleInput(delta);
+    m_camera->Update(delta);
 
     m_smoke->Update(delta);
     //   m_snow->Update(delta);
@@ -438,7 +435,7 @@ void TuhuApplication::Update(const float delta) {
     if( kbs.IsPressed(GLFW_KEY_P) ) {
 
 	string out = "Vector3f" +tos(m_camera->GetPosition()) + ",";
-	out += "Vector3f" + tos(m_camera->GetViewDir());
+//	out += "Vector3f" + tos(m_camera->GetViewDir());
 	ToClipboard(out);
     }
 

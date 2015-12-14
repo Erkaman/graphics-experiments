@@ -6,7 +6,7 @@
 #include "ewa/math/vector4f.hpp"
 #include "ewa/math/matrix4f.hpp"
 
-class Camera;
+class ICamera;
 class HeightMap;
 class Skydome;
 class Grass;
@@ -24,7 +24,7 @@ class TuhuApplication : public Application{
 
 private:
 
-    Camera* m_camera;
+    ICamera* m_camera;
     HeightMap* m_heightMap;
 
     Skydome* m_skydome;

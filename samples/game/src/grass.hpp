@@ -6,7 +6,7 @@
 
 class VBO;
 class ShaderProgram;
-class Camera;
+class ICamera;
 class Texture;
 class Vector2f;
 class Vector3f;
@@ -62,6 +62,6 @@ public:
     Grass(Vector2f position, HeightMap* heightMap);
     ~Grass();
 
-    void Draw(const Camera& camera, const Vector4f& lightPosition);
+    void Draw(const ICamera* camera, const Vector4f& lightPosition);
     void Update(const float delta);
 };

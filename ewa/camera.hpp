@@ -2,9 +2,9 @@
 
 #include "math/vector3f.hpp"
 #include "math/matrix4f.hpp"
+#include "icamera.hpp"
 
-
-class Camera {
+class Camera : public ICamera{
 
 private:
 
@@ -22,20 +22,20 @@ public:
 
     Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir);
 
-    Matrix4f GetMvpFromM(const Matrix4f& m) const;
-    Matrix4f GetMvpFromM() const;
-    Matrix4f GetVp() const;
-    Matrix4f GetMvpFromMv(const Matrix4f& modelViewMatrix) const;
+    virtual Matrix4f GetMvpFromM(const Matrix4f& m) const;
+    virtual Matrix4f GetMvpFromM() const;
+    virtual Matrix4f GetVp() const;
+    virtual Matrix4f GetMvpFromMv(const Matrix4f& modelViewMatrix) const;
 
-    Matrix4f GetViewMatrix() const;
-    Matrix4f GetModelViewMatrix() const; // with the identity matrix as the model matrix.
-    Matrix4f GetModelViewMatrix(const Matrix4f& modelMatrix) const;
+    virtual Matrix4f GetViewMatrix() const;
+    virtual Matrix4f GetModelViewMatrix() const; // with the identity matrix as the model matrix.
+    virtual Matrix4f GetModelViewMatrix(const Matrix4f& modelMatrix) const;
 
-    Matrix4f GetProjectionMatrix() const;
+    virtual Matrix4f GetProjectionMatrix() const;
 
     Matrix4f CreateProjectionMatrix(const float fov, const float aspectRatio, const float near, const float far)const;
 
-    Vector3f GetPosition() const;
+    virtual Vector3f GetPosition() const;
     Vector3f GetViewDir() const;
     Vector3f GetUp() const;
     Vector3f GetRight() const;
@@ -44,6 +44,6 @@ public:
     void Stride(const float amount);
     void Fly(const float amount);
 
-    void HandleInput(const float delta);
+    virtual void Update(const float delta);
 
 };

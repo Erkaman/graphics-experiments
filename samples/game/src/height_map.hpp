@@ -9,7 +9,7 @@
 
 class VBO;
 class ShaderProgram;
-class Camera;
+class ICamera;
 class Texture;
 class PerlinSeed;
 class Texture;
@@ -57,8 +57,8 @@ public:
     HeightMap(const std::string& path);
     ~HeightMap();
 
-    void Render(const Camera& camera, const Vector4f& lightPosition);
-    void RenderShadowMap(const Camera& camera);
+    void Render(const ICamera* camera, const Vector4f& lightPosition);
+    void RenderShadowMap(const ICamera* camera);
 
     void SetWireframe(const bool wireframe);
 

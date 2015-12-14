@@ -3,7 +3,7 @@
 #include "aabb.hpp"
 #include "log.hpp"
 
-class Camera;
+class ICamera;
 class Matrix4f;
 class DepthFBO;
 class btMotionState;
@@ -14,7 +14,7 @@ class IGeometryObject {
 public:
 
     virtual void Render(
-	const Camera& camera,
+	const ICamera* camera,
 	const Vector4f& lightPosition,
 	const Matrix4f& lightVp,
 	const DepthFBO& shadowMap) = 0;

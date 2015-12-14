@@ -131,7 +131,7 @@ Car::~Car() {
 }
 
 void Car::Render(
-    const Camera& camera,
+    const ICamera* camera,
     const Vector4f& lightPosition,
     const Matrix4f& lightVp,
     const DepthFBO& shadowMap) {

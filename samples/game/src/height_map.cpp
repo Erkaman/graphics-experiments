@@ -10,7 +10,7 @@
 #include "gl/texture2d.hpp"
 
 #include "math/matrix4f.hpp"
-#include "camera.hpp"
+#include "icamera.hpp"
 #include "file.hpp"
 #include "resource_manager.hpp"
 
@@ -168,10 +168,10 @@ void HeightMap::Render() {
 
 }
 
-void HeightMap::RenderShadowMap(const Camera& camera) {
+void HeightMap::RenderShadowMap(const ICamera* camera) {
     m_depthShader->Bind();
 
-    const Matrix4f mvp = camera.GetMvpFromM(Matrix4f::CreateTranslation(0,0,0));
+    const Matrix4f mvp = camera->GetMvpFromM(Matrix4f::CreateTranslation(0,0,0));
     m_depthShader->SetUniform("mvp", mvp  );
 
     Render();
@@ -180,7 +180,7 @@ void HeightMap::RenderShadowMap(const Camera& camera) {
 
 }
 
-void HeightMap::Render(const Camera& camera, const Vector4f& lightPosition) {
+void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
 
     m_shader->Bind();
 

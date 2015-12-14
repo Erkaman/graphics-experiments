@@ -12,7 +12,7 @@
 #include "ewa/math/math_common.hpp"
 
 #include "ewa/value_noise_seed.hpp"
-#include "ewa/camera.hpp"
+#include "ewa/icamera.hpp"
 #include "height_map.hpp"
 
 #include "ewa/util.hpp"
@@ -155,9 +155,9 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 
 
 
-void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
+void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition) {
 
-    float cameraDist = ( Vector2f(camera.GetPosition().x, camera.GetPosition().z)  - m_position).Length();
+    float cameraDist = ( Vector2f(camera->GetPosition().x, camera->GetPosition().z)  - m_position).Length();
 
     if(cameraDist < 40) {
 
@@ -204,14 +204,14 @@ void Grass::Draw(const Camera& camera, const Vector4f& lightPosition) {
 	const Matrix4f model =  Matrix4f::CreateIdentity();
 
 
-	const Matrix4f view = camera.GetViewMatrix();
+	const Matrix4f view = camera->GetViewMatrix();
 
 
 //	const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
 	m_billboardShader->SetUniform("model", model);
 	m_billboardShader->SetUniform("view", view);
 
-	m_billboardShader->SetUniform("projection", camera.GetProjectionMatrix());
+	m_billboardShader->SetUniform("projection", camera->GetProjectionMatrix());
 	m_billboardShader->SetUniform("offset", m_position);
 
 
