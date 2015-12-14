@@ -433,7 +433,6 @@ void GeometryObject::CreateCollisionShape(
 
     m_rigidBody = new btRigidBody(ci);
 
-    m_rigidBody->setActivationState(DISABLE_DEACTIVATION); // Needed for btRaycastVehicles
     physicsWorld->AddRigidBody(m_rigidBody);
 }
 
