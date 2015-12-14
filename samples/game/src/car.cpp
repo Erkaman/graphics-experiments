@@ -8,33 +8,33 @@
 
 
 // hard coded for now.
-const btVector3 CAR_DIMENSIONS(8.0f, 2.0f, 4.0f);
+//const btVector3 CAR_DIMENSIONS(8.0f, 2.0f, 4.0f);
+
+const btVector3 CAR_DIMENSIONS(4.0f, 2.0f, 8.0f);
 
 // change it to 4, 2, 8.
 
-const float MASS_OFFSET = -0.3f;
+const float MASS_OFFSET = -0.2f;
 
-const float WHEEL_RADIUS = 0.3f; // 0.5f
-
+const float WHEEL_RADIUS = 0.3; // 0.5f
 
 const float FRONT_WHEEL_FRICTION = 2.0f;
 const float BACK_WHEEL_FRICTION = 1.9f;
 
+float	steeringClamp = 0.3f;
 
 const float SUSPENSION_REST_LENGTH = 0.6f; // (see also maxSuspensionTravelCm)
 
 const float ROLL_INFLUENCE = 0.1f;
 
-float	maxEngineForce = 10000.f;//this should be engine/velocity dependent
+float	steeringIncrement = 0.04f;
+
+float	maxEngineForce = 1000.f;//this should be engine/velocity dependent
 float	maxBreakingForce = 100.f;
 
-/*
 const btVector3 FRONT_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, (CAR_DIMENSIONS.z()/2 - 0.3f - WHEEL_RADIUS));
 const btVector3 BACK_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, -(CAR_DIMENSIONS.z()/2 - 0.1f - WHEEL_RADIUS));
-*/
 
-const btVector3 FRONT_WHEEL_DISTANCE(   (CAR_DIMENSIONS.z()/2 - 0.3f - WHEEL_RADIUS)  , MASS_OFFSET, CAR_DIMENSIONS.x()/2 - 0.1f );
-const btVector3 BACK_WHEEL_DISTANCE(-(CAR_DIMENSIONS.z()/2 - 0.1f - WHEEL_RADIUS) , MASS_OFFSET, CAR_DIMENSIONS.x()/2 - 0.1f );
 
 Car* Car::Load(PhysicsWorld* physicsWorld) {
 
@@ -169,14 +169,30 @@ void Car::Update(const float delta) {
     float gEngineForce = 0.0f;
     float gBreakingForce = 0.0f;
 
+    static float gVehicleSteering = 0.0;
+
     if( kbs.IsPressed(GLFW_KEY_UP) ) {
 	gEngineForce = maxEngineForce;
 	gBreakingForce = 0.f;
-    }
-    if(kbs.IsPressed(GLFW_KEY_DOWN)  ) {
+    } else if(kbs.IsPressed(GLFW_KEY_DOWN)  ) {
 	gEngineForce = -maxEngineForce;
 	gBreakingForce = 0.f;
+    }
 
+    if( kbs.IsPressed(GLFW_KEY_LEFT) ) {
+
+	gVehicleSteering += steeringIncrement;
+	if (gVehicleSteering > steeringClamp)
+	    gVehicleSteering = steeringClamp;
+    } else if( kbs.IsPressed(GLFW_KEY_RIGHT) ) {
+
+	gVehicleSteering -= steeringIncrement;
+	if (	gVehicleSteering < -steeringClamp)
+	    gVehicleSteering = -steeringClamp;
+
+
+    } else {
+	gVehicleSteering = 0;
     }
 
     int wheelIndex = 2;
@@ -186,19 +202,9 @@ void Car::Update(const float delta) {
     m_raycastVehicle->applyEngineForce(gEngineForce,wheelIndex);
     m_raycastVehicle->setBrake(gBreakingForce,wheelIndex);
 
-    /*
+
     wheelIndex = 0;
     m_raycastVehicle->setSteeringValue(gVehicleSteering,wheelIndex);
     wheelIndex = 1;
     m_raycastVehicle->setSteeringValue(gVehicleSteering,wheelIndex);
-    */
-
-    /*
-      force = 600.0f * delta * (Vector3f(0,0,0.6).Normalize());
-      m_geoObj->ApplyForce(force);
-    */
-
-    // (-1,0,0)
-
-    //applyCentralForce
 }

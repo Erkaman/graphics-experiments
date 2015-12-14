@@ -1,4 +1,4 @@
 StaticMesh/car:
   physics:
   - shape: Box
-    half-extents: [4,1,2]
+    half-extents: [2,1,4]
