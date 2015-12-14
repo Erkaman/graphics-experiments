@@ -1,17 +1,24 @@
 #pragma once
 
+#include "math/vector3f.hpp"
+#include "math/matrix4f.hpp"
+
 class ICamera {
+
+protected:
+
+    Matrix4f m_projectionMatrix;
+    Matrix4f m_viewMatrix;
 
 public:
 
     virtual ~ICamera() {}
 
-    virtual Matrix4f GetVp() const=0;
-    virtual Matrix4f GetMvp(const Matrix4f& m) const=0;
+    virtual Matrix4f GetVp() const;
+    virtual Matrix4f GetMvp(const Matrix4f& m) const;
 
-    virtual Matrix4f GetViewMatrix() const=0;
-    virtual Matrix4f GetProjectionMatrix() const=0;
-
+    virtual Matrix4f GetViewMatrix() const;
+    virtual Matrix4f GetProjectionMatrix() const;
 
     virtual Vector3f GetPosition() const=0;
 

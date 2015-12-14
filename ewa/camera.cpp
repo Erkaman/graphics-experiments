@@ -39,17 +39,6 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
 }
 
 
-Matrix4f Camera::GetVp() const {
-    return (m_projectionMatrix) * (m_viewMatrix);
-}
-
-
-
-
-Matrix4f Camera::GetMvp(const Matrix4f& m) const {
-    return (m_projectionMatrix) * (m_viewMatrix) * (m);
-}
-
 
 void Camera::ComputeViewMatrix() {
 	m_viewMatrix =
@@ -127,13 +116,7 @@ void Camera::Update(const float delta) {
     }
 }
 
-Matrix4f Camera::GetViewMatrix() const {
-    return m_viewMatrix;
-}
 
-Matrix4f Camera::GetProjectionMatrix() const {
-    return m_projectionMatrix;
-}
 
 
 Vector3f Camera::GetPosition() const {
