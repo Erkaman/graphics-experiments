@@ -14,7 +14,6 @@ class Texture;
 class PerlinSeed;
 class Texture;
 
-
 struct Cell {
     Vector3f position;
     Vector3f normal;
@@ -40,6 +39,7 @@ private:
     Texture* m_grassTexture;
     Texture* m_sandTexture;
     Texture* m_snowTexture;
+    Texture* m_heightMap;
 
     MultArray<Cell> *m_map;
 
@@ -63,6 +63,5 @@ public:
     void SetWireframe(const bool wireframe);
 
     float GetHeightAt(float x, float z)const;
-
 
 };

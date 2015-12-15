@@ -3,6 +3,8 @@
 #include "math/vector3f.hpp"
 #include "math/matrix4f.hpp"
 
+#include "log.hpp"
+
 class ICamera {
 
 protected:
@@ -21,6 +23,7 @@ public:
     virtual Matrix4f GetProjectionMatrix() const;
 
     virtual Vector3f GetPosition() const=0;
+    virtual Vector3f GetViewDir() const {LOG_E("GetViewDir not yet implemented!");}
 
     virtual void Update(const float delta)=0;
 };

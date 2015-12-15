@@ -6,7 +6,6 @@
 #include "log.hpp"
 
 
-
 GLfloat Texture::cachedMaxAnisotropic = 0.0f;
 
 Texture::operator std::string() const {

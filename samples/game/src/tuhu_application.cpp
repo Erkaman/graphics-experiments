@@ -88,20 +88,16 @@ void TuhuApplication::Init() {
     m_points = Points::Load(points, 7.0, Vector3f(1,0,0) );
 
 
+    const Vector3f pos =Vector3f(37.695389, 28.063812, 19.465561);
 
-    const Vector3f pos =
-
-	Vector3f(17.328205f, 15.360136f, 14.091190f);
-
-
-    Vector3f(5.997801f, 5.711470f, -3.929811f);
     m_freeCamera = new Camera(GetWindowWidth(),GetWindowHeight(),
 
 
 
 
 			  pos,
-Vector3f(-0.597377f, -0.590989f, -0.542100f)
+
+Vector3f(0.542463, -0.207760, 0.813984)
 
 			  );
 
@@ -445,7 +441,7 @@ void TuhuApplication::Update(const float delta) {
     if( kbs.IsPressed(GLFW_KEY_P) ) {
 
 	string out = "Vector3f" +tos(m_curCamera->GetPosition()) + ",";
-//	out += "Vector3f" + tos(m_curCamera->GetViewDir());
+	out += "Vector3f" + tos(m_curCamera->GetViewDir());
 	ToClipboard(out);
     }
 

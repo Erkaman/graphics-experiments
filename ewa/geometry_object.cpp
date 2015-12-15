@@ -73,7 +73,7 @@ public:
 
 
 
-Texture* LoadTexture(const string& filename) {
+static Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
     if(!texture)
 	return NULL;

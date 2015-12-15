@@ -124,14 +124,14 @@ Vector3f Camera::GetPosition() const {
 }
 
 
-Vector3f Camera::GetViewDir() const {
-    return m_viewDir;
-}
-
 Vector3f Camera::GetUp() const {
     return m_up;
 }
 
 Vector3f Camera::GetRight() const {
     return m_right;
+}
+
+Vector3f Camera::GetViewDir() const {
+    return m_viewDir;
 }

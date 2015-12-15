@@ -25,9 +25,10 @@ public:
     virtual void Update(const float delta);
 
     virtual Vector3f GetPosition() const;
-    Vector3f GetViewDir() const;
     Vector3f GetUp() const;
     Vector3f GetRight() const;
+
+    virtual Vector3f GetViewDir() const;
 
     void Walk(const float amount);
     void Stride(const float amount);

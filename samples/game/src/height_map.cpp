@@ -31,7 +31,6 @@ constexpr int WIDTH = 256;
 constexpr int HEIGHT = 256;
 constexpr float SCALE_XZ = 0.8f;
 
-
 constexpr char VERTEX_FILE[] = "dat/vert.dat";
 constexpr char INDEX_FILE[] = "dat/indx.dat";
 
@@ -60,46 +59,32 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
     return n.Normalize();
 }
 
+static Texture* LoadTexture(const string& filename) {
+    Texture* texture = Texture2D::Load(filename);
+
+    if(!texture) {
+	PrintErrorExit();
+    }
+
+    texture->Bind();
+    texture->SetTextureRepeat();
+    texture->GenerateMipmap();
+    texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    texture->SetMagFilter(GL_LINEAR);
+    texture->Unbind();
+
+    return texture;
+}
+
 HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f) {
 
-    m_grassTexture = Texture2D::Load("img/grass.png");
-    if(!m_grassTexture) {
-	PrintErrorExit();
-    }
+    m_grassTexture = LoadTexture("img/grass.png");
 
-    m_grassTexture->Bind();
-    m_grassTexture->SetTextureRepeat();
-    m_grassTexture->GenerateMipmap();
-    m_grassTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-    m_grassTexture->SetMagFilter(GL_LINEAR);
-    m_grassTexture->Unbind();
+    m_sandTexture = LoadTexture("img/sand.png");
 
-    m_sandTexture = Texture2D::Load("img/sand.png");
-    if(!m_sandTexture) {
-	PrintErrorExit();
-    }
+    m_snowTexture = LoadTexture("img/snow.png");
 
-    m_sandTexture->Bind();
-    m_sandTexture->SetTextureRepeat();
-    m_sandTexture->GenerateMipmap();
-    m_sandTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-    m_sandTexture->SetMagFilter(GL_LINEAR);
-    m_sandTexture->Unbind();
-
-
-
-    m_snowTexture = Texture2D::Load("img/snow.png");
-    if(!m_snowTexture) {
-	PrintErrorExit();
-    }
-
-    m_snowTexture->Bind();
-    m_snowTexture->SetTextureRepeat();
-    m_snowTexture->GenerateMipmap();
-    m_snowTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-    m_snowTexture->SetMagFilter(GL_LINEAR);
-    m_snowTexture->Unbind();
-
+    m_heightMap =LoadTexture("img/combined.png");
 
     /*
       load the shader
@@ -109,9 +94,9 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
     m_depthShader = ShaderProgram::Load("shader/output_depth");
 
 
-    if(! (File::Exists(VERTEX_FILE) && File::Exists(INDEX_FILE) )) {
+//    if(! (File::Exists(VERTEX_FILE) && File::Exists(INDEX_FILE) )) {
 	CreateHeightmap(path);
-    }
+//    }
 
 
     m_vertexBuffer = VBO::CreateInterleaved(
@@ -199,6 +184,9 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
     Texture::SetActiveTextureUnit(2);
     m_snowTexture->Bind();
 
+    m_shader->SetUniform("heightMap", 3);
+    Texture::SetActiveTextureUnit(3);
+    m_heightMap->Bind();
 
 
     // set textures and stuff.
@@ -217,6 +205,7 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
     m_grassTexture->Unbind();
     m_sandTexture->Unbind();
     m_snowTexture->Unbind();
+    m_heightMap->Unbind();
 
 
     m_shader->Unbind();
@@ -265,13 +254,12 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 	PrintErrorExit();
     }
 
-	lodepng::load_file(buffer, *fullPath);
+    lodepng::load_file(buffer, *fullPath);
 
     lodepng::State state;
     std::vector<unsigned char> imageData;
     unsigned int width;
     unsigned int depth;
-
 
     unsigned error = lodepng::decode(imageData, width, depth, state, buffer);
 
@@ -280,32 +268,24 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     }
 
 
-
     /*
       Next we create the vertex buffer.
     */
-
 
     MultArray<Cell> map(width, depth);
 
     unsigned int xpos = 0;
     unsigned int zpos = 0;
 
-    float high = -9999.0f;
-    float low = 9999.0f;
-
     for(size_t i = 0; i < imageData.size(); i+=4) {
 
 	Cell& c = map(xpos, zpos);
 
-	float height = imageData[i+1] / 20.0f;
+//	float height = imageData[i+1] / 20.0f;
 
 //	LOG_I("red: %d", imageData[i]);
 
-	c.position = Vector3f(ScaleXZ(xpos), height, ScaleXZ(zpos));
-
-	high = std::max(c.position.y, high);
-	low = std::min(c.position.y, low);
+	c.position = Vector3f((float)xpos / (float)width, 0, (float)zpos / (float)depth);
 
 	++xpos;
 	if(xpos != 0 && ( xpos % (width) == 0)) {
@@ -314,6 +294,7 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 	}
     }
 
+/*
     // normalize the vertex data.
     for(size_t x = 0; x < width; ++x) {
 	for(size_t z = 0; z < depth; ++z) {
@@ -387,10 +368,9 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
 //    LOG_I("min max %f, %f", miny, maxy);
 
+*/
 
     File::WriteArray(VERTEX_FILE, reinterpret_cast<void *>(map.GetData()), map.GetTotalsize() * sizeof(Cell) );
-
-
 
     GLuint baseIndex = 0;
     UintVector indices;
