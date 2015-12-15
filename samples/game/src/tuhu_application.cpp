@@ -411,6 +411,8 @@ void TuhuApplication::Render() {
 
 void TuhuApplication::Update(const float delta) {
 
+    m_heightMap->Update(delta);
+
     m_viewFrustum->Update( m_curCamera->GetVp() );
 
     m_physicsWorld->Update(delta);

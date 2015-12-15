@@ -46,6 +46,8 @@ private:
 
     MultArray<Cell> *m_map;
 
+    MultArray<unsigned char>* m_image;
+
 
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
@@ -66,5 +68,7 @@ public:
     void SetWireframe(const bool wireframe);
 
     float GetHeightAt(float x, float z)const;
+
+    void Update(const float delta);
 
 };

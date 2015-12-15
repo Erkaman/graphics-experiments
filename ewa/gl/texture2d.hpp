@@ -5,8 +5,7 @@
 class Texture2D : public Texture{
 
 private:
-
-    GLint m_level;
+       GLint m_level;
 
     GLenum m_format;
     GLenum m_type;

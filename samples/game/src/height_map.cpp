@@ -257,18 +257,20 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     size_t width = 256;
     size_t depth = 256;
 
-    MultArray<unsigned char> image(width, depth, (unsigned char)0);
+    m_image = new MultArray<unsigned char>(width, depth, (unsigned char)0);
+
+    MultArray<unsigned char>& image = *m_image;
 
     Random random(3);
 
     for(size_t i = 0; i < width; ++i) {
 
 	for(size_t j = 0; j < depth; ++j) {
-	    image(i,j) = random.RandomInt(0,120);
+	    image(i,j) = random.RandomInt(0,80);
 	}
     }
 
-//    image(128,128) = 255;
+
 
     m_imageTexture = new Texture2D(image.GetData(), width, depth,
 					    GL_R8, // internal format
@@ -282,6 +284,17 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     m_imageTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
     m_imageTexture->SetMagFilter(GL_LINEAR);
     m_imageTexture->Unbind();
+
+
+    image(20,20) = 255;
+
+    m_imageTexture->Bind();
+
+    m_imageTexture->UpdateTexture(image.GetData());
+
+    m_imageTexture->Unbind();
+
+
 
 
     /*
@@ -467,4 +480,33 @@ float HeightMap::GetHeightAt(float x, float z)const {
     */
 
     return 0;
+}
+
+
+void HeightMap::Update(const float delta) {
+
+    MultArray<unsigned char>& image = *m_image;
+
+    static int dir = -1;
+
+    unsigned char c = image(20,20);
+
+    if(c >= 255 && dir==1) {
+	dir = -1;
+    }
+
+    if(c < 1 && dir==-1) {
+	dir = +1;
+    }
+
+    c += dir;
+
+    image(20,20) = c;
+
+    m_imageTexture->Bind();
+
+    m_imageTexture->UpdateTexture(image.GetData());
+
+    m_imageTexture->Unbind();
+
 }
