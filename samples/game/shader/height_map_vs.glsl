@@ -22,6 +22,8 @@ out vec2 texCoord;
 
 out vec3 position;
 
+out vec3 norm;
+
 // sample heightmap
 float f(vec2 texCoord) {
     return texture(heightMap, texCoord).r;
@@ -33,7 +35,7 @@ float f(float x, float z) {
 
 vec3 getNormal(vec2 texCoord)
 {
-    float eps = 0.00001;
+    float eps = 0.001;
     vec2 p = texCoord;
 
     vec3 n = vec3( f(p.x-eps,p.y) - f(p.x+eps,p.y),
@@ -63,5 +65,6 @@ void main()
 
     texCoord = texCoordIn;
 
+    norm = getNormal(positionIn.xz);
     position = pos;
 }

@@ -12,6 +12,8 @@ in vec2 texCoord;
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
 
+in vec3 norm;
+
 uniform sampler2D grass;
 uniform sampler2D sand;
 uniform sampler2D snow;
@@ -57,8 +59,10 @@ vec3 sampleDiffuseTexture() {
 void main()
 {
 
+
+
     vec3 shading = phongVertex(sampleDiffuseTexture(), viewSpaceNormal,
 			       viewSpaceLightDirection // minus, because its a directional light.
 			       , viewSpacePosition);
-    fragmentColor = vec4(shading, 1.0);
+    fragmentColor = vec4(norm, 1.0);
 }
