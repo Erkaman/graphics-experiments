@@ -46,7 +46,7 @@ float StrToFloat(const string& str) {
     return std::stof(str, &size) ;
 }
 
-float StrToBool(const string& str) {
+bool StrToBool(const string& str) {
     if(str == "true") {
 	return true;
     } else {
@@ -368,7 +368,7 @@ Vector3f ParseYamlVector(string str) {
 
 }
 
-CollisionShape* ReadYaml(const std::string& infile, EntityInfo* entityInfo) {
+CollisionShape* ReadYaml(const std::string& infile) {
 
     string yamlFile = infile.substr(0, infile.size()-4 ) + ".yaml" ;
 
@@ -488,7 +488,7 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
 
     if(File::Exists(yamlFile)) {
 
-	data->m_collisionShape = ReadYaml(infile, data->m_entityInfo);
+	data->m_collisionShape = ReadYaml(infile);
 	if(!data->m_collisionShape) {
 	    SetError("Could not parse yaml file: %s", infile.c_str() );
 	    return NULL;

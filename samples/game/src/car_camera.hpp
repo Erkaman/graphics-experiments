@@ -17,7 +17,7 @@ public:
 
     CarCamera(const int windowWidth, const int windowHeight, Car* car);
 
-    virtual void Update(const float delta);
+    virtual void Update(const float);
 
     virtual Vector3f GetPosition() const;
 };

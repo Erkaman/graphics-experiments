@@ -15,7 +15,7 @@ CarCamera::CarCamera(const int windowWidth, const int windowHeight, Car* car) {
 }
 
 
-void CarCamera::Update(const float delta) {
+void CarCamera::Update(const float) {
 
     UpdateViewMatrix();
 

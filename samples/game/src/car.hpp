@@ -3,7 +3,7 @@
 #include "ewa/igeometry_object.hpp"
 
 class PhysicsWorld;
-class btVehicleRaycaster;
+struct btVehicleRaycaster;
 class btRaycastVehicle;
 
 class Car : public IGeometryObject{
@@ -33,7 +33,7 @@ public:
 
     virtual AABB GetModelSpaceAABB()const;
 
-    void Update(const float delta);
+    void Update();
 
     Vector3f GetForwardVector()const;
 

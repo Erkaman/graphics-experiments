@@ -59,9 +59,6 @@ LIST(APPEND game_libs ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
 
 LIST(APPEND game_libs glfw3)
 
-FIND_PACKAGE(Bullet REQUIRED)
-
-LIST(APPEND game_libs ${BULLET_LIBRARIES})
 
 
 IF(APPLE)
@@ -79,6 +76,11 @@ IF(APPLE)
 	FIND_PACKAGE(OpenAL REQUIRED)
 	LIST(APPEND game_libs ${OPENAL_LIBRARY})
 
+	FIND_PACKAGE(Bullet REQUIRED)
+
+LIST(APPEND game_libs ${BULLET_LIBRARIES})
+
+	
    include_directories( ${BULLET_INCLUDE_DIRS} )
 
 
@@ -88,9 +90,17 @@ ELSEIF(UNIX)
   find_package(Threads REQUIRED)
   list(APPEND game_libs "${X11_X11_LIB}" "${RT_LIBRARY}" "${X11_Xrandr_LIB}" "${X11_Xinput_LIB}" "${X11_Xcursor_LIB}" "${X11_Xinerama_LIB}" "${X11_Xxf86vm_LIB}" "${CMAKE_THREAD_LIBS_INIT}")
 ELSEIF(WIN32)
-  MESSAGE(linking)
+  
   LINK_DIRECTORIES("deps/libs/win32")
+  
+  # add openal 
   LIST(APPEND game_libs OpenAL32)
+  
+  # add bullet 
+  LIST(APPEND game_libs BulletDynamics BulletCollision LinearMath)
+  include_directories("deps/include/bullet" )
+  
+  
 
 ENDIF()
 

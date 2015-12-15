@@ -48,7 +48,7 @@ void ToClipboard(const std::string& str) {
 //(0.705072, 0.0758142, 0.705072)
 TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_curCamera(NULL), m_heightMap(NULL),m_skydome(NULL), m_lightDirection(
 
-    -0.705072, -0.458142, -0.705072,
+    -0.705072f, -0.458142f, -0.705072f,
 //    -0.705072f, -0.0758142f, -0.705072f ,
 
     0.0f){ }
@@ -82,7 +82,7 @@ void TuhuApplication::Init() {
 
     for(int i = 0; i < 20; ++i) {
 
-	points.emplace_back(i,0,0);
+	points.emplace_back(i,0.0f,0.0f);
     }
 
     m_points = Points::Load(points, 7.0, Vector3f(1,0,0) );
@@ -91,17 +91,17 @@ void TuhuApplication::Init() {
 
     const Vector3f pos =
 
-	Vector3f(17.328205, 15.360136, 14.091190);
+	Vector3f(17.328205f, 15.360136f, 14.091190f);
 
 
-    Vector3f(5.997801, 5.711470, -3.929811);
+    Vector3f(5.997801f, 5.711470f, -3.929811f);
     m_freeCamera = new Camera(GetWindowWidth(),GetWindowHeight(),
 
 
 
 
 			  pos,
-Vector3f(-0.597377, -0.590989, -0.542100)
+Vector3f(-0.597377f, -0.590989f, -0.542100f)
 
 			  );
 
@@ -136,7 +136,7 @@ Vector3f(-0.597377, -0.590989, -0.542100)
 
    m_woodFloor = LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40) );
 
-   m_sphere = LoadObj("obj/sunball.eob", Vector3f(21.152159, 13.744261, 21.152159));
+   m_sphere = LoadObj("obj/sunball.eob", Vector3f(21.152159f, 13.744261f, 21.152159f));
 
 //   LOG_I("created some objs");
 
@@ -416,12 +416,12 @@ void TuhuApplication::Update(const float delta) {
 
     m_physicsWorld->Update(delta);
 
-    m_car->Update(delta);
+    m_car->Update();
 
     m_totalDelta += delta;
 
-    const float RADIUS = 30.0;
-    const float ROT_SPEED = 0.4;
+    const float RADIUS = 30.0f;
+    const float ROT_SPEED = 0.4f;
 
     m_line->SetEnd( Vector3f(
 

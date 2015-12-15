@@ -9,7 +9,7 @@ class btSequentialImpulseConstraintSolver;
 class btRigidBody;
 class btActionInterface;
 
-class btVehicleRaycaster;
+struct btVehicleRaycaster;
 
 class PhysicsWorld {
 

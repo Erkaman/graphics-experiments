@@ -25,14 +25,17 @@ using std::string;
 using std::vector;
 
 
-class MyMotionState : public btMotionState
+ATTRIBUTE_ALIGNED16(class) MyMotionState : public btMotionState
 {
 protected:
     GeometryObject* m_obj;
     btTransform mInitialPosition;
 
 public:
-    MyMotionState(const btTransform &initialPosition, GeometryObject *obj)
+
+	BT_DECLARE_ALIGNED_ALLOCATOR();
+
+    MyMotionState(const btTransform& initialPosition, GeometryObject *obj)
     {
         m_obj = obj;
 	mInitialPosition = initialPosition;

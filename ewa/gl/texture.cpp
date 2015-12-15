@@ -197,7 +197,7 @@ void Texture::WriteDepthToFile(const std::string& filename) {
     unsigned char* rgbaPixels = new unsigned char[m_width* m_height * 4];
     int j = 0;
 
-    for(int i = 0; i < size; ++i) {
+    for(size_t i = 0; i < size; ++i) {
 
 	float depth = depths[i];
 

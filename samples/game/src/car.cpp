@@ -14,7 +14,7 @@
 const btVector3 CAR_DIMENSIONS(4.0f, 2.0f, 8.0f);
 
 const float MASS_OFFSET = -0.2f;
-const float WHEEL_RADIUS = 0.3;
+const float WHEEL_RADIUS = 0.3f;
 const float FRONT_WHEEL_FRICTION = 1.9f;
 const float BACK_WHEEL_FRICTION = 1.9f;
 const float SUSPENSION_REST_LENGTH = 0.6f; // (see also maxSuspensionTravelCm)
@@ -146,8 +146,7 @@ AABB Car::GetModelSpaceAABB()const {
     return m_geoObj->GetModelSpaceAABB();
 }
 
-
-void Car::Update(const float delta) {
+void Car::Update() {
 //    LOG_I("car update");
     const KeyboardState& kbs = KeyboardState::GetInstance();
 

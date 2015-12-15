@@ -25,8 +25,10 @@ public:
 
     virtual ~IGeometryObject() {}
 
-    virtual void ApplyCentralForce(const Vector3f& force) {LOG_E("ApplyCentralForce not yet implemented!"); }
+#pragma warning( disable : 4100 ) // temporarily disable warning: "unreferenced formal parameter.
 
+    virtual void ApplyCentralForce(const Vector3f& force) {LOG_E("ApplyCentralForce not yet implemented!"); }
+    
     virtual void ApplyForce(const Vector3f& force, const Vector3f& relPos) {LOG_E("ApplyForce not yet implemented!"); }
 
     virtual btRigidBody* GetRigidBody() const {LOG_E("GetRigidBody not yet implemented!"); }
@@ -34,5 +36,7 @@ public:
     virtual btMotionState* GetMotionState() const { LOG_E("GetMotionState not yet implemented!"); }
 
     virtual Vector3f GetPosition() const=0;
+
+#pragma warning( default : 4100 )
 
 };
