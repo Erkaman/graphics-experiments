@@ -35,23 +35,47 @@ float f(float x, float z) {
 
 vec3 getNormal(vec2 texCoord)
 {
-    float eps = 0.001;
+/*
+    float eps = 1.0 / 256.0;
     vec2 p = texCoord;
 
     vec3 n = vec3( f(p.x-eps,p.y) - f(p.x+eps,p.y),
                          2.0f*eps,
                          f(p.x,p.y-eps) - f(p.x,p.y+eps) );
     return normalize( n );
+*/
+
+
+
+    float eps = 1.0 / 256.0;
+    vec3 p = vec3(texCoord.x, 0, texCoord.y);
+
+
+    //eps on x axis.
+    vec3 va = vec3(2*eps, f(p.x+eps,p.z) - f(p.x-eps,p.z), 0 );
+
+    vec3 vb = vec3(0, f(p.x,p.z+eps) - f(p.x,p.z-eps), 2*eps );
+
+    // http://stackoverflow.com/questions/5281261/generating-a-normal-map-from-a-height-map
+    vec3 n = normalize(cross(normalize(vb), normalize(va) ));
+
+
+
+//    return normalize(vec3(f(p.x,p.z)  ));
+
+    return n;
+//    return n * 0.5 + 0.5;
+
 }
 
 void main()
 {
-    float xzScale = 200.0;
+    float xzScale = 100.0;
     vec3 offset = vec3(50,0,50);
 
     vec3 pos = offset + vec3(
 	positionIn.x * xzScale,
-	f(positionIn.xz) * 5,
+	f(positionIn.xz)*4,
 	positionIn.z * xzScale);
 
     gl_Position = mvp * vec4(pos,1);
@@ -65,6 +89,6 @@ void main()
 
     texCoord = texCoordIn;
 
-    norm = getNormal(positionIn.xz);
+    norm = normalize(getNormal(positionIn.xz));
     position = pos;
 }

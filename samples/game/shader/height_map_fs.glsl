@@ -58,11 +58,10 @@ vec3 sampleDiffuseTexture() {
 
 void main()
 {
-
-
-
-    vec3 shading = phongVertex(sampleDiffuseTexture(), viewSpaceNormal,
+    vec3 shading = phongVertex(
+	texture(grass, texCoord).xyz
+	/*sampleDiffuseTexture()*/, viewSpaceNormal,
 			       viewSpaceLightDirection // minus, because its a directional light.
 			       , viewSpacePosition);
-    fragmentColor = vec4(norm, 1.0);
+    fragmentColor = vec4(shading, 1.0);
 }

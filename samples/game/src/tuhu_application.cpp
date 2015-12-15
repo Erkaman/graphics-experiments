@@ -88,7 +88,10 @@ void TuhuApplication::Init() {
     m_points = Points::Load(points, 7.0, Vector3f(1,0,0) );
 
 
-    const Vector3f pos =Vector3f(37.695389, 28.063812, 19.465561);
+    const Vector3f pos =
+
+	Vector3f(48.866501, 15.432347, 44.625168);
+
 
     m_freeCamera = new Camera(GetWindowWidth(),GetWindowHeight(),
 
@@ -97,7 +100,7 @@ void TuhuApplication::Init() {
 
 			  pos,
 
-Vector3f(0.542463, -0.207760, 0.813984)
+			      Vector3f(0.671108, -0.403981, 0.621622)
 
 			  );
 
@@ -112,7 +115,7 @@ Vector3f(0.542463, -0.207760, 0.813984)
     m_fire->Init();
 
 
-   m_heightMap = new HeightMap("img/combined.png");
+   m_heightMap = new HeightMap("img/hill.png");
 
 
 

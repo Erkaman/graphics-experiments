@@ -72,7 +72,6 @@ static Texture* LoadTexture(const string& filename) {
     texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
     texture->SetMagFilter(GL_LINEAR);
     texture->Unbind();
-
     return texture;
 }
 
@@ -286,6 +285,10 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 //	LOG_I("red: %d", imageData[i]);
 
 	c.position = Vector3f((float)xpos / (float)width, 0, (float)zpos / (float)depth);
+
+	float scale = 1.0;
+
+	c.texCoord = Vector2f(xpos*scale, zpos*scale);
 
 	++xpos;
 	if(xpos != 0 && ( xpos % (width) == 0)) {
