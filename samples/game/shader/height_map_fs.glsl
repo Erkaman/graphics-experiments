@@ -51,8 +51,6 @@ vec3 sampleDiffuseTexture() {
 	return mix(texture(grass,texCoord).xyz, texture(sand,texCoord).xyz, l);
 
     }
-
-
 //
 }
 

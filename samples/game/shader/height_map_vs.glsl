@@ -33,7 +33,7 @@ float f(float x, float z) {
 
 vec3 getNormal(vec2 texCoord)
 {
-    float eps = 0.001;
+    float eps = 0.00001;
     vec2 p = texCoord;
 
     vec3 n = vec3( f(p.x-eps,p.y) - f(p.x+eps,p.y),
@@ -42,10 +42,9 @@ vec3 getNormal(vec2 texCoord)
     return normalize( n );
 }
 
-
 void main()
 {
-    float xzScale = 100.0;
+    float xzScale = 200.0;
     vec3 offset = vec3(50,0,50);
 
     vec3 pos = offset + vec3(
