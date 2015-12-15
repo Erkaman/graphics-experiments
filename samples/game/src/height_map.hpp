@@ -13,6 +13,7 @@ class ICamera;
 class Texture;
 class PerlinSeed;
 class Texture;
+class Texture2D;
 
 struct Cell {
     Vector3f position;
@@ -39,7 +40,9 @@ private:
     Texture* m_grassTexture;
     Texture* m_sandTexture;
     Texture* m_snowTexture;
-    Texture* m_heightMap;
+//    Texture* m_heightMap;
+
+    Texture2D* m_imageTexture;
 
     MultArray<Cell> *m_map;
 
@@ -48,7 +51,7 @@ private:
     static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);
 
-    static void CreateHeightmap(const std::string& path);
+    void CreateHeightmap(const std::string& path);
 
     void Render();
 

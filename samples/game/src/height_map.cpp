@@ -13,6 +13,7 @@
 #include "icamera.hpp"
 #include "file.hpp"
 #include "resource_manager.hpp"
+#include "ewa/random.hpp"
 
 #include "math/vector2f.hpp"
 #include "math/vector3f.hpp"
@@ -34,6 +35,7 @@ constexpr float SCALE_XZ = 0.8f;
 constexpr char VERTEX_FILE[] = "dat/vert.dat";
 constexpr char INDEX_FILE[] = "dat/indx.dat";
 
+/*
 static inline float Lerp(float x, float y, float a) {
     return x*(1-a)+y*a;
 }
@@ -48,8 +50,9 @@ static inline Vector2f Fade(const float px, const float py) {
 	px * px * px * (px * (px * 6 - 15) + 10),
 	py * py * py * (py * (py * 6 - 15) + 10));
 }
+*/
 
-
+/*
 static Vector3f CalculateNormal (float north, float south, float east, float west)
 {
     Vector3f n(
@@ -58,6 +61,7 @@ static Vector3f CalculateNormal (float north, float south, float east, float wes
 	(north - south));
     return n.Normalize();
 }
+*/
 
 static Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
@@ -72,6 +76,7 @@ static Texture* LoadTexture(const string& filename) {
     texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
     texture->SetMagFilter(GL_LINEAR);
     texture->Unbind();
+
     return texture;
 }
 
@@ -83,7 +88,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
     m_snowTexture = LoadTexture("img/snow.png");
 
-    m_heightMap =LoadTexture("img/combined.png");
+//    m_heightMap =LoadTexture("img/combined.png");
 
     /*
       load the shader
@@ -185,7 +190,8 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
 
     m_shader->SetUniform("heightMap", 3);
     Texture::SetActiveTextureUnit(3);
-    m_heightMap->Bind();
+    // m_heightMap->Bind();
+    m_imageTexture->Bind();
 
 
     // set textures and stuff.
@@ -204,26 +210,32 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
     m_grassTexture->Unbind();
     m_sandTexture->Unbind();
     m_snowTexture->Unbind();
-    m_heightMap->Unbind();
+
+    m_imageTexture->Unbind();
 
 
     m_shader->Unbind();
 }
 
+/*
 const float HeightMap::ComputeY(const unsigned char heightMapData ) {
 //    return ((float)heightMapData  / 255.0f) * 0.2;
     return ((float)heightMapData  / 255.0f) * 1.0f;
 }
+*/
 
 void HeightMap::SetWireframe(const bool wireframe) {
     m_isWireframe = wireframe;
 }
 
+/*
 const float HeightMap::ScaleXZ(const int x) {
 //    return 0.03f * x;
     return SCALE_XZ * x;
 }
+*/
 
+/*
 const Color HeightMap::VertexColoring(const float y) {
 
     if(y < 1.7f) {
@@ -237,16 +249,46 @@ const Color HeightMap::VertexColoring(const float y) {
 	return Color::Lerp(lower, higher, (y-1.7f) / 1.2f);
     }
 
-}
+}*/
 
 void HeightMap::CreateHeightmap(const std::string& path) {
+
+
+    size_t width = 256;
+    size_t depth = 256;
+
+    MultArray<unsigned char> image(width, depth, (unsigned char)0);
+
+    Random random(3);
+
+    for(size_t i = 0; i < width; ++i) {
+
+	for(size_t j = 0; j < depth; ++j) {
+	    image(i,j) = random.RandomInt(0,120);
+	}
+    }
+
+//    image(128,128) = 255;
+
+    m_imageTexture = new Texture2D(image.GetData(), width, depth,
+					    GL_R8, // internal format
+					    GL_RED, // format
+					    GL_UNSIGNED_BYTE
+	);
+
+    m_imageTexture->Bind();
+    m_imageTexture->SetTextureRepeat();
+    m_imageTexture->GenerateMipmap();
+    m_imageTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    m_imageTexture->SetMagFilter(GL_LINEAR);
+    m_imageTexture->Unbind();
 
 
     /*
       Load the heightmap data.
     */
 
-    std::vector<unsigned char> buffer;
+    /*   std::vector<unsigned char> buffer;
 
     string* fullPath = ResourceManager::GetInstance().SearchResource(path);
     if(!fullPath) {
@@ -267,16 +309,19 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     }
 
 
-    /*
       Next we create the vertex buffer.
     */
+
+
+
 
     MultArray<Cell> map(width, depth);
 
     unsigned int xpos = 0;
     unsigned int zpos = 0;
 
-    for(size_t i = 0; i < imageData.size(); i+=4) {
+
+    for(size_t i = 0; i < width*depth; ++i) {
 
 	Cell& c = map(xpos, zpos);
 
@@ -295,6 +340,8 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 	    xpos = 0;
 	    ++zpos;
 	}
+
+//	LOG_I("x = %d, z = %d", xpos, zpos);
     }
 
 /*
@@ -399,7 +446,7 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 }
 
 float HeightMap::GetHeightAt(float x, float z)const {
-
+    /*
     Vector2f p = Vector2f( ((float)x / SCALE_XZ), ((float)z / SCALE_XZ) );
 
     Vector2i P =  Vector2i( Floor(p.x),  Floor(p.y) );
@@ -417,5 +464,7 @@ float HeightMap::GetHeightAt(float x, float z)const {
 
 
     return Lerp(Lerp(AA, BA, f.x), Lerp(AB, BB, f.x), f.y);
+    */
 
+    return 0;
 }
