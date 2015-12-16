@@ -1,4 +1,0 @@
-StaticMesh/sunball:
-  physics:
-  - shape: Sphere
-    radius: 1.0
