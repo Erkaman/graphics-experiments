@@ -1,0 +1,5 @@
+StaticMesh/wall:
+  physics:
+  - shape: Box
+    half-extents: [4.74187,3.19471,0.344089]
+    origin: [0,3,-0]
