@@ -190,12 +190,9 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
 
     m_shader->SetUniform("heightMap", 3);
     Texture::SetActiveTextureUnit(3);
-    // m_heightMap->Bind();
     m_imageTexture->Bind();
 
-
     // set textures and stuff.
-
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -217,23 +214,9 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
     m_shader->Unbind();
 }
 
-/*
-const float HeightMap::ComputeY(const unsigned char heightMapData ) {
-//    return ((float)heightMapData  / 255.0f) * 0.2;
-    return ((float)heightMapData  / 255.0f) * 1.0f;
-}
-*/
-
 void HeightMap::SetWireframe(const bool wireframe) {
     m_isWireframe = wireframe;
 }
-
-/*
-const float HeightMap::ScaleXZ(const int x) {
-//    return 0.03f * x;
-    return SCALE_XZ * x;
-}
-*/
 
 /*
 const Color HeightMap::VertexColoring(const float y) {
@@ -293,40 +276,6 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     m_imageTexture->UpdateTexture(image.GetData());
 
     m_imageTexture->Unbind();
-
-
-
-
-    /*
-      Load the heightmap data.
-    */
-
-    /*   std::vector<unsigned char> buffer;
-
-    string* fullPath = ResourceManager::GetInstance().SearchResource(path);
-    if(!fullPath) {
-	PrintErrorExit();
-    }
-
-    lodepng::load_file(buffer, *fullPath);
-
-    lodepng::State state;
-    std::vector<unsigned char> imageData;
-    unsigned int width;
-    unsigned int depth;
-
-    unsigned error = lodepng::decode(imageData, width, depth, state, buffer);
-
-    if(error != 0){
-	LOG_E("could not load height map: %s", lodepng_error_text(error));
-    }
-
-
-      Next we create the vertex buffer.
-    */
-
-
-
 
     MultArray<Cell> map(width, depth);
 
@@ -484,7 +433,7 @@ float HeightMap::GetHeightAt(float x, float z)const {
 
 
 void HeightMap::Update(const float delta) {
-
+/*
     MultArray<unsigned char>& image = *m_image;
 
     static int dir = -1;
@@ -505,8 +454,10 @@ void HeightMap::Update(const float delta) {
 
     m_imageTexture->Bind();
 
+    //TODO: methods better exist:
+    // http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
     m_imageTexture->UpdateTexture(image.GetData());
 
     m_imageTexture->Unbind();
-
+*/
 }
