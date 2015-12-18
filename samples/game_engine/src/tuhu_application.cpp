@@ -415,15 +415,17 @@ void TuhuApplication::RenderScene() {
 void TuhuApplication::Render() {
 
     if(m_config.IsGui()) {
-	ImGui_ImplGlfwGL3_NewFrame();
+	ImGui_ImplGlfwGL3_NewFrame(m_guiVerticalScale);
     }
 
     RenderShadowMap();
 
-    float SCALE = 0.3;
+    float SCALE = m_guiVerticalScale;
 
     // set the viewport to the size of the window.
 
+    int windowWidth;
+    int windowHeight;
 
     if(m_config.IsGui()) {
 
@@ -433,6 +435,8 @@ void TuhuApplication::Render() {
 	::SetViewport(fb_width*SCALE, 0,
 		      GetFramebufferWidth(),
 		      GetFramebufferHeight());
+	windowWidth = fb_width*SCALE * 0.5;
+	windowHeight = fb_height * 0.5;
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -465,7 +469,7 @@ void TuhuApplication::Render() {
 	bool p_opened = true;
 
 	ImGui::Begin("ImGui Demo", &p_opened,
-		     ImVec2(200,400), bg_alpha, window_flags);
+		     ImVec2(windowWidth,windowHeight), bg_alpha, window_flags);
 
 	ImGui::SetWindowPos(ImVec2(0,0) );
 
@@ -500,6 +504,7 @@ void TuhuApplication::Update(const float delta) {
 			-2.0,
 
 			cos(m_totalDelta*ROT_SPEED)*RADIUS  )  );
+
 
     m_curCamera->Update(delta);
 

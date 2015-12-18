@@ -59,7 +59,7 @@ public:
 
 protected:
 
-    Application(int argc, char *argv[], int width=800, int height=600);
+    Application(int argc, char *argv[], int width=800*1.5, int height=600*1.2);
 
     Font* m_font;
     ShaderProgram* m_fontShader;

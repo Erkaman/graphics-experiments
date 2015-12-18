@@ -345,7 +345,7 @@ void ImGui_ImplGlfwGL3_Shutdown()
     ImGui::Shutdown();
 }
 
-void ImGui_ImplGlfwGL3_NewFrame()
+void ImGui_ImplGlfwGL3_NewFrame(float guiVerticalScale)
 {
     if (!g_FontTexture)
         ImGui_ImplGlfwGL3_CreateDeviceObjects();
@@ -358,7 +358,7 @@ void ImGui_ImplGlfwGL3_NewFrame()
     glfwGetWindowSize(g_Window, &w, &h);
     glfwGetFramebufferSize(g_Window, &display_w, &display_h);
 
-    float SCALE = 0.3;
+    float SCALE = guiVerticalScale;
     w *= SCALE;
     display_w *= SCALE;
 

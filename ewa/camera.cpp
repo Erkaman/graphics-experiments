@@ -69,26 +69,34 @@ void Camera::Update(const float delta) {
 
 
     const Mouse& mouse = Mouse::getInstance();
+    const KeyboardState& kbs = KeyboardState::GetInstance();
+
 
     bool rotated = false;
 
-    if(!FloatEquals(mouse.GetDeltaX(), 0.0f)) {
-	m_viewDir.Rotate(mouse.GetDeltaX()*-0.1f, m_up).Normalize();
-	rotated = true;
+
+    Config& config = Config::GetInstance();
+
+    if(!config.IsGui() || (config.IsGui() &&  kbs.IsPressed(GLFW_KEY_F))  ) {
+
+	if(!FloatEquals(mouse.GetDeltaX(), 0.0f)) {
+	    m_viewDir.Rotate(mouse.GetDeltaX()*-0.1f, m_up).Normalize();
+	    rotated = true;
+	}
+
+	if(!FloatEquals(mouse.GetDeltaY(), 0.0f)) {
+	    m_viewDir.Rotate(mouse.GetDeltaY()*-0.1f, m_right).Normalize();
+	    rotated = true;
+	}
+
+	if(rotated) {
+	    m_right = Vector3f::Cross(m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
+	    m_up = Vector3f(0.0f,1.0f,0.0f);//Vector3f::Cross(m_right, m_viewDir).Normalize();
+	    ComputeViewMatrix();
+	}
+
     }
 
-    if(!FloatEquals(mouse.GetDeltaY(), 0.0f)) {
-	m_viewDir.Rotate(mouse.GetDeltaY()*-0.1f, m_right).Normalize();
-	rotated = true;
-    }
-
-    if(rotated) {
-	m_right = Vector3f::Cross(m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
-	m_up = Vector3f(0.0f,1.0f,0.0f);//Vector3f::Cross(m_right, m_viewDir).Normalize();
-	ComputeViewMatrix();
-    }
-
-    const KeyboardState& kbs = KeyboardState::GetInstance();
     static float cameraSpeed = 1.0f;
 
     if( kbs.IsPressed(GLFW_KEY_W) ) {
