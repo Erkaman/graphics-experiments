@@ -175,6 +175,8 @@ void TuhuApplication::Init() {
 //   m_ball2 = LoadObj("obj/sunball.eob", Vector3f(20,-1.0,-7) );
 
     m_depthFbo = new DepthFBO();
+
+    // TODO: should not this be the size of the framebuffer?
 m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
     m_carCamera = new CarCamera(GetFramebufferWidth(),GetFramebufferHeight(),
@@ -411,61 +413,69 @@ void TuhuApplication::RenderScene() {
 }
 
 void TuhuApplication::Render() {
-/*
+
     if(m_config.IsGui()) {
 	ImGui_ImplGlfwGL3_NewFrame();
     }
-*/
+
     RenderShadowMap();
 
     float SCALE = 0.3;
 
     // set the viewport to the size of the window.
-    SetViewport();
-
-    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-/*
-    int fb_width = GetFramebufferWidth();
-    int fb_height = GetFramebufferHeight();
+    if(m_config.IsGui()) {
 
-    ::SetViewport(fb_width*SCALE, 0,
-		  fb_width,
-		  fb_height);
+	int fb_width, fb_height;
+	glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
 
-    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-*/
+	::SetViewport(fb_width*SCALE, 0,
+		      GetFramebufferWidth(),
+		      GetFramebufferHeight());
+
+	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    } else {
+	SetViewport();
+
+	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    }
+
 
     RenderScene();
 
-/*
-    static float f = 0.0f;
 
-    ImGuiWindowFlags window_flags = 0;
+    if(m_config.IsGui()) {
+
+	static float f = 0.0f;
+
+	ImGuiWindowFlags window_flags = 0;
 //    window_flags |= ImGuiWindowFlags_NoTitleBar;
-    window_flags |= ImGuiWindowFlags_ShowBorders;
-    window_flags |= ImGuiWindowFlags_NoResize;
-    window_flags |= ImGuiWindowFlags_NoMove;
-    //window_flags |= ImGuiWindowFlags_NoScrollbar;
-    window_flags |= ImGuiWindowFlags_NoCollapse;
-    window_flags |= ImGuiWindowFlags_MenuBar;
+	window_flags |= ImGuiWindowFlags_ShowBorders;
+	window_flags |= ImGuiWindowFlags_NoResize;
+	window_flags |= ImGuiWindowFlags_NoMove;
+	//window_flags |= ImGuiWindowFlags_NoScrollbar;
+	window_flags |= ImGuiWindowFlags_NoCollapse;
+	window_flags |= ImGuiWindowFlags_MenuBar;
 
-    float bg_alpha = 1.0f; // <0: default
+	float bg_alpha = 1.0f; // <0: default
 
-    bool p_opened = true;
+	bool p_opened = true;
 
-    ImGui::Begin("ImGui Demo", &p_opened,
-		 ImVec2(200,400), bg_alpha, window_flags);
+	ImGui::Begin("ImGui Demo", &p_opened,
+		     ImVec2(200,400), bg_alpha, window_flags);
 
-    ImGui::SetWindowPos(ImVec2(0,0) );
+	ImGui::SetWindowPos(ImVec2(0,0) );
 
-    ImGui::Text("Hello, world!");
-    ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+	ImGui::Text("Hello, world!");
+	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 
-    ImGui::End();
+	ImGui::End();
 
-    ImGui::Render();*/
+	ImGui::Render();
+    }
 
 }
 

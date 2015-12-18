@@ -17,6 +17,7 @@ class Application {
 protected:
 
     GLFWwindow* m_window;
+    float m_guiVerticalScale;
 
 
 private:
@@ -42,10 +43,9 @@ private:
 
       The ratio of the framebuffer is given to the GUI is specified by this variable.
      */
-    float m_guiVerticalScale;
+
     int m_framebufferWidth;
     int m_framebufferHeight;
-
 
 
 public:
