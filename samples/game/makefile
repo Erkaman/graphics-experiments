@@ -1,2 +1,2 @@
 all:
-	make -C ../../build/ game && ../../build/samples/game/game ../.. ../game_engine
+	make -C ../../build/ game && ../../build/samples/game/game ../..
