@@ -68,8 +68,6 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
-    m_config.SetGui(true);
-
     if(m_config.IsGui()) {
 
 	// init gui:
@@ -114,7 +112,7 @@ void TuhuApplication::Init() {
 	Vector3f(48.866501, 15.432347, 44.625168);
 
 
-    m_freeCamera = new Camera(GetWindowWidth(),GetWindowHeight(),
+    m_freeCamera = new Camera(GetFramebufferWidth(),GetFramebufferHeight(),
 			  pos,
 
 			      Vector3f(0.671108, -0.403981, 0.621622)
@@ -179,8 +177,7 @@ void TuhuApplication::Init() {
     m_depthFbo = new DepthFBO();
 m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
-
-    m_carCamera = new CarCamera(GetWindowWidth(),GetWindowHeight(),
+    m_carCamera = new CarCamera(GetFramebufferWidth(),GetFramebufferHeight(),
 			     m_car
 			  );
 
@@ -369,8 +366,6 @@ void TuhuApplication::RenderShadowMap() {
 
 void TuhuApplication::RenderScene() {
 
-
-
     m_skydome->Draw(m_curCamera);
 
    m_heightMap->Render(m_curCamera, m_lightDirection);
@@ -416,19 +411,21 @@ void TuhuApplication::RenderScene() {
 }
 
 void TuhuApplication::Render() {
-
+/*
     if(m_config.IsGui()) {
 	ImGui_ImplGlfwGL3_NewFrame();
     }
-
+*/
     RenderShadowMap();
-
 
     float SCALE = 0.3;
 
     // set the viewport to the size of the window.
-//    SetViewport();
+    SetViewport();
 
+    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    /*
     int fb_width = GetFramebufferWidth();
     int fb_height = GetFramebufferHeight();
 
@@ -437,10 +434,11 @@ void TuhuApplication::Render() {
 		  fb_height);
 
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+*/
 
     RenderScene();
 
+/*
     static float f = 0.0f;
 
     ImGuiWindowFlags window_flags = 0;
@@ -467,6 +465,7 @@ void TuhuApplication::Render() {
     ImGui::End();
 
     ImGui::Render();
+*/
 }
 
 void TuhuApplication::Update(const float delta) {
@@ -536,8 +535,7 @@ void TuhuApplication::RenderText()  {
 
     string cull = std::to_string(nonCulledObjects) + "\\" + std::to_string(totalObjects);
 
-
-    m_font->DrawString(*m_fontShader, 600,150, cull);
+    m_font->DrawString(*m_fontShader, 10,170, cull);
 
     m_font->DrawString(*m_fontShader, 400,120, tos(m_curCamera->GetPosition())  );
 

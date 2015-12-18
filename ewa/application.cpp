@@ -57,8 +57,9 @@ void Application::Start() {
     m_font = Font::Load(
 	"img_lib/Ubuntu-B-64.png",
 	"img_lib/Ubuntu-B-64.amf",
-	GetWindowWidth(),GetWindowHeight(),
-	0.3f);
+
+	GetFramebufferWidth(),GetFramebufferHeight(),
+	0.8f);
 
 
     if(!m_font) {
@@ -97,8 +98,6 @@ void Application::DoMainLoop() {
 
 	RenderText_internal(fps.GetFpsString());
 
-
-
 	// update frame buffer
 	glfwSwapBuffers(m_window);
 	// update input.
@@ -107,14 +106,9 @@ void Application::DoMainLoop() {
 	delta = fps.ManageFPS();
 
 //	SetWindowTitle(fps.GetFpsString());
-
 //	std::string str = camera
 
-
-
     }
-
-
 }
 
 void Application::Cleanup() {
@@ -248,7 +242,12 @@ void Application::RenderText_internal(const std::string& fpsString) {
 
     RenderText();
 
-    m_font->DrawString(*m_fontShader, 670,560, fpsString.substr(0,9) );
+    m_font->DrawString(*m_fontShader,
+
+		       GetFramebufferWidth()-300,
+		       GetFramebufferWidth()-400,
+
+		       fpsString.substr(0,9) );
     m_fontShader->Unbind();
 
     GL_C(glDisable (GL_BLEND));
