@@ -3,13 +3,13 @@
 struct GLFWwindow;
 
 // a singelton class.
-class Mouse {
+class MouseState {
 
 private:
-    Mouse():m_previousX(0), m_previousY(0) {};
+    MouseState();
 
-    Mouse(Mouse const&);
-    void operator=(Mouse const&);
+    MouseState(MouseState const&);
+    void operator=(MouseState const&);
 
     float m_previousX;
     float m_previousY;
@@ -17,12 +17,17 @@ private:
     float m_deltaX;
     float m_deltaY;
 
+    bool* pressedButtons;
+
+
 public:
 
     void Update(GLFWwindow* window);
 
-    static Mouse& getInstance(){
-	static Mouse instance;
+    bool WasPressed(int button);
+
+    static MouseState& getInstance(){
+	static MouseState instance;
 
 	return instance;
     }
@@ -34,5 +39,7 @@ public:
     float GetDeltaY() const {
 	return m_deltaY;
     }
+
+
 
 };

@@ -65,7 +65,7 @@ int main(int, char**)
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
-        ImGui_ImplGlfwGL3_NewFrame();
+        ImGui_ImplGlfwGL3_NewFrame(1.0);
 
         // 1. Show a simple window
         // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"

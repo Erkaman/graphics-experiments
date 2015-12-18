@@ -147,25 +147,25 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Vector3f& v
     }
 }
 
-void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection, const Matrix4f& lightVp) {
 
-    const Matrix4f modelViewMatrix = /*Matrix4f::CreateLookAt(
-	-Vector3f(  Vector3f(-0.705072, -0.458142, -0.705072)),
-	    Vector3f(0.0f),
-	    Vector3f(0.0, 1.0, 0.0)
-	) * modelMatrix;*/
+void ShaderProgram::SetShaderUniforms(const Matrix4f& modelMatrix, const ICamera* camera) {
+
+    const Matrix4f modelViewMatrix =
 	camera->GetViewMatrix() * modelMatrix;
 
     const Matrix4f mvp = camera->GetProjectionMatrix() * modelViewMatrix;
-//	Matrix4f::CreateOrthographic(-20,20, -20, 20, -20, 20) * modelViewMatrix;
 
     SetUniform("mvp", mvp);
-    SetUniform("lightMvp", lightVp * modelMatrix);
-
-
     SetUniform("modelViewMatrix", modelViewMatrix);
     SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
 
+}
+
+void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection, const Matrix4f& lightVp) {
+
+    SetShaderUniforms(modelMatrix, camera);
+
+    SetUniform("lightMvp", lightVp * modelMatrix);
     SetUniform("viewSpaceLightDirection", Vector3f(camera->GetViewMatrix() * (lightDirection)  ) );
     SetUniform("eyePos", camera->GetPosition() );
 

@@ -21,6 +21,10 @@ class PhysicsWorld;
 class Car;
 class CarCamera;
 class Gui;
+class PickingFBO;
+
+constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
+constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
 
 class TuhuApplication : public Application{
 
@@ -60,6 +64,8 @@ private:
 
 
     DepthFBO* m_depthFbo;
+    PickingFBO* m_pickingFbo;
+
 
     Line* m_line;
     Points* m_points;
@@ -94,5 +100,6 @@ public:
 
     void RenderShadowMap();
     void RenderScene();
+    void RenderId();
 
 };

@@ -17,7 +17,7 @@ class Texture2D;
 
 struct Cell {
     Vector3f position;
-    Vector3f normal;
+    float id;
     Vector2f texCoord;
 };
 
@@ -34,6 +34,7 @@ private:
 
     ShaderProgram* m_shader;
     ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
+    ShaderProgram* m_idShader; //outputs only the id. Used for triangle picking in the height map.
 
     float m_movement;
 
@@ -64,6 +65,9 @@ public:
 
     void Render(const ICamera* camera, const Vector4f& lightPosition);
     void RenderShadowMap(const ICamera* camera);
+
+    // render, but instead of outputting colors for every triangle, we output the id of the frontmost triangles.
+    void RenderId(const ICamera* camera);
 
     void SetWireframe(const bool wireframe);
 

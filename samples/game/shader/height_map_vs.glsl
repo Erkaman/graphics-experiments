@@ -2,7 +2,7 @@
 
 
 layout (location = 0) in  vec3 positionIn;
-layout (location = 1) in  vec3 normalIn;
+layout (location = 1) in  float idIn;
 layout (location = 2) in vec2 texCoordIn;
 
 //in  vec4 colorIn;
@@ -23,6 +23,8 @@ out vec2 texCoord;
 out vec3 position;
 
 out vec3 norm;
+
+out float id;
 
 // sample heightmap
 float f(vec2 texCoord) {
@@ -91,4 +93,6 @@ void main()
 
     norm = normalize(getNormal(positionIn.xz));
     position = pos;
+
+    id = idIn;
 }

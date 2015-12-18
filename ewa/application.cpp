@@ -20,7 +20,7 @@
 
 
 #include "fps_manager.hpp"
-#include "mouse.hpp"
+#include "mouse_state.hpp"
 #include "config.hpp"
 
 bool isFocused = true;
@@ -228,7 +228,7 @@ void Application::Update_internal(const float delta) {
 
     m_running = !kbs.IsPressed(GLFW_KEY_ESCAPE);// GetKey(GLFW_KEY_ESCAPE) != GLFW_PRESS ;
 
-    Mouse::getInstance().Update(m_window);
+    MouseState::getInstance().Update(m_window);
 
     this->Update(delta);
 

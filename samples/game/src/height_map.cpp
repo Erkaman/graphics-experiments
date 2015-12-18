@@ -90,6 +90,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
     m_depthShader = ShaderProgram::Load("shader/output_depth");
 
+    m_idShader = ShaderProgram::Load("shader/output_id");
+
 
     CreateHeightmap(path);
 }
@@ -131,6 +133,8 @@ void HeightMap::RenderShadowMap(const ICamera* camera) {
     Render();
 
     m_depthShader->Unbind();
+
+
 
 }
 
@@ -178,6 +182,26 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
 
     m_shader->Unbind();
 }
+
+void HeightMap::RenderId(const ICamera* camera) {
+
+    m_idShader->Bind();
+
+    m_idShader->SetShaderUniforms(Matrix4f::CreateTranslation(0,0,0), camera);
+
+    m_idShader->SetUniform("heightMap", 3);
+    Texture::SetActiveTextureUnit(3);
+    m_imageTexture->Bind();
+
+    Render();
+
+    m_imageTexture->Unbind();
+
+    m_idShader->Unbind();
+}
+
+
+
 
 void HeightMap::SetWireframe(const bool wireframe) {
     m_isWireframe = wireframe;
@@ -248,18 +272,17 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     unsigned int xpos = 0;
     unsigned int zpos = 0;
 
+    int id = 0;
 
     for(size_t i = 0; i < width*depth; ++i) {
 
 	Cell& c = map(xpos, zpos);
 
-//	float height = imageData[i+1] / 20.0f;
-
-//	LOG_I("red: %d", imageData[i]);
-
 	c.position = Vector3f((float)xpos / (float)width, 0, (float)zpos / (float)depth);
 
 	float scale = 1.0;
+
+	c.id = id++;
 
 	c.texCoord = Vector2f(xpos*scale, zpos*scale);
 
@@ -351,7 +374,7 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 //    File::WriteArray(VERTEX_FILE, reinterpret_cast<void *>(map.GetData()), map.GetTotalsize() * sizeof(Cell) );
 
     m_vertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{3,3,2} // pos, normal, tex
+	vector<GLuint>{3,1,2} // pos, id, tex
 	);
 
     m_vertexBuffer->Bind();
@@ -424,7 +447,7 @@ float HeightMap::GetHeightAt(float x, float z)const {
 
 
 void HeightMap::Update(const float delta) {
-
+/*
     MultArray<unsigned char>& image = *m_image;
 
     static int dir = -1;
@@ -450,5 +473,5 @@ void HeightMap::Update(const float delta) {
     m_imageTexture->UpdateTexture(image.GetData());
 
     m_imageTexture->Unbind();
-
+*/
 }

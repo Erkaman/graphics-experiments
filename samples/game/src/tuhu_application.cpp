@@ -29,6 +29,8 @@
 #include "ewa/physics_world.hpp"
 #include "car_camera.hpp"
 
+#include "picking_fbo.hpp"
+
 
 #include "car.hpp"
 
@@ -62,6 +64,10 @@ TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_skydome);
     MY_DELETE(m_windSound);
     MY_DELETE(m_gui);
+
+    MY_DELETE(m_depthFbo);
+    MY_DELETE(m_pickingFbo);
+
 }
 
 void TuhuApplication::Init() {
@@ -171,12 +177,19 @@ void TuhuApplication::Init() {
     m_depthFbo = new DepthFBO();
 
     // TODO: should not this be the size of the framebuffer?
-m_depthFbo->Init(9, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+m_depthFbo->Init(DEPTH_FBO_TEXTURE_UNIT, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
     m_carCamera = new CarCamera(GetFramebufferWidth(),GetFramebufferHeight(),
 			     m_car
 			  );
 
+    if(m_gui) {
+	m_pickingFbo = new PickingFBO();
+
+	// TODO: should not this be the size of the framebuffer?
+	m_pickingFbo->Init(PICKING_FBO_TEXTURE_UNIT, GetFramebufferWidth(),GetFramebufferHeight() );
+
+    }
     /*
       OpenAL::Initp();
 
@@ -360,6 +373,18 @@ void TuhuApplication::RenderShadowMap() {
     m_depthFbo->Unbind();
 }
 
+void TuhuApplication::RenderId() {
+    m_pickingFbo->Bind();
+
+    // set viewport
+   m_heightMap->RenderId(m_curCamera);
+
+    m_pickingFbo->Unbind();
+
+//    m_pickingFbo->GetRenderTargetTexture().WriteToFile("id.png");
+//    exit(1);
+}
+
 void TuhuApplication::RenderScene() {
 
     m_skydome->Draw(m_curCamera);
@@ -408,6 +433,13 @@ void TuhuApplication::RenderScene() {
 
 void TuhuApplication::Render() {
 
+
+
+
+
+
+
+
     if(m_gui) {
 	m_gui->NewFrame(m_guiVerticalScale);
     }
@@ -441,6 +473,10 @@ void TuhuApplication::Render() {
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     }
+
+    if(m_pickingFbo)
+	RenderId();
+
 
 
     RenderScene();
@@ -511,9 +547,7 @@ void TuhuApplication::Update(const float delta) {
 	} else {
 	    m_curCamera = m_freeCamera;
 	}
-
     }
-
 }
 
 void TuhuApplication::RenderText()  {

@@ -18,6 +18,9 @@ uniform sampler2D grass;
 uniform sampler2D sand;
 uniform sampler2D snow;
 
+
+in float id;
+
 #define SCALE 0.03
 
 vec3 sampleDiffuseTexture() {

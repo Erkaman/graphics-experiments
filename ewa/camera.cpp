@@ -3,7 +3,7 @@
 #include "math/matrix4f.hpp"
 
 #include "math/quat4f.hpp"
-#include "mouse.hpp"
+#include "mouse_state.hpp"
 #include "config.hpp"
 #include "math/math_common.hpp"
 
@@ -68,7 +68,7 @@ void Camera::Update(const float delta) {
 
 
 
-    const Mouse& mouse = Mouse::getInstance();
+    const MouseState& mouse = MouseState::getInstance();
     const KeyboardState& kbs = KeyboardState::GetInstance();
 
 

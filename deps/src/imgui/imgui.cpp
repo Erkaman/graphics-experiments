@@ -106,7 +106,7 @@
         unsigned char* pixels;
         int width, height;
         io.Fonts->GetTexDataAsRGBA32(pixels, &width, &height);
-        // TODO: At this points you've got a texture pointed to by 'pixels' and you need to upload that your your graphic system 
+        // TODO: At this points you've got a texture pointed to by 'pixels' and you need to upload that your your graphic system
         // TODO: Store your texture pointer/identifier (whatever your engine uses) in 'io.Fonts->TexID'
 
         // Application main loop
@@ -287,7 +287,7 @@
 
        Button("Hello###ID";   // Label = "Hello",  ID = hash of "ID"
        Button("World###ID";   // Label = "World",  ID = hash of "ID" (same as above)
-       
+
        sprintf(buf, "My game (%f FPS)###MyGame");
        Begin(buf);            // Variable label,   ID = hash of "MyGame"
 
@@ -952,7 +952,7 @@ int ImTextCharFromUtf8(unsigned int* out_char, const char* in_text, const char* 
     if ((*str & 0xf0) == 0xe0)
     {
         *out_char = 0xFFFD; // will be invalid but not end of string
-        if (in_text_end && in_text_end - (const char*)str < 3) return 1; 
+        if (in_text_end && in_text_end - (const char*)str < 3) return 1;
         if (*str == 0xe0 && (str[1] < 0xa0 || str[1] > 0xbf)) return 3;
         if (*str == 0xed && str[1] > 0x9f) return 3; // str[1] < 0x80 is checked below
         c = (unsigned int)((*str++ & 0x0f) << 12);
@@ -2347,7 +2347,7 @@ void ImGui::EndFrame()
     // Notify OS when our Input Method Editor cursor has moved (e.g. CJK inputs using Microsoft IME)
     if (g.IO.ImeSetInputScreenPosFn && ImLengthSqr(g.OsImePosRequest - g.OsImePosSet) > 0.0001f)
     {
-        g.IO.ImeSetInputScreenPosFn((int)g.OsImePosRequest.x, (int)g.OsImePosRequest.y);   
+        g.IO.ImeSetInputScreenPosFn((int)g.OsImePosRequest.x, (int)g.OsImePosRequest.y);
         g.OsImePosSet = g.OsImePosRequest;
     }
 
@@ -3567,7 +3567,7 @@ bool ImGui::Begin(const char* name, bool* p_opened, const ImVec2& size_on_first_
         g.CurrentPopupStack.push_back(popup_ref);
         window->PopupID = popup_ref.PopupID;
     }
-    
+
     const bool window_appearing_after_being_hidden = (window->HiddenFrames == 1);
 
     // Process SetNextWindow***() calls
@@ -3714,7 +3714,7 @@ bool ImGui::Begin(const char* name, bool* p_opened, const ImVec2& size_on_first_
         else
         {
             size_auto_fit = ImClamp(window->SizeContents + window->WindowPadding, style.WindowMinSize, ImMax(style.WindowMinSize, g.IO.DisplaySize - g.Style.DisplaySafeAreaPadding));
-            
+
             // Handling case of auto fit window not fitting in screen on one axis, we are growing auto fit size on the other axis to compensate for expected scrollbar. FIXME: Might turn bigger than DisplaySize-WindowPadding.
             if (size_auto_fit.x < window->SizeContents.x && !(flags & ImGuiWindowFlags_NoScrollbar) && (flags & ImGuiWindowFlags_HorizontalScrollbar))
                 size_auto_fit.y += style.ScrollbarSize;
@@ -6808,7 +6808,7 @@ void ImGui::ProgressBar(float fraction, const ImVec2& size_arg, const char* over
         ImFormatString(overlay_buf, IM_ARRAYSIZE(overlay_buf), "%.0f%%", fraction*100+0.01f);
         overlay = overlay_buf;
     }
-    
+
     ImVec2 overlay_size = CalcTextSize(overlay, NULL);
     if (overlay_size.x > 0.0f)
         RenderTextClipped(ImVec2(ImClamp(fill_br.x + style.ItemSpacing.x, bb.Min.x, bb.Max.x - overlay_size.x - style.ItemInnerSpacing.x), bb.Min.y), bb.Max, overlay, NULL, &overlay_size, ImGuiAlign_Left|ImGuiAlign_VCenter, &bb.Min, &bb.Max);
@@ -7696,7 +7696,7 @@ bool ImGui::InputTextEx(const char* label, char* buf, int buf_size, const ImVec2
 
         // Notify OS of text input position for advanced IME (-1 x offset so that Windows IME can cover our cursor. Bit of an extra nicety.)
         if (is_editable)
-            g.OsImePosRequest = ImVec2(cursor_screen_pos.x - 1, cursor_screen_pos.y - g.FontSize);    
+            g.OsImePosRequest = ImVec2(cursor_screen_pos.x - 1, cursor_screen_pos.y - g.FontSize);
     }
     else
     {
@@ -8585,7 +8585,7 @@ bool ImGui::ColorEdit4(const char* label, float col[4], bool alpha)
     const ImVec4 col_display(col[0], col[1], col[2], 1.0f);
     if (ImGui::ColorButton(col_display))
         g.ColorEditModeStorage.SetInt(id, (edit_mode + 1) % 3); // Don't set local copy of 'edit_mode' right away!
-    
+
     // Recreate our own tooltip over's ColorButton() one because we want to display correct alpha here
     if (ImGui::IsItemHovered())
         ImGui::SetTooltip("Color:\n(%.2f,%.2f,%.2f,%.2f)\n#%02X%02X%02X%02X", col[0], col[1], col[2], col[3], IM_F32_TO_INT8(col[0]), IM_F32_TO_INT8(col[1]), IM_F32_TO_INT8(col[2]), IM_F32_TO_INT8(col[3]));
@@ -8682,7 +8682,7 @@ void ImGui::Dummy(const ImVec2& size)
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return;
-    
+
     const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + size);
     ItemSize(bb);
     ItemAdd(bb, NULL);
@@ -8946,9 +8946,9 @@ void ImGui::Columns(int columns_count, const char* id, bool border)
         }
     }
 
-    // Differentiate column ID with an arbitrary prefix for cases where users name their columns set the same as another widget. 
+    // Differentiate column ID with an arbitrary prefix for cases where users name their columns set the same as another widget.
     // In addition, when an identifier isn't explicitly provided we include the number of columns in the hash to make it uniquer.
-    ImGui::PushID(0x11223347 + (id ? 0 : columns_count)); 
+    ImGui::PushID(0x11223347 + (id ? 0 : columns_count));
     window->DC.ColumnsSetID = window->GetID(id ? id : "columns");
     ImGui::PopID();
 

@@ -1,2 +1,2 @@
-ll:
-	make -C samples/game_engine
+all:
+	make -C samples/game
