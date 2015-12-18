@@ -1,6 +1,5 @@
 #pragma once
 
-#include "gl/gl_common.hpp"
 
 struct GLFWwindow;
 
@@ -10,7 +9,8 @@ private:
 
     GLFWwindow* m_window;
 
-    bool pressedKeys[GLFW_KEY_LAST];
+    bool* m_prevFrameKeyState;
+    bool* m_curFrameKeyState;
 
     KeyboardState& operator=(const KeyboardState& other);
     KeyboardState(const KeyboardState& other);
@@ -25,5 +25,7 @@ public:
     bool IsPressed(int key)const;
 
     bool WasPressed(int key);
+
+    void Update();
 
 };

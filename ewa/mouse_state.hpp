@@ -17,7 +17,8 @@ private:
     float m_deltaX;
     float m_deltaY;
 
-    bool* pressedButtons;
+    bool* m_prevFrameButtonState;
+    bool* m_curFrameButtonState;
 
 
 public:
@@ -26,7 +27,7 @@ public:
 
     bool WasPressed(int button);
 
-    static MouseState& getInstance(){
+    static MouseState& GetInstance(){
 	static MouseState instance;
 
 	return instance;

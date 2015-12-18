@@ -1,29 +1,18 @@
 #include "keyboard_state.hpp"
 
+#include "gl/gl_common.hpp"
+
+
+#include "log.hpp"
 
 bool KeyboardState::IsPressed(int key) const{
-    return glfwGetKey( m_window , key ) == GLFW_PRESS;
+    return m_curFrameKeyState[key] == GLFW_PRESS;
 }
 
 bool KeyboardState::WasPressed(int key) {
-
-    if(glfwGetKey( m_window , key ) == GLFW_PRESS) {
-	pressedKeys[key] = true;
-    } else {
-
-
-	if(pressedKeys[key] == true) {
-	    pressedKeys[key] = false;
-
-	    return true;
-	} else  {
-
-	    return false;
-	}
-    }
-
-    return false;
-
+    return
+	m_prevFrameKeyState[key] == GLFW_PRESS &&
+	m_curFrameKeyState[key] == GLFW_RELEASE;
 }
 
 
@@ -35,7 +24,18 @@ KeyboardState& KeyboardState::GetInstance() {
 void KeyboardState::Init(GLFWwindow* window) {
     m_window = window;
 
+    m_prevFrameKeyState = new bool[GLFW_KEY_LAST];
+    m_curFrameKeyState = new bool[GLFW_KEY_LAST];
+
     for(int i =0 ; i < GLFW_KEY_LAST; ++i) {
-	pressedKeys[i] = false;
+	m_prevFrameKeyState[i] = GLFW_RELEASE;
+	m_curFrameKeyState[i] = GLFW_RELEASE;
+    }
+}
+
+void KeyboardState::Update() {
+    for(int i =0 ; i < GLFW_KEY_LAST; ++i) {
+	m_prevFrameKeyState[i] = m_curFrameKeyState[i];
+	m_curFrameKeyState[i] = glfwGetKey( m_window , i );
     }
 }

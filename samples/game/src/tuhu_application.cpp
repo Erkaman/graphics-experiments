@@ -4,6 +4,7 @@
 #include "ewa/common.hpp"
 #include "ewa/font.hpp"
 #include "ewa/keyboard_state.hpp"
+#include "ewa/mouse_state.hpp"
 
 #include "ewa/gl/depth_fbo.hpp"
 #include "ewa/gl/texture.hpp"
@@ -528,6 +529,13 @@ void TuhuApplication::Update(const float delta) {
 	string out = "Vector3f" +tos(m_curCamera->GetPosition()) + ",";
 	out += "Vector3f" + tos(m_curCamera->GetViewDir());
 	ToClipboard(out);
+    }
+
+
+    MouseState& ms = MouseState::GetInstance();
+
+    if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 )) {
+	LOG_I("click");
     }
 
     static bool b= false;

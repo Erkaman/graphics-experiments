@@ -68,7 +68,7 @@ void Camera::Update(const float delta) {
 
 
 
-    const MouseState& mouse = MouseState::getInstance();
+    const MouseState& mouse = MouseState::GetInstance();
     const KeyboardState& kbs = KeyboardState::GetInstance();
 
 

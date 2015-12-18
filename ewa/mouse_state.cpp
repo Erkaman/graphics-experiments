@@ -6,15 +6,25 @@
 
 MouseState::MouseState():m_previousX(0), m_previousY(0) {
 
-    pressedButtons = new bool[GLFW_MOUSE_BUTTON_LAST];
+    m_prevFrameButtonState = new bool[GLFW_MOUSE_BUTTON_LAST];
+    m_curFrameButtonState = new bool[GLFW_MOUSE_BUTTON_LAST];
 
     for(int i =0 ; i < GLFW_MOUSE_BUTTON_LAST; ++i) {
-	pressedButtons[i] = false;
+
+	m_prevFrameButtonState[i] = GLFW_RELEASE;
+	m_curFrameButtonState[i] = GLFW_RELEASE;
     }
 }
 
 
 void MouseState::Update(GLFWwindow* window) {
+
+    for(int i =0 ; i < GLFW_MOUSE_BUTTON_LAST; ++i) {
+	m_prevFrameButtonState[i] = m_curFrameButtonState[i];
+	m_curFrameButtonState[i] = glfwGetMouseButton( window , i );
+    }
+
+
 
     double xpos;
     double ypos;
@@ -32,5 +42,7 @@ void MouseState::Update(GLFWwindow* window) {
 
 
 bool MouseState::WasPressed(int button) {
-
+    return
+	m_prevFrameButtonState[button] == GLFW_PRESS &&
+	m_curFrameButtonState[button] == GLFW_RELEASE;
 }
