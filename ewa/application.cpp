@@ -21,6 +21,7 @@
 
 #include "fps_manager.hpp"
 #include "mouse.hpp"
+#include "config.hpp"
 
 bool isFocused = true;
 
@@ -42,9 +43,34 @@ Application::Application(int argc, char *argv[], int width, int height): m_width
 
 void Application::Start() {
 
+
+
+
+
     LogInit();
 
     this->SetupOpenGL();
+
+
+    Config& config = Config::GetInstance();
+
+    if(config.IsGui()) {
+	m_guiVerticalScale = 0.3;
+
+	int width, height;
+	glfwGetFramebufferSize(m_window, &width, &height);
+
+	m_framebufferWidth = width * (1.0 - m_guiVerticalScale);
+	m_framebufferHeight = height;
+
+    } else {
+	m_guiVerticalScale = 0.0;
+
+
+	glfwGetFramebufferSize(m_window, &m_framebufferWidth, &m_framebufferHeight);
+
+    }
+
 
     m_fontShader = ShaderProgram::Load("shader_lib/font_render");
 
@@ -52,15 +78,12 @@ void Application::Start() {
 	PrintErrorExit();
     }
 
-
-
     m_font = Font::Load(
 	"img_lib/Ubuntu-B-64.png",
 	"img_lib/Ubuntu-B-64.amf",
 
 	GetFramebufferWidth(),GetFramebufferHeight(),
 	0.8f);
-
 
     if(!m_font) {
 	PrintErrorExit();
@@ -189,17 +212,14 @@ void Application::SetViewport() {
 }
 
 int Application::GetFramebufferWidth() {
-    int width, height;
-    glfwGetFramebufferSize(m_window, &width, &height);
 
-    return width;
+    return m_framebufferWidth;
+
 }
 
 int Application::GetFramebufferHeight() {
-    int width, height;
-    glfwGetFramebufferSize(m_window, &width, &height);
 
-    return height;
+    return m_framebufferHeight;
 }
 
 void Application::Update_internal(const float delta) {

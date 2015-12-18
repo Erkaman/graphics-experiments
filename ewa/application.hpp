@@ -5,7 +5,6 @@
 
 #pragma warning( disable : 4099 )
 
-
 class GLFWwindow;
 
 class ShaderProgram;
@@ -35,6 +34,18 @@ private:
 
     int m_width;
     int m_height;
+
+    /*
+      This variable is a number between 0 and 1.
+
+      The leftmost part of the framebuffer is used to draw the GUI, if it is present.
+
+      The ratio of the framebuffer is given to the GUI is specified by this variable.
+     */
+    float m_guiVerticalScale;
+    int m_framebufferWidth;
+    int m_framebufferHeight;
+
 
 
 public:

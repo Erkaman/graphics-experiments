@@ -425,7 +425,8 @@ void TuhuApplication::Render() {
 
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    /*
+
+/*
     int fb_width = GetFramebufferWidth();
     int fb_height = GetFramebufferHeight();
 
@@ -464,8 +465,8 @@ void TuhuApplication::Render() {
 
     ImGui::End();
 
-    ImGui::Render();
-*/
+    ImGui::Render();*/
+
 }
 
 void TuhuApplication::Update(const float delta) {
