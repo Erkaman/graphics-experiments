@@ -4,6 +4,7 @@ Config::Config() {
 
     m_zNear = 0.1f;
     m_zFar = 300.0f;
+    m_gui = false;
 }
 
 float Config::GetZNear() const {
@@ -12,4 +13,13 @@ float Config::GetZNear() const {
 
 float Config::GetZFar() const {
     return m_zFar;
+}
+
+
+bool Config::IsGui() const {
+    return m_gui;
+}
+
+void Config::SetGui(const bool gui) {
+    m_gui = gui;
 }

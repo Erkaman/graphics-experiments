@@ -1,0 +1,31 @@
+
+file(GLOB GAME_SRC main.cpp )
+
+ADD_EXECUTABLE(
+  gui
+  MACOSX_BUNDLE
+  ${GAME_SRC} )
+TARGET_LINK_LIBRARIES(gui ewa)
+
+set(GLFW_VERSION_MAJOR "3")
+set(GLFW_VERSION_MINOR "1")
+set(GLFW_VERSION_PATCH "2")
+set(GLFW_VERSION_EXTRA "")
+set(GLFW_VERSION "${GLFW_VERSION_MAJOR}.${GLFW_VERSION_MINOR}")
+set(GLFW_VERSION_FULL "${GLFW_VERSION}.${GLFW_VERSION_PATCH}${GLFW_VERSION_EXTRA}")
+
+set_target_properties(gui PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Gui")
+
+    set_target_properties(gui PROPERTIES
+                          MACOSX_BUNDLE_SHORT_VERSION_STRING ${GLFW_VERSION}
+                          MACOSX_BUNDLE_LONG_VERSION_STRING ${GLFW_VERSION_FULL}
+                          MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_LIST_DIR}/my.plist)
+
+
+
+# set_target_properties(
+#     gui
+#     PROPERTIES
+#     MACOSX_BUNDLE_INFO_PLIST
+#     ${CMAKE_CURRENT_LIST_DIR}/my.plist
+#     )

@@ -188,7 +188,6 @@ void Application::SetupOpenGL() {
 
 void Application::SetViewport() {
 
-
     int width, height;
     glfwGetFramebufferSize(m_window, &width, &height);
 

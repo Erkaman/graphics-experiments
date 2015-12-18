@@ -15,6 +15,11 @@ class Font;
 
 class Application {
 
+protected:
+
+    GLFWwindow* m_window;
+
+
 private:
 
     void SetupOpenGL();
@@ -24,7 +29,6 @@ private:
     void Update_internal(const float delta);
     void RenderText_internal(const std::string& fpsString);
 
-    GLFWwindow* m_window;
     bool m_running;
 
     VAO* m_vao;

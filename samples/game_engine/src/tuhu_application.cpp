@@ -32,6 +32,10 @@
 
 #include "car.hpp"
 
+#include <imgui.h>
+#include "imgui_impl_glfw_gl3.h"
+
+
 
 using namespace std;
 
@@ -51,7 +55,7 @@ TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv)
     -0.705072f, -0.458142f, -0.705072f,
 //    -0.705072f, -0.0758142f, -0.705072f ,
 
-    0.0f){ }
+    0.0f),     m_config(Config::GetInstance())  { }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_carCamera);
@@ -63,6 +67,23 @@ TuhuApplication::~TuhuApplication() {
 }
 
 void TuhuApplication::Init() {
+
+    m_config.SetGui(true);
+
+    if(m_config.IsGui()) {
+
+	// init gui:
+	if(ImGui_ImplGlfwGL3_Init(m_window, true)) {
+	    LOG_I("IMGUI initialization succeeded");
+	} else {
+	    LOG_E("IMGUI initialization failed");
+	}
+
+    } else {
+
+	LOG_I("No GUI created");
+    }
+
 
     m_physicsWorld = new PhysicsWorld();
 
@@ -94,10 +115,6 @@ void TuhuApplication::Init() {
 
 
     m_freeCamera = new Camera(GetWindowWidth(),GetWindowHeight(),
-
-
-
-
 			  pos,
 
 			      Vector3f(0.671108, -0.403981, 0.621622)
@@ -352,10 +369,6 @@ void TuhuApplication::RenderShadowMap() {
 
 void TuhuApplication::RenderScene() {
 
-    // set the viewport to the size of the window.
-    SetViewport();
-
-    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
     m_skydome->Draw(m_curCamera);
@@ -404,9 +417,56 @@ void TuhuApplication::RenderScene() {
 
 void TuhuApplication::Render() {
 
-  RenderShadowMap();
+    if(m_config.IsGui()) {
+	ImGui_ImplGlfwGL3_NewFrame();
+    }
 
-  RenderScene();
+    RenderShadowMap();
+
+
+    float SCALE = 0.3;
+
+    // set the viewport to the size of the window.
+//    SetViewport();
+
+    int fb_width = GetFramebufferWidth();
+    int fb_height = GetFramebufferHeight();
+
+    ::SetViewport(fb_width*SCALE, 0,
+		  fb_width,
+		  fb_height);
+
+    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    RenderScene();
+
+    static float f = 0.0f;
+
+    ImGuiWindowFlags window_flags = 0;
+//    window_flags |= ImGuiWindowFlags_NoTitleBar;
+    window_flags |= ImGuiWindowFlags_ShowBorders;
+    window_flags |= ImGuiWindowFlags_NoResize;
+    window_flags |= ImGuiWindowFlags_NoMove;
+    //window_flags |= ImGuiWindowFlags_NoScrollbar;
+    window_flags |= ImGuiWindowFlags_NoCollapse;
+    window_flags |= ImGuiWindowFlags_MenuBar;
+
+    float bg_alpha = 1.0f; // <0: default
+
+    bool p_opened = true;
+
+    ImGui::Begin("ImGui Demo", &p_opened,
+		 ImVec2(200,400), bg_alpha, window_flags);
+
+    ImGui::SetWindowPos(ImVec2(0,0) );
+
+    ImGui::Text("Hello, world!");
+    ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+    ImGui::End();
+
+    ImGui::Render();
 }
 
 void TuhuApplication::Update(const float delta) {
