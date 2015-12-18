@@ -32,10 +32,7 @@
 
 #include "car.hpp"
 
-#include <imgui.h>
-#include "imgui_impl_glfw_gl3.h"
-
-
+#include "gui.hpp"
 
 using namespace std;
 
@@ -55,7 +52,7 @@ TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv)
     -0.705072f, -0.458142f, -0.705072f,
 //    -0.705072f, -0.0758142f, -0.705072f ,
 
-    0.0f),     m_config(Config::GetInstance())  { }
+    0.0f)  { }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_carCamera);
@@ -64,18 +61,15 @@ TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_heightMap);
     MY_DELETE(m_skydome);
     MY_DELETE(m_windSound);
+    MY_DELETE(m_gui);
 }
 
 void TuhuApplication::Init() {
 
+    Config& m_config = Config::GetInstance();
     if(m_config.IsGui()) {
 
-	// init gui:
-	if(ImGui_ImplGlfwGL3_Init(m_window, true)) {
-	    LOG_I("IMGUI initialization succeeded");
-	} else {
-	    LOG_E("IMGUI initialization failed");
-	}
+	m_gui = new Gui(m_window);
 
     } else {
 
@@ -414,8 +408,8 @@ void TuhuApplication::RenderScene() {
 
 void TuhuApplication::Render() {
 
-    if(m_config.IsGui()) {
-	ImGui_ImplGlfwGL3_NewFrame(m_guiVerticalScale);
+    if(m_gui) {
+	m_gui->NewFrame(m_guiVerticalScale);
     }
 
     RenderShadowMap();
@@ -427,7 +421,8 @@ void TuhuApplication::Render() {
     int windowWidth;
     int windowHeight;
 
-    if(m_config.IsGui()) {
+
+    if(m_gui) {
 
 	int fb_width, fb_height;
 	glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
@@ -435,7 +430,7 @@ void TuhuApplication::Render() {
 	::SetViewport(fb_width*SCALE, 0,
 		      GetFramebufferWidth(),
 		      GetFramebufferHeight());
-	windowWidth = fb_width*SCALE * 0.5;
+ 	windowWidth = fb_width*SCALE * 0.5;
 	windowHeight = fb_height * 0.5;
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -451,34 +446,8 @@ void TuhuApplication::Render() {
     RenderScene();
 
 
-    if(m_config.IsGui()) {
-
-	static float f = 0.0f;
-
-	ImGuiWindowFlags window_flags = 0;
-//    window_flags |= ImGuiWindowFlags_NoTitleBar;
-	window_flags |= ImGuiWindowFlags_ShowBorders;
-	window_flags |= ImGuiWindowFlags_NoResize;
-	window_flags |= ImGuiWindowFlags_NoMove;
-	//window_flags |= ImGuiWindowFlags_NoScrollbar;
-	window_flags |= ImGuiWindowFlags_NoCollapse;
-	window_flags |= ImGuiWindowFlags_MenuBar;
-
-	float bg_alpha = 1.0f; // <0: default
-
-	bool p_opened = true;
-
-	ImGui::Begin("ImGui Demo", &p_opened,
-		     ImVec2(windowWidth,windowHeight), bg_alpha, window_flags);
-
-	ImGui::SetWindowPos(ImVec2(0,0) );
-
-	ImGui::Text("Hello, world!");
-	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-
-	ImGui::End();
-
-	ImGui::Render();
+    if(m_gui) {
+	m_gui->Render(windowWidth, windowHeight);
     }
 
 }

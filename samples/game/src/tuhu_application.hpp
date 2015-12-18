@@ -20,7 +20,7 @@ class ViewFrustum;
 class PhysicsWorld;
 class Car;
 class CarCamera;
-class Config;
+class Gui;
 
 class TuhuApplication : public Application{
 
@@ -56,6 +56,8 @@ private:
 
     Car* m_car;
 
+    Gui* m_gui;
+
 
     DepthFBO* m_depthFbo;
 
@@ -75,8 +77,6 @@ private:
     std::vector<IGeometryObject*> m_geoObjs;
 
     PhysicsWorld* m_physicsWorld;
-
-    Config& m_config;
 
     IGeometryObject* LoadObj(const std::string& path, const Vector3f& position);
 

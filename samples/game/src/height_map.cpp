@@ -424,7 +424,7 @@ float HeightMap::GetHeightAt(float x, float z)const {
 
 
 void HeightMap::Update(const float delta) {
-/*
+
     MultArray<unsigned char>& image = *m_image;
 
     static int dir = -1;
@@ -450,5 +450,5 @@ void HeightMap::Update(const float delta) {
     m_imageTexture->UpdateTexture(image.GetData());
 
     m_imageTexture->Unbind();
-*/
+
 }
