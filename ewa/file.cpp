@@ -102,17 +102,10 @@ string File::GetFileContents() {
     }*/
 
 
-// ResourceManager::GetInstance().FindResource(filename).c_str()
 bool File::Exists(const std::string& filename) {
-    FILE* fp = fopen(filename.c_str(), "rb");
-    if (fp != NULL)
-    {
-	fclose(fp);
-	return true;
-    } else {
-	return false;
-    }
+	return ResourceManager::GetInstance().ResourceExists(filename);
 }
+
 
 void File::WriteArray(const void* data, size_t dataSize) {
     fwrite(data, 1, dataSize, m_fp);

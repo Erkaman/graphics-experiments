@@ -50,7 +50,7 @@ void ToClipboard(const std::string& str) {
 }
 
 //(0.705072, 0.0758142, 0.705072)
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_curCamera(NULL), m_heightMap(NULL),m_skydome(NULL), m_lightDirection(
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_gui(NULL),m_curCamera(NULL), m_heightMap(NULL),m_skydome(NULL), m_lightDirection(
 
     -0.705072f, -0.458142f, -0.705072f,
 //    -0.705072f, -0.0758142f, -0.705072f ,
@@ -82,7 +82,7 @@ void TuhuApplication::Init() {
 
 	LOG_I("No GUI created");
     }
-
+	
 
     m_physicsWorld = new PhysicsWorld();
 
@@ -166,12 +166,12 @@ void TuhuApplication::Init() {
 
    m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) );
 
-  /* m_car = Car::Load(m_physicsWorld);
+   m_car = Car::Load(m_physicsWorld);
     if(!m_car)
 	PrintErrorExit();
 	
     m_geoObjs.push_back(m_car);
-	*/
+	
 
 //   m_ball2 = LoadObj("obj/sunball.eob", Vector3f(20,-1.0,-7) );
 
@@ -180,9 +180,9 @@ void TuhuApplication::Init() {
     // TODO: should not this be the size of the framebuffer?
 m_depthFbo->Init(DEPTH_FBO_TEXTURE_UNIT, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
- /*   m_carCamera = new CarCamera(GetFramebufferWidth(),GetFramebufferHeight(),
+    m_carCamera = new CarCamera(GetFramebufferWidth(),GetFramebufferHeight(),
 			     m_car
-			  );*/
+			  );
 
 //    if(m_gui) {
 	m_pickingFbo = new PickingFBO();
@@ -504,8 +504,8 @@ void TuhuApplication::Render() {
 
     }
 
-    if(m_pickingFbo)
-	RenderId();
+//    if(m_pickingFbo)
+//	RenderId();
 
     RenderScene();
 
@@ -524,7 +524,7 @@ void TuhuApplication::Update(const float delta) {
 
     m_physicsWorld->Update(delta);
 
-  //  m_car->Update();
+    m_car->Update();
 
     m_totalDelta += delta;
 

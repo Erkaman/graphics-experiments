@@ -6,6 +6,19 @@
 
 using std::string;
 
+// ResourceManager::GetInstance().FindResource(filename).c_str()
+bool FileExists(const std::string& filename) {
+FILE* fp = fopen(filename.c_str(), "rb");
+if (fp != NULL)
+{
+fclose(fp);
+return true;
+} else {
+return false;
+}
+}
+
+
 ResourceManager& ResourceManager::GetInstance() {
     static ResourceManager instance;
     return instance;
@@ -40,7 +53,7 @@ bool ResourceManager::ResourceExists(const std::string& resourceName, std::strin
 
 	std::string resourcePath = File::AppendPaths(path, resourceName);
 
-	if(File::Exists(resourcePath)) {
+	if(FileExists(resourcePath)) {
 	    foundResource = resourcePath;
 
 	    return true;
