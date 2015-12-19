@@ -244,11 +244,9 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     for(size_t i = 0; i < width; ++i) {
 
 	for(size_t j = 0; j < depth; ++j) {
-	    image(i,j) = random.RandomInt(0,80);
+	    image(i,j) =0; //random.RandomInt(0,80);
 	}
     }
-
-
 
     m_imageTexture = new Texture2D(image.GetData(), width, depth,
 					    GL_R8, // internal format
@@ -284,7 +282,11 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
 	Cell& c = map(xpos, zpos);
 
-	c.position = Vector3f((float)xpos / (float)width, 0, (float)zpos / (float)depth);
+	c.position =
+	    Vector3f(
+		(float)xpos / (float)width,
+		0,
+		(float)zpos / (float)depth);
 
 	float scale = 1.0;
 
@@ -452,25 +454,41 @@ float HeightMap::GetHeightAt(float x, float z)const {
 }
 
 
+
 void HeightMap::Update(const float delta) {
-/*
+
+/*    static float total = 0;
+    static bool done = false;
+
+    total += delta;
+
     MultArray<unsigned char>& image = *m_image;
 
-    static int dir = -1;
+    float rad = 25;
 
-    unsigned char c = image(20,20);
+    int cx = 40;
+    int cz = 40;
 
-    if(c >= 255 && dir==1) {
-	dir = -1;
-    }
+    if(total > 0.05 && !done) {
 
-    if(c < 1 && dir==-1) {
-	dir = +1;
-    }
+	total = 0;
 
-    c += dir;
+	for(int ix = -rad; ix < +rad; ++ix) {
 
-    image(20,20) = c;
+	    for(int iz = -rad; iz < +rad; ++iz) {
+
+		float dist = sqrt( (float)ix * ix + (float)iz * iz  );
+
+		if(dist < rad) {
+		    image(cx+ix,cz+iz) += (rad-dist);
+
+		    if(image(cx+ix,cz+iz) >= 240) {
+			done = true;
+		    }
+		}
+	    }
+	}
+
 
     m_imageTexture->Bind();
 
@@ -479,5 +497,17 @@ void HeightMap::Update(const float delta) {
     m_imageTexture->UpdateTexture(image.GetData());
 
     m_imageTexture->Unbind();
+
+    }
+
+
+
 */
+
+
+
+
+
+
+
 }

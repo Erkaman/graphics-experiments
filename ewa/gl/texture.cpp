@@ -188,6 +188,8 @@ void Texture::WriteIdToFile(const std::string& filename) {
 
     for(size_t i = 0; i < size; i+=3) {
 
+//	LOG_I("pixel: %f", pixels[i+1]);
+
 	rgbaPixels[j++]  = (unsigned char)(pixels[i+0] * 255.0f);
 	rgbaPixels[j++]  = (unsigned char)(pixels[i+1] * 255.0f);
 	rgbaPixels[j++]  = (unsigned char)(pixels[i+2] * 255.0f);

@@ -386,7 +386,7 @@ void TuhuApplication::RenderId() {
     m_pickingFbo->Unbind();
 
 
-
+/*
     GL_C(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
     m_pickingFbo->UnbindForWriting();
@@ -406,13 +406,14 @@ void TuhuApplication::RenderId() {
 
     m_pickingFbo->UnbindForReading();
 
-	/*
+
     LOG_I("actual framebuffeR: %d, %d", GetFramebufferWidth(), GetFramebufferHeight() );
+*/
 
+//    m_pickingFbo->GetRenderTargetTexture().WriteIdToFile("id.png");
+//    m_pickingFbo->GetRenderTargetTexture().WriteToFile("id.png");
 
-    m_pickingFbo->GetRenderTargetTexture().WriteIdToFile("id.png");
-
-    exit(1);*/
+//    exit(1);
 }
 
 void TuhuApplication::RenderScene() {
@@ -500,14 +501,17 @@ void TuhuApplication::Render() {
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     } else {
+//	LOG_I("set view port to full viewport");
 	SetViewport();
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     }
 
-//    if(m_pickingFbo)
-//		RenderId();
+
+   if(m_pickingFbo)
+
+	RenderId();
 
    RenderScene();
 
@@ -567,7 +571,6 @@ void TuhuApplication::Update(const float delta) {
 
 	if(m_pickingFbo) {
 
-
 	    float x = ms.GetX();
 	    float y = ms.GetY();
 
@@ -576,12 +579,17 @@ void TuhuApplication::Update(const float delta) {
 	    int fb_width;
 	    glfwGetFramebufferSize(m_window, &fb_width, NULL);
 	    x -= (float)fb_width*m_guiVerticalScale*0.5f;
+//	    y = GetFramebufferHeight() - y - 1;
 
 	    LOG_I("mouse: %f, %f", x, y);
 
 	    PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 
 	    LOG_I("%f, %f, %f", pi.id, pi.unused1, pi.unused2);
+
+	    LOG_I("fb = %d, %d",
+		  GetFramebufferWidth(), GetFramebufferHeight() );
+
 	}
 
     }
