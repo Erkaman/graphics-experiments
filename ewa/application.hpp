@@ -5,7 +5,7 @@
 
 #pragma warning( disable : 4099 )
 
-class GLFWwindow;
+struct GLFWwindow;
 
 class ShaderProgram;
 

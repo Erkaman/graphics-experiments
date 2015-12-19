@@ -166,12 +166,12 @@ void TuhuApplication::Init() {
 
    m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) );
 
-   m_car = Car::Load(m_physicsWorld);
+  /* m_car = Car::Load(m_physicsWorld);
     if(!m_car)
 	PrintErrorExit();
-
+	
     m_geoObjs.push_back(m_car);
-
+	*/
 
 //   m_ball2 = LoadObj("obj/sunball.eob", Vector3f(20,-1.0,-7) );
 
@@ -180,9 +180,9 @@ void TuhuApplication::Init() {
     // TODO: should not this be the size of the framebuffer?
 m_depthFbo->Init(DEPTH_FBO_TEXTURE_UNIT, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
-    m_carCamera = new CarCamera(GetFramebufferWidth(),GetFramebufferHeight(),
+ /*   m_carCamera = new CarCamera(GetFramebufferWidth(),GetFramebufferHeight(),
 			     m_car
-			  );
+			  );*/
 
 //    if(m_gui) {
 	m_pickingFbo = new PickingFBO();
@@ -524,7 +524,7 @@ void TuhuApplication::Update(const float delta) {
 
     m_physicsWorld->Update(delta);
 
-    m_car->Update();
+  //  m_car->Update();
 
     m_totalDelta += delta;
 
