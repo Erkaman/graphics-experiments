@@ -73,7 +73,13 @@ static Texture* LoadTexture(const string& filename) {
     return texture;
 }
 
-HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f) {
+HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f),
+m_idShader(NULL),
+m_shader(NULL),
+m_depthShader(NULL),
+m_grassTexture(NULL),
+m_sandTexture(NULL),
+m_snowTexture(NULL){
 
     m_grassTexture = LoadTexture("img/grass.png");
 

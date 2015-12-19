@@ -90,9 +90,9 @@ void TuhuApplication::Init() {
 
     m_totalDelta = 0;
 
-    m_smoke = new SmokeEffect(Vector3f(11.5,-3,10));
+  /*  m_smoke = new SmokeEffect(Vector3f(11.5,-3,10));
     m_smoke->Init();
-
+	*/
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
@@ -386,7 +386,7 @@ void TuhuApplication::RenderId() {
     m_pickingFbo->Unbind();
 
 
-/*
+	/*
     GL_C(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
     m_pickingFbo->UnbindForWriting();
@@ -405,14 +405,16 @@ void TuhuApplication::RenderId() {
 	     ));
 
     m_pickingFbo->UnbindForReading();
-*/
+	*/
 
+
+	/*
     LOG_I("actual framebuffeR: %d, %d", GetFramebufferWidth(), GetFramebufferHeight() );
 
 
     m_pickingFbo->GetRenderTargetTexture().WriteIdToFile("id.png");
 
-    exit(1);
+    exit(1);*/
 }
 
 void TuhuApplication::RenderScene() {
@@ -423,12 +425,12 @@ void TuhuApplication::RenderScene() {
 
 //    m_grass->Draw(m_curCamera, m_lightDirection);
 
-   m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
+  // m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 
   //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
 
-    m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
+ //   m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 
     Matrix4f biasMatrix(
@@ -504,10 +506,10 @@ void TuhuApplication::Render() {
 
     }
 
-//    if(m_pickingFbo)
-//	RenderId();
+    if(m_pickingFbo)
+		RenderId();
 
-    RenderScene();
+   // RenderScene();
 
 
     if(m_gui) {
@@ -540,13 +542,13 @@ void TuhuApplication::Update(const float delta) {
 
 
     m_curCamera->Update(delta);
-
+	/*
     m_smoke->Update(delta);
     //   m_snow->Update(delta);
     m_fire->Update(delta);
-
+	*/
     m_skydome->Update(delta);
-
+	
 //      m_grass->Update(delta);
 
     KeyboardState& kbs = KeyboardState::GetInstance();

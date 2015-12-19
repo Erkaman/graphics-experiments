@@ -79,6 +79,7 @@ void ShaderProgram::CompileShaderProgram(const string& vertexShaderSource, const
 }
 
 void ShaderProgram::Bind() {
+
     GL_C(glUseProgram(m_shaderProgram));
 }
 

@@ -42,8 +42,9 @@ void PickingFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
 	m_depthBuffer->Unbind();
 
 
-	GL_C(glReadBuffer(GL_NONE));
+	/*GL_C(glReadBuffer(GL_NONE));
 	GL_C(glDrawBuffer(GL_COLOR_ATTACHMENT0));
+	*/
 
 	CheckFramebufferStatus();
 
