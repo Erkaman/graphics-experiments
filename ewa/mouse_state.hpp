@@ -20,10 +20,12 @@ private:
     bool* m_prevFrameButtonState;
     bool* m_curFrameButtonState;
 
+    GLFWwindow* m_window;
+
 
 public:
 
-    void Update(GLFWwindow* window);
+    void Update();
 
     bool WasPressed(int button);
 
@@ -33,6 +35,9 @@ public:
 	return instance;
     }
 
+    void Init(GLFWwindow* window);
+
+
     float GetDeltaX() const {
 	return m_deltaX;
     }
@@ -41,6 +46,6 @@ public:
 	return m_deltaY;
     }
 
-
-
+    float GetX() const;
+    float GetY() const;
 };

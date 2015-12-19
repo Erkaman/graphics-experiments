@@ -88,6 +88,7 @@ public:
 
     void WriteDepthToFile(const std::string& filename);
 
+    void WriteIdToFile(const std::string& filename);
 
     static void WriteToFile(unsigned char* pixels, const size_t width, const size_t height, const std::string& filename);
 

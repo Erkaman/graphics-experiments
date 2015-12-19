@@ -35,9 +35,7 @@ void FBO::CheckFramebufferStatus()  {
     CheckFramebufferStatus(m_target);
 }
 
-
 FBO::FBO(): m_target(GL_FRAMEBUFFER), m_depthBuffer(NULL), m_renderTargetTexture(NULL) {
-
 }
 
 void FBO::Init(const GLenum targetTextureUnit, const GLsizei width, const GLsizei height) {

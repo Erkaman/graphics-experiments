@@ -184,13 +184,14 @@ m_depthFbo->Init(DEPTH_FBO_TEXTURE_UNIT, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 			     m_car
 			  );
 
-    if(m_gui) {
+//    if(m_gui) {
 	m_pickingFbo = new PickingFBO();
 
 	// TODO: should not this be the size of the framebuffer?
 	m_pickingFbo->Init(PICKING_FBO_TEXTURE_UNIT, GetFramebufferWidth(),GetFramebufferHeight() );
 
-    }
+	LOG_I("picking: %d, %d", GetFramebufferWidth(),GetFramebufferHeight() );
+	//  }
     /*
       OpenAL::Initp();
 
@@ -377,13 +378,41 @@ void TuhuApplication::RenderShadowMap() {
 void TuhuApplication::RenderId() {
     m_pickingFbo->Bind();
 
+    Clear(0.0f, 0.2f, 0.2f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     // set viewport
-   m_heightMap->RenderId(m_curCamera);
+    m_heightMap->RenderId(m_curCamera);
 
     m_pickingFbo->Unbind();
 
-//    m_pickingFbo->GetRenderTargetTexture().WriteToFile("id.png");
-//    exit(1);
+
+/*
+    GL_C(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+
+    m_pickingFbo->UnbindForWriting();
+    m_pickingFbo->BindForReading();
+    GL_C(glReadBuffer(GL_COLOR_ATTACHMENT0));
+
+
+    // bl it
+
+    int w = GetFramebufferWidth();
+    int h = GetFramebufferHeight();
+
+
+    GL_C(glBlitFramebuffer(
+    	0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST
+	     ));
+
+    m_pickingFbo->UnbindForReading();
+*/
+
+    LOG_I("actual framebuffeR: %d, %d", GetFramebufferWidth(), GetFramebufferHeight() );
+
+
+    m_pickingFbo->GetRenderTargetTexture().WriteIdToFile("id.png");
+
+    exit(1);
 }
 
 void TuhuApplication::RenderScene() {
@@ -478,8 +507,6 @@ void TuhuApplication::Render() {
     if(m_pickingFbo)
 	RenderId();
 
-
-
     RenderScene();
 
 
@@ -535,7 +562,26 @@ void TuhuApplication::Update(const float delta) {
     MouseState& ms = MouseState::GetInstance();
 
     if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 )) {
-	LOG_I("click");
+
+	if(m_pickingFbo) {
+
+
+	    float x = ms.GetX();
+	    float y = ms.GetY();
+
+	    // remap the mouse position to the game framebuffer:
+
+	    int fb_width;
+	    glfwGetFramebufferSize(m_window, &fb_width, NULL);
+	    x -= (float)fb_width*m_guiVerticalScale*0.5f;
+
+	    LOG_I("mouse: %f, %f", x, y);
+
+	    PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
+
+	    LOG_I("%f, %f, %f", pi.id, pi.unused1, pi.unused2);
+	}
+
     }
 
     static bool b= false;

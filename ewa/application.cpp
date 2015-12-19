@@ -91,6 +91,7 @@ void Application::Start() {
 
 
     KeyboardState::GetInstance().Init(m_window);
+    MouseState::GetInstance().Init(m_window);
 
     this->Init();
     this->DoMainLoop();
@@ -228,7 +229,7 @@ void Application::Update_internal(const float delta) {
 
     m_running = !kbs.IsPressed(GLFW_KEY_ESCAPE);// GetKey(GLFW_KEY_ESCAPE) != GLFW_PRESS ;
 
-    MouseState::GetInstance().Update(m_window);
+    MouseState::GetInstance().Update();
     KeyboardState::GetInstance().Update();
 
     this->Update(delta);
