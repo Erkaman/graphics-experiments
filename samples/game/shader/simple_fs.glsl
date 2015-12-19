@@ -218,7 +218,6 @@ void main(void) {
 
 #endif
 
-
     // compute diffuse and specular terms
     float diff=clamp(dot(-l,finalNormal.xyz),0,1);
 

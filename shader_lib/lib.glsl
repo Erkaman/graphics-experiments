@@ -24,9 +24,10 @@ vec3 phongVertex(vec3 diffuseTextureSample, vec3 viewSpaceNormal, vec3 viewSpace
 
     vec3 normal = normalize(viewSpaceNormal);
 
-//    vec3 directionToLight =
-//	normalize(viewSpaceLightPosition - viewSpacePosition);
-    vec3 directionToLight = viewSpaceLightDirection;
+    // for the time being, we will make the lighting of the heightmap to a point light.
+    vec3 directionToLight =
+	normalize(viewSpaceLightDirection - viewSpacePosition);
+//    vec3 directionToLight = viewSpaceLightDirection;
 
     vec3 directionFromEye = normalize(viewSpacePosition);
 

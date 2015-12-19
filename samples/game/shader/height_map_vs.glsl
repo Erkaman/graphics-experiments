@@ -26,6 +26,8 @@ out vec3 norm;
 
 out float id;
 
+out float height;
+
 // sample heightmap
 float f(vec2 texCoord) {
     return texture(heightMap, texCoord).r;
@@ -72,6 +74,7 @@ vec3 getNormal(vec2 texCoord)
 
 void main()
 {
+
     float xzScale = 100.0;
     vec3 offset = vec3(50,0,50);
 
@@ -79,6 +82,8 @@ void main()
 	positionIn.x * xzScale,
 	f(positionIn.xz)*4,
 	positionIn.z * xzScale);
+
+
 
     gl_Position = mvp * vec4(pos,1);
 
@@ -95,4 +100,5 @@ void main()
     position = pos;
 
     id = idIn;
+    height = f(positionIn.xz)*4;
 }

@@ -457,7 +457,7 @@ float HeightMap::GetHeightAt(float x, float z)const {
 
 void HeightMap::Update(const float delta) {
 
-    /*
+/*
     static float total = 0;
     static bool done = false;
 
@@ -514,13 +514,13 @@ void HeightMap::Update(const float delta) {
 	if(istep > max_step) {
 
 
-	    m_imageTexture->WriteToFile("height.png");
+	       m_imageTexture->WriteToFile("height.png");
 
 	    exit(1);
 
 
 	}
 
-    }
-    */
+    }*/
+
 }

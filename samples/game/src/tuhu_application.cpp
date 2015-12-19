@@ -96,7 +96,7 @@ void TuhuApplication::Init() {
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
-    m_line = Line::Load(Vector3f(00,-2.0,0), Vector3f(0,-2.0,30));
+    m_line = Line::Load(Vector3f(00,0.0,0),  -100 * Vector3f(m_lightDirection)  );
 
     vector<Vector3f> points;
 
@@ -537,12 +537,6 @@ void TuhuApplication::Update(const float delta) {
     const float RADIUS = 30.0f;
     const float ROT_SPEED = 0.4f;
 
-    m_line->SetEnd( Vector3f(
-
-			/*0*/ sin(m_totalDelta*ROT_SPEED)*RADIUS,
-			-2.0,
-
-			cos(m_totalDelta*ROT_SPEED)*RADIUS  )  );
 
 
     m_curCamera->Update(delta);

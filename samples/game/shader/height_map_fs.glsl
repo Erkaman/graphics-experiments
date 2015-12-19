@@ -18,6 +18,8 @@ uniform sampler2D grass;
 uniform sampler2D sand;
 uniform sampler2D snow;
 
+in float height;
+
 
 in float id;
 
@@ -67,4 +69,6 @@ void main()
 			       viewSpaceLightDirection // minus, because its a directional light.
 			       , viewSpacePosition);
     fragmentColor = vec4(shading, 1.0);
+//    fragmentColor = vec4(vec3(height), 1.0);
+
 }
