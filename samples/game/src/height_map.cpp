@@ -29,31 +29,31 @@ using std::vector;
 using std::string;
 
 /*
-static inline float Lerp(float x, float y, float a) {
-    return x*(1-a)+y*a;
-}
+  static inline float Lerp(float x, float y, float a) {
+  return x*(1-a)+y*a;
+  }
 
-static inline int Floor(float x) {
-    return x>=0 ? (int)x : (int)x-1;
-}
+  static inline int Floor(float x) {
+  return x>=0 ? (int)x : (int)x-1;
+  }
 
 
-static inline Vector2f Fade(const float px, const float py) {
-    return Vector2f(
-	px * px * px * (px * (px * 6 - 15) + 10),
-	py * py * py * (py * (py * 6 - 15) + 10));
-}
+  static inline Vector2f Fade(const float px, const float py) {
+  return Vector2f(
+  px * px * px * (px * (px * 6 - 15) + 10),
+  py * py * py * (py * (py * 6 - 15) + 10));
+  }
 */
 
 /*
-static Vector3f CalculateNormal (float north, float south, float east, float west)
-{
-    Vector3f n(
-	(west - east),
-	2.0f,
-	(north - south));
-    return n.Normalize();
-}
+  static Vector3f CalculateNormal (float north, float south, float east, float west)
+  {
+  Vector3f n(
+  (west - east),
+  2.0f,
+  (north - south));
+  return n.Normalize();
+  }
 */
 
 static Texture* LoadTexture(const string& filename) {
@@ -74,12 +74,12 @@ static Texture* LoadTexture(const string& filename) {
 }
 
 HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f),
-m_idShader(NULL),
-m_shader(NULL),
-m_depthShader(NULL),
-m_grassTexture(NULL),
-m_sandTexture(NULL),
-m_snowTexture(NULL){
+					       m_idShader(NULL),
+					       m_shader(NULL),
+					       m_depthShader(NULL),
+					       m_grassTexture(NULL),
+					       m_sandTexture(NULL),
+					       m_snowTexture(NULL){
 
     m_grassTexture = LoadTexture("img/grass.png");
 
@@ -109,7 +109,7 @@ HeightMap::~HeightMap() {
     MY_DELETE(m_grassTexture);
     MY_DELETE(m_map)
 
-}
+	}
 
 
 void HeightMap::Render() {
@@ -214,20 +214,20 @@ void HeightMap::SetWireframe(const bool wireframe) {
 }
 
 /*
-const Color HeightMap::VertexColoring(const float y) {
+  const Color HeightMap::VertexColoring(const float y) {
 
-    if(y < 1.7f) {
-	Color lower = Color::FromInt(237, 201, 175);
-	Color higher = Color::FromInt(0x76, 0xa9, 0x12);
-	return Color::Lerp(lower, higher, y / 1.7f);
-    } else {
-	Color lower = Color::FromInt(0x76, 0xa9, 0x12);
-	Color higher = Color::FromInt(255, 255 , 255);
+  if(y < 1.7f) {
+  Color lower = Color::FromInt(237, 201, 175);
+  Color higher = Color::FromInt(0x76, 0xa9, 0x12);
+  return Color::Lerp(lower, higher, y / 1.7f);
+  } else {
+  Color lower = Color::FromInt(0x76, 0xa9, 0x12);
+  Color higher = Color::FromInt(255, 255 , 255);
 
-	return Color::Lerp(lower, higher, (y-1.7f) / 1.2f);
-    }
+  return Color::Lerp(lower, higher, (y-1.7f) / 1.2f);
+  }
 
-}*/
+  }*/
 
 void HeightMap::CreateHeightmap(const std::string& path) {
 
@@ -244,14 +244,14 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     for(size_t i = 0; i < width; ++i) {
 
 	for(size_t j = 0; j < depth; ++j) {
-	    image(i,j) =0; //random.RandomInt(0,80);
+	    image(i,j) = random.RandomInt(0,80);
 	}
     }
 
     m_imageTexture = new Texture2D(image.GetData(), width, depth,
-					    GL_R8, // internal format
-					    GL_RED, // format
-					    GL_UNSIGNED_BYTE
+				   GL_R8, // internal format
+				   GL_RED, // format
+				   GL_UNSIGNED_BYTE
 	);
 
     m_imageTexture->Bind();
@@ -270,8 +270,8 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
     m_imageTexture->Unbind();
 
-     m_map = new MultArray<Cell>(width, depth);
-     MultArray<Cell> &map = *m_map;
+    m_map = new MultArray<Cell>(width, depth);
+    MultArray<Cell> &map = *m_map;
 
     unsigned int xpos = 0;
     unsigned int zpos = 0;
@@ -304,76 +304,76 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     }
 
 /*
-    // normalize the vertex data.
-    for(size_t x = 0; x < width; ++x) {
-	for(size_t z = 0; z < depth; ++z) {
-	    Cell& c = map(x,z);
+// normalize the vertex data.
+for(size_t x = 0; x < width; ++x) {
+for(size_t z = 0; z < depth; ++z) {
+Cell& c = map(x,z);
 
-	    c.position.y = (c.position.y - low) / (high - low);
-	    c.position.y *=2.7f;
-	    c.position.y -=5.0f;
+c.position.y = (c.position.y - low) / (high - low);
+c.position.y *=2.7f;
+c.position.y -=5.0f;
 
-	}
-    }
+}
+}
 
-    constexpr int BLEND_RANGE = 1;
+constexpr int BLEND_RANGE = 1;
 
-    for(size_t x = 0; x < width; ++x) {
-	for(size_t z = 0; z < depth; ++z) {
-	    Cell& c = map(x,z);
-
-
-	    float smooth = 0.0f;
-	    int samples = 0;
-
-	    for (int xx = -BLEND_RANGE; xx <= BLEND_RANGE; xx++) {
-		for(int zz = -BLEND_RANGE; zz <= BLEND_RANGE; ++zz) {
-		    smooth += map.GetWrap(x+xx,z+zz).position.y;
-		    ++samples;
-		}
-	    }
-
-	    c.position.y = (smooth / (float)samples);
-	}
-    }
-
-    float miny = 9999;
-    float maxy = -9999;
+for(size_t x = 0; x < width; ++x) {
+for(size_t z = 0; z < depth; ++z) {
+Cell& c = map(x,z);
 
 
-    for(size_t x = 0; x < width; ++x) {
-	for(size_t z = 0; z < depth; ++z) {
-	    Cell& c = map(x,z);
+float smooth = 0.0f;
+int samples = 0;
 
-	    //  c.position.y *= 2.0f;
+for (int xx = -BLEND_RANGE; xx <= BLEND_RANGE; xx++) {
+for(int zz = -BLEND_RANGE; zz <= BLEND_RANGE; ++zz) {
+smooth += map.GetWrap(x+xx,z+zz).position.y;
+++samples;
+}
+}
 
-	    c.normal = CalculateNormal(
-		map.GetWrap(x,z-1).position.y,
-		map.GetWrap(x,z+1).position.y,
-		map.GetWrap(x+1,z).position.y,
-		map.GetWrap(x-1,z).position.y);
+c.position.y = (smooth / (float)samples);
+}
+}
+
+float miny = 9999;
+float maxy = -9999;
+
+
+for(size_t x = 0; x < width; ++x) {
+for(size_t z = 0; z < depth; ++z) {
+Cell& c = map(x,z);
+
+//  c.position.y *= 2.0f;
+
+c.normal = CalculateNormal(
+map.GetWrap(x,z-1).position.y,
+map.GetWrap(x,z+1).position.y,
+map.GetWrap(x+1,z).position.y,
+map.GetWrap(x-1,z).position.y);
 
 //	    c.color = VertexColoring(c.position.y);
 
 //	    LOG_I("pos: %f", c.position.y);
 
-	    c.texCoord.x = (float)x/5.0f;
-	    c.texCoord.y = (float)z/5.0f;
+c.texCoord.x = (float)x/5.0f;
+c.texCoord.y = (float)z/5.0f;
 
 
-	    float y = c.position.y;
+float y = c.position.y;
 
-	    if(y > maxy) {
-		maxy = y;
-	    }
+if(y > maxy) {
+maxy = y;
+}
 
-	    if(y < miny) {
-		miny = y;
-	    }
+if(y < miny) {
+miny = y;
+}
 
 
-	}
-    }
+}
+}
 
 //    LOG_I("min max %f, %f", miny, maxy);
 
@@ -431,23 +431,23 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
 float HeightMap::GetHeightAt(float x, float z)const {
     /*
-    Vector2f p = Vector2f( ((float)x / SCALE_XZ), ((float)z / SCALE_XZ) );
+      Vector2f p = Vector2f( ((float)x / SCALE_XZ), ((float)z / SCALE_XZ) );
 
-    Vector2i P =  Vector2i( Floor(p.x),  Floor(p.y) );
+      Vector2i P =  Vector2i( Floor(p.x),  Floor(p.y) );
 
-    const Vector2f f = Fade(
-	p.x - Floor(p.x),
-	p.y - Floor(p.y));
-
-
-
-    float AA = ((*m_map)(  P.x, P.y )).position.y;
-    float AB = ((*m_map)(  P.x, P.y+1 )).position.y;
-    float BA = ((*m_map)(  P.x+1, P.y )).position.y;
-    float BB = ((*m_map)(  P.x+1, P.y+1 )).position.y;
+      const Vector2f f = Fade(
+      p.x - Floor(p.x),
+      p.y - Floor(p.y));
 
 
-    return Lerp(Lerp(AA, BA, f.x), Lerp(AB, BB, f.x), f.y);
+
+      float AA = ((*m_map)(  P.x, P.y )).position.y;
+      float AB = ((*m_map)(  P.x, P.y+1 )).position.y;
+      float BA = ((*m_map)(  P.x+1, P.y )).position.y;
+      float BB = ((*m_map)(  P.x+1, P.y+1 )).position.y;
+
+
+      return Lerp(Lerp(AA, BA, f.x), Lerp(AB, BB, f.x), f.y);
     */
 
     return 0;
@@ -457,7 +457,8 @@ float HeightMap::GetHeightAt(float x, float z)const {
 
 void HeightMap::Update(const float delta) {
 
-/*    static float total = 0;
+    /*
+    static float total = 0;
     static bool done = false;
 
     total += delta;
@@ -469,7 +470,12 @@ void HeightMap::Update(const float delta) {
     int cx = 40;
     int cz = 40;
 
-    if(total > 0.05 && !done) {
+    float maxdist = rad;
+
+    static int istep = 0;
+    const int max_step = 30;
+
+    if(total > 0.05 && istep <= max_step) {
 
 	total = 0;
 
@@ -477,37 +483,44 @@ void HeightMap::Update(const float delta) {
 
 	    for(int iz = -rad; iz < +rad; ++iz) {
 
-		float dist = sqrt( (float)ix * ix + (float)iz * iz  );
+		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
+
+		int bla = (unsigned char)((1.0 - dist / maxdist) * 255.0f);
 
 		if(dist < rad) {
-		    image(cx+ix,cz+iz) += (rad-dist);
+		    image(cx+ix,cz+iz) +=  bla / (max_step+1);
 
-		    if(image(cx+ix,cz+iz) >= 240) {
-			done = true;
-		    }
+		    //	    if(image(cx+ix,cz+iz) >= 240) {
+
+		    done = true;
+
 		}
+//		}
 	    }
 	}
 
 
-    m_imageTexture->Bind();
+	m_imageTexture->Bind();
 
-    //TODO: methods better exist:
-    // http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
-    m_imageTexture->UpdateTexture(image.GetData());
+	//TODO: methods better exist:
+	// http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
+	m_imageTexture->UpdateTexture(image.GetData());
 
-    m_imageTexture->Unbind();
+	m_imageTexture->Unbind();
+
+	++istep;
+
+
+	if(istep > max_step) {
+
+
+	    m_imageTexture->WriteToFile("height.png");
+
+	    exit(1);
+
+
+	}
 
     }
-
-
-
-*/
-
-
-
-
-
-
-
+    */
 }
