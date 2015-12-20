@@ -33,11 +33,13 @@ private:
     VBO* m_vertexBuffer;
     VBO* m_indexBuffer;
 
+    VBO* m_cursorVertexBuffer;
+
     ShaderProgram* m_shader;
     ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
     ShaderProgram* m_idShader; //outputs only the id. Used for triangle picking in the height map.
+    ShaderProgram* m_cursorShader;
 
-    float m_movement;
 
     Texture* m_grassTexture;
     Texture* m_sandTexture;
@@ -57,7 +59,16 @@ private:
 
     void CreateHeightmap(const std::string& path);
 
+
+    void RenderHeightMap(const ICamera* camera, const Vector4f& lightPosition);
+    void RenderCursor(const ICamera* camera);
+
+
     void Render(ShaderProgram* shader);
+
+    void RenderSetup(ShaderProgram* shader);
+    void RenderUnsetup(ShaderProgram* shader);
+
 
 public:
 

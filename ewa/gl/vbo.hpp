@@ -83,7 +83,3 @@ public:
     GLint GetBufferSize();
 
 };
-
-// the data needed,
-// the vertex attribs(vector of GLuint)
-// and the sizes.

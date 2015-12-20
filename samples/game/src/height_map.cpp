@@ -14,6 +14,7 @@
 #include "file.hpp"
 #include "resource_manager.hpp"
 #include "ewa/random.hpp"
+#include "ewa/config.hpp"
 
 #include "math/vector2f.hpp"
 #include "math/vector3f.hpp"
@@ -77,10 +78,11 @@ static Texture* LoadTexture(const string& filename) {
     return texture;
 }
 
-HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(3.0f),
-					       m_idShader(NULL),
+HeightMap::HeightMap(const std::string& path): m_isWireframe(false),
 					       m_shader(NULL),
 					       m_depthShader(NULL),
+					       m_idShader(NULL),
+					       m_cursorShader(NULL),
 					       m_grassTexture(NULL),
 					       m_sandTexture(NULL),
 					       m_snowTexture(NULL){
@@ -100,8 +102,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false), m_movement(
 
     m_depthShader = ShaderProgram::Load("shader/output_depth");
 
-    m_idShader = ShaderProgram::Load("shader/output_id");
-
+    m_idShader = ShaderProgram::Load("shader/height_map_output_id");
+    m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
 
     CreateHeightmap(path);
 }
@@ -112,15 +114,30 @@ HeightMap::~HeightMap() {
     MY_DELETE(m_vertexBuffer);
     MY_DELETE(m_grassTexture);
     MY_DELETE(m_map)
-
 }
 
+void HeightMap::RenderSetup(ShaderProgram* shader) {
+    m_shader->SetUniform("heightMap", 3);
+    Texture::SetActiveTextureUnit(3);
+    m_imageTexture->Bind();
 
-void HeightMap::Render(ShaderProgram* shader) {
 
     shader->SetUniform("xzScale", xzScale);
     shader->SetUniform("yScale", yScale);
     shader->SetUniform("offset", offset);
+
+}
+
+void HeightMap::RenderUnsetup(ShaderProgram* shader) {
+    m_imageTexture->Unbind();
+}
+
+
+
+void HeightMap::Render(ShaderProgram* shader) {
+
+    RenderSetup(shader);
+
 
     // setup vertex buffers.
     m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
@@ -135,6 +152,10 @@ void HeightMap::Render(ShaderProgram* shader) {
     m_indexBuffer->Unbind();
 
     m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
+
+
+    RenderUnsetup(shader);
+
 
 }
 
@@ -152,11 +173,10 @@ void HeightMap::RenderShadowMap(const ICamera* camera) {
     m_depthShader->Unbind();
 */
 
-
 }
 
-void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
 
+void HeightMap::RenderHeightMap(const ICamera* camera, const Vector4f& lightPosition) {
     m_shader->Bind();
 
     m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition, Matrix4f::CreateIdentity());
@@ -165,17 +185,14 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
     Texture::SetActiveTextureUnit(0);
     m_grassTexture->Bind();
 
-    m_shader->SetUniform("sand", 1);
+/*    m_shader->SetUniform("sand", 1);
     Texture::SetActiveTextureUnit(1);
     m_sandTexture->Bind();
 
     m_shader->SetUniform("snow", 2);
     Texture::SetActiveTextureUnit(2);
     m_snowTexture->Bind();
-
-    m_shader->SetUniform("heightMap", 3);
-    Texture::SetActiveTextureUnit(3);
-    m_imageTexture->Bind();
+*/
 
     // set textures and stuff.
 
@@ -189,27 +206,68 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     m_grassTexture->Unbind();
-    m_sandTexture->Unbind();
+    /*   m_sandTexture->Unbind();
     m_snowTexture->Unbind();
-
-    m_imageTexture->Unbind();
+    */
 
     m_shader->Unbind();
+
+}
+
+
+void HeightMap::RenderCursor(const ICamera* camera) {
+/*
+
+    vector<Vector3f> points;
+
+    points.push_back(Vector3f(0, 0, 0));
+
+    m_cursorVertexBuffer->Bind();
+    m_cursorVertexBuffer->SetBufferData(points);
+    m_cursorVertexBuffer->Unbind();
+
+
+    m_cursorShader->Bind();
+
+
+
+
+    m_cursorShader->SetShaderUniforms(Matrix4f::CreateTranslation(0,0,0), camera);
+
+
+    RenderSetup(m_cursorShader);
+
+
+
+
+    RenderUnsetup(m_cursorShader);
+
+    m_cursorShader->Unbind();
+*/
+
+
+
+}
+
+
+void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
+
+    RenderHeightMap(camera, lightPosition);
+
+    Config& m_config = Config::GetInstance();
+    if(m_config.IsGui()) {
+	RenderCursor(camera);
+    }
 }
 
 void HeightMap::RenderId(const ICamera* camera) {
 
     m_idShader->Bind();
 
+
     m_idShader->SetShaderUniforms(Matrix4f::CreateTranslation(0,0,0), camera);
 
-    m_idShader->SetUniform("heightMap", 3);
-    Texture::SetActiveTextureUnit(3);
-    m_imageTexture->Bind();
-
     Render(m_idShader);
-
-    m_imageTexture->Unbind();
 
     m_idShader->Unbind();
 }
@@ -316,84 +374,6 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 //	LOG_I("x = %d, z = %d", xpos, zpos);
     }
 
-/*
-// normalize the vertex data.
-for(size_t x = 0; x < width; ++x) {
-for(size_t z = 0; z < depth; ++z) {
-Cell& c = map(x,z);
-
-c.position.y = (c.position.y - low) / (high - low);
-c.position.y *=2.7f;
-c.position.y -=5.0f;
-
-}
-}
-
-constexpr int BLEND_RANGE = 1;
-
-for(size_t x = 0; x < width; ++x) {
-for(size_t z = 0; z < depth; ++z) {
-Cell& c = map(x,z);
-
-
-float smooth = 0.0f;
-int samples = 0;
-
-for (int xx = -BLEND_RANGE; xx <= BLEND_RANGE; xx++) {
-for(int zz = -BLEND_RANGE; zz <= BLEND_RANGE; ++zz) {
-smooth += map.GetWrap(x+xx,z+zz).position.y;
-++samples;
-}
-}
-
-c.position.y = (smooth / (float)samples);
-}
-}
-
-float miny = 9999;
-float maxy = -9999;
-
-
-for(size_t x = 0; x < width; ++x) {
-for(size_t z = 0; z < depth; ++z) {
-Cell& c = map(x,z);
-
-//  c.position.y *= 2.0f;
-
-c.normal = CalculateNormal(
-map.GetWrap(x,z-1).position.y,
-map.GetWrap(x,z+1).position.y,
-map.GetWrap(x+1,z).position.y,
-map.GetWrap(x-1,z).position.y);
-
-//	    c.color = VertexColoring(c.position.y);
-
-//	    LOG_I("pos: %f", c.position.y);
-
-c.texCoord.x = (float)x/5.0f;
-c.texCoord.y = (float)z/5.0f;
-
-
-float y = c.position.y;
-
-if(y > maxy) {
-maxy = y;
-}
-
-if(y < miny) {
-miny = y;
-}
-
-
-}
-}
-
-//    LOG_I("min max %f, %f", miny, maxy);
-
-*/
-
-//    File::WriteArray(VERTEX_FILE, reinterpret_cast<void *>(map.GetData()), map.GetTotalsize() * sizeof(Cell) );
-
     m_vertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{3,1,2} // pos, id, tex
 	);
@@ -402,17 +382,15 @@ miny = y;
     m_vertexBuffer->SetBufferData(map);
     m_vertexBuffer->Unbind();
 
-
-
-
-
-
+    m_cursorVertexBuffer = VBO::CreateInterleaved(
+	vector<GLuint>{3}, // pos
+	GL_DYNAMIC_DRAW
+	);
 
     GLuint baseIndex = 0;
     UintVector indices;
 
     m_numTriangles = 0;
-
 
     for(size_t x = 0; x < (width-1); ++x) {
 	for(size_t z = 0; z < (depth-1); ++z) {
