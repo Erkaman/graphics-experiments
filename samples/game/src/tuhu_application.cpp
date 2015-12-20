@@ -110,14 +110,14 @@ void TuhuApplication::Init() {
 
     const Vector3f pos =
 
-	Vector3f(47.435387, 3.226641, 48.256962);
+	Vector3f(49.742802, 8.404278, 50.394230);
+
 
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 			  pos,
-
 	Vector3f(0.671108, -0.403981, 0.621622)
 
 			  );

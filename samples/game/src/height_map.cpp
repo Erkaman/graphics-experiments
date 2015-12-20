@@ -276,7 +276,7 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     m_imageTexture->Unbind();
 
 
-    image(20,20) = 255;
+    image(20,20) = 10000;
 
     m_imageTexture->Bind();
 
@@ -500,9 +500,23 @@ void HeightMap::Update(const float delta) {
 
 		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
-		int bla = (unsigned short)((1.0 - dist / maxdist) * 65535.0f);
 
 		if(dist < rad) {
+
+		    float x = dist / maxdist; // in range [0,1].
+
+		    float y = (1.0 - x*x);
+
+		    if(y < 0) {
+			y = 0;
+		    }
+
+		    if(y > 1.0) {
+			y = 1.0;
+		    }
+
+		    int bla = (unsigned short)((y) * 65535.0f);
+
 		    image(cx+ix,cz+iz) +=  bla  / (max_step+1);
 
 //		    istep = max_step+1;
@@ -526,12 +540,12 @@ void HeightMap::Update(const float delta) {
 
 
 	if(istep > max_step) {
+	    /*
 
-/*
 	    m_imageTexture->Write16ToFile("height.png");
 
 	    exit(1);
-*/
+	    */
 
 	}
 
