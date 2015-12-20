@@ -11,7 +11,7 @@ uniform mat4 mvp;
 
 uniform sampler2D heightMap;
 
-out float id;
+flat out float id;
 
 // sample heightmap
 float f(vec2 texCoord) {

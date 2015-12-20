@@ -169,14 +169,14 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
 
     // set textures and stuff.
 
-    if(m_isWireframe)
+//    if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 
     Render();
 
 
-    if(m_isWireframe)
+//    if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     m_grassTexture->Unbind();
@@ -278,9 +278,12 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
     int id = 0;
 
+
+
     for(size_t i = 0; i < width*depth; ++i) {
 
 	Cell& c = map(xpos, zpos);
+
 
 	c.position =
 	    Vector3f(

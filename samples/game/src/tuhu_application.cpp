@@ -110,18 +110,15 @@ void TuhuApplication::Init() {
 
     const Vector3f pos =
 
-	Vector3f(48.866501, 15.432347, 44.625168);
+	Vector3f(47.435387, 3.226641, 48.256962);
 
-
-    int fb_width;
-    glfwGetFramebufferSize(m_window, &fb_width, NULL);
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 			  pos,
 
-			      Vector3f(0.671108, -0.403981, 0.621622)
+	Vector3f(0.671108, -0.403981, 0.621622)
 
 			  );
 
