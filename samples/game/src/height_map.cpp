@@ -245,23 +245,27 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     size_t width = 256;
     size_t depth = 256;
 
-    m_image = new MultArray<unsigned char>(width, depth, (unsigned char)0);
+    m_image = new MultArray<unsigned short>(width, depth, (unsigned short)0);
 
-    MultArray<unsigned char>& image = *m_image;
+    MultArray<unsigned short>& image = *m_image;
 
     Random random(3);
 
     for(size_t i = 0; i < width; ++i) {
 
 	for(size_t j = 0; j < depth; ++j) {
-	    image(i,j) = random.RandomInt(0,80);
+
+
+//	    image(i,j) = random.RandomInt(0,80);
+	    image(i,j) = random.RandomInt(0, 20559);
+
 	}
     }
 
     m_imageTexture = new Texture2D(image.GetData(), width, depth,
-				   GL_R8, // internal format
+				   GL_R16, // internal format
 				   GL_RED, // format
-				   GL_UNSIGNED_BYTE
+				   GL_UNSIGNED_SHORT
 	);
 
     m_imageTexture->Bind();
@@ -466,8 +470,6 @@ float HeightMap::GetHeightAt(float x, float z)const {
     return 0;
 }
 
-
-
 void HeightMap::Update(const float delta) {
 
 /*
@@ -476,7 +478,7 @@ void HeightMap::Update(const float delta) {
 
     total += delta;
 
-    MultArray<unsigned char>& image = *m_image;
+    MultArray<unsigned short>& image = *m_image;
 
     float rad = 25;
 
@@ -498,7 +500,7 @@ void HeightMap::Update(const float delta) {
 
 		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
-		int bla = (unsigned char)((1.0 - dist / maxdist) * 255.0f);
+		int bla = (unsigned short)((1.0 - dist / maxdist) * 255.0f);
 
 		if(dist < rad) {
 		    image(cx+ix,cz+iz) +=  bla / (max_step+1);

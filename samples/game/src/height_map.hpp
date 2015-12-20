@@ -48,7 +48,7 @@ private:
 
     MultArray<Cell> *m_map;
 
-    MultArray<unsigned char>* m_image;
+    MultArray<unsigned short>* m_image;
 
 
     static const float ComputeY(const unsigned char heightMapData );
