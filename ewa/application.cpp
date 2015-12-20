@@ -54,7 +54,7 @@ void Application::Start() {
 
     Config& config = Config::GetInstance();
 
-    if(config.IsGui()) {
+/*    if(config.IsGui()) {
 	m_guiVerticalScale = 0.3;
 
 	int width, height;
@@ -66,10 +66,12 @@ void Application::Start() {
     } else {
 	m_guiVerticalScale = 0.0;
 
+*/
+    	m_guiVerticalScale = 0.3;
+//	int width, height;
+	glfwGetFramebufferSize(m_window, &m_framebufferWidth , &m_framebufferHeight);
 
-	glfwGetFramebufferSize(m_window, &m_framebufferWidth, &m_framebufferHeight);
-
-    }
+	//  }
 
 
     m_fontShader = ShaderProgram::Load("shader_lib/font_render");
@@ -206,10 +208,10 @@ void Application::SetupOpenGL() {
 
 void Application::SetViewport() {
 
-    int width, height;
-    glfwGetFramebufferSize(m_window, &width, &height);
+//    int width, height;
+//    glfwGetFramebufferSize(m_window, &width, &height);
 
-    ::SetViewport(0, 0, width, height);
+    ::SetViewport(0, 0, GetFramebufferWidth(), GetFramebufferHeight());
 }
 
 int Application::GetFramebufferWidth() {

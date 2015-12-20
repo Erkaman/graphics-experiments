@@ -113,7 +113,12 @@ void TuhuApplication::Init() {
 	Vector3f(48.866501, 15.432347, 44.625168);
 
 
-    m_freeCamera = new Camera(GetFramebufferWidth(),GetFramebufferHeight(),
+    int fb_width;
+    glfwGetFramebufferSize(m_window, &fb_width, NULL);
+
+    m_freeCamera = new Camera(
+	GetFramebufferWidth(),
+	GetFramebufferHeight(),
 			  pos,
 
 			      Vector3f(0.671108, -0.403981, 0.621622)
@@ -487,7 +492,7 @@ void TuhuApplication::Render() {
     int windowHeight;
 
 
-    if(m_gui) {
+/*    if(m_gui) {
 
 	int fb_width, fb_height;
 	glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
@@ -500,13 +505,14 @@ void TuhuApplication::Render() {
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    } else {
+	} else {*/
 //	LOG_I("set view port to full viewport");
 	SetViewport();
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    }
+//    }
+
 
 
    if(m_pickingFbo)
@@ -517,8 +523,18 @@ void TuhuApplication::Render() {
 
 
     if(m_gui) {
+
+	int fb_width, fb_height;
+	glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
+
+ 	windowWidth = fb_width*SCALE * 0.5;
+	windowHeight = fb_height * 0.5;
+
+
 	m_gui->Render(windowWidth, windowHeight);
     }
+
+
 
 }
 
@@ -565,25 +581,33 @@ void TuhuApplication::Update(const float delta) {
 
 	if(m_pickingFbo) {
 
-	    float x = ms.GetX();
-	    float y = ms.GetY();
-
-	    // remap the mouse position to the game framebuffer:
+	    float x = ms.GetX()*2;
+	    float y = ms.GetY()*2;
 
 	    int fb_width;
 	    glfwGetFramebufferSize(m_window, &fb_width, NULL);
-	    x -= (float)fb_width*m_guiVerticalScale*0.5f;
-//	    y = GetFramebufferHeight() - y - 1;
 
-	    LOG_I("mouse: %f, %f", x, y);
+	    if(fb_width*m_guiVerticalScale > x) { // if click within gui ignore.
 
-	    PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
+		LOG_I("IGNORE");
 
-	    LOG_I("%f, %f, %f", pi.id, pi.unused1, pi.unused2);
+	    } else {
 
-	    LOG_I("fb = %d, %d",
-		  GetFramebufferWidth(), GetFramebufferHeight() );
+		// remap the mouse position to the game framebuffer:
 
+		int fb_width;
+		glfwGetFramebufferSize(m_window, &fb_width, NULL);
+		y = GetFramebufferHeight() - y - 1;
+
+		LOG_I("mouse: %f, %f", x, y);
+
+		PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
+
+		LOG_I("%f, %f, %f", pi.id, pi.unused1, pi.unused2);
+
+		LOG_I("fb = %d, %d",
+		      GetFramebufferWidth(), GetFramebufferHeight() );
+	    }
 	}
 
     }
