@@ -86,6 +86,9 @@ public:
      */
     void WriteToFile(const std::string& filename);
 
+    void Write16ToFile(const std::string& filename);
+
+
     void WriteDepthToFile(const std::string& filename);
 
     void WriteIdToFile(const std::string& filename);

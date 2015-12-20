@@ -168,6 +168,43 @@ void Texture::WriteToFile(const std::string& filename) {
 }
 
 
+void Texture::Write16ToFile(const std::string& filename) {
+
+    Bind();
+    size_t size = m_width* m_height * 1; // only red channel.
+    unsigned short* pixels = new unsigned short[size];
+    GL_C(glGetTexImage(m_target, 0, GL_RED, GL_UNSIGNED_SHORT, pixels));
+    Unbind();
+
+    // flip the image.
+
+    /*Encode the image*/
+
+    unsigned char* image = ((unsigned char*)pixels);
+
+    // fixed endianness.
+
+    for(int i = 0; i < (size*2); i+=2 ) {
+
+	unsigned char temp;
+
+	temp = image[i];
+	image[i] = image[i+1];
+	image[i+1] = temp;
+
+    }
+
+    unsigned error = lodepng_encode_file(filename.c_str(), image, m_width, m_height, LCT_GREY, 16);
+
+//    unsigned error = lodepng_encode_file(filename, image, width, height);
+
+    if(error) {
+      	LOG_E("PNG encoder error: %d: %s", error, lodepng_error_text(error) );
+    }
+}
+
+
+
 void Texture::WriteIdToFile(const std::string& filename) {
 /*
     m_width *= 1.0;

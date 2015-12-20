@@ -256,8 +256,8 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 	for(size_t j = 0; j < depth; ++j) {
 
 
-//	    image(i,j) = random.RandomInt(0,80);
-	    image(i,j) = random.RandomInt(0, 20559);
+//	    image(i,j) = random.RandomInt(0, 20559);
+	    image(i,j) = 0;
 
 	}
     }
@@ -472,7 +472,7 @@ float HeightMap::GetHeightAt(float x, float z)const {
 
 void HeightMap::Update(const float delta) {
 
-/*
+
     static float total = 0;
     static bool done = false;
 
@@ -500,20 +500,19 @@ void HeightMap::Update(const float delta) {
 
 		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
-		int bla = (unsigned short)((1.0 - dist / maxdist) * 255.0f);
+		int bla = (unsigned short)((1.0 - dist / maxdist) * 65535.0f);
 
 		if(dist < rad) {
-		    image(cx+ix,cz+iz) +=  bla / (max_step+1);
+		    image(cx+ix,cz+iz) +=  bla  / (max_step+1);
+
+//		    istep = max_step+1;
 
 		    //	    if(image(cx+ix,cz+iz) >= 240) {
-
-		    done = true;
 
 		}
 //		}
 	    }
 	}
-
 
 	m_imageTexture->Bind();
 
@@ -528,14 +527,14 @@ void HeightMap::Update(const float delta) {
 
 	if(istep > max_step) {
 
-
-	       m_imageTexture->WriteToFile("height.png");
+/*
+	    m_imageTexture->Write16ToFile("height.png");
 
 	    exit(1);
-
+*/
 
 	}
 
-    }*/
+    }
 
 }
