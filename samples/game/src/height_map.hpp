@@ -14,6 +14,7 @@ class Texture;
 class PerlinSeed;
 class Texture;
 class Texture2D;
+class ShaderProgra;
 
 struct Cell {
     Vector3f position;
@@ -56,7 +57,7 @@ private:
 
     void CreateHeightmap(const std::string& path);
 
-    void Render();
+    void Render(ShaderProgram* shader);
 
 public:
 

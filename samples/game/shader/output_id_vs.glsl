@@ -11,6 +11,11 @@ uniform mat4 mvp;
 
 uniform sampler2D heightMap;
 
+uniform float xzScale;
+uniform vec3 offset;
+uniform float yScale;
+
+
 flat out float id;
 
 // sample heightmap
@@ -24,12 +29,10 @@ float f(float x, float z) {
 
 void main()
 {
-    float xzScale = 100.0;
-    vec3 offset = vec3(50,0,50);
 
     vec3 pos = offset + vec3(
 	positionIn.x * xzScale,
-	f(positionIn.xz)*4,
+	f(positionIn.xz)*yScale,
 	positionIn.z * xzScale);
 
     gl_Position = mvp * vec4(pos,1);

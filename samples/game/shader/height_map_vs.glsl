@@ -14,6 +14,9 @@ uniform mat4 normalMatrix;
 
 uniform sampler2D heightMap;
 
+uniform float xzScale;
+uniform vec3 offset;
+uniform float yScale;
 
 out vec3 viewSpaceNormal;
 out vec3 viewSpacePosition;
@@ -75,12 +78,10 @@ vec3 getNormal(vec2 texCoord)
 void main()
 {
 
-    float xzScale = 100.0;
-    vec3 offset = vec3(50,0,50);
 
     vec3 pos = offset + vec3(
 	positionIn.x * xzScale,
-	f(positionIn.xz)*4,
+	f(positionIn.xz)*yScale,
 	positionIn.z * xzScale);
 
 

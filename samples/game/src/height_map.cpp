@@ -28,6 +28,10 @@
 using std::vector;
 using std::string;
 
+constexpr float xzScale= 100.0;
+const Vector3f offset(50, 0, 50);
+constexpr float yScale = 4.0;
+
 /*
   static inline float Lerp(float x, float y, float a) {
   return x*(1-a)+y*a;
@@ -109,10 +113,14 @@ HeightMap::~HeightMap() {
     MY_DELETE(m_grassTexture);
     MY_DELETE(m_map)
 
-	}
+}
 
 
-void HeightMap::Render() {
+void HeightMap::Render(ShaderProgram* shader) {
+
+    shader->SetUniform("xzScale", xzScale);
+    shader->SetUniform("yScale", yScale);
+    shader->SetUniform("offset", offset);
 
     // setup vertex buffers.
     m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
@@ -131,6 +139,9 @@ void HeightMap::Render() {
 }
 
 void HeightMap::RenderShadowMap(const ICamera* camera) {
+
+    // TODO: implement shadow mapping for height map.
+/*
     m_depthShader->Bind();
 
     const Matrix4f mvp = camera->GetMvp(Matrix4f::CreateTranslation(0,0,0));
@@ -139,7 +150,7 @@ void HeightMap::RenderShadowMap(const ICamera* camera) {
     Render();
 
     m_depthShader->Unbind();
-
+*/
 
 
 }
@@ -169,14 +180,13 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
 
     // set textures and stuff.
 
-//    if(m_isWireframe)
+    if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 
-    Render();
+    Render(m_shader);
 
-
-//    if(m_isWireframe)
+    if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     m_grassTexture->Unbind();
@@ -199,7 +209,7 @@ void HeightMap::RenderId(const ICamera* camera) {
     Texture::SetActiveTextureUnit(3);
     m_imageTexture->Bind();
 
-    Render();
+    Render(m_idShader);
 
     m_imageTexture->Unbind();
 
