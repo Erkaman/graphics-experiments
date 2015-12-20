@@ -165,7 +165,6 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
     Texture::SetActiveTextureUnit(0);
     m_grassTexture->Bind();
 
-
     m_shader->SetUniform("sand", 1);
     Texture::SetActiveTextureUnit(1);
     m_sandTexture->Bind();
@@ -194,7 +193,6 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
     m_snowTexture->Unbind();
 
     m_imageTexture->Unbind();
-
 
     m_shader->Unbind();
 }
@@ -232,6 +230,7 @@ void HeightMap::SetWireframe(const bool wireframe) {
   return Color::Lerp(lower, higher, y / 1.7f);
   } else {
   Color lower = Color::FromInt(0x76, 0xa9, 0x12);
+
   Color higher = Color::FromInt(255, 255 , 255);
 
   return Color::Lerp(lower, higher, (y-1.7f) / 1.2f);
@@ -240,7 +239,6 @@ void HeightMap::SetWireframe(const bool wireframe) {
   }*/
 
 void HeightMap::CreateHeightmap(const std::string& path) {
-
 
     size_t width = 256;
     size_t depth = 256;
@@ -256,8 +254,8 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 	for(size_t j = 0; j < depth; ++j) {
 
 
-//	    image(i,j) = random.RandomInt(0, 20559);
-	    image(i,j) = 0;
+	    image(i,j) = random.RandomInt(0, 20559);
+//	    image(i,j) = 0;
 
 	}
     }
@@ -291,8 +289,6 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     unsigned int zpos = 0;
 
     int id = 0;
-
-
 
     for(size_t i = 0; i < width*depth; ++i) {
 
@@ -472,7 +468,7 @@ float HeightMap::GetHeightAt(float x, float z)const {
 
 void HeightMap::Update(const float delta) {
 
-
+/*
     static float total = 0;
     static bool done = false;
 
@@ -499,7 +495,6 @@ void HeightMap::Update(const float delta) {
 	    for(int iz = -rad; iz < +rad; ++iz) {
 
 		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
-
 
 		if(dist < rad) {
 
@@ -538,17 +533,16 @@ void HeightMap::Update(const float delta) {
 
 	++istep;
 
-
 	if(istep > max_step) {
-	    /*
+
 
 	    m_imageTexture->Write16ToFile("height.png");
 
 	    exit(1);
-	    */
+
 
 	}
 
-    }
+    }*/
 
 }

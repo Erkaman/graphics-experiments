@@ -186,14 +186,12 @@ m_depthFbo->Init(DEPTH_FBO_TEXTURE_UNIT, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 			     m_car
 			  );
 
-//    if(m_gui) {
+    if(m_gui) {
 	m_pickingFbo = new PickingFBO();
 
 	// TODO: should not this be the size of the framebuffer?
 	m_pickingFbo->Init(PICKING_FBO_TEXTURE_UNIT, GetFramebufferWidth(),GetFramebufferHeight() );
-
-	LOG_I("picking: %d, %d", GetFramebufferWidth(),GetFramebufferHeight() );
-	//  }
+    }
     /*
       OpenAL::Initp();
 
@@ -378,9 +376,10 @@ void TuhuApplication::RenderShadowMap() {
 }
 
 void TuhuApplication::RenderId() {
+
     m_pickingFbo->Bind();
 
-    Clear(0.0f, 0.2f, 0.2f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Clear(0.0f, 0.0f, 0.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // set viewport
     m_heightMap->RenderId(m_curCamera);
@@ -489,31 +488,12 @@ void TuhuApplication::Render() {
     int windowHeight;
 
 
-/*    if(m_gui) {
-
-	int fb_width, fb_height;
-	glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
-
-	::SetViewport(fb_width*SCALE, 0,
-		      GetFramebufferWidth(),
-		      GetFramebufferHeight());
- 	windowWidth = fb_width*SCALE * 0.5;
-	windowHeight = fb_height * 0.5;
-
-	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	} else {*/
-//	LOG_I("set view port to full viewport");
 	SetViewport();
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//    }
-
-
 
    if(m_pickingFbo)
-
 	RenderId();
 
    RenderScene();
@@ -596,14 +576,11 @@ void TuhuApplication::Update(const float delta) {
 		glfwGetFramebufferSize(m_window, &fb_width, NULL);
 		y = GetFramebufferHeight() - y - 1;
 
-		LOG_I("mouse: %f, %f", x, y);
+//		LOG_I("mouse: %f, %f", x, y);
 
 		PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 
-		LOG_I("%f, %f, %f", pi.id, pi.unused1, pi.unused2);
-
-		LOG_I("fb = %d, %d",
-		      GetFramebufferWidth(), GetFramebufferHeight() );
+		LOG_I("triangle: %f", pi.unused1);
 	    }
 	}
 

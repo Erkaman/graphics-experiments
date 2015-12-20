@@ -12,14 +12,10 @@ in vec2 texCoord;
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
 
-in vec3 norm;
 
 uniform sampler2D grass;
 uniform sampler2D sand;
 uniform sampler2D snow;
-
-in float height;
-
 
 in float id;
 

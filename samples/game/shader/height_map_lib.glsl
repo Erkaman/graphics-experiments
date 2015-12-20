@@ -1,0 +1,35 @@
+float f(sampler2D heightMap, vec2 texCoord) {
+    return texture(heightMap, texCoord).r;
+}
+
+float f(sampler2D heightMap, float x, float z) {
+    return f(heightMap, vec2(x,z));
+}
+
+vec3 getNormal(sampler2D hm, vec2 texCoord)
+{
+    float eps = 1.0 / 256.0;
+    vec3 p = vec3(texCoord.x, 0, texCoord.y);
+
+
+    //eps on x axis.
+    vec3 va = vec3(2*eps, f(hm,p.x+eps,p.z) - f(hm,p.x-eps,p.z), 0 );
+
+    vec3 vb = vec3(0, f(hm,p.x,p.z+eps) - f(hm,p.x,p.z-eps), 2*eps );
+
+    // http://stackoverflow.com/questions/5281261/generating-a-normal-map-from-a-height-map
+    vec3 n = normalize(cross(normalize(vb), normalize(va) ));
+
+    return n;
+}
+
+vec3 computePos(
+    sampler2D heightMap,
+    float xzScale,
+    vec3 offset,
+    float yScale) {
+    return offset + vec3(
+	positionIn.x * xzScale,
+	f(heightMap,positionIn.xz)*yScale,
+	positionIn.z * xzScale);
+}
