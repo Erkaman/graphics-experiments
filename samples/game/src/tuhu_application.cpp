@@ -109,8 +109,9 @@ void TuhuApplication::Init() {
 
 
     const Vector3f pos =
+	Vector3f(50.099174, 1.119144, 50.957794);
 
-	Vector3f(49.742802, 8.404278, 50.394230);
+
 
 
 
@@ -118,11 +119,9 @@ void TuhuApplication::Init() {
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 			  pos,
-	Vector3f(0.671108, -0.403981, 0.621622)
+	Vector3f(0.139355, -0.612614, -0.778000)
 
 			  );
-
-
 
     m_snow = new SnowEffect(pos);
     m_snow->Init();

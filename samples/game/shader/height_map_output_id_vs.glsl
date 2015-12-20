@@ -16,7 +16,7 @@ flat out float id;
 
 void main()
 {
-    vec3 pos = computePos(heightMap,  xzScale, offset, yScale);
+    vec3 pos = computePos(positionIn, heightMap,  xzScale, offset, yScale);
 
     gl_Position = mvp * vec4(pos,1);
 

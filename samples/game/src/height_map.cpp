@@ -32,6 +32,7 @@ using std::string;
 constexpr float xzScale= 100.0;
 const Vector3f offset(50, 0, 50);
 constexpr float yScale = 4.0;
+constexpr size_t resolution = 256;
 
 /*
   static inline float Lerp(float x, float y, float a) {
@@ -125,6 +126,7 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
     shader->SetUniform("xzScale", xzScale);
     shader->SetUniform("yScale", yScale);
     shader->SetUniform("offset", offset);
+    shader->SetUniform("resolution", (float)resolution);
 
 }
 
@@ -199,7 +201,6 @@ void HeightMap::RenderHeightMap(const ICamera* camera, const Vector4f& lightPosi
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-
     Render(m_shader);
 
     if(m_isWireframe)
@@ -216,11 +217,11 @@ void HeightMap::RenderHeightMap(const ICamera* camera, const Vector4f& lightPosi
 
 
 void HeightMap::RenderCursor(const ICamera* camera) {
-/*
+
 
     vector<Vector3f> points;
 
-    points.push_back(Vector3f(0, 0, 0));
+    points.push_back(Vector3f(3.0 / (float)resolution, 0, 3.0 / (float)resolution));
 
     m_cursorVertexBuffer->Bind();
     m_cursorVertexBuffer->SetBufferData(points);
@@ -237,13 +238,15 @@ void HeightMap::RenderCursor(const ICamera* camera) {
 
     RenderSetup(m_cursorShader);
 
-
+    m_cursorVertexBuffer->EnableVertexAttribInterleaved();
+    m_cursorVertexBuffer->DrawVertices(GL_POINTS, points.size());
+    m_cursorVertexBuffer->DisableVertexAttribInterleaved();
 
 
     RenderUnsetup(m_cursorShader);
 
     m_cursorShader->Unbind();
-*/
+
 
 
 
@@ -298,8 +301,8 @@ void HeightMap::SetWireframe(const bool wireframe) {
 
 void HeightMap::CreateHeightmap(const std::string& path) {
 
-    size_t width = 256;
-    size_t depth = 256;
+    size_t width = resolution;
+    size_t depth = resolution;
 
     m_image = new MultArray<unsigned short>(width, depth, (unsigned short)0);
 
@@ -325,12 +328,11 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 	);
 
     m_imageTexture->Bind();
-    m_imageTexture->SetTextureRepeat();
+    m_imageTexture->SetTextureClamping();
     m_imageTexture->GenerateMipmap();
     m_imageTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
     m_imageTexture->SetMagFilter(GL_LINEAR);
     m_imageTexture->Unbind();
-
 
     image(20,20) = 10000;
 

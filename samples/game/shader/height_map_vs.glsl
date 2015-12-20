@@ -16,6 +16,7 @@ uniform sampler2D heightMap;
 uniform float xzScale;
 uniform vec3 offset;
 uniform float yScale;
+uniform float resolution;
 
 out vec3 viewSpaceNormal;
 out vec3 viewSpacePosition;
@@ -28,12 +29,12 @@ out float id;
 
 void main()
 {
-    vec3 pos = computePos(heightMap,  xzScale, offset, yScale);
+    vec3 pos = computePos(positionIn, heightMap,  xzScale, offset, yScale);
 
     gl_Position = mvp * vec4(pos,1);
 
     viewSpaceNormal = normalize((normalMatrix * vec4(normalize(
-							 getNormal(heightMap,positionIn.xz)
+							 getNormal(heightMap,positionIn.xz, resolution)
 							 ),0.0)).xyz);
 
     viewSpacePosition = (modelViewMatrix * vec4(pos, 1.0)).xyz;
