@@ -16,6 +16,7 @@
 #include "resource_manager.hpp"
 #include "ewa/random.hpp"
 #include "ewa/config.hpp"
+#include "ewa/gl/texture_loader.hpp"
 
 #include "math/vector2f.hpp"
 #include "math/vector3f.hpp"
@@ -122,7 +123,6 @@ HeightMap::~HeightMap() {
     MY_DELETE(m_grassTexture);
     MY_DELETE(m_map)
 }
-
 
 void HeightMap::CreateCursor() {
     vector<Vector3f> points;
@@ -319,17 +319,85 @@ void HeightMap::SetWireframe(const bool wireframe) {
 
   }*/
 
+
+void HeightMap::LoadHeightmap() {
+
+
+
+
+
+
+    std::string* resourcePath = ResourceManager::GetInstance().SearchResource("height.png");
+    if(!resourcePath) {
+	PrintErrorExit();
+    }
+
+    std::vector<unsigned char> tempBuffer;
+    lodepng::load_file(tempBuffer,
+		       *resourcePath);
+
+    std::vector<unsigned char> buffer;
+
+    unsigned int unused1;
+    unsigned int unused2;
+
+
+    lodepng::State state;
+    unsigned error = lodepng::decode(buffer, unused1, unused2/*, state*/, tempBuffer, LCT_GREY, 16);
+
+    if(error != 0){
+	SetError("could not load png %s: %s", resourcePath->c_str(), lodepng_error_text(error));
+	PrintErrorExit();
+    }
+
+
+    size_t width = resolution;
+    size_t depth = resolution;
+
+
+    int iBuffer = 0;
+
+    MultArray<unsigned short>& image = *m_image;
+
+    for(size_t j = 0; j < depth; ++j) {
+
+	for(size_t i = 0; i < width; ++i) {
+
+	    unsigned char c1 = buffer[iBuffer+0];
+	    unsigned char c2 = buffer[iBuffer+1];
+
+	    unsigned short s = (c1 << 8) | c2;
+
+	    image(i,j) = s;
+
+	    iBuffer += 2;
+
+	    if(iBuffer > buffer.size() ) {
+		LOG_I("exceeded size: %ld, %ld, %ld", iBuffer, i, j);
+		exit(1);
+	    }
+
+	}
+    }
+
+
+}
+
 void HeightMap::CreateHeightmap(const std::string& path) {
 
     size_t width = resolution;
     size_t depth = resolution;
 
+    Random random(3);
+
     m_image = new MultArray<unsigned short>(width, depth, (unsigned short)0);
 
     MultArray<unsigned short>& image = *m_image;
 
-    Random random(3);
+      LoadHeightmap();
 
+
+/*
     for(size_t i = 0; i < width; ++i) {
 
 	for(size_t j = 0; j < depth; ++j) {
@@ -340,6 +408,8 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
 	}
     }
+*/
+
 
     m_imageTexture = new Texture2D(image.GetData(), width, depth,
 				   GL_R16, // internal format
@@ -631,19 +701,20 @@ void HeightMap::ModifyTerrain(const float delta) {
 
 
 	}*/
-
     }
-
 }
 
 void HeightMap::Update(const float delta, ICamera* camera,
 		       const float framebufferWidth,
 		       const float framebufferHeight) {
 
-
     if(m_config.IsGui()) {
 	UpdateCursor(camera,framebufferWidth, framebufferHeight);
     }
+}
 
+void HeightMap::SaveTexture() {
+ 	    m_imageTexture->Write16ToFile("height.png");
 
 }
+//the bad lightning may be caused beccause the transition from hill to grass is very bad.

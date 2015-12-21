@@ -557,6 +557,10 @@ void TuhuApplication::Update(const float delta) {
     }
 
 
+    if( kbs.IsPressed(GLFW_KEY_7) ) {
+	m_heightMap->SaveTexture();
+    }
+
 
     if(ms.IsPressed(GLFW_MOUSE_BUTTON_1 )) {
 

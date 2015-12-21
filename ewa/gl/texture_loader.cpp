@@ -15,7 +15,7 @@ TextureInfo* TextureLoader::Load(const std::string& texturePath) {
     unsigned int width;
     unsigned int height;
 
-	std::string* resourcePath = ResourceManager::GetInstance().SearchResource(texturePath);
+    std::string* resourcePath = ResourceManager::GetInstance().SearchResource(texturePath);
     if(!resourcePath) {
 	return NULL;
     }

@@ -60,6 +60,7 @@ private:
 
     void CreateHeightmap(const std::string& path);
     void CreateCursor();
+    void LoadHeightmap();
 
     void RenderHeightMap(const ICamera* camera, const Vector4f& lightPosition);
     void RenderCursor(const ICamera* camera);
@@ -93,7 +94,8 @@ public:
 		const float framebufferWidth,
 		const float framebufferHeight);
 
-
     void ModifyTerrain(const float delta);
+
+    void SaveTexture();
 
 };
