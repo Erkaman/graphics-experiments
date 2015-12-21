@@ -66,9 +66,11 @@ void main()
 	p.z * xzScale);
 */
 
+
     vec3 pos = computePos(
 	positionIn + vec3(cursorPosition.x / resolution, 0, cursorPosition.z / resolution),
 	heightMap,  xzScale, offset, yScale);
+
 
     gl_Position = mvp * vec4(pos,1);
 }

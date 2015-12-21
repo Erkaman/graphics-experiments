@@ -116,8 +116,6 @@ void TuhuApplication::Init() {
 
 
 
-
-
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),

@@ -124,15 +124,15 @@ HeightMap::~HeightMap() {
 void HeightMap::CreateCursor() {
     vector<Vector3f> points;
 
-    const int rad = 5;
+    const int rad = 25;
 
-    for(int ix = -rad; ix < +rad; ++ix) {
+    for(int ix = -rad; ix <= +rad; ++ix) {
 
-	for(int iz = -rad; iz < +rad; ++iz) {
+	for(int iz = -rad; iz <= +rad; ++iz) {
 
 	    float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
-	    if(dist < rad) {
+	    if(dist <= rad) {
 		points.push_back(Vector3f((float)ix / (float)resolution, 0, (float)iz / (float)resolution));
 	    }
 	}
@@ -542,8 +542,6 @@ void HeightMap::Update(const float delta, ICamera* camera,
 	UpdateCursor(camera,framebufferWidth, framebufferHeight);
     }
 
-
-
     static float total = 0;
     static bool done = false;
 
@@ -551,7 +549,7 @@ void HeightMap::Update(const float delta, ICamera* camera,
 
     MultArray<unsigned short>& image = *m_image;
 
-    float rad = 25;
+    float rad = 35;
 
     int cx = 40;
     int cz = 40;
@@ -565,13 +563,13 @@ void HeightMap::Update(const float delta, ICamera* camera,
 
 	total = 0;
 
-	for(int ix = -rad; ix < +rad; ++ix) {
+	for(int ix = -rad; ix <= +rad; ++ix) {
 
-	    for(int iz = -rad; iz < +rad; ++iz) {
+	    for(int iz = -rad; iz <= +rad; ++iz) {
 
 		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
-		if(dist < rad) {
+		if(dist <= rad) {
 
 		    float x = dist / maxdist; // in range [0,1].
 
@@ -610,8 +608,8 @@ void HeightMap::Update(const float delta, ICamera* camera,
 
 	if(istep > max_step) {
 
-
-/*	    m_imageTexture->Write16ToFile("height.png");
+/*
+	    m_imageTexture->Write16ToFile("height.png");
 
 	    exit(1);
 */
