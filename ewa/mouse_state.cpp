@@ -47,6 +47,12 @@ bool MouseState::WasPressed(int button) {
 }
 
 
+bool MouseState::IsPressed(int button) {
+    return m_curFrameButtonState[button] == GLFW_PRESS;
+}
+
+
+
 float MouseState::GetX() const {
     double xpos;
     glfwGetCursorPos(m_window,&xpos,NULL);

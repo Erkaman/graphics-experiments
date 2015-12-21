@@ -94,5 +94,6 @@ public:
 		const float framebufferHeight);
 
 
+    void ModifyTerrain(const float delta);
 
 };

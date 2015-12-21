@@ -28,6 +28,7 @@ public:
     void Update();
 
     bool WasPressed(int button);
+    bool IsPressed(int button);
 
     static MouseState& GetInstance(){
 	static MouseState instance;

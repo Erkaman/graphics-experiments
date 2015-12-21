@@ -558,28 +558,32 @@ void TuhuApplication::Update(const float delta) {
 
 
 
-    if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 )) {
+    if(ms.IsPressed(GLFW_MOUSE_BUTTON_1 )) {
 
-	if(m_pickingFbo) {
+	if(GuiMouseState::isWithinWindow()) {
+	    // remap the mouse position to the game framebuffer:
 
-
-	    if(GuiMouseState::isWithinWindow()) {
-		// remap the mouse position to the game framebuffer:
+	    m_heightMap->ModifyTerrain(delta);
 
 /*		float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
 		float x = GuiMouseState::GetX();
 
 //		LOG_I("mouse: %f, %f", x, y);
 
-		PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
+PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 */
 //		LOG_I("triangle: %f", pi.unused1);
-	    } else {
-		LOG_I("IGNORE");
-	    }
+	} else {
+	    LOG_I("IGNORE");
 	}
 
+/*
+  if(m_pickingFbo) {
+
+  }
+*/
     }
+
 
     static bool b= false;
 

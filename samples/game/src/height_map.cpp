@@ -34,6 +34,7 @@ constexpr float xzScale= 100.0;
 const Vector3f offset(50, 0, 50);
 constexpr float yScale = 4.0;
 constexpr size_t resolution = 256;
+constexpr unsigned short MAX_HEIGHT = 65535;
 
 /*
   static inline float Lerp(float x, float y, float a) {
@@ -113,6 +114,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false),
 }
 
 HeightMap::~HeightMap() {
+
+
     MY_DELETE(m_shader);
     MY_DELETE(m_indexBuffer);
     MY_DELETE(m_vertexBuffer);
@@ -124,7 +127,7 @@ HeightMap::~HeightMap() {
 void HeightMap::CreateCursor() {
     vector<Vector3f> points;
 
-    const int rad = 25;
+    const int rad = 35;
 
     for(int ix = -rad; ix <= +rad; ++ix) {
 
@@ -351,7 +354,7 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     m_imageTexture->SetMagFilter(GL_LINEAR);
     m_imageTexture->Unbind();
 
-    image(20,20) = 10000;
+//    image(20,20) = 10000;
 
     m_imageTexture->Bind();
 
@@ -533,14 +536,12 @@ void HeightMap::UpdateCursor(ICamera* camera,
     }
 }
 
-void HeightMap::Update(const float delta, ICamera* camera,
-		       const float framebufferWidth,
-		       const float framebufferHeight) {
 
 
-    if(m_config.IsGui()) {
-	UpdateCursor(camera,framebufferWidth, framebufferHeight);
-    }
+
+void HeightMap::ModifyTerrain(const float delta) {
+
+//    LOG_I("modify");
 
     static float total = 0;
     static bool done = false;
@@ -551,15 +552,16 @@ void HeightMap::Update(const float delta, ICamera* camera,
 
     float rad = 35;
 
-    int cx = 40;
-    int cz = 40;
+    int cx = cursorPosition.x;
+    int cz = cursorPosition.z;
+
 
     float maxdist = rad;
 
     static int istep = 0;
     const int max_step = 30;
 
-    if(total > 0.05 && istep <= max_step) {
+    if(total > 0.05) {
 
 	total = 0;
 
@@ -583,9 +585,22 @@ void HeightMap::Update(const float delta, ICamera* camera,
 			y = 1.0;
 		    }
 
-		    int bla = (unsigned short)((y) * 65535.0f);
+//		    int max = (unsigned short)((y) * 65535.0f);
+		    float max =y * 63535.0f;
 
-		    image(cx+ix,cz+iz) +=  bla  / (max_step+1);
+		    if( image(cx+ix,cz+iz) < max) {
+
+			float increment = max  / (max_step);
+
+			if(image(cx+ix,cz+iz) + increment >  MAX_HEIGHT) {
+			    // prevent overflow
+			    image(cx+ix,cz+iz) = MAX_HEIGHT;
+			} else {
+
+			    image(cx+ix,cz+iz) += increment;
+
+			}
+		    }
 
 //		    istep = max_step+1;
 
@@ -606,16 +621,29 @@ void HeightMap::Update(const float delta, ICamera* camera,
 
 	++istep;
 
+/*
 	if(istep > max_step) {
 
-/*
+
 	    m_imageTexture->Write16ToFile("height.png");
 
 	    exit(1);
-*/
 
-	}
+
+	}*/
 
     }
+
+}
+
+void HeightMap::Update(const float delta, ICamera* camera,
+		       const float framebufferWidth,
+		       const float framebufferHeight) {
+
+
+    if(m_config.IsGui()) {
+	UpdateCursor(camera,framebufferWidth, framebufferHeight);
+    }
+
 
 }
