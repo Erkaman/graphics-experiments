@@ -36,6 +36,7 @@
 #include "car.hpp"
 
 #include "gui.hpp"
+#include "gui_mouse_state.hpp"
 
 using namespace std;
 
@@ -77,6 +78,8 @@ void TuhuApplication::Init() {
     if(m_config.IsGui()) {
 
 	m_gui = new Gui(m_window);
+
+	GuiMouseState::Init(m_guiVerticalScale);
 
     } else {
 
@@ -501,7 +504,8 @@ void TuhuApplication::Render() {
     if(m_gui) {
 
 	int fb_width, fb_height;
-	glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
+	fb_width = GetFramebufferWidth();
+	fb_height = GetFramebufferHeight();
 
  	windowWidth = fb_width*SCALE * 0.5;
 	windowHeight = fb_height * 0.5;
@@ -515,6 +519,21 @@ void TuhuApplication::Render() {
 }
 
 void TuhuApplication::Update(const float delta) {
+
+    int fb_width, fb_height;
+    glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
+
+
+    //  LOG_I("fb1: %d, %d", fb_width, fb_height);
+
+    fb_width = GetFramebufferWidth();
+    fb_height = GetFramebufferHeight();
+
+    //   LOG_I("fb2: %d, %d", fb_width, fb_height);
+
+
+
+    GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
 
     m_heightMap->Update(delta);
 
@@ -557,29 +576,20 @@ void TuhuApplication::Update(const float delta) {
 
 	if(m_pickingFbo) {
 
-	    float x = ms.GetX()*2;
-	    float y = ms.GetY()*2;
 
-	    int fb_width;
-	    glfwGetFramebufferSize(m_window, &fb_width, NULL);
-
-	    if(fb_width*m_guiVerticalScale > x) { // if click within gui ignore.
-
-		LOG_I("IGNORE");
-
-	    } else {
-
+	    if(GuiMouseState::isWithinWindow()) {
 		// remap the mouse position to the game framebuffer:
 
-		int fb_width;
-		glfwGetFramebufferSize(m_window, &fb_width, NULL);
-		y = GetFramebufferHeight() - y - 1;
+		float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
+		float x = GuiMouseState::GetX();
 
 //		LOG_I("mouse: %f, %f", x, y);
 
 		PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 
 		LOG_I("triangle: %f", pi.unused1);
+	    } else {
+		LOG_I("IGNORE");
 	    }
 	}
 
