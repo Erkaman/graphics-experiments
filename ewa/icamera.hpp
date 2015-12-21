@@ -26,4 +26,6 @@ public:
     virtual Vector3f GetViewDir() const {LOG_E("GetViewDir not yet implemented!");}
 
     virtual void Update(const float delta)=0;
+
+
 };

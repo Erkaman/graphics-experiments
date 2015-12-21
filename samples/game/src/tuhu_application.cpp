@@ -112,7 +112,7 @@ void TuhuApplication::Init() {
 
 
     const Vector3f pos =
-	Vector3f(50.099174, 1.119144, 50.957794);
+	Vector3f(45.282848, 6.476396, 48.503151);
 
 
 
@@ -122,8 +122,7 @@ void TuhuApplication::Init() {
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 			  pos,
-	Vector3f(0.139355, -0.612614, -0.778000)
-
+	Vector3f(0.794949, -0.465078, 0.389563)
 			  );
 
     m_snow = new SnowEffect(pos);
@@ -495,9 +494,9 @@ void TuhuApplication::Render() {
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-   if(m_pickingFbo)
+/*   if(m_pickingFbo)
 	RenderId();
-
+*/
    RenderScene();
 
 
@@ -520,22 +519,12 @@ void TuhuApplication::Render() {
 
 void TuhuApplication::Update(const float delta) {
 
-    int fb_width, fb_height;
-    glfwGetFramebufferSize(m_window, &fb_width, &fb_height);
-
-
-    //  LOG_I("fb1: %d, %d", fb_width, fb_height);
-
-    fb_width = GetFramebufferWidth();
-    fb_height = GetFramebufferHeight();
-
-    //   LOG_I("fb2: %d, %d", fb_width, fb_height);
-
-
+    MouseState& ms = MouseState::GetInstance();
 
     GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
 
-    m_heightMap->Update(delta);
+
+    m_heightMap->Update(delta, m_curCamera, GetFramebufferWidth(),GetFramebufferHeight());
 
     m_viewFrustum->Update( m_curCamera->GetVp() );
 
@@ -570,7 +559,6 @@ void TuhuApplication::Update(const float delta) {
     }
 
 
-    MouseState& ms = MouseState::GetInstance();
 
     if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 )) {
 
@@ -580,14 +568,14 @@ void TuhuApplication::Update(const float delta) {
 	    if(GuiMouseState::isWithinWindow()) {
 		// remap the mouse position to the game framebuffer:
 
-		float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
+/*		float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
 		float x = GuiMouseState::GetX();
 
 //		LOG_I("mouse: %f, %f", x, y);
 
 		PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
-
-		LOG_I("triangle: %f", pi.unused1);
+*/
+//		LOG_I("triangle: %f", pi.unused1);
 	    } else {
 		LOG_I("IGNORE");
 	    }

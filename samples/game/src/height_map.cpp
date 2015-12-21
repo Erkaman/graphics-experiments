@@ -4,6 +4,7 @@
 #include "log.hpp"
 #include "perlin_seed.hpp"
 #include "common.hpp"
+#include "gui_mouse_state.hpp"
 
 #include "gl/vbo.hpp"
 #include "gl/shader_program.hpp"
@@ -86,7 +87,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false),
 					       m_cursorShader(NULL),
 					       m_grassTexture(NULL),
 					       m_sandTexture(NULL),
-					       m_snowTexture(NULL){
+					       m_snowTexture(NULL), m_config(Config::GetInstance()){
 
     m_grassTexture = LoadTexture("img/grass.png");
 
@@ -107,6 +108,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false),
     m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
 
     CreateHeightmap(path);
+
+    CreateCursor();
 }
 
 HeightMap::~HeightMap() {
@@ -115,6 +118,32 @@ HeightMap::~HeightMap() {
     MY_DELETE(m_vertexBuffer);
     MY_DELETE(m_grassTexture);
     MY_DELETE(m_map)
+}
+
+
+void HeightMap::CreateCursor() {
+    vector<Vector3f> points;
+
+    const int rad = 5;
+
+    for(int ix = -rad; ix < +rad; ++ix) {
+
+	for(int iz = -rad; iz < +rad; ++iz) {
+
+	    float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
+
+	    if(dist < rad) {
+		points.push_back(Vector3f((float)ix / (float)resolution, 0, (float)iz / (float)resolution));
+	    }
+	}
+    }
+
+
+    m_cursorVertexBuffer->Bind();
+    m_cursorVertexBuffer->SetBufferData(points);
+    m_cursorVertexBuffer->Unbind();
+
+    m_numCursorPoints = points.size();
 }
 
 void HeightMap::RenderSetup(ShaderProgram* shader) {
@@ -212,34 +241,23 @@ void HeightMap::RenderHeightMap(const ICamera* camera, const Vector4f& lightPosi
     */
 
     m_shader->Unbind();
-
 }
 
 
 void HeightMap::RenderCursor(const ICamera* camera) {
 
 
-    vector<Vector3f> points;
-
-    points.push_back(Vector3f(3.0 / (float)resolution, 0, 3.0 / (float)resolution));
-
-    m_cursorVertexBuffer->Bind();
-    m_cursorVertexBuffer->SetBufferData(points);
-    m_cursorVertexBuffer->Unbind();
 
 
     m_cursorShader->Bind();
 
-
-
-
     m_cursorShader->SetShaderUniforms(Matrix4f::CreateTranslation(0,0,0), camera);
-
+    m_cursorShader->SetUniform("cursorPosition", cursorPosition );
 
     RenderSetup(m_cursorShader);
 
     m_cursorVertexBuffer->EnableVertexAttribInterleaved();
-    m_cursorVertexBuffer->DrawVertices(GL_POINTS, points.size());
+    m_cursorVertexBuffer->DrawVertices(GL_POINTS, m_numCursorPoints);
     m_cursorVertexBuffer->DisableVertexAttribInterleaved();
 
 
@@ -257,7 +275,6 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
 
     RenderHeightMap(camera, lightPosition);
 
-    Config& m_config = Config::GetInstance();
     if(m_config.IsGui()) {
 	RenderCursor(camera);
     }
@@ -315,8 +332,8 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 	for(size_t j = 0; j < depth; ++j) {
 
 
-	    image(i,j) = random.RandomInt(0, 20559);
-//	    image(i,j) = 0;
+//	    image(i,j) = random.RandomInt(0, 20559);
+	    image(i,j) = 0;
 
 	}
     }
@@ -446,9 +463,87 @@ float HeightMap::GetHeightAt(float x, float z)const {
     return 0;
 }
 
-void HeightMap::Update(const float delta) {
+void HeightMap::UpdateCursor(ICamera* camera,
+		       const float framebufferWidth,
+		       const float framebufferHeight) {
 
-/*
+    float x = GuiMouseState::GetX();
+    float y = framebufferHeight -GuiMouseState::GetY()-1;
+
+    // remap cursor position to range [-1,-1]
+    // otherwise, we cant use the inverse VP-matrix to recover the world space cursor position
+    float remapX = (float)(-1.0f + (2.0f * x) / framebufferWidth);
+    float remapY = (float)(-1.0f + (2.0f * y) / framebufferHeight );
+
+    Matrix4f m = camera->GetVp();
+    m.Inverse();
+
+    // use inverse VP-matrix to recover cursor position
+    Vector4f v =(m * Vector4f(remapX, remapY , 0, 1) );
+
+    v.x /= v.w;
+    v.y /= v.w;
+    v.z /= v.w;
+    v.w = 1.0;
+
+    Vector3f rayOrigin = camera->GetPosition();
+    Vector3f rayDir = (Vector3f(v) - rayOrigin  ).Normalize();
+
+//    LOG_I("raydir: %s", tocstr(rayDir) );
+
+    // now raytrace the plane heightmap.
+
+    // plane normal
+    Vector3f n(0,1,0);
+    Vector3f x0(offset); // plane offset
+    Vector3f o = rayOrigin;
+    Vector3f d = rayDir;
+
+    float t = (Vector3f::Dot(n, x0) - Vector3f::Dot(n, o)) / (Vector3f::Dot(n, d));
+
+    if(t < 0) {
+	// not hitting plane. do nothing.
+
+    } else {
+
+
+	// the position where the ray hits the plane.
+	Vector3f hit = rayOrigin + rayDir * t;
+
+	// now find which, exact, height position is hit by the ray.
+
+	hit -= offset;
+	hit = hit * (1.0 / xzScale);
+	hit = hit * resolution;
+
+	int xHit = hit.x;
+	int zHit = hit.z;
+
+	if(xHit >= 0 && xHit < (int)resolution &&
+	   zHit >= 0 && zHit < (int)resolution) {
+	    // if cursor is actually hitting the plane, update cursor position.
+//	    LOG_I("UPDATE cursor: %d, %d", xHit, zHit);
+
+	    cursorPosition.x = xHit;
+	    cursorPosition.y = 0;
+	    cursorPosition.z = zHit;
+
+
+	}
+    }
+}
+
+void HeightMap::Update(const float delta, ICamera* camera,
+		       const float framebufferWidth,
+		       const float framebufferHeight) {
+
+
+    if(m_config.IsGui()) {
+	UpdateCursor(camera,framebufferWidth, framebufferHeight);
+    }
+
+
+
     static float total = 0;
     static bool done = false;
 
@@ -516,13 +611,13 @@ void HeightMap::Update(const float delta) {
 	if(istep > max_step) {
 
 
-	    m_imageTexture->Write16ToFile("height.png");
+/*	    m_imageTexture->Write16ToFile("height.png");
 
 	    exit(1);
-
+*/
 
 	}
 
-    }*/
+    }
 
 }

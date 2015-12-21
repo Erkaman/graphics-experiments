@@ -13,6 +13,8 @@ uniform vec3 offset;
 uniform float yScale;
 uniform float resolution;
 
+uniform vec3 cursorPosition;
+
 vec3 getDir(sampler2D hm, vec2 texCoord, float resolution)
 {
     float eps = 1.0 / resolution;
@@ -47,7 +49,6 @@ vec3 getCentroid(sampler2D hm, vec2 texCoord, float resolution)
     vec3 a3 = vec3(texCoord.x, f(hm,  texCoord.x, texCoord.y-eps ), texCoord.y-eps);
 
     return (a1+a2+a3) / 3.0;
-
 }
 
 void main()
@@ -56,16 +57,18 @@ void main()
 
     //   vec3 p = positionIn + dir * (1.0 / (256*2) );
 
-    vec3 p  = getCentroid(heightMap,positionIn.xz, resolution );
+    /*  vec3 p  = getCentroid(heightMap,positionIn.xz, resolution );
 
     vec3 pos =
 	offset + vec3(
 	p.x * xzScale,
 	p.y*yScale,
 	p.z * xzScale);
+*/
 
-
-//	p;//computePos(p, heightMap,  xzScale, offset, yScale);
+    vec3 pos = computePos(
+	positionIn + vec3(cursorPosition.x / resolution, 0, cursorPosition.z / resolution),
+	heightMap,  xzScale, offset, yScale);
 
     gl_Position = mvp * vec4(pos,1);
 }

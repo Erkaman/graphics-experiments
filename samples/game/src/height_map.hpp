@@ -4,7 +4,6 @@
 #include "math/color.hpp"
 #include "math/vector4f.hpp"
 #include "math/vector2f.hpp"
-
 #include "ewa/mult_array.hpp"
 
 class VBO;
@@ -15,6 +14,8 @@ class PerlinSeed;
 class Texture;
 class Texture2D;
 class ShaderProgra;
+class Config;
+class ICamera;
 
 struct Cell {
     Vector3f position;
@@ -34,31 +35,31 @@ private:
     VBO* m_indexBuffer;
 
     VBO* m_cursorVertexBuffer;
+    unsigned short m_numCursorPoints;
 
     ShaderProgram* m_shader;
     ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
     ShaderProgram* m_idShader; //outputs only the id. Used for triangle picking in the height map.
     ShaderProgram* m_cursorShader;
 
-
     Texture* m_grassTexture;
     Texture* m_sandTexture;
     Texture* m_snowTexture;
-//    Texture* m_heightMap;
-
     Texture2D* m_imageTexture;
 
     MultArray<Cell> *m_map;
-
     MultArray<unsigned short>* m_image;
 
+    Config& m_config;
+
+    Vector3f cursorPosition;
 
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);
 
     void CreateHeightmap(const std::string& path);
-
+    void CreateCursor();
 
     void RenderHeightMap(const ICamera* camera, const Vector4f& lightPosition);
     void RenderCursor(const ICamera* camera);
@@ -69,6 +70,9 @@ private:
     void RenderSetup(ShaderProgram* shader);
     void RenderUnsetup(ShaderProgram* shader);
 
+    void UpdateCursor(ICamera* camera,
+		      const float framebufferWidth,
+		      const float framebufferHeight);
 
 public:
 
@@ -85,6 +89,10 @@ public:
 
     float GetHeightAt(float x, float z)const;
 
-    void Update(const float delta);
+    void Update(const float delta, ICamera* camera,
+		const float framebufferWidth,
+		const float framebufferHeight);
+
+
 
 };
