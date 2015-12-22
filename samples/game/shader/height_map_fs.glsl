@@ -19,6 +19,8 @@ uniform sampler2D snow;
 
 in float id;
 
+in vec3 norm;
+
 #define SCALE 0.03
 
 vec3 sampleDiffuseTexture() {

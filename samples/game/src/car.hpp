@@ -41,3 +41,5 @@ public:
 
 
 };
+
+//could be that the heightmap normal calulcaiton does not handle steep variations in terrain, like game gems said.

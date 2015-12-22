@@ -33,7 +33,7 @@ using std::string;
 
 constexpr float xzScale= 100.0;
 const Vector3f offset(50, 0, 50);
-constexpr float yScale = 4.0;
+constexpr float yScale = 10.0;
 constexpr size_t resolution = 256;
 constexpr unsigned short MAX_HEIGHT = 65535;
 
@@ -408,8 +408,8 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
 	}
     }
-*/
 
+*/
 
     m_imageTexture = new Texture2D(image.GetData(), width, depth,
 				   GL_R16, // internal format
