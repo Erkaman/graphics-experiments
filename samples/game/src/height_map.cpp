@@ -33,37 +33,10 @@ using std::string;
 
 constexpr float xzScale= 100.0;
 const Vector3f offset(50, 0, 50);
-constexpr float yScale = 10.0;
+constexpr float yScale = 4.0;
 constexpr size_t resolution = 256;
 constexpr unsigned short MAX_HEIGHT = 65535;
 
-/*
-  static inline float Lerp(float x, float y, float a) {
-  return x*(1-a)+y*a;
-  }
-
-  static inline int Floor(float x) {
-  return x>=0 ? (int)x : (int)x-1;
-  }
-
-
-  static inline Vector2f Fade(const float px, const float py) {
-  return Vector2f(
-  px * px * px * (px * (px * 6 - 15) + 10),
-  py * py * py * (py * (py * 6 - 15) + 10));
-  }
-*/
-
-/*
-  static Vector3f CalculateNormal (float north, float south, float east, float west)
-  {
-  Vector3f n(
-  (west - east),
-  2.0f,
-  (north - south));
-  return n.Normalize();
-  }
-*/
 
 static Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
@@ -394,10 +367,10 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
     MultArray<unsigned short>& image = *m_image;
 
-      LoadHeightmap();
+    //  LoadHeightmap();
 
 
-/*
+
     for(size_t i = 0; i < width; ++i) {
 
 	for(size_t j = 0; j < depth; ++j) {
@@ -408,8 +381,6 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
 	}
     }
-
-*/
 
     m_imageTexture = new Texture2D(image.GetData(), width, depth,
 				   GL_R16, // internal format
