@@ -60,16 +60,11 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false),
 					       m_idShader(NULL),
 					       m_cursorShader(NULL),
 					       m_grassTexture(NULL),
-					       m_sandTexture(NULL),
-					       m_snowTexture(NULL), m_config(Config::GetInstance()){
+					       m_dirtTexture(NULL), m_config(Config::GetInstance()){
 
     m_grassTexture = LoadTexture("img/grass.png");
 
-    m_sandTexture = LoadTexture("img/sand.png");
-
-    m_snowTexture = LoadTexture("img/snow.png");
-
-//    m_heightMap =LoadTexture("img/combined.png");
+    m_dirtTexture = LoadTexture("img/dirt.png");
 
     /*
       load the shader
@@ -82,6 +77,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false),
     m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
 
     CreateHeightmap(path);
+
+    CreateSplatMap();
 
     CreateCursor();
 }
@@ -124,7 +121,12 @@ void HeightMap::CreateCursor() {
 void HeightMap::RenderSetup(ShaderProgram* shader) {
     m_shader->SetUniform("heightMap", 3);
     Texture::SetActiveTextureUnit(3);
-    m_imageTexture->Bind();
+    m_heightMap->Bind();
+
+    m_shader->SetUniform("splatMap", 4);
+    Texture::SetActiveTextureUnit(4);
+    m_splatMap->Bind();
+
 
 
     shader->SetUniform("xzScale", xzScale);
@@ -135,7 +137,8 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
 }
 
 void HeightMap::RenderUnsetup(ShaderProgram* shader) {
-    m_imageTexture->Unbind();
+    m_heightMap->Unbind();
+    m_splatMap->Unbind();
 }
 
 
@@ -181,7 +184,6 @@ void HeightMap::RenderShadowMap(const ICamera* camera) {
 
 }
 
-
 void HeightMap::RenderHeightMap(const ICamera* camera, const Vector4f& lightPosition) {
     m_shader->Bind();
 
@@ -191,10 +193,11 @@ void HeightMap::RenderHeightMap(const ICamera* camera, const Vector4f& lightPosi
     Texture::SetActiveTextureUnit(0);
     m_grassTexture->Bind();
 
-/*    m_shader->SetUniform("sand", 1);
+    m_shader->SetUniform("dirt", 1);
     Texture::SetActiveTextureUnit(1);
-    m_sandTexture->Bind();
+    m_dirtTexture->Bind();
 
+/*
     m_shader->SetUniform("snow", 2);
     Texture::SetActiveTextureUnit(2);
     m_snowTexture->Bind();
@@ -211,8 +214,8 @@ void HeightMap::RenderHeightMap(const ICamera* camera, const Vector4f& lightPosi
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     m_grassTexture->Unbind();
-    /*   m_sandTexture->Unbind();
-    m_snowTexture->Unbind();
+    m_dirtTexture->Unbind();
+       /*m_snowTexture->Unbind();
     */
 
     m_shader->Unbind();
@@ -329,7 +332,7 @@ void HeightMap::LoadHeightmap() {
 
     size_t iBuffer = 0;
 
-    MultArray<unsigned short>& image = *m_image;
+    MultArray<unsigned short>& heightData = *m_heightData;
 
     for(size_t j = 0; j < depth; ++j) {
 
@@ -340,7 +343,7 @@ void HeightMap::LoadHeightmap() {
 
 	    unsigned short s = (c1 << 8) | c2;
 
-	    image(i,j) = s;
+	    heightData(i,j) = s;
 
 	    iBuffer += 2;
 
@@ -355,6 +358,67 @@ void HeightMap::LoadHeightmap() {
 
 }
 
+void HeightMap::CreateSplatMap() {
+
+    size_t width = resolution;
+    size_t depth = resolution;
+
+    Random random(3);
+
+    SplatColor def; // default splat color.
+    def.r = 255;
+    def.g = 0;
+    def.b = 0;
+    def.a = 0;
+
+    m_splatData = new MultArray<SplatColor>(width, depth, def  );
+
+    MultArray<SplatColor>& splatData = *m_splatData;
+
+    bool firstHalf = true;
+
+
+    for(size_t i = 0; i < width; ++i) {
+
+	for(size_t j = 0; j < depth; ++j) {
+
+	    if(firstHalf) {
+		splatData(i,j).r = 255;
+		splatData(i,j).g = 0;
+	    } else {
+		splatData(i,j).r = 0;
+		splatData(i,j).g = 255;
+	    }
+
+	}
+
+	if(i > width/2) {
+	    firstHalf = false;
+	}
+    }
+
+
+    m_splatMap = new Texture2D(splatData.GetData(), width, depth,
+				   GL_RGBA8, // internal format
+				   GL_RGBA, // format
+				   GL_UNSIGNED_BYTE);
+
+    m_splatMap->Bind();
+    m_splatMap->SetTextureClamping();
+    m_splatMap->GenerateMipmap();
+    m_splatMap->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    m_splatMap->SetMagFilter(GL_LINEAR);
+    m_splatMap->Unbind();
+
+//    image(20,20) = 10000;
+
+    m_splatMap->Bind();
+    m_splatMap->UpdateTexture(splatData.GetData());
+    m_splatMap->Unbind();
+
+}
+
+
 void HeightMap::CreateHeightmap(const std::string& path) {
 
     size_t width = resolution;
@@ -362,47 +426,37 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
     Random random(3);
 
-    m_image = new MultArray<unsigned short>(width, depth, (unsigned short)0);
+    m_heightData = new MultArray<unsigned short>(width, depth, (unsigned short)0);
 
-    MultArray<unsigned short>& image = *m_image;
-
-
-//    LoadHeightmap();
-
-
-
+    MultArray<unsigned short>& heightData = *m_heightData;
 
     for(size_t i = 0; i < width; ++i) {
 
 	for(size_t j = 0; j < depth; ++j) {
-
-
-//	    image(i,j) = random.RandomInt(0, 20559);
-	    image(i,j) = 0;
-
+	    heightData(i,j) = 0;
 	}
     }
 
-    m_imageTexture = new Texture2D(image.GetData(), width, depth,
+    m_heightMap = new Texture2D(heightData.GetData(), width, depth,
 				   GL_R16, // internal format
 				   GL_RED, // format
 				   GL_UNSIGNED_SHORT
 	);
 
-    m_imageTexture->Bind();
-    m_imageTexture->SetTextureClamping();
-    m_imageTexture->GenerateMipmap();
-    m_imageTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-    m_imageTexture->SetMagFilter(GL_LINEAR);
-    m_imageTexture->Unbind();
+    m_heightMap->Bind();
+    m_heightMap->SetTextureClamping();
+    m_heightMap->GenerateMipmap();
+    m_heightMap->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    m_heightMap->SetMagFilter(GL_LINEAR);
+    m_heightMap->Unbind();
 
 //    image(20,20) = 10000;
 
-    m_imageTexture->Bind();
+    m_heightMap->Bind();
 
-    m_imageTexture->UpdateTexture(image.GetData());
+    m_heightMap->UpdateTexture(heightData.GetData());
 
-    m_imageTexture->Unbind();
+    m_heightMap->Unbind();
 
     m_map = new MultArray<Cell>(width, depth);
     MultArray<Cell> &map = *m_map;
@@ -416,18 +470,21 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
 	Cell& c = map(xpos, zpos);
 
+	float x = (float)xpos / (float)width;
+	float z = (float)zpos / (float)depth;
 
 	c.position =
 	    Vector3f(
-		(float)xpos / (float)width,
+		x,
 		0,
-		(float)zpos / (float)depth);
+		z
+		);
 
 	float scale = 1.0;
 
 	c.id = id++;
 
-	c.texCoord = Vector2f(xpos*scale, zpos*scale);
+	c.texCoord = Vector2f(x,z);
 
 	++xpos;
 	if(xpos != 0 && ( xpos % (width) == 0)) {
@@ -480,6 +537,9 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     m_indexBuffer->Bind();
     m_indexBuffer->SetBufferData(indices);
     m_indexBuffer->Unbind();
+
+
+
 
 
 }
@@ -589,7 +649,7 @@ void HeightMap::ModifyTerrain(const float delta) {
 
     total += delta;
 
-    MultArray<unsigned short>& image = *m_image;
+    MultArray<unsigned short>& image = *m_heightData;
 
     float rad = 35;
 
@@ -651,13 +711,13 @@ void HeightMap::ModifyTerrain(const float delta) {
 	    }
 	}
 
-	m_imageTexture->Bind();
+	m_heightMap->Bind();
 
 	//TODO: methods better exist:
 	// http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
-	m_imageTexture->UpdateTexture(image.GetData());
+	m_heightMap->UpdateTexture(image.GetData());
 
-	m_imageTexture->Unbind();
+	m_heightMap->Unbind();
 
 	++istep;
 
@@ -665,7 +725,7 @@ void HeightMap::ModifyTerrain(const float delta) {
 	if(istep > max_step) {
 
 
-	    m_imageTexture->Write16ToFile("height.png");
+	    m_heightMap->Write16ToFile("height.png");
 
 	    exit(1);
 
@@ -684,7 +744,7 @@ void HeightMap::Update(const float delta, ICamera* camera,
 }
 
 void HeightMap::SaveTexture() {
- 	    m_imageTexture->Write16ToFile("height.png");
+ 	    m_heightMap->Write16ToFile("height.png");
 
 }
 //the bad lightning may be caused beccause the transition from hill to grass is very bad.

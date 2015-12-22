@@ -17,10 +17,20 @@ class ShaderProgra;
 class Config;
 class ICamera;
 
+// the data associated with every triangle in the heightmap mesh.
 struct Cell {
     Vector3f position;
     float id;
     Vector2f texCoord;
+};
+
+struct SplatColor{
+public:
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+    unsigned char a;
+
 };
 
 class HeightMap {
@@ -43,12 +53,14 @@ private:
     ShaderProgram* m_cursorShader;
 
     Texture* m_grassTexture;
-    Texture* m_sandTexture;
-    Texture* m_snowTexture;
-    Texture2D* m_imageTexture;
+    Texture* m_dirtTexture;
+
+    Texture2D* m_heightMap;
+    Texture2D* m_splatMap;
 
     MultArray<Cell> *m_map;
-    MultArray<unsigned short>* m_image;
+    MultArray<unsigned short>* m_heightData;
+    MultArray<SplatColor>* m_splatData;
 
     Config& m_config;
 
@@ -60,6 +72,8 @@ private:
 
     void CreateHeightmap(const std::string& path);
     void CreateCursor();
+    void CreateSplatMap();
+
     void LoadHeightmap();
 
     void RenderHeightMap(const ICamera* camera, const Vector4f& lightPosition);
