@@ -37,7 +37,6 @@ constexpr float yScale = 4.0;
 constexpr size_t resolution = 256;
 constexpr unsigned short MAX_HEIGHT = 65535;
 
-
 static Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
 
@@ -328,7 +327,7 @@ void HeightMap::LoadHeightmap() {
     size_t depth = resolution;
 
 
-    int iBuffer = 0;
+    size_t iBuffer = 0;
 
     MultArray<unsigned short>& image = *m_image;
 
@@ -367,7 +366,9 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
     MultArray<unsigned short>& image = *m_image;
 
-    //  LoadHeightmap();
+
+//    LoadHeightmap();
+
 
 
 
@@ -585,7 +586,6 @@ void HeightMap::ModifyTerrain(const float delta) {
 //    LOG_I("modify");
 
     static float total = 0;
-    static bool done = false;
 
     total += delta;
 
@@ -626,19 +626,18 @@ void HeightMap::ModifyTerrain(const float delta) {
 			y = 1.0;
 		    }
 
-//		    int max = (unsigned short)((y) * 65535.0f);
-		    float max =y * 63535.0f;
+		    float max =y * (float)MAX_HEIGHT;
 
-		    if( image(cx+ix,cz+iz) < max) {
+		    if( image(cx+ix,cz+iz) < (float)MAX_HEIGHT) {
 
 			float increment = max  / (max_step);
 
-			if(image(cx+ix,cz+iz) + increment >  MAX_HEIGHT) {
-			    // prevent overflow
-			    image(cx+ix,cz+iz) = MAX_HEIGHT;
-			} else {
 
-			    image(cx+ix,cz+iz) += increment;
+			if(image(cx+ix,cz+iz) + increment > MAX_HEIGHT) {
+			    image(cx+ix,cz+iz) = MAX_HEIGHT;
+
+			} else {
+			image(cx+ix,cz+iz) += increment;
 
 			}
 		    }
