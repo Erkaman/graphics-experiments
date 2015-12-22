@@ -2,7 +2,17 @@
 
 struct GLFWwindow;
 
+
+enum GuiMode {
+    ModifyTerrainMode,
+    DrawTextureMode
+};
+
 class Gui {
+
+private:
+
+    int m_guiMode;
 
 public:
 
@@ -13,5 +23,7 @@ public:
     void NewFrame(const float guiVerticalScale);
 
     void Render(int windowWidth, int windowHeight);
+
+    int GetGuiMode()const;
 
 };

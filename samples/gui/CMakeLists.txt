@@ -1,5 +1,5 @@
 
-file(GLOB GAME_SRC main.cpp )
+file(GLOB GAME_SRC *.cpp )
 
 ADD_EXECUTABLE(
   gui

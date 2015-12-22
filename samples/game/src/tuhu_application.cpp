@@ -51,12 +51,12 @@ void ToClipboard(const std::string& str) {
 }
 
 //(0.705072, 0.0758142, 0.705072)
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_gui(NULL),m_curCamera(NULL), m_heightMap(NULL),m_skydome(NULL), m_lightDirection(
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_curCamera(NULL), m_heightMap(NULL), m_skydome(NULL), m_gui(NULL), m_lightDirection (
 
     -0.705072f, -0.458142f, -0.705072f,
 //    -0.705072f, -0.0758142f, -0.705072f ,
 
-    0.0f)  { }
+    0.0f)   { }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_carCamera);
@@ -532,10 +532,6 @@ void TuhuApplication::Update(const float delta) {
 
     m_totalDelta += delta;
 
-    const float RADIUS = 30.0f;
-    const float ROT_SPEED = 0.4f;
-
-
 
     m_curCamera->Update(delta);
 
@@ -567,7 +563,14 @@ void TuhuApplication::Update(const float delta) {
 	if(GuiMouseState::isWithinWindow()) {
 	    // remap the mouse position to the game framebuffer:
 
-	    m_heightMap->ModifyTerrain(delta);
+
+	    if(m_gui->GetGuiMode() == ModifyTerrainMode) {
+
+		m_heightMap->ModifyTerrain(delta);
+
+	    } else {
+	    }
+
 
 /*		float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
 		float x = GuiMouseState::GetX();
@@ -613,9 +616,9 @@ void TuhuApplication::RenderText()  {
 
     string cull = std::to_string(nonCulledObjects) + "\\" + std::to_string(totalObjects);
 
-    m_font->DrawString(*m_fontShader, 10,170, cull);
+    m_font->DrawString(*m_fontShader, 750,170, cull);
 
-    m_font->DrawString(*m_fontShader, 400,120, tos(m_curCamera->GetPosition())  );
+    m_font->DrawString(*m_fontShader, 750,120, tos(m_curCamera->GetPosition())  );
 
 
 

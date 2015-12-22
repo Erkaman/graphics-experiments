@@ -401,6 +401,8 @@ void ImGui_ImplGlfwGL3_NewFrame(float guiVerticalScale)
 
 Gui::Gui(GLFWwindow* window) {
 
+    m_guiMode = ModifyTerrainMode;
+
     // init gui:
     if(ImGui_ImplGlfwGL3_Init(window, true)) {
 	LOG_I("IMGUI initialization succeeded");
@@ -441,11 +443,31 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
     ImGui::SetWindowPos(ImVec2(0,0) );
 
-    ImGui::Text("Hello, world!");
-    ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+
+    ImGui::RadioButton("MT", &m_guiMode, ModifyTerrainMode); ImGui::SameLine();
+    ImGui::RadioButton("DT", &m_guiMode, DrawTextureMode); //ImGui::SameLine();
+
+
+
+    if(m_guiMode == ModifyTerrainMode) {
+	ImGui::Text("Radius:");
+	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+    } else {
+
+	ImGui::Text("Radius2:");
+	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+    }
+
 
     ImGui::End();
 
     ImGui::Render();
 
+}
+//             ImGui::LogButtons();
+
+
+int Gui::GetGuiMode()const {
+    return m_guiMode;
 }
