@@ -24,6 +24,9 @@
 #include "math/vector2i.hpp"
 #include "math/color.hpp"
 
+#include "gui_enum.hpp"
+
+
 #include <vector>
 
 #include "lodepng.h"
@@ -366,7 +369,7 @@ void HeightMap::CreateSplatMap() {
     Random random(3);
 
     SplatColor def; // default splat color.
-    def.r = 0;
+    def.r = 255;
     def.g = 0;
     def.b = 0;
     def.a = 255;
@@ -726,14 +729,13 @@ void HeightMap::ModifyTerrain(const float delta) {
     }
 }
 
-void HeightMap::DrawTexture(const float delta) {
+void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 
     MultArray<SplatColor>& splatData = *m_splatData;
 
     float rad = 35;
 
     float fadeRad = 30;
-
 
     int cx = m_cursorPosition.x;
     int cz = m_cursorPosition.y;
@@ -762,7 +764,6 @@ void HeightMap::DrawTexture(const float delta) {
 
 		if(dist <= rad) {
 
-
 		    unsigned char val;
 
 		    if(dist > fadeRad) {
@@ -775,8 +776,21 @@ void HeightMap::DrawTexture(const float delta) {
 			val = 255;
 		    }
 
-		    if(splatData(px,pz).r < val) {
-			splatData(px,pz).r = val;
+		    unsigned char& current = drawTextureType == GrassTexture ? splatData(px,pz).r : splatData(px,pz).g;
+
+		    unsigned char& other = drawTextureType == GrassTexture ? splatData(px,pz).g : splatData(px,pz).r;
+
+//		    unsigned char& b = drawTextureType == GrassTexture ? splatData(px,pz).r : splatData(px,pz).g;
+
+
+		    if(current < val) {
+			current = val;
+
+			if(other > 0)
+
+			    other = 255 - val;
+
+
 		    }
 
 

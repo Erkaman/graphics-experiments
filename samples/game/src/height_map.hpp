@@ -111,7 +111,7 @@ public:
 		const float framebufferHeight);
 
     void ModifyTerrain(const float delta);
-    void DrawTexture(const float delta);
+    void DrawTexture(const float delta, int drawTextureType);
 
     void SaveHeightMap();
     void SaveSplatMap();

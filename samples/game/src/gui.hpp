@@ -1,18 +1,15 @@
 #pragma once
 
+
 struct GLFWwindow;
 
-
-enum GuiMode {
-    ModifyTerrainMode,
-    DrawTextureMode
-};
 
 class Gui {
 
 private:
 
     int m_guiMode;
+    int m_drawTextureType;
 
 public:
 
@@ -25,5 +22,6 @@ public:
     void Render(int windowWidth, int windowHeight);
 
     int GetGuiMode()const;
+    int GetDrawTextureType()const;
 
 };

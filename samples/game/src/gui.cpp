@@ -1,4 +1,5 @@
 #include "gui.hpp"
+#include "gui_enum.hpp"
 
 #include <imgui.h>
 
@@ -402,6 +403,7 @@ void ImGui_ImplGlfwGL3_NewFrame(float guiVerticalScale)
 Gui::Gui(GLFWwindow* window) {
 
     m_guiMode = DrawTextureMode;//ModifyTerrainMode;
+    m_drawTextureType = GrassTexture;
 
     // init gui:
     if(ImGui_ImplGlfwGL3_Init(window, true)) {
@@ -448,8 +450,6 @@ void Gui::Render(int windowWidth, int windowHeight) {
     ImGui::RadioButton("MT", &m_guiMode, ModifyTerrainMode); ImGui::SameLine();
     ImGui::RadioButton("DT", &m_guiMode, DrawTextureMode); //ImGui::SameLine();
 
-
-
     if(m_guiMode == ModifyTerrainMode) {
 	ImGui::Text("Radius:");
 	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
@@ -457,8 +457,9 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 	ImGui::Text("Radius2:");
 	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-    }
 
+        ImGui::Combo("Texture", &m_drawTextureType, "Grass\0Dirt\0\0");   // Combo using values packed in a single
+    }
 
     ImGui::End();
 
@@ -470,4 +471,9 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 int Gui::GetGuiMode()const {
     return m_guiMode;
+}
+
+
+int Gui::GetDrawTextureType()const {
+    return m_drawTextureType;
 }

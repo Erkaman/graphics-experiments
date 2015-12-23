@@ -34,6 +34,7 @@
 
 
 #include "car.hpp"
+#include "gui_enum.hpp"
 
 #include "gui.hpp"
 #include "gui_mouse_state.hpp"
@@ -573,7 +574,7 @@ void TuhuApplication::Update(const float delta) {
 		m_heightMap->ModifyTerrain(delta);
 
 	    } else {
-		m_heightMap->DrawTexture(delta);
+		m_heightMap->DrawTexture(delta, m_gui->GetDrawTextureType() );
 
 	    }
 
