@@ -458,7 +458,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	ImGui::Text("Radius2:");
 	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 
-        ImGui::Combo("Texture", &m_drawTextureType, "Grass\0Dirt\0\0");   // Combo using values packed in a single
+        ImGui::Combo("Texture", &m_drawTextureType, "Grass\0Dirt\0Rock\0Eraser\0\0");   // Combo using values packed in a single
     }
 
     ImGui::End();

@@ -70,6 +70,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false),
 
     m_dirtTexture = LoadTexture("img/dirt.png");
 
+    m_rockTexture = LoadTexture("img/rock.png");
+
     /*
       load the shader
     */
@@ -200,6 +202,10 @@ void HeightMap::RenderHeightMap(const ICamera* camera, const Vector4f& lightPosi
     Texture::SetActiveTextureUnit(1);
     m_dirtTexture->Bind();
 
+    m_shader->SetUniform("rock", 2);
+    Texture::SetActiveTextureUnit(2);
+    m_rockTexture->Bind();
+
 /*
     m_shader->SetUniform("snow", 2);
     Texture::SetActiveTextureUnit(2);
@@ -218,8 +224,7 @@ void HeightMap::RenderHeightMap(const ICamera* camera, const Vector4f& lightPosi
 
     m_grassTexture->Unbind();
     m_dirtTexture->Unbind();
-       /*m_snowTexture->Unbind();
-    */
+    m_rockTexture->Unbind();
 
     m_shader->Unbind();
 }
@@ -300,12 +305,7 @@ void HeightMap::SetWireframe(const bool wireframe) {
 
   }*/
 
-
 void HeightMap::LoadHeightmap() {
-
-
-
-
 
 
     std::string* resourcePath = ResourceManager::GetInstance().SearchResource("height.png");
@@ -372,7 +372,7 @@ void HeightMap::CreateSplatMap() {
     def.r = 255;
     def.g = 0;
     def.b = 0;
-    def.a = 255;
+    def.a = 0;
 
     m_splatData = new MultArray<SplatColor>(width, depth, def  );
 
@@ -747,8 +747,6 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 	// we need to move cursor again to draw again.
 	m_cursorPositionWasUpdated = false;
 
-//	LOG_I("update color");
-
 	for(int ix = -rad; ix <= +rad; ++ix) {
 
 	    for(int iz = -rad; iz <= +rad; ++iz) {
@@ -776,79 +774,59 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 			val = 255;
 		    }
 
-		    unsigned char& current = drawTextureType == GrassTexture ? splatData(px,pz).r : splatData(px,pz).g;
 
-		    unsigned char& other = drawTextureType == GrassTexture ? splatData(px,pz).g : splatData(px,pz).r;
-
-//		    unsigned char& b = drawTextureType == GrassTexture ? splatData(px,pz).r : splatData(px,pz).g;
+		    if(drawTextureType != EraserTexture) {
 
 
-		    if(current < val) {
-			current = val;
+			unsigned char* textures =  (unsigned char *)&splatData(px,pz);
 
-			if(other > 0)
+			// find the texture that has the most influence on the pixel.
+			// we will blend between this texture and the current texture.
+			int imax = drawTextureType == GrassTexture ? 1 : 0;
+			for(int i = imax+1; i < 4; ++i) {
+			    if(textures[i] > textures[imax] && i != drawTextureType) {
+				imax = i;
+			    }
+			}
 
-			    other = 255 - val;
+			if(imax == drawTextureType) {
+			    // this texture is already drawn on this pixel. Do nothing.
+			    continue;
+			}
 
+			unsigned char& current = textures[drawTextureType];
 
-		    }
+			unsigned char& other = textures[imax];
 
+			if(current < val) {
+			    current = val;
 
-		    /*
-		    if(  (unsigned short)splatData(cx+ix,cz+iz).r + (unsigned short)val > 255  ) {
+			    if(other > 0)
 
-			splatData(cx+ix,cz+iz).r = 255;
+				other = 255 - val;
+			}
+
 
 		    } else {
 
-			splatData(cx+ix,cz+iz).r += val;
 
-			}*/
+			SplatColor& color =  splatData(px,pz);
+			color.r = 255;
+			color.g = 0;
+			color.b = 0;
+			color.a = 0;
 
 
-
-
-
-/*
-		    float x = dist / maxdist; // in range [0,1].
-
-		    float y = (1.0 - x*x);
-
-		    if(y < 0) {
-			y = 0;
 		    }
 
-		    if(y > 1.0) {
-			y = 1.0;
-		    }
 
-		    float max =y * (float)MAX_HEIGHT;
-
-		    if( image(cx+ix,cz+iz) < (float)MAX_HEIGHT) {
-
-			float increment = max  / (max_step);
-
-
-			if(image(cx+ix,cz+iz) + increment > MAX_HEIGHT) {
-			    image(cx+ix,cz+iz) = MAX_HEIGHT;
-
-			} else {
-			    image(cx+ix,cz+iz) += increment;
-
-			}
-		    }
-*/
 
 		}
 	    }
 	}
 
 	m_splatMap->Bind();
-
-	//TODO: methods better exist:
-	// http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
 	m_splatMap->UpdateTexture(splatData.GetData());
-
 	m_splatMap->Unbind();
 
     } else {

@@ -15,6 +15,7 @@ in vec3 viewSpacePosition;
 
 uniform sampler2D grass;
 uniform sampler2D dirt;
+uniform sampler2D rock;
 
 uniform sampler2D splatMap;
 
@@ -70,7 +71,10 @@ void main()
 
 
 
-    vec3 diffuse =splat.r * texture(grass, scaledTexcoord).xyz + splat.g * texture(dirt, scaledTexcoord).xyz;
+    vec3 diffuse =
+	splat.r * texture(grass, scaledTexcoord).xyz +
+	splat.g * texture(dirt, scaledTexcoord).xyz +
+	splat.b * texture(rock, scaledTexcoord).xyz;
 
 
 

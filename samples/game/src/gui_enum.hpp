@@ -7,6 +7,12 @@ enum GuiMode {
 
 // if in DrawTextureMode, specify which texture we are currently drawing.
 enum DrawTextureType {
-    GrassTexture,
-    DirtTexture
+    GrassTexture = 0,
+    DirtTexture = 1,
+    RockTexture = 2,
+    // add new textures HERE!
+
+    EraserTexture = 3
+
+
 };

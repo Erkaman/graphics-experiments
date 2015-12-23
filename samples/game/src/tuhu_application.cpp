@@ -588,7 +588,7 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 */
 //		LOG_I("triangle: %f", pi.unused1);
 	} else {
-	    LOG_I("IGNORE");
+//	    LOG_I("IGNORE");
 	}
 
 /*

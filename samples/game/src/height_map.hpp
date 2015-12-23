@@ -55,6 +55,7 @@ private:
 
     Texture* m_grassTexture;
     Texture* m_dirtTexture;
+    Texture* m_rockTexture;
 
     Texture2D* m_heightMap;
     Texture2D* m_splatMap;
