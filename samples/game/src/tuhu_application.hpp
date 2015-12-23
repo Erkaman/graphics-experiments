@@ -14,8 +14,6 @@ class Sound;
 class ParticleSystem;
 class IGeometryObject;
 class DepthFBO;
-class Line;
-class Points;
 class ViewFrustum;
 class PhysicsWorld;
 class Car;
@@ -66,9 +64,6 @@ private:
     DepthFBO* m_depthFbo;
     PickingFBO* m_pickingFbo;
 
-
-    Line* m_line;
-    Points* m_points;
 
     Vector4f m_lightDirection;
 

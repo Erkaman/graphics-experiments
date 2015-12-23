@@ -69,6 +69,8 @@ private:
     Vector2i m_cursorPosition;
     bool m_cursorPositionWasUpdated;
 
+    Vector3f m_offset;
+
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);

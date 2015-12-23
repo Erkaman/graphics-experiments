@@ -26,10 +26,9 @@ const btVector3 FRONT_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, (
 const btVector3 BACK_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, -(CAR_DIMENSIONS.z()/2 - 0.1f - WHEEL_RADIUS));
 
 
-Car* Car::Load(PhysicsWorld* physicsWorld) {
+Car* Car::Load(PhysicsWorld* physicsWorld, const Vector3f& position) {
 
-    IGeometryObject* geoObj = GeometryObject::Load("obj/car.eob",
-						   Vector3f(0,-1.5,0),
+    IGeometryObject* geoObj = GeometryObject::Load("obj/car.eob", position,
 						   physicsWorld );
 
     if(!geoObj) {

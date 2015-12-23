@@ -20,7 +20,7 @@ private:
 
 public:
 
-    static Car* Load(PhysicsWorld* physicsWorld);
+    static Car* Load(PhysicsWorld* physicsWorld, const Vector3f& position);
     virtual ~Car();
 
     virtual void Render(

@@ -96,34 +96,23 @@ void TuhuApplication::Init() {
 
     m_totalDelta = 0;
 
-  m_smoke = new SmokeEffect(Vector3f(10,3,10));
+    // NOTE: we can fix the shadows by setting trans to (0,0,0).
+    Vector3f trans = Vector3f(-80,0,-80);
+
+  m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
     m_smoke->Init();
 
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
-    m_line = Line::Load(Vector3f(00,0.0,0),  -100 * Vector3f(m_lightDirection)  );
-
-    vector<Vector3f> points;
-
-    for(int i = 0; i < 20; ++i) {
-
-	points.emplace_back(i,0.0f,0.0f);
-    }
-
-    m_points = Points::Load(points, 7.0, Vector3f(1,0,0) );
-
-
     const Vector3f pos =
-	Vector3f(45.282848, 6.476396, 48.503151);
-
-
+	Vector3f(51.479908, 40.918278, 70.826126);
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 			  pos,
-	Vector3f(0.794949, -0.465078, 0.389563)
+	Vector3f(-0.613098, -0.523130, -0.591984)
 			  );
 
     m_snow = new SnowEffect(pos);
@@ -137,8 +126,6 @@ void TuhuApplication::Init() {
 
    m_heightMap = new HeightMap("img/hill.png");
 
-
-
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
@@ -146,31 +133,31 @@ void TuhuApplication::Init() {
 
 //   LOG_I("now we start creating objs");
 
-   m_stoneFloor = LoadObj("obj/rock_floor.eob", Vector3f(0,0,40));
+   m_stoneFloor = LoadObj("obj/rock_floor.eob", Vector3f(0,0,40) + trans);
 
 
 //   LOG_I("created one single obj");
 
-   m_flatWoodFloor = LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40) );
+   m_flatWoodFloor = LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40)+ trans );
 
-   m_woodFloor = LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40) );
+   m_woodFloor = LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40)+ trans );
 
-   m_sphere = LoadObj("obj/sunball.eob", Vector3f(21.152159f, 13.744261f, 21.152159f));
+   m_sphere = LoadObj("obj/sunball.eob", Vector3f(21.152159f, 13.744261f, 21.152159f)+ trans);
 
 //   LOG_I("created some objs");
 
 
-   m_plane = LoadObj("obj/plane.eob", Vector3f(0,-2.5,0));
+   m_plane = LoadObj("obj/plane.eob", Vector3f(0,-2.5,0)+ trans);
 
-   m_tree = LoadObj("obj/tree.eob", Vector3f(10,-2.5,10) );
+   m_tree = LoadObj("obj/tree.eob", Vector3f(10,-2.5,10) + trans);
 
 //   LOG_I("created some more objs");
 
-   m_wall = LoadObj("obj/wall.eob", Vector3f(-5,-2.5,-5)  );
+   m_wall = LoadObj("obj/wall.eob", Vector3f(-5,-2.5,-5)  + trans);
 
-   m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) );
+   m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) + trans);
 
-   m_car = Car::Load(m_physicsWorld);
+   m_car = Car::Load(m_physicsWorld, Vector3f(0,-1.5,0)+trans);
     if(!m_car)
 	PrintErrorExit();
 
@@ -455,13 +442,6 @@ void TuhuApplication::RenderScene() {
     }
 
     totalObjects = m_geoObjs.size();
-
-
-
-
-     m_line->Render(m_curCamera->GetVp());
-     m_points->Render(m_curCamera->GetVp());
-
 
   m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 

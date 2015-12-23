@@ -35,10 +35,11 @@ using std::vector;
 using std::string;
 
 constexpr float xzScale= 100.0;
-const Vector3f offset(50, 0, 50);
 constexpr float yScale = 4.0;
 constexpr size_t resolution = 256;
 constexpr unsigned short MAX_HEIGHT = 65535;
+
+//const Vector3f offset(0, 0, 0);
 
 static Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
@@ -65,6 +66,10 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false),
 					       m_grassTexture(NULL),
 					       m_dirtTexture(NULL), m_config(Config::GetInstance()),
 					       m_cursorPosition(0,0), m_cursorPositionWasUpdated(true) {
+
+
+    // position the heightfield so that it is centered at the origin:
+    m_offset = Vector3f(-xzScale/2.0,0,-xzScale/2.0);
 
     m_grassTexture = LoadTexture("img/grass.png");
 
@@ -137,7 +142,7 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
 
     shader->SetUniform("xzScale", xzScale);
     shader->SetUniform("yScale", yScale);
-    shader->SetUniform("offset", offset);
+    shader->SetUniform("offset", m_offset);
     shader->SetUniform("resolution", (float)resolution);
 }
 
@@ -242,6 +247,10 @@ void HeightMap::RenderCursor(const ICamera* camera) {
 
     m_cursorShader->SetUniform("cursorPosition",
 			       Vector3f(m_cursorPosition.x, 0, m_cursorPosition.y) );
+
+
+    // set point size.
+    glPointSize(7.0);
 
     RenderSetup(m_cursorShader);
 
@@ -603,7 +612,7 @@ void HeightMap::UpdateCursor(ICamera* camera,
 
     // plane normal
     Vector3f n(0,1,0);
-    Vector3f x0(offset); // plane offset
+    Vector3f x0(m_offset); // plane offset
     Vector3f o = rayOrigin;
     Vector3f d = rayDir;
 
@@ -614,13 +623,12 @@ void HeightMap::UpdateCursor(ICamera* camera,
 
     } else {
 
-
 	// the position where the ray hits the plane.
 	Vector3f hit = rayOrigin + rayDir * t;
 
 	// now find which, exact, height position is hit by the ray.
 
-	hit -= offset;
+	hit -= m_offset;
 	hit = hit * (1.0 / xzScale);
 	hit = hit * resolution;
 
@@ -857,3 +865,20 @@ void HeightMap::SaveSplatMap() {
 
 
 //the bad lightning may be caused beccause the transition from hill to grass is very bad.
+
+/*
+
+btHeightfieldTerrainShape::btHeightfieldTerrainShape	(
+    int 	heightStickWidth, // number of squares in heightmap. 256 in our case.
+    int 	heightStickLength, // see above
+    const void * 	heightfieldData, // byte(?)  sequence of the heightmap.  data.
+    btScalar 	heightScale, // not sure...
+    btScalar 	minHeight, // max height in float. should be 1 in our case, since this is the true range.
+btScalar 	maxHeight,
+
+    int 	upAxis, // should be 1, if y-axis is up.
+PHY_ScalarType 	heightDataType,
+bool 	flipQuadEdges
+)
+
+*/
