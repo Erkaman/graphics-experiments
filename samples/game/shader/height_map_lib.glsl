@@ -1,5 +1,5 @@
 float f(sampler2D heightMap, vec2 texCoord) {
-    return texture(heightMap, texCoord).r;
+    return -1 + texture(heightMap, texCoord).r*2;
 }
 
 float f(sampler2D heightMap, float x, float z) {

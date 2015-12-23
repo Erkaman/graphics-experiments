@@ -31,11 +31,15 @@
 
 #include "lodepng.h"
 
+#include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
+
 using std::vector;
 using std::string;
 
 
 constexpr unsigned short MAX_HEIGHT = 65535;
+constexpr unsigned short MID_HEIGHT = 32768;
+constexpr unsigned short MIN_HEIGHT = 0;
 
 //const Vector3f offset(0, 0, 0);
 
@@ -447,7 +451,7 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     for(size_t i = 0; i < width; ++i) {
 
 	for(size_t j = 0; j < depth; ++j) {
-	    heightData(i,j) = 0;
+	    heightData(i,j) = MID_HEIGHT;
 	}
     }
 
@@ -880,3 +884,46 @@ bool 	flipQuadEdges
 )
 
 */
+
+void HeightMap::AddToPhysicsWorld(const PhysicsWorld* physicsWorld) {
+
+	// get new heightfield of appropriate type
+/*
+    void* rawHeightMap = m_heightMap->GetPixels<unsigned short>(
+	m_resolution* m_resolution * 1, GL_RED, GL_UNSIGNED_SHORT
+	);
+    /*
+    LOG_I("raw: %d",  rawHeightMap[0] );
+    LOG_I("raw: %d",  rawHeightMap[1] );
+    LOG_I("raw: %d",  rawHeightMap[2] );
+
+
+
+	bool flipQuadEdges = false;
+	btHeightfieldTerrainShape * heightfieldShape =
+	    new btHeightfieldTerrainShape(m_resolution, m_resolution,
+					  rawHeightMap,
+					  s_gridHeightScale,
+					  m_minHeight, // 0.0
+					  m_maxHeight, // 4.0
+					  1, // y-axis is up.
+					  PHY_SHORT,
+					  flipQuadEdges);
+	/*
+	btAssert(heightfieldShape && "null heightfield");
+
+	// scale the shape
+	btVector3 localScaling = getUpVector(m_upAxis, s_gridSpacing, 1.0);
+	heightfieldShape->setLocalScaling(localScaling);
+
+	// set origin to middle of heightfield
+	btTransform tr;
+	tr.setIdentity();
+	tr.setOrigin(btVector3(0,-20,0));
+
+	// create ground object
+	float mass = 0.0;
+	localCreateRigidBody(mass, tr, heightfieldShape);
+    */
+
+}

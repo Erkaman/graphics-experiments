@@ -17,6 +17,7 @@ class Texture2D;
 class ShaderProgra;
 class Config;
 class ICamera;
+class PhysicsWorld;
 
 // the data associated with every triangle in the heightmap mesh.
 struct Cell {
@@ -121,5 +122,9 @@ public:
 
     void SaveHeightMap();
     void SaveSplatMap();
+
+
+    void AddToPhysicsWorld(const PhysicsWorld* physicsWorld);
+
 
 };
