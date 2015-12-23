@@ -60,7 +60,8 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false),
 					       m_idShader(NULL),
 					       m_cursorShader(NULL),
 					       m_grassTexture(NULL),
-					       m_dirtTexture(NULL), m_config(Config::GetInstance()){
+					       m_dirtTexture(NULL), m_config(Config::GetInstance()),
+					       m_cursorPosition(0,0), m_cursorPositionWasUpdated(true) {
 
     m_grassTexture = LoadTexture("img/grass.png");
 
@@ -229,7 +230,10 @@ void HeightMap::RenderCursor(const ICamera* camera) {
     m_cursorShader->Bind();
 
     m_cursorShader->SetShaderUniforms(Matrix4f::CreateTranslation(0,0,0), camera);
-    m_cursorShader->SetUniform("cursorPosition", cursorPosition );
+
+
+    m_cursorShader->SetUniform("cursorPosition",
+			       Vector3f(m_cursorPosition.x, 0, m_cursorPosition.y) );
 
     RenderSetup(m_cursorShader);
 
@@ -350,11 +354,8 @@ void HeightMap::LoadHeightmap() {
 		LOG_I("exceeded size: %ld, %ld, %ld", iBuffer, i, j);
 		exit(1);
 	    }
-
 	}
     }
-
-
 }
 
 void HeightMap::CreateSplatMap() {
@@ -365,15 +366,15 @@ void HeightMap::CreateSplatMap() {
     Random random(3);
 
     SplatColor def; // default splat color.
-    def.r = 255;
+    def.r = 0;
     def.g = 0;
     def.b = 0;
-    def.a = 0;
+    def.a = 255;
 
     m_splatData = new MultArray<SplatColor>(width, depth, def  );
 
     MultArray<SplatColor>& splatData = *m_splatData;
-
+/*
     bool firstHalf = true;
 
 
@@ -395,7 +396,7 @@ void HeightMap::CreateSplatMap() {
 	    firstHalf = false;
 	}
     }
-
+*/
 
     m_splatMap = new Texture2D(splatData.GetData(), width, depth,
 				   GL_RGBA8, // internal format
@@ -628,9 +629,14 @@ void HeightMap::UpdateCursor(ICamera* camera,
 	    // if cursor is actually hitting the plane, update cursor position.
 //	    LOG_I("UPDATE cursor: %d, %d", xHit, zHit);
 
-	    cursorPosition.x = xHit;
-	    cursorPosition.y = 0;
-	    cursorPosition.z = zHit;
+	    if(xHit != m_cursorPosition.x && zHit != m_cursorPosition.y) {
+		m_cursorPosition.x = xHit;
+		m_cursorPosition.y = zHit;
+		m_cursorPositionWasUpdated = true;
+	    } else {
+	    }
+
+
 
 
 	}
@@ -642,8 +648,6 @@ void HeightMap::UpdateCursor(ICamera* camera,
 
 void HeightMap::ModifyTerrain(const float delta) {
 
-//    LOG_I("modify");
-
     static float total = 0;
 
     total += delta;
@@ -652,8 +656,8 @@ void HeightMap::ModifyTerrain(const float delta) {
 
     float rad = 35;
 
-    int cx = cursorPosition.x;
-    int cz = cursorPosition.z;
+    int cx = m_cursorPosition.x;
+    int cz = m_cursorPosition.y;
 
 
     float maxdist = rad;
@@ -719,19 +723,126 @@ void HeightMap::ModifyTerrain(const float delta) {
 	m_heightMap->Unbind();
 
 	++istep;
-
-/*
-	if(istep > max_step) {
-
-
-	    m_heightMap->Write16ToFile("height.png");
-
-	    exit(1);
-
-
-	}*/
     }
 }
+
+void HeightMap::DrawTexture(const float delta) {
+
+    MultArray<SplatColor>& splatData = *m_splatData;
+
+    float rad = 35;
+
+    float fadeRad = 30;
+
+
+    int cx = m_cursorPosition.x;
+    int cz = m_cursorPosition.y;
+
+    float maxdist = rad;
+
+    if(m_cursorPositionWasUpdated) {
+
+	// we need to move cursor again to draw again.
+	m_cursorPositionWasUpdated = false;
+
+//	LOG_I("update color");
+
+	for(int ix = -rad; ix <= +rad; ++ix) {
+
+	    for(int iz = -rad; iz <= +rad; ++iz) {
+
+		int px = cx+ix;
+		int pz = cz+iz;
+
+		if(px < 0 || px >= resolution || pz < 0 || pz >= resolution) {
+		    continue;
+		}
+
+		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
+
+		if(dist <= rad) {
+
+
+		    unsigned char val;
+
+		    if(dist > fadeRad) {
+			float f1 = dist - fadeRad;
+			float f2 = rad - fadeRad;
+
+			val = (unsigned char)((1.0 - f1/f2) * 255.0);
+
+		    } else {
+			val = 255;
+		    }
+
+		    if(splatData(px,pz).r < val) {
+			splatData(px,pz).r = val;
+		    }
+
+
+		    /*
+		    if(  (unsigned short)splatData(cx+ix,cz+iz).r + (unsigned short)val > 255  ) {
+
+			splatData(cx+ix,cz+iz).r = 255;
+
+		    } else {
+
+			splatData(cx+ix,cz+iz).r += val;
+
+			}*/
+
+
+
+
+
+/*
+		    float x = dist / maxdist; // in range [0,1].
+
+		    float y = (1.0 - x*x);
+
+		    if(y < 0) {
+			y = 0;
+		    }
+
+		    if(y > 1.0) {
+			y = 1.0;
+		    }
+
+		    float max =y * (float)MAX_HEIGHT;
+
+		    if( image(cx+ix,cz+iz) < (float)MAX_HEIGHT) {
+
+			float increment = max  / (max_step);
+
+
+			if(image(cx+ix,cz+iz) + increment > MAX_HEIGHT) {
+			    image(cx+ix,cz+iz) = MAX_HEIGHT;
+
+			} else {
+			    image(cx+ix,cz+iz) += increment;
+
+			}
+		    }
+*/
+
+		}
+	    }
+	}
+
+	m_splatMap->Bind();
+
+	//TODO: methods better exist:
+	// http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
+	m_splatMap->UpdateTexture(splatData.GetData());
+
+	m_splatMap->Unbind();
+
+    } else {
+
+    }
+
+}
+
 
 void HeightMap::Update(const float delta, ICamera* camera,
 		       const float framebufferWidth,
@@ -742,8 +853,15 @@ void HeightMap::Update(const float delta, ICamera* camera,
     }
 }
 
-void HeightMap::SaveTexture() {
+void HeightMap::SaveHeightMap() {
  	    m_heightMap->Write16ToFile("height.png");
 
 }
+
+
+void HeightMap::SaveSplatMap() {
+    m_splatMap->WriteToFile("splat.png");
+}
+
+
 //the bad lightning may be caused beccause the transition from hill to grass is very bad.

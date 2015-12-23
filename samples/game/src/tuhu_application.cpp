@@ -554,7 +554,11 @@ void TuhuApplication::Update(const float delta) {
 
 
     if( kbs.IsPressed(GLFW_KEY_7) ) {
-	m_heightMap->SaveTexture();
+	m_heightMap->SaveHeightMap();
+    }
+
+    if( kbs.IsPressed(GLFW_KEY_8) ) {
+	m_heightMap->SaveSplatMap();
     }
 
 
@@ -569,6 +573,8 @@ void TuhuApplication::Update(const float delta) {
 		m_heightMap->ModifyTerrain(delta);
 
 	    } else {
+		m_heightMap->DrawTexture(delta);
+
 	    }
 
 

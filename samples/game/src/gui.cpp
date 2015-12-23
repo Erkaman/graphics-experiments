@@ -401,7 +401,7 @@ void ImGui_ImplGlfwGL3_NewFrame(float guiVerticalScale)
 
 Gui::Gui(GLFWwindow* window) {
 
-    m_guiMode = ModifyTerrainMode;
+    m_guiMode = DrawTextureMode;//ModifyTerrainMode;
 
     // init gui:
     if(ImGui_ImplGlfwGL3_Init(window, true)) {

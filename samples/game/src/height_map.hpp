@@ -5,6 +5,7 @@
 #include "math/vector4f.hpp"
 #include "math/vector2f.hpp"
 #include "ewa/mult_array.hpp"
+#include "math/vector2i.hpp"
 
 class VBO;
 class ShaderProgram;
@@ -64,7 +65,8 @@ private:
 
     Config& m_config;
 
-    Vector3f cursorPosition;
+    Vector2i m_cursorPosition;
+    bool m_cursorPositionWasUpdated;
 
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
@@ -109,7 +111,9 @@ public:
 		const float framebufferHeight);
 
     void ModifyTerrain(const float delta);
+    void DrawTexture(const float delta);
 
-    void SaveTexture();
+    void SaveHeightMap();
+    void SaveSplatMap();
 
 };
