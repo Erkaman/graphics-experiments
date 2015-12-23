@@ -34,9 +34,7 @@
 using std::vector;
 using std::string;
 
-constexpr float xzScale= 100.0;
-constexpr float yScale = 4.0;
-constexpr size_t resolution = 256;
+
 constexpr unsigned short MAX_HEIGHT = 65535;
 
 //const Vector3f offset(0, 0, 0);
@@ -65,11 +63,15 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false),
 					       m_cursorShader(NULL),
 					       m_grassTexture(NULL),
 					       m_dirtTexture(NULL), m_config(Config::GetInstance()),
-					       m_cursorPosition(0,0), m_cursorPositionWasUpdated(true) {
+					       m_cursorPosition(0,0), m_cursorPositionWasUpdated(true),
+					       m_xzScale(100.0),
+					       m_yScale(4.0),
+					       m_resolution(256)
+{
 
 
     // position the heightfield so that it is centered at the origin:
-    m_offset = Vector3f(-xzScale/2.0,0,-xzScale/2.0);
+    m_offset = Vector3f(-m_xzScale/2.0,0,-m_xzScale/2.0);
 
     m_grassTexture = LoadTexture("img/grass.png");
 
@@ -116,7 +118,7 @@ void HeightMap::CreateCursor() {
 	    float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
 	    if(dist <= rad) {
-		points.push_back(Vector3f((float)ix / (float)resolution, 0, (float)iz / (float)resolution));
+		points.push_back(Vector3f((float)ix / (float)m_resolution, 0, (float)iz / (float)m_resolution));
 	    }
 	}
     }
@@ -140,10 +142,10 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
 
 
 
-    shader->SetUniform("xzScale", xzScale);
-    shader->SetUniform("yScale", yScale);
+    shader->SetUniform("xzScale", m_xzScale);
+    shader->SetUniform("yScale", m_yScale);
     shader->SetUniform("offset", m_offset);
-    shader->SetUniform("resolution", (float)resolution);
+    shader->SetUniform("resolution", (float)m_resolution);
 }
 
 void HeightMap::RenderUnsetup(ShaderProgram* shader) {
@@ -341,8 +343,8 @@ void HeightMap::LoadHeightmap() {
     }
 
 
-    size_t width = resolution;
-    size_t depth = resolution;
+    size_t width = m_resolution;
+    size_t depth = m_resolution;
 
 
     size_t iBuffer = 0;
@@ -372,8 +374,8 @@ void HeightMap::LoadHeightmap() {
 
 void HeightMap::CreateSplatMap() {
 
-    size_t width = resolution;
-    size_t depth = resolution;
+    size_t width = m_resolution;
+    size_t depth = m_resolution;
 
     Random random(3);
 
@@ -433,8 +435,8 @@ void HeightMap::CreateSplatMap() {
 
 void HeightMap::CreateHeightmap(const std::string& path) {
 
-    size_t width = resolution;
-    size_t depth = resolution;
+    size_t width = m_resolution;
+    size_t depth = m_resolution;
 
     Random random(3);
 
@@ -491,8 +493,6 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 		0,
 		z
 		);
-
-	float scale = 1.0;
 
 	c.id = id++;
 
@@ -629,14 +629,14 @@ void HeightMap::UpdateCursor(ICamera* camera,
 	// now find which, exact, height position is hit by the ray.
 
 	hit -= m_offset;
-	hit = hit * (1.0 / xzScale);
-	hit = hit * resolution;
+	hit = hit * (1.0 / m_xzScale);
+	hit = hit * m_resolution;
 
 	int xHit = hit.x;
 	int zHit = hit.z;
 
-	if(xHit >= 0 && xHit < (int)resolution &&
-	   zHit >= 0 && zHit < (int)resolution) {
+	if(xHit >= 0 && xHit < (int)m_resolution &&
+	   zHit >= 0 && zHit < (int)m_resolution) {
 	    // if cursor is actually hitting the plane, update cursor position.
 //	    LOG_I("UPDATE cursor: %d, %d", xHit, zHit);
 
@@ -748,8 +748,6 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
     int cx = m_cursorPosition.x;
     int cz = m_cursorPosition.y;
 
-    float maxdist = rad;
-
     if(m_cursorPositionWasUpdated) {
 
 	// we need to move cursor again to draw again.
@@ -762,7 +760,7 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 		int px = cx+ix;
 		int pz = cz+iz;
 
-		if(px < 0 || px >= resolution || pz < 0 || pz >= resolution) {
+		if(px < 0 || px >= m_resolution || pz < 0 || pz >= m_resolution) {
 		    continue;
 		}
 

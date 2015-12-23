@@ -70,6 +70,9 @@ private:
     bool m_cursorPositionWasUpdated;
 
     Vector3f m_offset;
+    const float m_xzScale;
+    const float m_yScale;
+    const size_t m_resolution;
 
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
