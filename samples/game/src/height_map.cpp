@@ -119,11 +119,11 @@ void HeightMap::CreateCursor() {
 }
 
 void HeightMap::RenderSetup(ShaderProgram* shader) {
-    m_shader->SetUniform("heightMap", 3);
+    shader->SetUniform("heightMap", 3);
     Texture::SetActiveTextureUnit(3);
     m_heightMap->Bind();
 
-    m_shader->SetUniform("splatMap", 4);
+    shader->SetUniform("splatMap", 4);
     Texture::SetActiveTextureUnit(4);
     m_splatMap->Bind();
 
@@ -133,7 +133,6 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
     shader->SetUniform("yScale", yScale);
     shader->SetUniform("offset", offset);
     shader->SetUniform("resolution", (float)resolution);
-
 }
 
 void HeightMap::RenderUnsetup(ShaderProgram* shader) {
