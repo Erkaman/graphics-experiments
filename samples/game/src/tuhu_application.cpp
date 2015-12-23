@@ -39,6 +39,8 @@
 #include "gui.hpp"
 #include "gui_mouse_state.hpp"
 
+#include "nfd.h"
+
 using namespace std;
 
 int nonCulledObjects = 0;
@@ -562,6 +564,18 @@ void TuhuApplication::Update(const float delta) {
 	m_heightMap->SaveSplatMap();
     }
 
+    if( kbs.WasPressed(GLFW_KEY_9) ) {
+
+	nfdchar_t *outPath = NULL;
+
+	nfdresult_t result = NFD_OpenDialog( "png,jpg;pdf", NULL, &outPath );
+
+	if ( result == NFD_OKAY ) {
+	    puts("Success!");
+	    puts(outPath);
+	    free(outPath);
+	}
+    }
 
     if(ms.IsPressed(GLFW_MOUSE_BUTTON_1 )) {
 

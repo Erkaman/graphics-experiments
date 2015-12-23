@@ -47,11 +47,9 @@ endif()
 #SET(SRC main.cpp)
 file(GLOB ENGINE_SRC ewa/*.cpp ewa/gl/shader/*.cpp ewa/gl/*.cpp ewa/math/*.cpp ewa/audio/*.cpp deps/src/glew/*.c deps/src/lodepng/*.cpp deps/src/imgui/*.cpp )
 
-
 ######################################
 ############ ADD  LIBRARIES
 ######################################
-
 
 FIND_PACKAGE(OpenGL REQUIRED)
 
@@ -59,9 +57,11 @@ LIST(APPEND game_libs ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
 
 LIST(APPEND game_libs glfw3)
 
-
-
 IF(APPLE)
+
+  LIST(APPEND ENGINE_SRC deps/src/nfd/nfd_common.c deps/src/nfd/nfd_cocoa.m)
+
+
   LINK_DIRECTORIES("deps/libs/mac")
   find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
   find_library(COCOA_FRAMEWORK Cocoa)
@@ -104,7 +104,8 @@ ELSEIF(WIN32)
 
 ENDIF()
 
-include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng" "."  "deps/include/imgui")
+include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng" "."  "deps/include/imgui"
+  "deps/include/nfd")
 
 set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
@@ -116,10 +117,3 @@ TARGET_LINK_LIBRARIES(ewa ${game_libs})
 add_subdirectory("samples")
 
 add_subdirectory("unit_test")
-
-
-
-# we should put al headers in deps/include.
-# put openal.lib in link directory.
-
-# bullet version: 2.83.4
