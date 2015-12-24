@@ -142,7 +142,9 @@ void TuhuApplication::Init() {
 
    m_woodFloor = LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40)+ trans );
 
-   m_sphere = LoadObj("obj/sunball.eob", Vector3f(21.152159f, 13.744261f, 21.152159f)+ trans);
+   m_sphere = LoadObj("obj/sunball.eob",
+
+		      Vector3f(21.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60) );
 
 //   LOG_I("created some objs");
 

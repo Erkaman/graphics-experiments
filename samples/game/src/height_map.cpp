@@ -440,6 +440,10 @@ void HeightMap::CreateSplatMap() {
 
 void HeightMap::CreateHeightmap(const std::string& path) {
 
+
+
+
+
     size_t width = m_resolution;
     size_t depth = m_resolution;
 
@@ -449,12 +453,23 @@ void HeightMap::CreateHeightmap(const std::string& path) {
 
     MultArray<unsigned short>& heightData = *m_heightData;
 
+/*
     for(size_t i = 0; i < width; ++i) {
 
+	unsigned short h = 0;
+
 	for(size_t j = 0; j < depth; ++j) {
-	    heightData(i,j) = MIN_HEIGHT;
+
+	    heightData(j,i) = MIN_HEIGHT;
+
+	    h += 200;
 	}
     }
+
+    heightData(100,100) = MID_HEIGHT;
+*/
+
+    LoadHeightmap();
 
     m_heightMap = new Texture2D(heightData.GetData(), width, depth,
 				   GL_R16, // internal format
@@ -895,30 +910,24 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 	);
 
     // create a signed height map.
-    unsigned char* signedRawHeightMap = new unsigned char[m_resolution* m_resolution *2];
+    signed short* signedRawHeightMap = new signed short[m_resolution* m_resolution *2];
 
     for(size_t i = 0; i < m_resolution* m_resolution; ++i) {
 
 	unsigned short us = rawHeightMap[i];
 
+//LOG_I("us: %d", us );
+
 	signed short ss =
 	    us >= MID_HEIGHT ?
 	    us - MID_HEIGHT :
-	    MID_HEIGHT -us;
-
-	unsigned char c1 = (ss >> 8) & 255;
-	unsigned char c2 = ss & 255;
-
-	*signedRawHeightMap = c1;
-	++signedRawHeightMap;
-	*signedRawHeightMap = c2;
-	++signedRawHeightMap;
-
-//	signedRawHeightMap[i] = ss;
+	    -(MID_HEIGHT -us);
+//	signed short ss = us;
+//	LOG_I("ss: %d", ss );
+	signedRawHeightMap[i] = ss;
 
 //	LOG_I("lol: %d", signedRawHeightMap[i] );
     }
-
 
 /*
     LOG_I("raw: %d",  rawHeightMap[0] );
@@ -930,16 +939,13 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 	bool flipQuadEdges = false;
 	btHeightfieldTerrainShape * heightfieldShape =
 	    new btHeightfieldTerrainShape(m_resolution, m_resolution,
-					  rawHeightMap,
+					  signedRawHeightMap,
 					  m_yScale / 32767.0,  //s_gridHeightScale,
 					  -4, // min height
 					  +4, // max height
 					  1, // y-axis is up.
 					  PHY_SHORT,
 					  flipQuadEdges);
-
-
-	btAssert(heightfieldShape && "null heightfield");
 
 	// scale the shape
 //	btVector3 localScaling = getUpVector(m_upAxis, s_gridSpacing, 1.0);
@@ -950,13 +956,12 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 	// set origin to middle of heightfield
 	btTransform tr;
 	tr.setIdentity();
-	tr.setOrigin(btVector3(0,-4,0));
+	tr.setOrigin(btVector3(0,0,0));
 
 	// create ground object
 	float mass = 0.0;
 
 	btVector3 inertia(0, 0, 0);
-
 
 	btMotionState* motionState = new btDefaultMotionState(tr);
 
@@ -970,3 +975,5 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
 
 }
+
+//btHeightfieldTerrainShape
