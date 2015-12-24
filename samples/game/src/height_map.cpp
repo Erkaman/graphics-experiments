@@ -25,6 +25,7 @@
 #include "math/color.hpp"
 
 #include "gui_enum.hpp"
+#include "ewa/physics_world.hpp"
 
 
 #include <vector>
@@ -32,10 +33,10 @@
 #include "lodepng.h"
 
 #include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
+#include <btBulletDynamicsCommon.h>
 
 using std::vector;
 using std::string;
-
 
 constexpr unsigned short MAX_HEIGHT = 65535;
 constexpr unsigned short MID_HEIGHT = 32768;
@@ -451,7 +452,7 @@ void HeightMap::CreateHeightmap(const std::string& path) {
     for(size_t i = 0; i < width; ++i) {
 
 	for(size_t j = 0; j < depth; ++j) {
-	    heightData(i,j) = MID_HEIGHT;
+	    heightData(i,j) = MIN_HEIGHT;
 	}
     }
 
@@ -885,45 +886,87 @@ bool 	flipQuadEdges
 
 */
 
-void HeightMap::AddToPhysicsWorld(const PhysicsWorld* physicsWorld) {
+void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
-	// get new heightfield of appropriate type
-/*
-    void* rawHeightMap = m_heightMap->GetPixels<unsigned short>(
+    // get new heightfield of appropriate type
+
+    unsigned short* rawHeightMap = m_heightMap->GetPixels<unsigned short>(
 	m_resolution* m_resolution * 1, GL_RED, GL_UNSIGNED_SHORT
 	);
-    /*
+
+    // create a signed height map.
+    unsigned char* signedRawHeightMap = new unsigned char[m_resolution* m_resolution *2];
+
+    for(size_t i = 0; i < m_resolution* m_resolution; ++i) {
+
+	unsigned short us = rawHeightMap[i];
+
+	signed short ss =
+	    us >= MID_HEIGHT ?
+	    us - MID_HEIGHT :
+	    MID_HEIGHT -us;
+
+	unsigned char c1 = (ss >> 8) & 255;
+	unsigned char c2 = ss & 255;
+
+	*signedRawHeightMap = c1;
+	++signedRawHeightMap;
+	*signedRawHeightMap = c2;
+	++signedRawHeightMap;
+
+//	signedRawHeightMap[i] = ss;
+
+//	LOG_I("lol: %d", signedRawHeightMap[i] );
+    }
+
+
+/*
     LOG_I("raw: %d",  rawHeightMap[0] );
     LOG_I("raw: %d",  rawHeightMap[1] );
     LOG_I("raw: %d",  rawHeightMap[2] );
 
-
+*/
 
 	bool flipQuadEdges = false;
 	btHeightfieldTerrainShape * heightfieldShape =
 	    new btHeightfieldTerrainShape(m_resolution, m_resolution,
 					  rawHeightMap,
-					  s_gridHeightScale,
-					  m_minHeight, // 0.0
-					  m_maxHeight, // 4.0
+					  m_yScale / 32767.0,  //s_gridHeightScale,
+					  -4, // min height
+					  +4, // max height
 					  1, // y-axis is up.
 					  PHY_SHORT,
 					  flipQuadEdges);
-	/*
+
+
 	btAssert(heightfieldShape && "null heightfield");
 
 	// scale the shape
-	btVector3 localScaling = getUpVector(m_upAxis, s_gridSpacing, 1.0);
-	heightfieldShape->setLocalScaling(localScaling);
+//	btVector3 localScaling = getUpVector(m_upAxis, s_gridSpacing, 1.0);
+	heightfieldShape->setLocalScaling(
+	    btVector3(100.0f/(float)m_resolution,1, 100.0f/(float)m_resolution)
+	    );
 
 	// set origin to middle of heightfield
 	btTransform tr;
 	tr.setIdentity();
-	tr.setOrigin(btVector3(0,-20,0));
+	tr.setOrigin(btVector3(0,-4,0));
 
 	// create ground object
 	float mass = 0.0;
-	localCreateRigidBody(mass, tr, heightfieldShape);
-    */
+
+	btVector3 inertia(0, 0, 0);
+
+
+	btMotionState* motionState = new btDefaultMotionState(tr);
+
+	btRigidBody::btRigidBodyConstructionInfo ci(mass, motionState, heightfieldShape, inertia);
+
+	btRigidBody* rigidBody = new btRigidBody(ci);
+
+	physicsWorld->AddRigidBody(rigidBody);
+//	localCreateRigidBody(mass, tr, heightfieldShape);
+
+
 
 }

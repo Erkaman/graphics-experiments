@@ -124,7 +124,7 @@ public:
     void SaveSplatMap();
 
 
-    void AddToPhysicsWorld(const PhysicsWorld* physicsWorld);
+    void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
 
 
 };
