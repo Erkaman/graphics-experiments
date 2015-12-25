@@ -88,6 +88,10 @@ static Texture* LoadTexture(const string& filename) {
     return texture;
 }
 
+
+GeometryObject::GeometryObject(): m_rigidBody(NULL) {}
+
+
 GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f& position, PhysicsWorld* physicsWorld) {
 
 
@@ -372,7 +376,6 @@ void  GeometryObject::SetModelMatrix(const Matrix4f& modelMatrix) {
     m_modelMatrix = modelMatrix;
 }
 
-
 AABB GeometryObject::GetModelSpaceAABB()const {
 
     AABB temp;
@@ -404,11 +407,15 @@ void GeometryObject::CreateCollisionShape(
 }
 */
 void GeometryObject::ApplyCentralForce(const Vector3f& force) {
-    m_rigidBody->applyCentralForce(toBtVec(force));
+    if(m_rigidBody)
+	m_rigidBody->applyCentralForce(toBtVec(force));
+
 }
 
 void GeometryObject::ApplyForce(const Vector3f& force, const Vector3f& relPos) {
-    m_rigidBody->applyForce(toBtVec(force), toBtVec(relPos) );
+
+    if(m_rigidBody)
+	m_rigidBody->applyForce(toBtVec(force), toBtVec(relPos) );
 }
 
 btRigidBody* GeometryObject::GetRigidBody() const {

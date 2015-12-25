@@ -37,7 +37,7 @@ Car* Car::Load(PhysicsWorld* physicsWorld, const Vector3f& position) {
     return new Car(geoObj, physicsWorld);
 }
 
-Car::Car(IGeometryObject* geoObj, PhysicsWorld* physicsWorld) {
+Car::Car(IGeometryObject* geoObj, PhysicsWorld* physicsWorld): m_raycastVehicle(NULL) {
 
     m_geoObj = geoObj;
 
@@ -66,13 +66,18 @@ AABB Car::GetModelSpaceAABB()const {
 }
 
 void Car::Update() {
+
+    if(!m_raycastVehicle) {
+	// if not yet added to physicsworld, there is nothing we can do.
+	return;
+    }
+
 //    LOG_I("car update");
     const KeyboardState& kbs = KeyboardState::GetInstance();
 
 
     const float steeringClamp = 0.3f;
     const float steeringIncrement = 0.04f;
-
 
     float engineForce = 0.0f;
     float breakingForce = 0.0f;
@@ -111,15 +116,14 @@ void Car::Update() {
     m_raycastVehicle->setSteeringValue(vehicleSteering,0);
     m_raycastVehicle->setSteeringValue(vehicleSteering,1);
 
-
-//    LOG_I("forward. %s", tocstr(forwardVector) );
-
-//    LOG_I("pos. %s", tocstr(GetPosition()) );
-
 }
 
 Vector3f Car::GetForwardVector()const {
-    return fromBtVec(m_raycastVehicle->getForwardVector());
+    if(!m_raycastVehicle) {
+	return Vector3f(1,0,0); // default vector.
+    } else {
+	return fromBtVec(m_raycastVehicle->getForwardVector());
+    }
 }
 
 Vector3f Car::GetPosition() const {

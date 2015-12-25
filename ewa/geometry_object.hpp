@@ -52,7 +52,7 @@ private:
     btRigidBody* m_rigidBody;
     btMotionState* m_motionState;
 
-    GeometryObject() {}
+    GeometryObject();
 
     void  SetModelMatrix(const Matrix4f& modelMatrix);
 
