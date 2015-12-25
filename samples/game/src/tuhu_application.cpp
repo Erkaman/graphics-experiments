@@ -432,7 +432,13 @@ void TuhuApplication::RenderScene() {
 
 	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetModelSpaceAABB())) {
 	    ++nonCulledObjects;
-	   geoObj->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+
+	    if(m_selected == geoObj) {
+		geoObj->RenderWithOutlines(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+	    } else {
+		geoObj->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+	    }
+
 	}
 
     }

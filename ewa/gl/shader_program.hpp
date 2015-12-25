@@ -61,6 +61,8 @@ public:
     void SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection, const Matrix4f& lightVp);
 
     void SetShaderUniforms(const Matrix4f& modelMatrix, const ICamera* camera);
+    void SetMvpUniform(const Matrix4f& mvp);
+
 
     void Query();
 

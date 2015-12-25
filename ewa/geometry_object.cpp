@@ -176,6 +176,8 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
 	return NULL;
     }
 
+    geoObj->m_outlineShader = ShaderProgram::Load("shader/draw_outline");
+
     geoObj->m_depthShader = ShaderProgram::Load("shader/output_depth");
 
     if(!geoObj->m_depthShader) {
@@ -261,7 +263,6 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
 
     m_depthShader->Bind();
 
-
     Matrix4f modelMatrix = GetModelMatrix();
 
     const Matrix4f mvp = lightVp * modelMatrix;
@@ -274,6 +275,57 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
     }
 
     m_depthShader->Unbind();
+
+}
+
+void GeometryObject::RenderWithOutlines(
+	const ICamera* camera,
+	const Vector4f& lightPosition,
+	const Matrix4f& lightVp,
+	const DepthFBO& shadowMap) {
+
+    // Enable stencil tests.
+    GL_C(glEnable(GL_STENCIL_TEST));
+    GL_C(glStencilFunc(GL_ALWAYS,1,1));
+    GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE));
+    GL_C(glStencilMask(1));
+    GL_C(glClearStencil(0));
+    GL_C(glClear(GL_STENCIL_BUFFER_BIT));
+
+    // render normally. All the pixels that are covered with the objects, will be assigned a value of 1
+    // in the stencil buffer.
+    Render(camera, lightPosition, lightVp,shadowMap);
+
+
+    /*
+      Only render where the corresponding pixel in the stencil buffer is zero.
+      This ensures that the outline is drawn around the object.
+     */
+    GL_C(glStencilFunc(GL_EQUAL,0,1));
+    GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_KEEP));
+    GL_C(glStencilMask(0x00));
+
+    m_outlineShader->Bind();
+
+    Matrix4f modelMatrix = GetModelMatrix( Matrix4f::CreateScale(Vector3f(1.05)) );
+
+    const Matrix4f mvp = camera->GetVp() * modelMatrix;
+    m_outlineShader->SetUniform("mvp", mvp  );
+
+    for(size_t i = 0; i < m_chunks.size(); ++i) {
+	Chunk* chunk = m_chunks[i];
+
+	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+    }
+
+    m_outlineShader->Unbind();
+
+
+    // render.
+
+    GL_C(glDisable(GL_STENCIL_TEST));
+
+
 
 }
 
@@ -493,18 +545,12 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     physicsWorld->AddRigidBody(m_rigidBody);
 }
 
-Matrix4f GeometryObject::GetModelMatrix()const {
-/*
-    btQuaternion quat1;
-    quat1.setEuler(M_PI/4.0,0,0);
+Matrix4f GeometryObject::GetModelMatrix(const Matrix4f& scaling)const {
+    return
 
-
-    btQuaternion quat2;
-    quat2.setEuler(0,M_PI/2.0,0);
-*/
-    return Matrix4f::CreateTranslation(m_position + m_editPosition)
-//	* fromBtMat( btMatrix3x3(quat1 * quat2) );
-	*       fromBtMat( btMatrix3x3(m_rotation * m_editRotation) );
+	Matrix4f::CreateTranslation(m_position + m_editPosition) * // translate
+	fromBtMat( btMatrix3x3(m_rotation * m_editRotation) ) * // rotate
+    	scaling; // scale
 }
 
 void GeometryObject::SetEditPosition(const Vector3f& editPosition) {

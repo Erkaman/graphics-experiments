@@ -149,6 +149,12 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Vector3f& v
 }
 
 
+void ShaderProgram::SetMvpUniform(const Matrix4f& mvp) {
+    SetUniform("mvp", mvp);
+
+}
+
+
 void ShaderProgram::SetShaderUniforms(const Matrix4f& modelMatrix, const ICamera* camera) {
 
     const Matrix4f modelViewMatrix =
@@ -156,7 +162,7 @@ void ShaderProgram::SetShaderUniforms(const Matrix4f& modelMatrix, const ICamera
 
     const Matrix4f mvp = camera->GetProjectionMatrix() * modelViewMatrix;
 
-    SetUniform("mvp", mvp);
+    SetMvpUniform(mvp);
     SetUniform("modelViewMatrix", modelViewMatrix);
     SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
 

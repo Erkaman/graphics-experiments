@@ -25,6 +25,12 @@ public:
 
     virtual void RenderShadowMap(const Matrix4f& lightVp) = 0;
 
+    virtual void RenderWithOutlines(
+	const ICamera* camera,
+	const Vector4f& lightPosition,
+	const Matrix4f& lightVp,
+	const DepthFBO& shadowMap) {LOG_E("RenderWithOutlines not yet implemented!"); }
+
     virtual AABB GetModelSpaceAABB()const=0;
 
     virtual ~IGeometryObject() {}

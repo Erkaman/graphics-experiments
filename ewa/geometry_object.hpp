@@ -42,6 +42,7 @@ private:
 
     ShaderProgram* m_defaultShader;
     ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
+    ShaderProgram* m_outlineShader; //Used for drawing an outline of the object.
 
     bool m_hasNormalMap;
     bool m_hasSpecularMap;
@@ -63,7 +64,7 @@ private:
 
     void CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld);
 
-    Matrix4f GetModelMatrix()const;
+    Matrix4f GetModelMatrix(const Matrix4f& scaling = Matrix4f::CreateIdentity() )const;
 
 protected:
 
@@ -80,6 +81,13 @@ public:
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
 
     virtual void RenderShadowMap(const Matrix4f& lightVp); // vp = view projection matrix.
+
+    virtual void RenderWithOutlines(
+	const ICamera* camera,
+	const Vector4f& lightPosition,
+	const Matrix4f& lightVp,
+	const DepthFBO& shadowMap);
+
 
     AABB GetModelSpaceAABB()const;
 
