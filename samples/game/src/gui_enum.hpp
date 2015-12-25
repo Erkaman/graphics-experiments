@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 enum GuiMode {
     ModifyTerrainMode,
     DrawTextureMode,
@@ -19,6 +21,7 @@ enum DrawTextureType {
 
 enum InputMode {
     InputTranslateMode,
+    InputRotateMode,
     InputNoneMode,
 };
 
@@ -29,3 +32,16 @@ enum AxisMode {
     ZAxis,
     NoneAxis
 };
+
+inline std::string AxisModeToStr(int axisMode) {
+
+    if(axisMode == XAxis) {
+	return "XAxis: ";
+    }else if(axisMode == YAxis) {
+	return "YAxis: ";
+    }else if(axisMode == ZAxis) {
+	return "ZAxis: ";
+    } else {
+	return "NoneAxis";
+    }
+}

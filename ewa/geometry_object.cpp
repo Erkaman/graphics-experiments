@@ -25,6 +25,18 @@ using std::string;
 using std::vector;
 
 
+Matrix4f fromBtMat(const btMatrix3x3& m) {
+
+    return Matrix4f(
+	m[0].x(),m[0].y(),m[0].z(),0,
+	m[1].x(),m[1].y(),m[1].z(),0,
+	m[2].x(),m[2].y(),m[2].z(),0,
+	0            , 0           , 0           ,1
+	);
+
+
+}
+
 ATTRIBUTE_ALIGNED16(class) MyMotionState : public btMotionState
 {
 protected:
@@ -54,7 +66,7 @@ public:
     {
         if(m_obj == NULL)
             return; // silently return before we set a node
-
+/*
 	btMatrix3x3 r = worldTrans.getBasis();
 
 	Matrix4f rot(
@@ -63,10 +75,10 @@ public:
 	    r[2].x(),r[2].y(),r[2].z(),0,
 	    0            , 0           , 0           ,1
 	    );
-
+*/
         btVector3 pos = worldTrans.getOrigin();
         m_obj->SetPosition(Vector3f(pos.x(), pos.y(), pos.z()) );
-	m_obj->SetRotation(rot);
+	m_obj->SetRotation(/*rot*/ worldTrans.getRotation() );
     }
 };
 
@@ -103,7 +115,7 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
 
     geoObj->SetPosition(position);
     geoObj->SetEditPosition( Vector3f(0.0f) );
-    geoObj->SetRotation(Matrix4f::CreateIdentity());
+    geoObj->SetRotation( btQuaternion::getIdentity() );
 
 
     /*
@@ -390,7 +402,7 @@ void GeometryObject::SetPosition(const Vector3f& position) {
     this->m_position = position;
 }
 
-void GeometryObject::SetRotation(const Matrix4f& rotation) {
+void GeometryObject::SetRotation(const btQuaternion& rotation) {
 
     m_rotation = rotation;
 
@@ -481,9 +493,18 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 }
 
 Matrix4f GeometryObject::GetModelMatrix()const {
-    return Matrix4f::CreateTranslation(m_position + m_editPosition) * m_rotation;
-}
 
+    btQuaternion quat1;
+    quat1.setEuler(M_PI/4.0,0,0);
+
+
+    btQuaternion quat2;
+    quat2.setEuler(0,M_PI/2.0,0);
+
+    return Matrix4f::CreateTranslation(m_position + m_editPosition)
+//	* fromBtMat( btMatrix3x3(quat1 * quat2) );
+	*       fromBtMat( btMatrix3x3(m_rotation) );
+}
 
 void GeometryObject::SetEditPosition(const Vector3f& editPosition) {
     m_editPosition = editPosition;

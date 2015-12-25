@@ -15,6 +15,7 @@ private:
     int m_axisMode;
 
     Vector3f m_translate;
+    Vector3f m_rotate; // describes the rotation in euler angles.
 
     bool m_accepted;
 

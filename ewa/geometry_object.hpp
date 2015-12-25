@@ -6,6 +6,8 @@
 
 #include "igeometry_object.hpp"
 
+#include <LinearMath/btQuaternion.h>
+
 
 class Vector3f;
 class VBO;
@@ -55,7 +57,7 @@ private:
     GeometryObject();
 
     Vector3f m_position;
-    Matrix4f m_rotation;
+    btQuaternion m_rotation;
 
     Vector3f m_editPosition;
 
@@ -82,7 +84,7 @@ public:
     AABB GetModelSpaceAABB()const;
 
     void SetPosition(const Vector3f& position);
-    void SetRotation(const Matrix4f& rotation);
+    void SetRotation(const btQuaternion& rotation);
     virtual void SetEditPosition(const Vector3f& editPosition);
 
 
