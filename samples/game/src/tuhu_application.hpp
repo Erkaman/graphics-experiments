@@ -45,7 +45,6 @@ private:
     ParticleSystem* m_snow;
     ParticleSystem* m_fire;
 
-
     IGeometryObject* m_stoneFloor;
     IGeometryObject* m_flatWoodFloor;
     IGeometryObject* m_woodFloor;
@@ -55,6 +54,9 @@ private:
     IGeometryObject* m_wall;
     IGeometryObject* m_wall2;
     IGeometryObject* m_ball2;
+
+    IGeometryObject* m_selected;
+
 
     Car* m_car;
 

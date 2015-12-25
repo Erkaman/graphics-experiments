@@ -34,4 +34,9 @@ public:
     int GetGuiMode()const;
     int GetDrawTextureType()const;
 
+    Vector3f GetTranslate()const;
+
+    bool WasAccepted()const;
+
+
 };

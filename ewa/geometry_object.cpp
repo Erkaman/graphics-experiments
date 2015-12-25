@@ -102,6 +102,7 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
 
 
     geoObj->SetPosition(position);
+    geoObj->SetEditPosition( Vector3f(0.0f) );
     geoObj->SetRotation(Matrix4f::CreateIdentity());
 
 
@@ -114,9 +115,6 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
      */
     geoObj->m_aabb = data->aabb;
     geoObj->m_aabbWireframe = Cube::Load();
-
-
-
 
     string basePath = File::GetFilePath(filename);
 
@@ -483,5 +481,10 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 }
 
 Matrix4f GeometryObject::GetModelMatrix()const {
-    return Matrix4f::CreateTranslation(m_position) * m_rotation;
+    return Matrix4f::CreateTranslation(m_position + m_editPosition) * m_rotation;
+}
+
+
+void GeometryObject::SetEditPosition(const Vector3f& editPosition) {
+    m_editPosition = editPosition;
 }

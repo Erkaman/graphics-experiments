@@ -129,14 +129,7 @@ void TuhuApplication::Init() {
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
 
-//   m_grass = new Grass(Vector2f(10,10), m_heightMap);
-
-//   LOG_I("now we start creating objs");
-
    m_stoneFloor = LoadObj("obj/rock_floor.eob", Vector3f(0,0,40) + trans);
-
-
-//   LOG_I("created one single obj");
 
    m_flatWoodFloor = LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40)+ trans );
 
@@ -146,31 +139,30 @@ void TuhuApplication::Init() {
 
 		      Vector3f(21.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60) );
 
-//   LOG_I("created some objs");
-
-
    m_plane = LoadObj("obj/plane.eob", Vector3f(0,-2.5,0)+ trans);
 
    m_tree = LoadObj("obj/tree.eob", Vector3f(10,-2.5,10) + trans);
 
-//   LOG_I("created some more objs");
-
    m_wall = LoadObj("obj/wall.eob", Vector3f(-5,-2.5,-5)  + trans);
 
    m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) + trans);
+
+
+
+
+   m_selected = LoadObj("obj/wall.eob",
+ Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
+       );
+
 
    m_car = Car::Load(m_physicsWorld, Vector3f(0,-1.5,0)+trans);
     if(!m_car)
 	PrintErrorExit();
     m_geoObjs.push_back(m_car);
 
-
-//   m_ball2 = LoadObj("obj/sunball.eob", Vector3f(20,-1.0,-7) );
-
     m_depthFbo = new DepthFBO();
 
     // TODO: should not this be the size of the framebuffer?
-
     m_depthFbo->Init(DEPTH_FBO_TEXTURE_UNIT, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
     m_carCamera = new CarCamera(GetFramebufferWidth(),GetFramebufferHeight(),
@@ -530,6 +522,7 @@ void TuhuApplication::Update(const float delta) {
 */
 
 
+
     if( kbs.IsPressed(GLFW_KEY_P) ) {
 
 	string out = "Vector3f" +tos(m_curCamera->GetPosition()) + ",";
@@ -579,7 +572,6 @@ void TuhuApplication::Update(const float delta) {
 
 	    }
 
-
 /*		float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
 		float x = GuiMouseState::GetX();
 
@@ -591,13 +583,27 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 	} else {
 //	    LOG_I("IGNORE");
 	}
-
-/*
-  if(m_pickingFbo) {
-
-  }
-*/
     }
+
+     if(m_gui->GetGuiMode() == ModelMode) {
+
+	 if(m_gui->WasAccepted() ) {
+
+	     m_selected->SetPosition( m_gui->GetTranslate() + m_selected->GetPosition() );
+
+	     m_selected->SetEditPosition( Vector3f(0.0f) );
+
+	 } else {
+
+	     m_selected->SetEditPosition( m_gui->GetTranslate() );
+
+	 }
+
+
+     }
+
+
+
 
 
     static bool b= false;

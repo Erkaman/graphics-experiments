@@ -57,10 +57,11 @@ private:
     Vector3f m_position;
     Matrix4f m_rotation;
 
+    Vector3f m_editPosition;
+
     void CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld);
 
     Matrix4f GetModelMatrix()const;
-
 
 protected:
 
@@ -82,6 +83,7 @@ public:
 
     void SetPosition(const Vector3f& position);
     void SetRotation(const Matrix4f& rotation);
+    virtual void SetEditPosition(const Vector3f& editPosition);
 
 
 
@@ -93,7 +95,6 @@ public:
     virtual btRigidBody* GetRigidBody() const;
 
     virtual btMotionState* GetMotionState() const;
-
 
     virtual Vector3f GetPosition() const;
 

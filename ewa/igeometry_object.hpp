@@ -41,6 +41,11 @@ public:
 
     virtual void AddToPhysicsWorld(PhysicsWorld* physicsWorld)=0;
 
+    virtual void SetEditPosition(const Vector3f& editPosition) {LOG_E("SetEditPosition not yet implemented!");}
+
+    virtual void SetPosition(const Vector3f& position) {LOG_E("SetPosition not yet implemented!");}
+
+
 #pragma warning( default : 4100 )
 
 };

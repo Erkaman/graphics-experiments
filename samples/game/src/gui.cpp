@@ -558,7 +558,7 @@ void Gui::Update() {
 		} else {
 		    // get keyboard number input.
 
-		    m_translate.x += ms.GetDeltaX();
+		    m_translate.x += ms.GetDeltaX() * 0.1;
 		}
 
 	    }
@@ -566,4 +566,13 @@ void Gui::Update() {
 
 	}
     }
+}
+
+Vector3f Gui::GetTranslate()const {
+    return m_translate;
+}
+
+
+bool Gui::WasAccepted()const {
+    return m_accepted;
 }
