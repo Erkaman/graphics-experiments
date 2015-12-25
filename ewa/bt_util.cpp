@@ -16,7 +16,8 @@ btQuaternion toBtQuat(const Vector4f& v) {
 
 btQuaternion toBtQuat(const Vector3f& v) {
     btQuaternion quat;
-    quat.setEuler(v.x,v.y,v.z);
+    quat.setEuler(
+	v.y, v.x,v.z);
 
     return quat;
 
