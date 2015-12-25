@@ -485,6 +485,10 @@ void Gui::Render(int windowWidth, int windowHeight) {
 		mode += "NoneAxis";
 	    } else if(m_axisMode == XAxis) {
 		mode += "XAxis: ";
+	    }else if(m_axisMode == YAxis) {
+		mode += "YAxis: ";
+	    }else if(m_axisMode == ZAxis) {
+		mode += "ZAxis: ";
 	    }
 	}
 
@@ -545,20 +549,25 @@ void Gui::Update() {
 		m_accepted = true;
 	    } else {
 
-
 		if(m_axisMode == NoneAxis) {
 
 		    // at this point, you can input which axis you wish to translate for.
 
 		    if( kbs.WasPressed(GLFW_KEY_X) ) {
 			m_axisMode = XAxis;
+		    } else if( kbs.WasPressed(GLFW_KEY_Y) ) {
+			m_axisMode = YAxis;
+		    } else if( kbs.WasPressed(GLFW_KEY_Z) ) {
+			m_axisMode = ZAxis;
 		    }
-
 
 		} else {
 		    // get keyboard number input.
 
-		    m_translate.x += ms.GetDeltaX() * 0.1;
+		    float* tr = (float*)&m_translate;
+
+		    tr[m_axisMode] += ms.GetDeltaX() * 0.1;
+//		    m_translate.x += ms.GetDeltaX() * 0.1;
 		}
 
 	    }
