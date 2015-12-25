@@ -193,6 +193,7 @@ m_depthFbo->Init(DEPTH_FBO_TEXTURE_UNIT, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
     m_curCamera = m_freeCamera;
 
+//    StartPhysics();
 }
 
 
@@ -559,6 +560,10 @@ void TuhuApplication::Update(const float delta) {
 	}
     }
 
+    if( kbs.WasPressed(GLFW_KEY_6) ) {
+	StartPhysics();
+    }
+
     if(ms.IsPressed(GLFW_MOUSE_BUTTON_1 )) {
 
 	if(GuiMouseState::isWithinWindow()) {
@@ -623,21 +628,34 @@ void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 750,120, tos(m_curCamera->GetPosition())  );
 
-
-
 //    m_font->DrawString(*m_fontShader, 600,120, cull );
-
-
 }
 
 IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position) {
 
     IGeometryObject* obj = GeometryObject::Load(path, position, m_physicsWorld);
 
+
     if(!obj)
 	PrintErrorExit();
+
+    LOG_I("add to physics");
+    obj->AddToPhysicsWorld(m_physicsWorld);
+
 
     m_geoObjs.push_back(obj);
 
     return obj;
+}
+
+void TuhuApplication::StartPhysics()  {
+/*
+    for(IGeometryObject* geoObj: m_geoObjs) {
+	LOG_I("add obj");
+	geoObj->AddToPhysicsWorld(m_physicsWorld);
+    }
+
+    LOG_I("add heightmap");
+   m_heightMap->AddToPhysicsWorld(m_physicsWorld);
+*/
 }

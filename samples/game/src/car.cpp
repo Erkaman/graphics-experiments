@@ -28,8 +28,7 @@ const btVector3 BACK_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, -(
 
 Car* Car::Load(PhysicsWorld* physicsWorld, const Vector3f& position) {
 
-    IGeometryObject* geoObj = GeometryObject::Load("obj/car.eob", position,
-						   physicsWorld );
+    IGeometryObject* geoObj = GeometryObject::Load("obj/car.eob", position, physicsWorld);
 
     if(!geoObj) {
 	return NULL;
@@ -62,6 +61,7 @@ Car::Car(IGeometryObject* geoObj, PhysicsWorld* physicsWorld) {
     m_raycastVehicle->setCoordinateSystem(0, 1, 2);
 
     physicsWorld->AddVehicle(m_raycastVehicle);
+
 
     const btVector3 wheelDirection(0, -1.0f, 0); // This is the direction of the raycast.
     const btVector3 wheelAxle(-1.0f, 0, 0); // This is spinning direction (using right hand rule).
@@ -204,4 +204,8 @@ Vector3f Car::GetForwardVector()const {
 
 Vector3f Car::GetPosition() const {
     return m_geoObj->GetPosition();
+}
+
+void Car::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
+    physicsWorld->AddVehicle(m_raycastVehicle);
 }

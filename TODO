@@ -1,4 +1,28 @@
+Main features:
+* Environment mapping.(then water reflection. )
+* deferred shading.
+* SSAO
+* particle system.
+* geo clipmapping
+http://malideveloper.arm.com/resources/sample-code/terrain-rendering-with-geometry-clipmaps/
 
+* some kind of spartial data structure, potentially.
+* shadows.
+* road rendering.
+
+see
+Torque3D-development/Engine/source/environment/decalRoad.cpp
+search for spline.
+
+http://www.gamedev.net/topic/629976-tips-for-programming-a-road-building-tool/
+
+* vegetation map.
+
+
+
+ree
+torch.
+traffic sign.
 
 * target polygon count:
 10000 is way too many.
@@ -12,10 +36,15 @@ http://www.rsart.co.uk/2007/08/27/yes-but-how-many-polygons/
 
 Race Game:
 Environment map on car.
+https://github.com/stuntrally/stuntrally/blob/8d78b7a7e4addbeccf4ea4a81f28b4f5f338dfcb/source/ogre/CarReflection.cpp
+
 fire particle effect out pipe at back.
 particle effect at goal to mark the goal.
 use railings to make sure car is in track.
 sparkles fly when you land?
+
+http://docs.nvidia.com/gameworks/content/gameworkslibrary/graphicssamples/opengl_samples/feedbackparticlessample.htm
+
 * rain effect
 * snow effect.
 https://www.youtube.com/watch?v=r1CT9wTQiwc
@@ -46,6 +75,19 @@ http://www.gamedev.net/topic/652777-geometry-clipmaps-terrain-tutorial-with-sour
 * shadow mapping.
 * water rendering
 * Deferred rendering.
+
+http://gamedevs.org/uploads/deferred-shading-tutorial.pdf
+http://www.cse.chalmers.se/edu/year/2011/course/TDA361/Advanced%20Computer%20Graphics/deferredshading2012.pdf
+http://www.cse.chalmers.se/edu/year/2011/course/TDA361/Advanced%20Computer%20Graphics/DeferredRenderingPresentation.pdf
+ftp://download.nvidia.com/developer/presentations/2004/6800_Leagues/6800_Leagues_Deferred_Shading.pdf
+using four framebuffers:
+
+fbo1: normal.x normal.y normal.z empty
+fbo2: diffuse.r diffuse.g diffuse.b empty
+fbo3: specular.r specular.g specular.b shininess
+depth buffer: depth
+with 16-bits float for each channel.
+
 * Make better unit testing framework.
 * make program for converting shader to png texture.
 * make better clouds. See here for inspiration: https://www.shadertoy.com/view/XlSSRd

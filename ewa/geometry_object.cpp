@@ -397,8 +397,7 @@ void GeometryObject::SetRotation(const Matrix4f& rotation) {
 }
 
 void GeometryObject::CreateCollisionShape(
-    const CollisionShape* colShape, const EntityInfo* entityInfo,
-    PhysicsWorld* physicsWorld) {
+    const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld) {
 
     if(!colShape)
 	return; // do nothing for nothing.
@@ -416,6 +415,8 @@ void GeometryObject::CreateCollisionShape(
     } else if(colShape->m_shape == CylinderShape) {
 	btShape = new btCylinderShape(toBtVec(colShape->m_halfExtents) );
     } else {
+
+	LOG_E("undefined collision shape: %d", colShape->m_shape );
 
 	return;
     }
@@ -459,4 +460,11 @@ btMotionState* GeometryObject::GetMotionState() const {
 
 Vector3f GeometryObject::GetPosition() const {
     return m_position;
+}
+
+void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
+/*    if(m_rigidBody) {
+	LOG_I("rigidbody null");
+	}*/
+//    physicsWorld->AddRigidBody(m_rigidBody);
 }

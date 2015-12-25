@@ -83,6 +83,9 @@ private:
 
     Matrix4f MakeLightProj()const;
 
+
+    void StartPhysics();
+
 public:
 
     TuhuApplication(int argc, char *argv[]);
@@ -96,5 +99,6 @@ public:
     void RenderShadowMap();
     void RenderScene();
     void RenderId();
+
 
 };

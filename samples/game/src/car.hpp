@@ -6,6 +6,7 @@ class PhysicsWorld;
 struct btVehicleRaycaster;
 class btRaycastVehicle;
 
+
 class Car : public IGeometryObject{
 
 private:
@@ -39,6 +40,7 @@ public:
 
     virtual Vector3f GetPosition() const;
 
+    virtual void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
 
 };
 
