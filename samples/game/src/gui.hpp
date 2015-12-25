@@ -36,6 +36,7 @@ public:
     int GetDrawTextureType()const;
 
     Vector3f GetTranslate()const;
+    Vector3f GetRotate()const;
 
     bool WasAccepted()const;
 

@@ -567,7 +567,7 @@ void Gui::Update() {
 
 		    float* tr = (float*)&m_rotate;
 
-		    tr[m_axisMode] += ms.GetDeltaX() * 0.1;
+		    tr[m_axisMode] += ms.GetDeltaX() * 0.01;
 		}
 	    }
 
@@ -597,7 +597,7 @@ void Gui::Update() {
 		} else {
 		    // get keyboard number input.
 
-		    float* tr = (float*)&m_rotate;
+		    float* tr = (float*)&m_translate;
 
 		    tr[m_axisMode] += ms.GetDeltaX() * 0.1;
 		}
@@ -611,6 +611,10 @@ void Gui::Update() {
 
 Vector3f Gui::GetTranslate()const {
     return m_translate;
+}
+
+Vector3f Gui::GetRotate()const {
+    return m_rotate;
 }
 
 

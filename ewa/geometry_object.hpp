@@ -8,7 +8,6 @@
 
 #include <LinearMath/btQuaternion.h>
 
-
 class Vector3f;
 class VBO;
 class ShaderProgram;
@@ -60,6 +59,7 @@ private:
     btQuaternion m_rotation;
 
     Vector3f m_editPosition;
+    btQuaternion m_editRotation;
 
     void CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld);
 
@@ -83,12 +83,10 @@ public:
 
     AABB GetModelSpaceAABB()const;
 
-    void SetPosition(const Vector3f& position);
-    void SetRotation(const btQuaternion& rotation);
+    virtual void SetPosition(const Vector3f& position);
+    virtual void SetRotation(const btQuaternion& rotation);
     virtual void SetEditPosition(const Vector3f& editPosition);
-
-
-
+    virtual void SetEditRotation(const btQuaternion& editRotation);
 
     virtual void ApplyCentralForce(const Vector3f& force);
 
@@ -99,7 +97,7 @@ public:
     virtual btMotionState* GetMotionState() const;
 
     virtual Vector3f GetPosition() const;
+    virtual btQuaternion GetRotation() const;
 
     virtual void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
-
 };

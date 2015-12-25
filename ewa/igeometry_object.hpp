@@ -3,6 +3,9 @@
 #include "aabb.hpp"
 #include "log.hpp"
 
+#include <LinearMath/btQuaternion.h>
+
+
 class ICamera;
 class Matrix4f;
 class DepthFBO;
@@ -38,12 +41,17 @@ public:
     virtual btMotionState* GetMotionState() const { LOG_E("GetMotionState not yet implemented!"); }
 
     virtual Vector3f GetPosition() const=0;
+    virtual btQuaternion GetRotation() const { LOG_E("GetRotation not yet implemented!"); }
 
     virtual void AddToPhysicsWorld(PhysicsWorld* physicsWorld)=0;
 
     virtual void SetEditPosition(const Vector3f& editPosition) {LOG_E("SetEditPosition not yet implemented!");}
 
     virtual void SetPosition(const Vector3f& position) {LOG_E("SetPosition not yet implemented!");}
+
+    virtual void SetRotation(const btQuaternion& rotation) {LOG_E("SetRotation not yet implemented!"); }
+
+    virtual void SetEditRotation(const btQuaternion& editRotation) { LOG_E("SetEditRotation not yet implemented!"); }
 
 
 #pragma warning( default : 4100 )

@@ -116,6 +116,7 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
     geoObj->SetPosition(position);
     geoObj->SetEditPosition( Vector3f(0.0f) );
     geoObj->SetRotation( btQuaternion::getIdentity() );
+    geoObj->SetEditRotation( btQuaternion::getIdentity() );
 
 
     /*
@@ -473,7 +474,7 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     /*
       Create motion state
      */
-    btTransform transform(toBtQuat(colShape->m_rotate), toBtVec(m_position + colShape->m_origin));
+    btTransform transform(m_rotation* toBtQuat(colShape->m_rotate), toBtVec(m_position + colShape->m_origin));
     m_motionState = new MyMotionState(transform, this);
 
     btVector3 inertia(0, 0, 0);
@@ -493,19 +494,27 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 }
 
 Matrix4f GeometryObject::GetModelMatrix()const {
-
+/*
     btQuaternion quat1;
     quat1.setEuler(M_PI/4.0,0,0);
 
 
     btQuaternion quat2;
     quat2.setEuler(0,M_PI/2.0,0);
-
+*/
     return Matrix4f::CreateTranslation(m_position + m_editPosition)
 //	* fromBtMat( btMatrix3x3(quat1 * quat2) );
-	*       fromBtMat( btMatrix3x3(m_rotation) );
+	*       fromBtMat( btMatrix3x3(m_rotation * m_editRotation) );
 }
 
 void GeometryObject::SetEditPosition(const Vector3f& editPosition) {
     m_editPosition = editPosition;
+}
+
+void GeometryObject::SetEditRotation(const btQuaternion& editRotation) {
+    m_editRotation = editRotation;
+}
+
+btQuaternion GeometryObject::GetRotation() const {
+    return m_rotation;
 }

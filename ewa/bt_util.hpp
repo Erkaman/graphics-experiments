@@ -11,3 +11,5 @@ Vector3f fromBtVec(const btVector3& v);
 
 
 btQuaternion toBtQuat(const Vector4f& v);
+
+btQuaternion toBtQuat(const Vector3f& v);

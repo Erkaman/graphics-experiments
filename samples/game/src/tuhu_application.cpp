@@ -35,6 +35,7 @@
 
 #include "car.hpp"
 #include "gui_enum.hpp"
+#include "bt_util.hpp"
 
 #include "gui.hpp"
 #include "gui_mouse_state.hpp"
@@ -569,7 +570,6 @@ void TuhuApplication::Update(const float delta) {
 		m_heightMap->DrawTexture(delta, m_gui->GetDrawTextureType() );
 
 	    } else {
-
 	    }
 
 /*		float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
@@ -590,12 +590,19 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 	 if(m_gui->WasAccepted() ) {
 
 	     m_selected->SetPosition( m_gui->GetTranslate() + m_selected->GetPosition() );
-
 	     m_selected->SetEditPosition( Vector3f(0.0f) );
+
+
+	     m_selected->SetRotation(
+
+		  m_selected->GetRotation() * toBtQuat(m_gui->GetRotate()));
+	     m_selected->SetEditRotation( btQuaternion::getIdentity()  );
+
 
 	 } else {
 
 	     m_selected->SetEditPosition( m_gui->GetTranslate() );
+	     m_selected->SetEditRotation( toBtQuat(m_gui->GetRotate()) );
 
 	 }
 

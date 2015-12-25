@@ -13,3 +13,11 @@ Vector3f fromBtVec(const btVector3& v) {
 btQuaternion toBtQuat(const Vector4f& v) {
     return btQuaternion(v.x,v.y,v.z, v.w);
 }
+
+btQuaternion toBtQuat(const Vector3f& v) {
+    btQuaternion quat;
+    quat.setEuler(v.x,v.y,v.z);
+
+    return quat;
+
+}
