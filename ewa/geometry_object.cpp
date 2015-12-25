@@ -98,6 +98,7 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
     }
 
     GeometryObject* geoObj = new GeometryObject();
+    geoObj->m_data = data;
 
 
     geoObj->SetPosition(position);
@@ -108,7 +109,7 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
 
 //    LOG_I("about to create collision shape");
 
-    geoObj->CreateCollisionShape(data->m_collisionShape, data->m_entityInfo, physicsWorld);
+//    geoObj->CreateCollisionShape(data->m_collisionShape, data->m_entityInfo, physicsWorld);
 
 //    LOG_I("done create collision shape");
 
@@ -396,8 +397,40 @@ void GeometryObject::SetRotation(const Matrix4f& rotation) {
     this->SetModelMatrix(Matrix4f::CreateTranslation(m_position) * rotation );
 }
 
+/*
 void GeometryObject::CreateCollisionShape(
     const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld) {
+
+}
+*/
+void GeometryObject::ApplyCentralForce(const Vector3f& force) {
+    m_rigidBody->applyCentralForce(toBtVec(force));
+}
+
+void GeometryObject::ApplyForce(const Vector3f& force, const Vector3f& relPos) {
+    m_rigidBody->applyForce(toBtVec(force), toBtVec(relPos) );
+}
+
+btRigidBody* GeometryObject::GetRigidBody() const {
+    return m_rigidBody;
+}
+
+
+btMotionState* GeometryObject::GetMotionState() const {
+    return m_motionState;
+}
+
+Vector3f GeometryObject::GetPosition() const {
+    return m_position;
+}
+
+void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
+/*    if(m_rigidBody) {
+	LOG_I("rigidbody null");
+	}*/
+
+    CollisionShape* colShape = m_data->m_collisionShape;
+    EntityInfo* entityInfo = m_data->m_entityInfo;
 
     if(!colShape)
 	return; // do nothing for nothing.
@@ -438,33 +471,14 @@ void GeometryObject::CreateCollisionShape(
 
     m_rigidBody = new btRigidBody(ci);
 
-    physicsWorld->AddRigidBody(m_rigidBody);
-}
-
-void GeometryObject::ApplyCentralForce(const Vector3f& force) {
-    m_rigidBody->applyCentralForce(toBtVec(force));
-}
-
-void GeometryObject::ApplyForce(const Vector3f& force, const Vector3f& relPos) {
-    m_rigidBody->applyForce(toBtVec(force), toBtVec(relPos) );
-}
-
-btRigidBody* GeometryObject::GetRigidBody() const {
-    return m_rigidBody;
-}
-
-
-btMotionState* GeometryObject::GetMotionState() const {
-    return m_motionState;
-}
-
-Vector3f GeometryObject::GetPosition() const {
-    return m_position;
-}
-
-void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
-/*    if(m_rigidBody) {
-	LOG_I("rigidbody null");
-	}*/
 //    physicsWorld->AddRigidBody(m_rigidBody);
+
+
+
+
+
+
+
+
+    physicsWorld->AddRigidBody(m_rigidBody);
 }

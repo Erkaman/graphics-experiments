@@ -9,9 +9,6 @@ CarCamera::CarCamera(const int windowWidth, const int windowHeight, Car* car) {
 
     m_projectionMatrix =
 	Matrix4f::CreatePerspective (45.0f, (float)windowWidth/(float)windowHeight, config.GetZNear(), config.GetZFar());
-
-
-    UpdateViewMatrix();
 }
 
 

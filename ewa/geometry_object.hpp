@@ -34,6 +34,9 @@ private:
 
     };
 
+    GeometryObjectData* m_data;
+
+
     std::vector<Chunk*> m_chunks;
 
     ShaderProgram* m_defaultShader;

@@ -124,7 +124,7 @@ void TuhuApplication::Init() {
     m_fire->Init();
 
    m_heightMap = new HeightMap("img/hill.png");
-   m_heightMap->AddToPhysicsWorld(m_physicsWorld);
+//   m_heightMap->AddToPhysicsWorld(m_physicsWorld);
 
     //                    128000
     m_skydome = new Skydome(1, 10, 10);
@@ -159,11 +159,13 @@ void TuhuApplication::Init() {
 
    m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) + trans);
 
+   LOG_I("car begin");
    m_car = Car::Load(m_physicsWorld, Vector3f(0,-1.5,0)+trans);
     if(!m_car)
 	PrintErrorExit();
-
     m_geoObjs.push_back(m_car);
+   LOG_I("car end");
+
 
 
 //   m_ball2 = LoadObj("obj/sunball.eob", Vector3f(20,-1.0,-7) );
@@ -171,11 +173,15 @@ void TuhuApplication::Init() {
     m_depthFbo = new DepthFBO();
 
     // TODO: should not this be the size of the framebuffer?
-m_depthFbo->Init(DEPTH_FBO_TEXTURE_UNIT, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
+    m_depthFbo->Init(DEPTH_FBO_TEXTURE_UNIT, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+
+    LOG_I("car cam begin");
     m_carCamera = new CarCamera(GetFramebufferWidth(),GetFramebufferHeight(),
 			     m_car
 			  );
+    LOG_I("car cam end");
+
 
     if(m_gui) {
 	m_pickingFbo = new PickingFBO();
@@ -193,7 +199,7 @@ m_depthFbo->Init(DEPTH_FBO_TEXTURE_UNIT, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
     m_curCamera = m_freeCamera;
 
-//    StartPhysics();
+    StartPhysics();
 }
 
 
@@ -614,9 +620,11 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 
 	if(m_curCamera == m_freeCamera) {
 	    m_curCamera = m_carCamera;
+
 	} else {
 	    m_curCamera = m_freeCamera;
 	}
+	m_curCamera->Update(0);
     }
 }
 
@@ -635,13 +643,8 @@ IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3
 
     IGeometryObject* obj = GeometryObject::Load(path, position, m_physicsWorld);
 
-
     if(!obj)
 	PrintErrorExit();
-
-    LOG_I("add to physics");
-    obj->AddToPhysicsWorld(m_physicsWorld);
-
 
     m_geoObjs.push_back(obj);
 
@@ -649,13 +652,11 @@ IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3
 }
 
 void TuhuApplication::StartPhysics()  {
-/*
+
     for(IGeometryObject* geoObj: m_geoObjs) {
-	LOG_I("add obj");
 	geoObj->AddToPhysicsWorld(m_physicsWorld);
     }
 
-    LOG_I("add heightmap");
-   m_heightMap->AddToPhysicsWorld(m_physicsWorld);
-*/
+    m_heightMap->AddToPhysicsWorld(m_physicsWorld);
+
 }
