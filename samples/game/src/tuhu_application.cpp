@@ -489,9 +489,6 @@ void TuhuApplication::Render() {
 
 	m_gui->Render(windowWidth, windowHeight);
     }
-
-
-
 }
 
 void TuhuApplication::Update(const float delta) {
@@ -512,7 +509,6 @@ void TuhuApplication::Update(const float delta) {
 
     m_totalDelta += delta;
 
-
     m_curCamera->Update(delta);
 
     m_smoke->Update(delta);
@@ -523,7 +519,16 @@ void TuhuApplication::Update(const float delta) {
 
 //      m_grass->Update(delta);
 
+    m_gui->Update();
+
     KeyboardState& kbs = KeyboardState::GetInstance();
+
+/*
+    if(input_accepted) {
+	add to object.
+    }
+*/
+
 
     if( kbs.IsPressed(GLFW_KEY_P) ) {
 
@@ -531,7 +536,6 @@ void TuhuApplication::Update(const float delta) {
 	out += "Vector3f" + tos(m_curCamera->GetViewDir());
 	ToClipboard(out);
     }
-
 
     if( kbs.IsPressed(GLFW_KEY_7) ) {
 	m_heightMap->SaveHeightMap();
@@ -568,8 +572,10 @@ void TuhuApplication::Update(const float delta) {
 
 		m_heightMap->ModifyTerrain(delta);
 
-	    } else {
+	    } else if(m_gui->GetGuiMode() == DrawTextureMode) {
 		m_heightMap->DrawTexture(delta, m_gui->GetDrawTextureType() );
+
+	    } else {
 
 	    }
 
@@ -648,3 +654,12 @@ void TuhuApplication::StartPhysics()  {
     m_heightMap->AddToPhysicsWorld(m_physicsWorld);
 
 }
+
+
+/*
+  once gui switches over to input translate mode,
+  we check this every frame, and once it does switch, we temporarily saves the translation.
+
+ */
+
+//render(vector rotationoffset, vector translationoffset).

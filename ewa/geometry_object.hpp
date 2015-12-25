@@ -52,11 +52,12 @@ private:
     btRigidBody* m_rigidBody;
     btMotionState* m_motionState;
 
+    Matrix4f m_modelMatrix;
+
+
     GeometryObject();
 
     void  SetModelMatrix(const Matrix4f& modelMatrix);
-
-    Matrix4f m_modelMatrix;
 
     Vector3f m_position;
 
@@ -73,7 +74,9 @@ public:
 
     virtual ~GeometryObject();
 
-    virtual void Render(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
+    virtual void Render(
+
+	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
 
     virtual void RenderShadowMap(const Matrix4f& lightVp); // vp = view projection matrix.
 

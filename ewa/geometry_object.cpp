@@ -57,7 +57,6 @@ public:
 
 	btMatrix3x3 r = worldTrans.getBasis();
 
-
 	Matrix4f rot(
 	    r[0].x(),r[0].y(),r[0].z(),0,
 	    r[1].x(),r[1].y(),r[1].z(),0,
@@ -70,8 +69,6 @@ public:
 	m_obj->SetRotation(rot);
     }
 };
-
-
 
 static Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
@@ -87,7 +84,6 @@ static Texture* LoadTexture(const string& filename) {
 
     return texture;
 }
-
 
 GeometryObject::GeometryObject(): m_rigidBody(NULL) {}
 
@@ -254,6 +250,8 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
 
     m_depthShader->Bind();
 
+
+
     const Matrix4f mvp = lightVp * m_modelMatrix;
     m_depthShader->SetUniform("mvp", mvp  );
 
@@ -393,7 +391,6 @@ void GeometryObject::SetPosition(const Vector3f& position) {
     this->SetModelMatrix(Matrix4f::CreateTranslation(position));
 
     //   this->SetModelMatrix(Matrix4f::CreateTranslation(m_position) * rotation );
-
 }
 
 void GeometryObject::SetRotation(const Matrix4f& rotation) {
@@ -479,13 +476,6 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     m_rigidBody = new btRigidBody(ci);
 
 //    physicsWorld->AddRigidBody(m_rigidBody);
-
-
-
-
-
-
-
 
     physicsWorld->AddRigidBody(m_rigidBody);
 }

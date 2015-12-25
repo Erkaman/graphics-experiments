@@ -2,7 +2,9 @@
 
 enum GuiMode {
     ModifyTerrainMode,
-    DrawTextureMode
+    DrawTextureMode,
+    ModelMode
+
 };
 
 // if in DrawTextureMode, specify which texture we are currently drawing.
@@ -13,6 +15,17 @@ enum DrawTextureType {
     // add new textures HERE!
 
     EraserTexture = 3
+};
 
+enum InputMode {
+    InputTranslateMode,
+    InputNoneMode,
+};
 
+// which axis you are inputting for, when in either InputTranslateMode or InputRotateMode.
+enum AxisMode {
+    XAxis,
+    YAxis,
+    ZAxis,
+    NoneAxis
 };

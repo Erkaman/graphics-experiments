@@ -4,6 +4,8 @@
 #include <imgui.h>
 
 #include "ewa/log.hpp"
+#include "ewa/keyboard_state.hpp"
+#include "ewa/mouse_state.hpp"
 
 #include <imgui.h>
 
@@ -399,11 +401,16 @@ void ImGui_ImplGlfwGL3_NewFrame(float guiVerticalScale)
 }
 
 
+using std::string;
 
 Gui::Gui(GLFWwindow* window) {
 
-    m_guiMode = DrawTextureMode;//ModifyTerrainMode;
+    m_guiMode = ModelMode;//ModifyTerrainMode;
     m_drawTextureType = GrassTexture;
+    m_inputMode = InputNoneMode;
+    m_axisMode = NoneAxis;
+    m_translate = Vector3f(0);
+    m_accepted = false;
 
     // init gui:
     if(ImGui_ImplGlfwGL3_Init(window, true)) {
@@ -448,17 +455,42 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 
     ImGui::RadioButton("MT", &m_guiMode, ModifyTerrainMode); ImGui::SameLine();
-    ImGui::RadioButton("DT", &m_guiMode, DrawTextureMode); //ImGui::SameLine();
+    ImGui::RadioButton("DT", &m_guiMode, DrawTextureMode);  ImGui::SameLine();
+    ImGui::RadioButton("M", &m_guiMode, ModelMode);
 
     if(m_guiMode == ModifyTerrainMode) {
 	ImGui::Text("Radius:");
 	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-    } else {
+    } else if(m_guiMode == DrawTextureMode) {
 
 	ImGui::Text("Radius2:");
 	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 
         ImGui::Combo("Texture", &m_drawTextureType, "Grass\0Dirt\0Rock\0Eraser\0\0");   // Combo using values packed in a single
+    } else {
+
+	ImGui::Text("lol:");
+
+	string xs = "x: ";
+	xs += std::to_string(m_translate.x);
+	ImGui::Text(xs.c_str() );
+
+	string mode = "state: ";
+	if(m_inputMode == InputNoneMode) {
+	    mode += "none";
+	}  else if(m_inputMode == InputTranslateMode) {
+	    mode += "translate: ";
+
+	    if(m_axisMode == NoneAxis) {
+		mode += "NoneAxis";
+	    } else if(m_axisMode == XAxis) {
+		mode += "XAxis: ";
+	    }
+	}
+
+	ImGui::Text(mode.c_str() );
+
+	ImGui::Text(m_accepted ? "accepted" : "awaiting" );
     }
 
     ImGui::End();
@@ -476,4 +508,62 @@ int Gui::GetGuiMode()const {
 
 int Gui::GetDrawTextureType()const {
     return m_drawTextureType;
+}
+
+
+void Gui::ResetModelMode() {
+
+    m_translate = Vector3f(0);
+    m_inputMode = InputNoneMode;
+    m_axisMode = NoneAxis;
+    m_accepted = false;
+}
+
+void Gui::Update() {
+
+    KeyboardState& kbs = KeyboardState::GetInstance();
+    MouseState& ms = MouseState::GetInstance();
+
+    if(m_accepted) {
+	ResetModelMode();
+    }
+
+    if(m_guiMode == ModelMode) {
+
+	if(m_inputMode == InputNoneMode) {
+
+	    if( kbs.WasPressed(GLFW_KEY_G) ) {
+		m_inputMode = InputTranslateMode;
+	    }
+
+	} else if(m_inputMode == InputTranslateMode) {
+
+	    if(kbs.IsPressed(GLFW_KEY_BACKSPACE) ) {
+		ResetModelMode();
+
+	    } else if(kbs.IsPressed(GLFW_KEY_ENTER) ) {
+		m_accepted = true;
+	    } else {
+
+
+		if(m_axisMode == NoneAxis) {
+
+		    // at this point, you can input which axis you wish to translate for.
+
+		    if( kbs.WasPressed(GLFW_KEY_X) ) {
+			m_axisMode = XAxis;
+		    }
+
+
+		} else {
+		    // get keyboard number input.
+
+		    m_translate.x += ms.GetDeltaX();
+		}
+
+	    }
+
+
+	}
+    }
 }
