@@ -52,16 +52,14 @@ private:
     btRigidBody* m_rigidBody;
     btMotionState* m_motionState;
 
-    Matrix4f m_modelMatrix;
-
-
     GeometryObject();
 
-    void  SetModelMatrix(const Matrix4f& modelMatrix);
-
     Vector3f m_position;
+    Matrix4f m_rotation;
 
     void CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld);
+
+    Matrix4f GetModelMatrix()const;
 
 
 protected:
@@ -86,6 +84,8 @@ public:
     void SetRotation(const Matrix4f& rotation);
 
 
+
+
     virtual void ApplyCentralForce(const Vector3f& force);
 
     virtual void ApplyForce(const Vector3f& force, const Vector3f& relPos);
@@ -98,4 +98,5 @@ public:
     virtual Vector3f GetPosition() const;
 
     virtual void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
+
 };

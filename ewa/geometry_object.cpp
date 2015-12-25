@@ -102,22 +102,20 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
 
 
     geoObj->SetPosition(position);
+    geoObj->SetRotation(Matrix4f::CreateIdentity());
+
 
     /*
       Load collision shape into physics engine.
      */
-
-//    LOG_I("about to create collision shape");
-
-//    geoObj->CreateCollisionShape(data->m_collisionShape, data->m_entityInfo, physicsWorld);
-
-//    LOG_I("done create collision shape");
 
     /*
       Bounding Volume
      */
     geoObj->m_aabb = data->aabb;
     geoObj->m_aabbWireframe = Cube::Load();
+
+
 
 
     string basePath = File::GetFilePath(filename);
@@ -229,6 +227,8 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
 	geoObj->m_chunks.push_back(newChunk);
     }
 
+
+
     return geoObj;
 
 }
@@ -251,8 +251,9 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
     m_depthShader->Bind();
 
 
+    Matrix4f modelMatrix = GetModelMatrix();
 
-    const Matrix4f mvp = lightVp * m_modelMatrix;
+    const Matrix4f mvp = lightVp * modelMatrix;
     m_depthShader->SetUniform("mvp", mvp  );
 
     for(size_t i = 0; i < m_chunks.size(); ++i) {
@@ -267,11 +268,13 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
 
 void GeometryObject::Render(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
 
+    Matrix4f modelMatrix = GetModelMatrix();
+
     m_defaultShader->Bind();
 
     m_defaultShader->SetPhongUniforms(
 
-	m_modelMatrix
+	modelMatrix
 	, camera, lightPosition,
 	lightVp);
 
@@ -360,8 +363,10 @@ void GeometryObject::Render(const ICamera* camera, const Vector4f& lightPosition
 
     Vector3f radius = m_aabb.max - center;
 
+
+
     m_aabbWireframe->SetModelMatrix(
-	m_modelMatrix*
+	modelMatrix *
 	Matrix4f::CreateTranslation(center) *
 	Matrix4f::CreateScale(radius)
 	);
@@ -370,31 +375,28 @@ void GeometryObject::Render(const ICamera* camera, const Vector4f& lightPosition
     m_aabbWireframe->Render(camera->GetVp());
 }
 
-void  GeometryObject::SetModelMatrix(const Matrix4f& modelMatrix) {
-    m_modelMatrix = modelMatrix;
-}
-
 AABB GeometryObject::GetModelSpaceAABB()const {
 
     AABB temp;
 
-    temp.min = Vector3f((m_modelMatrix * Vector4f(m_aabb.min, 1.0f)));
-    temp.max = Vector3f((m_modelMatrix * Vector4f(m_aabb.max, 1.0f)));
+
+    Matrix4f modelMatrix = GetModelMatrix();
+
+    temp.min = Vector3f((modelMatrix * Vector4f(m_aabb.min, 1.0f)));
+    temp.max = Vector3f((modelMatrix * Vector4f(m_aabb.max, 1.0f)));
 
     return temp;
 }
 
 void GeometryObject::SetPosition(const Vector3f& position) {
     this->m_position = position;
-
-    // update model matrix.
-    this->SetModelMatrix(Matrix4f::CreateTranslation(position));
-
-    //   this->SetModelMatrix(Matrix4f::CreateTranslation(m_position) * rotation );
 }
 
 void GeometryObject::SetRotation(const Matrix4f& rotation) {
-    this->SetModelMatrix(Matrix4f::CreateTranslation(m_position) * rotation );
+
+    m_rotation = rotation;
+
+//    this->SetModelMatrix(Matrix4f::CreateTranslation(m_position) * rotation );
 }
 
 /*
@@ -478,4 +480,8 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 //    physicsWorld->AddRigidBody(m_rigidBody);
 
     physicsWorld->AddRigidBody(m_rigidBody);
+}
+
+Matrix4f GeometryObject::GetModelMatrix()const {
+    return Matrix4f::CreateTranslation(m_position) * m_rotation;
 }
