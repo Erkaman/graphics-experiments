@@ -148,10 +148,9 @@ void TuhuApplication::Init() {
 
    m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) + trans);
 
+   m_selected = m_tree;
 
-
-
-   m_selected = LoadObj("obj/wall.eob",
+   /*m_selected = */LoadObj("obj/wall.eob",
  Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
        );
 
