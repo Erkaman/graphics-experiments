@@ -4,6 +4,7 @@
 
 struct GLFWwindow;
 
+class GuiListener;
 
 class Gui {
 
@@ -14,10 +15,10 @@ private:
     int m_inputMode;
     int m_axisMode;
 
-    Vector3f m_translate;
-    Vector3f m_rotate; // describes the rotation in euler angles.
+    Vector3f m_translation;
+    Vector3f m_rotation; // describes the rotation in euler angles.
 
-    bool m_accepted;
+    std::vector<GuiListener*> m_listeners;
 
     void ResetModelMode();
 
@@ -35,10 +36,9 @@ public:
     int GetGuiMode()const;
     int GetDrawTextureType()const;
 
-    Vector3f GetTranslate()const;
-    Vector3f GetRotate()const;
+    Vector3f GetTranslation()const;
+    Vector3f GetRotation()const;
 
-    bool WasAccepted()const;
-
+    void AddListener(GuiListener* listener);
 
 };

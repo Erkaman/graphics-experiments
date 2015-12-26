@@ -8,6 +8,8 @@
 
 #include <LinearMath/btQuaternion.h>
 
+#include "gui_listener.hpp"
+
 class ICamera;
 class HeightMap;
 class Skydome;
@@ -26,7 +28,7 @@ class PickingFBO;
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
 
-class TuhuApplication : public Application{
+class TuhuApplication : public Application, public GuiListener{
 
 private:
 
@@ -113,5 +115,8 @@ public:
     void RenderScene();
     void RenderId();
 
+
+    virtual void TranslationAccepted();
+    virtual void RotationAccepted();
 
 };

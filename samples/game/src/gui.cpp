@@ -1,5 +1,6 @@
 #include "gui.hpp"
 #include "gui_enum.hpp"
+#include "gui_listener.hpp"
 
 #include <imgui.h>
 
@@ -409,9 +410,8 @@ Gui::Gui(GLFWwindow* window) {
     m_drawTextureType = GrassTexture;
     m_inputMode = InputNoneMode;
     m_axisMode = NoneAxis;
-    m_translate = Vector3f(0);
-    m_rotate = Vector3f(0);
-    m_accepted = false;
+    m_translation = Vector3f(0);
+    m_rotation = Vector3f(0);
 
     // init gui:
     if(ImGui_ImplGlfwGL3_Init(window, true)) {
@@ -473,7 +473,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	ImGui::Text("lol:");
 
 	string xs = "x: ";
-	xs += std::to_string(m_translate.x);
+	xs += std::to_string(m_translation.x);
 	ImGui::Text(xs.c_str() );
 
 	string mode = "state: ";
@@ -491,7 +491,6 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 	ImGui::Text(mode.c_str() );
 
-	ImGui::Text(m_accepted ? "accepted" : "awaiting" );
     }
 
     ImGui::End();
@@ -514,12 +513,11 @@ int Gui::GetDrawTextureType()const {
 
 void Gui::ResetModelMode() {
 
-    m_translate = Vector3f(0);
-    m_rotate = Vector3f(0);
+    m_translation = Vector3f(0);
+    m_rotation = Vector3f(0);
 
     m_inputMode = InputNoneMode;
     m_axisMode = NoneAxis;
-    m_accepted = false;
 }
 
 void Gui::Update() {
@@ -527,9 +525,6 @@ void Gui::Update() {
     KeyboardState& kbs = KeyboardState::GetInstance();
     MouseState& ms = MouseState::GetInstance();
 
-    if(m_accepted) {
-	ResetModelMode();
-    }
 
     if(m_guiMode == ModelMode) {
 
@@ -547,7 +542,13 @@ void Gui::Update() {
 		ResetModelMode();
 
 	    } else if(kbs.IsPressed(GLFW_KEY_ENTER) ) {
-		m_accepted = true;
+
+		for(GuiListener* listener : m_listeners) {
+		    listener->RotationAccepted();
+		}
+
+		ResetModelMode();
+
 	    } else {
 
 		if(m_axisMode == NoneAxis) {
@@ -565,7 +566,7 @@ void Gui::Update() {
 		} else {
 		    // get keyboard number input.
 
-		    float* tr = (float*)&m_rotate;
+		    float* tr = (float*)&m_rotation;
 
 		    tr[m_axisMode] += ms.GetDeltaX() * 0.01;
 		}
@@ -579,7 +580,13 @@ void Gui::Update() {
 		ResetModelMode();
 
 	    } else if(kbs.IsPressed(GLFW_KEY_ENTER) ) {
-		m_accepted = true;
+
+		for(GuiListener* listener : m_listeners) {
+		    listener->TranslationAccepted();
+		}
+
+		ResetModelMode();
+
 	    } else {
 
 		if(m_axisMode == NoneAxis) {
@@ -597,27 +604,23 @@ void Gui::Update() {
 		} else {
 		    // get keyboard number input.
 
-		    float* tr = (float*)&m_translate;
+		    float* tr = (float*)&m_translation;
 
 		    tr[m_axisMode] += ms.GetDeltaX() * 0.1;
 		}
 	    }
 	}
-
-
-
     }
 }
 
-Vector3f Gui::GetTranslate()const {
-    return m_translate;
+Vector3f Gui::GetTranslation()const {
+    return m_translation;
 }
 
-Vector3f Gui::GetRotate()const {
-    return m_rotate;
+Vector3f Gui::GetRotation()const {
+    return m_rotation;
 }
 
-
-bool Gui::WasAccepted()const {
-    return m_accepted;
+void Gui::AddListener(GuiListener* listener) {
+    m_listeners.push_back(listener);
 }

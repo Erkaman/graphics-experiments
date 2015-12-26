@@ -92,6 +92,7 @@ void TuhuApplication::Init() {
     if(m_config.IsGui()) {
 
 	m_gui = new Gui(m_window);
+	m_gui->AddListener(this);
 
 	GuiMouseState::Init(m_guiVerticalScale);
 
@@ -594,7 +595,7 @@ void TuhuApplication::Update(const float delta) {
 	}
     }
 
-    if( kbs.WasPressed(GLFW_KEY_6) ) {
+    if( kbs.WasPressed(GLFW_KEY_6) && !m_gui ) {
 	StartPhysics();
     }
 
@@ -656,26 +657,9 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 
     if(m_gui && m_gui->GetGuiMode() == ModelMode && m_selected ) {
 
-	if(m_gui->WasAccepted() ) {
 
-	    m_selected->SetPosition( m_gui->GetTranslate() + m_selected->GetPosition() );
-	    m_selected->SetEditPosition( Vector3f(0.0f) );
-
-
-	    m_selected->SetRotation(
-
-		m_selected->GetRotation() * toBtQuat(m_gui->GetRotate()));
-	    m_selected->SetEditRotation( btQuaternion::getIdentity()  );
-
-
-	} else {
-
-	    m_selected->SetEditPosition( m_gui->GetTranslate() );
-	    m_selected->SetEditRotation( toBtQuat(m_gui->GetRotate()) );
-
-	}
-
-
+	m_selected->SetEditPosition( m_gui->GetTranslation() );
+	m_selected->SetEditRotation( toBtQuat(m_gui->GetRotation()) );
     }
 
 
@@ -714,7 +698,7 @@ void TuhuApplication::RenderText()  {
 }
 
 IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position,
-    const btQuaternion& rotation) {
+					  const btQuaternion& rotation) {
 
     IGeometryObject* obj = GeometryObject::Load(path, position,
 						rotation, m_physicsWorld, currentObjId++);
@@ -815,7 +799,7 @@ void TuhuApplication::ParseObjs(const std::string& filename) {
 
     LOG_I("numObjs: %d", numObjs );
 
-    for(int iObj = 0; iObj < numObjs; ++iObj) {
+    for(size_t iObj = 0; iObj < numObjs; ++iObj) {
 
 	reader->ReadLine(); // beginObj
 
@@ -838,4 +822,18 @@ void TuhuApplication::ParseObjs(const std::string& filename) {
 	LoadObj(filename, translation, rotation);
 
     }
+}
+
+
+void TuhuApplication::TranslationAccepted() {
+    m_selected->SetPosition( m_gui->GetTranslation() + m_selected->GetPosition() );
+    m_selected->SetEditPosition( Vector3f(0.0f) );
+}
+
+void TuhuApplication::RotationAccepted() {
+    m_selected->SetRotation(
+
+	m_selected->GetRotation() * toBtQuat(m_gui->GetRotation()));
+    m_selected->SetEditRotation( btQuaternion::getIdentity()  );
+
 }
