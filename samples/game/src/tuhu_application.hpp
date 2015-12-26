@@ -6,6 +6,8 @@
 #include "ewa/math/vector4f.hpp"
 #include "ewa/math/matrix4f.hpp"
 
+#include <LinearMath/btQuaternion.h>
+
 class ICamera;
 class HeightMap;
 class Skydome;
@@ -84,12 +86,16 @@ private:
     std::vector<IGeometryObject*> m_geoObjs;
 
 
-    IGeometryObject* LoadObj(const std::string& path, const Vector3f& position);
+    IGeometryObject* LoadObj(const std::string& path, const Vector3f& position,
+	const btQuaternion& rotation = btQuaternion::getIdentity());
 
     Matrix4f MakeLightProj()const;
 
 
     void StartPhysics();
+
+
+    void ParseObjs(const std::string& filename);
 
 public:
 

@@ -6,6 +6,9 @@
 #include "ewa/keyboard_state.hpp"
 #include "ewa/mouse_state.hpp"
 #include "ewa/file.hpp"
+#include "ewa/buffered_file_reader.hpp"
+#include "ewa/string_util.hpp"
+
 
 #include "ewa/gl/depth_fbo.hpp"
 #include "ewa/gl/texture.hpp"
@@ -107,7 +110,7 @@ void TuhuApplication::Init() {
     // NOTE: we can fix the shadows by setting trans to (0,0,0).
     Vector3f trans = Vector3f(-80,-1,-80);
 
-  m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
+    m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
     m_smoke->Init();
 
     ::SetDepthTest(true);
@@ -119,9 +122,9 @@ void TuhuApplication::Init() {
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
-			  pos,
+	pos,
 	Vector3f(-0.613098, -0.523130, -0.591984)
-			  );
+	);
 
     m_snow = new SnowEffect(pos);
     m_snow->Init();
@@ -143,39 +146,44 @@ void TuhuApplication::Init() {
 	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,
 	    File::AppendPaths(dir, SPLAT_MAP_FILENAME ));
 
+	ParseObjs(File::AppendPaths(dir, OBJS_FILENAME ));
+
+
     } else {
 
 	m_heightMap = new HeightMap();
 
+	m_stoneFloor = LoadObj("obj/rock_floor.eob", Vector3f(0,0,40) + trans);
+
+	m_flatWoodFloor = LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40)+ trans );
+
+	m_woodFloor = LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40)+ trans );
+
+	m_sphere = LoadObj("obj/sunball.eob",
+
+			   Vector3f(21.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60) );
+
+	m_plane = LoadObj("obj/plane.eob", Vector3f(0,-2.5,0)+ trans);
+
+	m_tree = LoadObj("obj/tree.eob", Vector3f(10,-2.5,10) + trans);
+
+	m_wall = LoadObj("obj/wall.eob", Vector3f(-5,-2.5,-5)  + trans);
+
+	m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) + trans);
+
+	m_selected = m_tree;
+
+	/*m_selected = */LoadObj("obj/wall.eob",
+				 Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
+	    );
+
+
 
     }
 
-   m_stoneFloor = LoadObj("obj/rock_floor.eob", Vector3f(0,0,40) + trans);
-
-   m_flatWoodFloor = LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40)+ trans );
-
-   m_woodFloor = LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40)+ trans );
-
-   m_sphere = LoadObj("obj/sunball.eob",
-
-		      Vector3f(21.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60) );
-
-   m_plane = LoadObj("obj/plane.eob", Vector3f(0,-2.5,0)+ trans);
-
-   m_tree = LoadObj("obj/tree.eob", Vector3f(10,-2.5,10) + trans);
-
-   m_wall = LoadObj("obj/wall.eob", Vector3f(-5,-2.5,-5)  + trans);
-
-   m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) + trans);
-
-   m_selected = m_tree;
-
-   /*m_selected = */LoadObj("obj/wall.eob",
- Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
-       );
 
 
-   m_car = Car::Load(m_physicsWorld, Vector3f(0,-1.5,0)+trans);
+    m_car = Car::Load(m_physicsWorld, Vector3f(0,-1.5,0)+trans);
     if(!m_car)
 	PrintErrorExit();
     m_geoObjs.push_back(m_car);
@@ -186,8 +194,8 @@ void TuhuApplication::Init() {
     m_depthFbo->Init(DEPTH_FBO_TEXTURE_UNIT, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
     m_carCamera = new CarCamera(GetFramebufferWidth(),GetFramebufferHeight(),
-			     m_car
-			  );
+				m_car
+	);
 
     if(m_gui) {
 	m_pickingFbo = new PickingFBO();
@@ -207,7 +215,6 @@ void TuhuApplication::Init() {
 
 //    StartPhysics();
 
-    LOG_I("end init");
 }
 
 
@@ -219,7 +226,7 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
     /*
       First we compute the world space location of all 8 corners of the view frustum.
-     */
+    */
 
     Matrix4f invProj = m_curCamera->GetVp().Inverse();
 
@@ -229,12 +236,12 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
 
 /*
-    LOG_I("sanity: %s",
-	  string(m_camera->GetMvpFromM() * Vector4f(17.328205, 15.360136, 14.091190, 1.0)).c_str()
+  LOG_I("sanity: %s",
+  string(m_camera->GetMvpFromM() * Vector4f(17.328205, 15.360136, 14.091190, 1.0)).c_str()
 
-	);
+  );
 
-    exit(1);*/
+  exit(1);*/
 
 //    	Vector3f(17.328205, 15.360136, 14.091190);
 
@@ -269,7 +276,7 @@ Matrix4f TuhuApplication::MakeLightProj()const {
     //  LOG_I("lbn: %s",  string(lbn).c_str() );
 
     Vector3f corners[8] =  {lbn , ltn , rbn , rtn ,
-			   lbf , ltf , rbf , rtf };
+			    lbf , ltf , rbf , rtf };
 
     Vector3f centroid = Vector3f(0,0,0);
     for(int i = 0; i < 8; ++i) {
@@ -288,10 +295,10 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
 
     Matrix4f viewMatrix =
-		Matrix4f::CreateLookAt(
-		    centroid + ( Vector3f(m_lightDirection) * (config.GetZFar() + nearClipOffset )   ),
-		    centroid,
-		    Vector3f(0,1,0));
+	Matrix4f::CreateLookAt(
+	    centroid + ( Vector3f(m_lightDirection) * (config.GetZFar() + nearClipOffset )   ),
+	    centroid,
+	    Vector3f(0,1,0));
 
 
     // the frustum corners in lightspace.
@@ -325,14 +332,14 @@ Matrix4f TuhuApplication::MakeLightProj()const {
     }
 
 /*
-    LOG_I("min x %f",  mins.x ); // -12
-    LOG_I("max x %f",  maxes.x  ); // 12
+  LOG_I("min x %f",  mins.x ); // -12
+  LOG_I("max x %f",  maxes.x  ); // 12
 
-    LOG_I("min y %f",  mins.y ); // -23
-    LOG_I("max y %f",  maxes.y  ); // 23
+  LOG_I("min y %f",  mins.y ); // -23
+  LOG_I("max y %f",  maxes.y  ); // 23
 
-    LOG_I("-mimin z %f", -mins.z   ); // 2
-    LOG_I("mymaxz %f",  maxes.z ); // -23
+  LOG_I("-mimin z %f", -mins.z   ); // 2
+  LOG_I("mymaxz %f",  maxes.z ); // -23
 
 //    exit(1);*/
 
@@ -342,43 +349,36 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
 
 void TuhuApplication::RenderShadowMap() {
-
-     m_depthFbo->Bind();
-    {
-	::SetViewport(0,0,SHADOW_MAP_SIZE,SHADOW_MAP_SIZE);
-
-	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	m_lightViewMatrix = Matrix4f::CreateLookAt(
-	    -Vector3f(m_lightDirection),
-	    Vector3f(0.0f, 0.0f, 0.0f),
-	    Vector3f(0.0, 1.0, 0.0)
-	    );
-
-
-	m_lightProjectionMatrix =  //MakeLightProj();
-	    Matrix4f::CreateOrthographic(-30, 30, -12, 12, -20, 30);
-
-	Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
-
 /*
-  m_stoneFloor->RenderShadowMap(vp);
+  m_depthFbo->Bind();
+  {
+  ::SetViewport(0,0,SHADOW_MAP_SIZE,SHADOW_MAP_SIZE);
 
-  m_flatWoodFloor->RenderShadowMap(vp);
+  Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  m_woodFloor->RenderShadowMap(vp);
+  m_lightViewMatrix = Matrix4f::CreateLookAt(
+  -Vector3f(m_lightDirection),
+  Vector3f(0.0f, 0.0f, 0.0f),
+  Vector3f(0.0, 1.0, 0.0)
+  );
+
+
+  m_lightProjectionMatrix =  //MakeLightProj();
+  Matrix4f::CreateOrthographic(-30, 30, -12, 12, -20, 30);
+
+  Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
+
+  m_sphere->RenderShadowMap(vp);
+
+  m_tree->RenderShadowMap(vp);
+
+  m_wall->RenderShadowMap(vp);
+  m_wall2->RenderShadowMap(vp);
+
+
+  }
+  m_depthFbo->Unbind();
 */
-	m_sphere->RenderShadowMap(vp);
-
-	m_tree->RenderShadowMap(vp);
-
-	m_wall->RenderShadowMap(vp);
-	m_wall2->RenderShadowMap(vp);
-
-//	m_ball2->RenderShadowMap(vp);
-
-    }
-    m_depthFbo->Unbind();
 }
 
 void TuhuApplication::RenderId() {
@@ -402,34 +402,31 @@ void TuhuApplication::RenderId() {
 	}
     }
 
-
-    m_wall2->RenderId(m_curCamera);
-
     m_pickingFbo->Unbind();
 
 
 /*
-    GL_C(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+  GL_C(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
-    m_pickingFbo->UnbindForWriting();
-    m_pickingFbo->BindForReading();
-    GL_C(glReadBuffer(GL_COLOR_ATTACHMENT0));
-
-
-    // bl it
-
-    int w = GetFramebufferWidth();
-    int h = GetFramebufferHeight();
+  m_pickingFbo->UnbindForWriting();
+  m_pickingFbo->BindForReading();
+  GL_C(glReadBuffer(GL_COLOR_ATTACHMENT0));
 
 
-    GL_C(glBlitFramebuffer(
-    	0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST
-	     ));
+  // bl it
 
-    m_pickingFbo->UnbindForReading();
+  int w = GetFramebufferWidth();
+  int h = GetFramebufferHeight();
 
 
-    LOG_I("actual framebuffeR: %d, %d", GetFramebufferWidth(), GetFramebufferHeight() );
+  GL_C(glBlitFramebuffer(
+  0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST
+  ));
+
+  m_pickingFbo->UnbindForReading();
+
+
+  LOG_I("actual framebuffeR: %d, %d", GetFramebufferWidth(), GetFramebufferHeight() );
 */
 
 //    m_pickingFbo->GetRenderTargetTexture().WriteIdToFile("id.png");
@@ -442,15 +439,15 @@ void TuhuApplication::RenderScene() {
 
     m_skydome->Draw(m_curCamera);
 
-   m_heightMap->Render(m_curCamera, m_lightDirection);
+    m_heightMap->Render(m_curCamera, m_lightDirection);
 
 //    m_grass->Draw(m_curCamera, m_lightDirection);
 
 
 
-  //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
+    //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
 
- //   m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
+    //   m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 
     Matrix4f biasMatrix(
@@ -462,14 +459,13 @@ void TuhuApplication::RenderScene() {
 
     Matrix4f lightVp =  biasMatrix *  m_lightProjectionMatrix * m_lightViewMatrix;
 
-
     nonCulledObjects = 0;
     for(IGeometryObject* geoObj: m_geoObjs) {
 
 	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetModelSpaceAABB())) {
 	    ++nonCulledObjects;
 
-	    if(m_selected == geoObj) {
+	    if(m_selected && m_selected == geoObj) {
 		geoObj->RenderWithOutlines(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
 	    } else {
 		geoObj->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
@@ -480,7 +476,7 @@ void TuhuApplication::RenderScene() {
 
     totalObjects = m_geoObjs.size();
 
-  m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
+    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 }
 
@@ -500,15 +496,14 @@ void TuhuApplication::Render() {
     int windowHeight;
 
 
-	SetViewport();
+    SetViewport();
 
-	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-   if(m_pickingFbo)
+    if(m_pickingFbo)
 	RenderId();
 
-   RenderScene();
+    RenderScene();
 
 
     if(m_gui) {
@@ -549,12 +544,11 @@ void TuhuApplication::Update(const float delta) {
 
     m_smoke->Update(delta);
 /*    //   m_snow->Update(delta);
-    m_fire->Update(delta);
-	*/
+      m_fire->Update(delta);
+*/
     m_skydome->Update(delta);
 
 //      m_grass->Update(delta);
-
 
     if(m_gui)
 	m_gui->Update();
@@ -562,9 +556,9 @@ void TuhuApplication::Update(const float delta) {
     KeyboardState& kbs = KeyboardState::GetInstance();
 
 /*
-    if(input_accepted) {
-	add to object.
-    }
+  if(input_accepted) {
+  add to object.
+  }
 */
 
 
@@ -577,14 +571,15 @@ void TuhuApplication::Update(const float delta) {
     }
 
     /*
-    if( kbs.IsPressed(GLFW_KEY_7) ) {
-	m_heightMap->SaveHeightMap();
-    }
+      if( kbs.IsPressed(GLFW_KEY_7) ) {
+      m_heightMap->SaveHeightMap();
+      }
 
-    if( kbs.IsPressed(GLFW_KEY_8) ) {
-	m_heightMap->SaveSplatMap();
-    }
+      if( kbs.IsPressed(GLFW_KEY_8) ) {
+      m_heightMap->SaveSplatMap();
+      }
     */
+
 
     if( kbs.WasPressed(GLFW_KEY_9) ) {
 
@@ -658,29 +653,30 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
     }
 
 
-     if(m_gui && m_gui->GetGuiMode() == ModelMode) {
 
-	 if(m_gui->WasAccepted() ) {
+    if(m_gui && m_gui->GetGuiMode() == ModelMode && m_selected ) {
 
-	     m_selected->SetPosition( m_gui->GetTranslate() + m_selected->GetPosition() );
-	     m_selected->SetEditPosition( Vector3f(0.0f) );
+	if(m_gui->WasAccepted() ) {
 
-
-	     m_selected->SetRotation(
-
-		  m_selected->GetRotation() * toBtQuat(m_gui->GetRotate()));
-	     m_selected->SetEditRotation( btQuaternion::getIdentity()  );
+	    m_selected->SetPosition( m_gui->GetTranslate() + m_selected->GetPosition() );
+	    m_selected->SetEditPosition( Vector3f(0.0f) );
 
 
-	 } else {
+	    m_selected->SetRotation(
 
-	     m_selected->SetEditPosition( m_gui->GetTranslate() );
-	     m_selected->SetEditRotation( toBtQuat(m_gui->GetRotate()) );
-
-	 }
+		m_selected->GetRotation() * toBtQuat(m_gui->GetRotate()));
+	    m_selected->SetEditRotation( btQuaternion::getIdentity()  );
 
 
-     }
+	} else {
+
+	    m_selected->SetEditPosition( m_gui->GetTranslate() );
+	    m_selected->SetEditRotation( toBtQuat(m_gui->GetRotate()) );
+
+	}
+
+
+    }
 
 
     static bool b= false;
@@ -703,6 +699,7 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 	}
 	m_curCamera->Update(0);
     }
+
 }
 
 void TuhuApplication::RenderText()  {
@@ -716,10 +713,11 @@ void TuhuApplication::RenderText()  {
 //    m_font->DrawString(*m_fontShader, 600,120, cull );
 }
 
-IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position) {
+IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position,
+    const btQuaternion& rotation) {
 
     IGeometryObject* obj = GeometryObject::Load(path, position,
-						btQuaternion::getIdentity(), m_physicsWorld, currentObjId++);
+						rotation, m_physicsWorld, currentObjId++);
 
     if(!obj)
 	PrintErrorExit();
@@ -758,6 +756,10 @@ void TuhuApplication::Cleanup() {
 	File* outFile = File::Load(
 	    File::AppendPaths(dir, OBJS_FILENAME ),
 	    FileModeWriting);
+
+	// -1, since we do not count the car. m_car
+	outFile->WriteLine("numObjs " + to_string(m_geoObjs.size()-1) );
+
 
 	for(IGeometryObject* geoObj: m_geoObjs) {
 
@@ -798,4 +800,42 @@ void TuhuApplication::Cleanup() {
     }
 
     LOG_I("cleanup");
+}
+
+void TuhuApplication::ParseObjs(const std::string& filename) {
+
+    BufferedFileReader* reader = BufferedFileReader::Load(  filename);
+    if(!reader) {
+	PrintErrorExit();
+    }
+
+    string firstLine = reader->ReadLine();
+
+    size_t numObjs = stoi(StringUtil::SplitString(firstLine, " ")[1]);
+
+    LOG_I("numObjs: %d", numObjs );
+
+    for(int iObj = 0; iObj < numObjs; ++iObj) {
+
+	reader->ReadLine(); // beginObj
+
+	string filenameLine = reader->ReadLine();
+	string filename = StringUtil::SplitString(filenameLine, " ")[1];
+
+	vector<string> tokens = StringUtil::SplitString(reader->ReadLine(), " ");
+	Vector3f translation = Vector3f(stof(tokens[1]),stof(tokens[2]), stof(tokens[3]) );
+
+	tokens = StringUtil::SplitString(reader->ReadLine(), " ");
+	btQuaternion rotation = btQuaternion(
+	    stof(tokens[1]),
+	    stof(tokens[2]),
+	    stof(tokens[3]),
+	    stof(tokens[4]));
+
+	reader->ReadLine(); // endObj
+
+	// parsed the object. now add it to the world.
+	LoadObj(filename, translation, rotation);
+
+    }
 }
