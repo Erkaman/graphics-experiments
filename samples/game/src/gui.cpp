@@ -5,8 +5,12 @@
 #include <imgui.h>
 
 #include "ewa/log.hpp"
+#include "ewa/file.hpp"
 #include "ewa/keyboard_state.hpp"
 #include "ewa/mouse_state.hpp"
+
+#include "nfd.h"
+
 
 #include <imgui.h>
 
@@ -454,7 +458,6 @@ void Gui::Render(int windowWidth, int windowHeight) {
     ImGui::SetWindowPos(ImVec2(0,0) );
 
 
-
     ImGui::RadioButton("MT", &m_guiMode, ModifyTerrainMode); ImGui::SameLine();
     ImGui::RadioButton("DT", &m_guiMode, DrawTextureMode);  ImGui::SameLine();
     ImGui::RadioButton("M", &m_guiMode, ModelMode);
@@ -490,6 +493,43 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	}
 
 	ImGui::Text(mode.c_str() );
+
+	if (ImGui::Button("Add Model")) {
+	    nfdchar_t *outPath = NULL;
+
+	    nfdresult_t result = NFD_OpenDialog( "eob", "obj/", &outPath );
+
+	    if ( result == NFD_OKAY ) {
+
+		string path(outPath);
+
+		size_t lastSlashIndex = path.rfind("/");
+
+		size_t secondToLastSlashIndex = path.rfind("/", lastSlashIndex-1);
+
+		string objDir = path.substr(secondToLastSlashIndex+1, lastSlashIndex-secondToLastSlashIndex-1);
+
+		// we only allow files to be loaded from the directory obj/
+		if(objDir == "obj" ) {
+
+		    string objPath =
+			path.substr(secondToLastSlashIndex+1, string::npos);
+
+		    for(GuiListener* listener : m_listeners) {
+			listener->ModelAdded(objPath);
+		    }
+
+
+		} else {
+ 		    LOG_W("You can only load obj files from obj/");
+		}
+
+//		LOG_I("found path: %s",
+//		      .c_str() );
+
+
+	    }
+	}
 
     }
 

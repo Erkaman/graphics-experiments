@@ -44,7 +44,6 @@
 #include "gui.hpp"
 #include "gui_mouse_state.hpp"
 
-#include "nfd.h"
 
 using namespace std;
 
@@ -582,18 +581,7 @@ void TuhuApplication::Update(const float delta) {
     */
 
 
-    if( kbs.WasPressed(GLFW_KEY_9) ) {
 
-	nfdchar_t *outPath = NULL;
-
-	nfdresult_t result = NFD_OpenDialog( "png,jpg;pdf", NULL, &outPath );
-
-	if ( result == NFD_OKAY ) {
-	    puts("Success!");
-	    puts(outPath);
-	    free(outPath);
-	}
-    }
 
     if( kbs.WasPressed(GLFW_KEY_6) && !m_gui ) {
 	StartPhysics();
@@ -643,6 +631,7 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 
 	    if(id != 0) {
 		LOG_I("triangle: %f, %f", pi.unused1, pi.id);
+
 		m_selected = m_geoObjs[id-1];
 
 	    }
@@ -653,13 +642,11 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 
     }
 
-
-
     if(m_gui && m_gui->GetGuiMode() == ModelMode && m_selected ) {
-
 
 	m_selected->SetEditPosition( m_gui->GetTranslation() );
 	m_selected->SetEditRotation( toBtQuat(m_gui->GetRotation()) );
+
     }
 
 
@@ -699,6 +686,8 @@ void TuhuApplication::RenderText()  {
 
 IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position,
 					  const btQuaternion& rotation) {
+
+
 
     IGeometryObject* obj = GeometryObject::Load(path, position,
 						rotation, m_physicsWorld, currentObjId++);
@@ -836,4 +825,8 @@ void TuhuApplication::RotationAccepted() {
 	m_selected->GetRotation() * toBtQuat(m_gui->GetRotation()));
     m_selected->SetEditRotation( btQuaternion::getIdentity()  );
 
+}
+
+void TuhuApplication::ModelAdded(const std::string& filename) {
+    m_selected = LoadObj(filename, Vector3f(0,0,0) );
 }
