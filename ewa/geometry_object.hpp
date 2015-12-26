@@ -66,6 +66,8 @@ private:
     Vector3f m_editPosition;
     btQuaternion m_editRotation;
 
+    std::string m_filename;
+
     void createcollisionshape(const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld);
 
     Matrix4f GetModelMatrix(const Matrix4f& scaling = Matrix4f::CreateIdentity() )const;
@@ -115,4 +117,7 @@ public:
     virtual btQuaternion GetRotation() const;
 
     virtual void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
+
+    virtual std::string GetFilename() const;
+
 };

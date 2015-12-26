@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class Config {
 
 private:
@@ -13,6 +15,7 @@ private:
     float m_zNear;
     float m_zFar;
     bool m_gui;
+    std::string m_worldFilename;
 
 public:
 
@@ -27,5 +30,8 @@ public:
 
     bool IsGui() const;
     void SetGui(const bool gui);
+
+    void SetWorldFilename(const std::string& str);
+    std::string GetWorldFilename()const;
 
 };

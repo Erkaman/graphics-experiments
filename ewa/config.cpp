@@ -23,3 +23,12 @@ bool Config::IsGui() const {
 void Config::SetGui(const bool gui) {
     m_gui = gui;
 }
+
+
+void Config::SetWorldFilename(const std::string& str) {
+    m_worldFilename = str;
+}
+
+std::string Config::GetWorldFilename()const {
+    return m_worldFilename;
+}

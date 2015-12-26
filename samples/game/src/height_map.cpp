@@ -870,14 +870,13 @@ void HeightMap::Update(const float delta, ICamera* camera,
     }
 }
 
-void HeightMap::SaveHeightMap() {
- 	    m_heightMap->Write16ToFile("height.png");
+void HeightMap::SaveHeightMap(const std::string& filename) {
+ 	    m_heightMap->Write16ToFile(filename);
 
 }
 
-
-void HeightMap::SaveSplatMap() {
-    m_splatMap->WriteToFile("splat.png");
+void HeightMap::SaveSplatMap(const std::string& filename) {
+    m_splatMap->WriteToFile(filename);
 }
 
 

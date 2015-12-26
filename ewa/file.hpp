@@ -70,5 +70,8 @@ public:
     static bool PathExists(const std::string& path );
 
     // recursively create a path.
+    /*
+      If given a path "a/b/c", create the directory "a/b/c".
+     */
     static void CreatePath(const std::string& path);
 };

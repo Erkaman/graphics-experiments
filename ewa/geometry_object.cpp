@@ -113,6 +113,7 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
     GeometryObject* geoObj = new GeometryObject();
     geoObj->m_data = data;
     geoObj->m_id = id;
+    geoObj->m_filename = filename;
 
 
     geoObj->SetPosition(position);
@@ -585,4 +586,8 @@ void GeometryObject::SetEditRotation(const btQuaternion& editRotation) {
 
 btQuaternion GeometryObject::GetRotation() const {
     return m_rotation;
+}
+
+std::string GeometryObject::GetFilename() const {
+    return m_filename;
 }

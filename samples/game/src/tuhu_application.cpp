@@ -5,6 +5,7 @@
 #include "ewa/font.hpp"
 #include "ewa/keyboard_state.hpp"
 #include "ewa/mouse_state.hpp"
+#include "ewa/file.hpp"
 
 #include "ewa/gl/depth_fbo.hpp"
 #include "ewa/gl/texture.hpp"
@@ -48,6 +49,10 @@ int nonCulledObjects = 0;
 int totalObjects = 0;
 
 constexpr int SHADOW_MAP_SIZE = 1024;
+
+const string HEIGHT_MAP_FILENAME = "heightmap.png";
+const string SPLAT_MAP_FILENAME = "splatmap.png";
+const string OBJS_FILENAME = "objs";
 
 void ToClipboard(const std::string& str) {
     std::string command = "echo '" + str + "' | pbcopy";
@@ -558,6 +563,7 @@ void TuhuApplication::Update(const float delta) {
 	ToClipboard(out);
     }
 
+    /*
     if( kbs.IsPressed(GLFW_KEY_7) ) {
 	m_heightMap->SaveHeightMap();
     }
@@ -565,6 +571,7 @@ void TuhuApplication::Update(const float delta) {
     if( kbs.IsPressed(GLFW_KEY_8) ) {
 	m_heightMap->SaveSplatMap();
     }
+    */
 
     if( kbs.WasPressed(GLFW_KEY_9) ) {
 
@@ -719,11 +726,63 @@ void TuhuApplication::StartPhysics()  {
 
 }
 
+void TuhuApplication::Cleanup() {
 
-/*
-  once gui switches over to input translate mode,
-  we check this every frame, and once it does switch, we temporarily saves the translation.
+    if(m_gui) {
+	// if we were in the world editor, we need to serialize the world.
 
- */
+	string dir = Config::GetInstance().GetWorldFilename();
 
-//render(vector rotationoffset, vector translationoffset).
+	// we save the entire world in a directory. Make sure the directory exists:
+	File::CreatePath(dir);
+
+	// save heightmap:
+	m_heightMap->SaveHeightMap(File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) );
+
+	// save splatmap:
+	m_heightMap->SaveSplatMap(File::AppendPaths(dir, SPLAT_MAP_FILENAME ) );
+
+	File* outFile = File::Load(
+	    File::AppendPaths(dir, OBJS_FILENAME ),
+	    FileModeWriting);
+
+	for(IGeometryObject* geoObj: m_geoObjs) {
+
+	    if(geoObj != m_car ) {
+//		LOG_I("geoOjb: %s",  geoObj->GetFilename().c_str() );
+
+		outFile->WriteLine("beginObj");
+
+		outFile->WriteLine("filename " + geoObj->GetFilename() );
+
+		Vector3f p = geoObj->GetPosition();
+		outFile->WriteLine("translation " +
+				   to_string(p.x) + " " +
+				   to_string(p.y) + " " +
+				   to_string(p.z)
+		    );
+
+		btQuaternion  q = geoObj->GetRotation();
+		outFile->WriteLine("rotation " +
+				   to_string(q.x() ) + " " +
+				   to_string(q.y() ) + " " +
+				   to_string(q.z() ) + " " +
+				   to_string(q.w() ) + " "
+
+		    );
+
+
+		outFile->WriteLine("endObj");
+
+
+
+	    }
+
+	}
+
+	delete outFile;
+
+    }
+
+    LOG_I("cleanup");
+}

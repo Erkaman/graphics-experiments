@@ -120,8 +120,8 @@ public:
     void ModifyTerrain(const float delta);
     void DrawTexture(const float delta, int drawTextureType);
 
-    void SaveHeightMap();
-    void SaveSplatMap();
+    void SaveHeightMap(const std::string& filename);
+    void SaveSplatMap(const std::string& filename);
 
 
     void AddToPhysicsWorld(PhysicsWorld* physicsWorld);

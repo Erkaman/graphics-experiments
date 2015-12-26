@@ -100,6 +100,8 @@ public:
     void Render() override;
     void RenderText() override;
     void Update(const float delta) override;
+    void Cleanup() override;
+
 
     void RenderShadowMap();
     void RenderScene();

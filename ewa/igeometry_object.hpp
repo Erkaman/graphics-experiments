@@ -62,6 +62,8 @@ public:
     virtual void SetEditRotation(const btQuaternion& editRotation) { LOG_E("SetEditRotation not yet implemented!"); }
 
 
+    virtual std::string GetFilename() const { LOG_E("GetFilename not yet implemented!"); }
+
 #pragma warning( default : 4100 )
 
 };

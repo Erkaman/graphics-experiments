@@ -97,7 +97,7 @@ void Application::Start() {
 
     this->Init();
     this->DoMainLoop();
-    this->Cleanup();
+    this->Cleanup_internal();
 }
 
 void Application::DoMainLoop() {
@@ -137,7 +137,13 @@ void Application::DoMainLoop() {
     }
 }
 
-void Application::Cleanup() {
+
+
+
+void Application::Cleanup_internal() {
+
+    Cleanup();
+
     m_vao->Unbind();
     delete m_vao;
     delete m_fontShader;

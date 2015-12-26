@@ -19,12 +19,14 @@ protected:
     GLFWwindow* m_window;
     float m_guiVerticalScale;
 
-
 private:
 
     void SetupOpenGL();
     void DoMainLoop();
-    void Cleanup();
+    void Cleanup_internal();
+
+
+
 
     void Update_internal(const float delta);
     void RenderText_internal(const std::string& fpsString);
@@ -68,6 +70,7 @@ protected:
     virtual void Init() = 0;
     virtual void Update(const float delta) = 0;
     virtual void RenderText() {}
+    virtual void Cleanup() {}
 
 
     void SetViewport();

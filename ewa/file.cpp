@@ -35,8 +35,11 @@ File* File::Load(const std::string& filename, const FileMode fileMode) {
 
     // create the directory of the file if necessary.
     if(FileModeWriting == fileMode) {
-	if(!File::PathExists(File::GetFilePath(filename)))
-	    CreatePath(File::GetFilePath(filename));
+
+	string path = GetFilePath(filename);
+
+	if(!File::PathExists(path))
+	    CreatePath(path);
 
 	file->m_filename = filename;
 
@@ -200,7 +203,6 @@ void CreatePathHelper(const std::string& path) {
 
 #ifdef _WIN32
 
-
     // TODO: handle errors.
     CreateDirectory(path.c_str(), NULL);
 
@@ -211,8 +213,6 @@ void CreatePathHelper(const std::string& path) {
     mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
 #endif
-
-
 }
 
 void File::CreatePath(const std::string& path) {
@@ -221,10 +221,12 @@ void File::CreatePath(const std::string& path) {
     do {
 
 	size_t end = path.find("/", beg);
-
-	string p = path.substr(0,end+1);
-
+	string p = path.substr(0,end);
 	CreatePathHelper(p);
+	if(end == string::npos ) {
+	    break;
+	}
+
 //	LOG_I("p: %s", p.c_str() );
 
 	beg = end+1;
