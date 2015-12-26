@@ -78,7 +78,10 @@ protected:
 
 public:
 
-    static GeometryObject* Load(const std::string& filename, const Vector3f& position,PhysicsWorld* physicsWorld,
+    static GeometryObject* Load(const std::string& filename,
+				const Vector3f& position,
+				btQuaternion rotation,
+				PhysicsWorld* physicsWorld,
 	unsigned int id);
 
     virtual ~GeometryObject();

@@ -128,6 +128,4 @@ public:
 	Unbind();
 	return pixels;
     }
-
-
 };

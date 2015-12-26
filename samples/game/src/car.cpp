@@ -30,7 +30,8 @@ const btVector3 BACK_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, -(
 
 Car* Car::Load(PhysicsWorld* physicsWorld, const Vector3f& position) {
 
-    IGeometryObject* geoObj = GeometryObject::Load("obj/car.eob", position, physicsWorld, CAR_ID);
+    IGeometryObject* geoObj = GeometryObject::Load("obj/car.eob",
+						   position, btQuaternion::getIdentity(),physicsWorld, CAR_ID);
 
     if(!geoObj) {
 	return NULL;

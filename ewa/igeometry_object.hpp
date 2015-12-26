@@ -37,7 +37,6 @@ public:
 
     virtual ~IGeometryObject() {}
 
-
 #pragma warning( disable : 4100 ) // temporarily disable warning: "unreferenced formal parameter.
 
     virtual void ApplyCentralForce(const Vector3f& force) {LOG_E("ApplyCentralForce not yet implemented!"); }

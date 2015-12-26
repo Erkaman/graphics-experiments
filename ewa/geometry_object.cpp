@@ -100,7 +100,11 @@ static Texture* LoadTexture(const string& filename) {
 GeometryObject::GeometryObject(): m_rigidBody(NULL) {}
 
 
-GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f& position, PhysicsWorld* physicsWorld,
+GeometryObject* GeometryObject::Load(
+    const std::string& filename,
+    const Vector3f& position,
+    btQuaternion rotation,
+    PhysicsWorld* physicsWorld,
     unsigned int id) {
 
 
@@ -118,7 +122,7 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
 
     geoObj->SetPosition(position);
     geoObj->SetEditPosition( Vector3f(0.0f) );
-    geoObj->SetRotation( btQuaternion::getIdentity() );
+    geoObj->SetRotation( rotation  );
     geoObj->SetEditRotation( btQuaternion::getIdentity() );
 
 

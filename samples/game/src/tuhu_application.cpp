@@ -50,8 +50,8 @@ int totalObjects = 0;
 
 constexpr int SHADOW_MAP_SIZE = 1024;
 
-const string HEIGHT_MAP_FILENAME = "heightmap.png";
-const string SPLAT_MAP_FILENAME = "splatmap.png";
+const string HEIGHT_MAP_FILENAME = "heightmap.bin";
+const string SPLAT_MAP_FILENAME = "splatmap.bin";
 const string OBJS_FILENAME = "objs";
 
 void ToClipboard(const std::string& str) {
@@ -131,11 +131,24 @@ void TuhuApplication::Init() {
     m_fire = new FireEffect(Vector3f(12,-3,10));
     m_fire->Init();
 
-   m_heightMap = new HeightMap("img/hill.png");
-//   m_heightMap->AddToPhysicsWorld(m_physicsWorld);
 
-    //                    128000
     m_skydome = new Skydome(1, 10, 10);
+
+
+    string dir = Config::GetInstance().GetWorldFilename();
+
+    if(File::PathExists(dir)) {
+
+	m_heightMap = new HeightMap(
+	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,
+	    File::AppendPaths(dir, SPLAT_MAP_FILENAME ));
+
+    } else {
+
+	m_heightMap = new HeightMap();
+
+
+    }
 
    m_stoneFloor = LoadObj("obj/rock_floor.eob", Vector3f(0,0,40) + trans);
 
@@ -690,7 +703,6 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 	}
 	m_curCamera->Update(0);
     }
-
 }
 
 void TuhuApplication::RenderText()  {
@@ -706,7 +718,8 @@ void TuhuApplication::RenderText()  {
 
 IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position) {
 
-    IGeometryObject* obj = GeometryObject::Load(path, position, m_physicsWorld, currentObjId++);
+    IGeometryObject* obj = GeometryObject::Load(path, position,
+						btQuaternion::getIdentity(), m_physicsWorld, currentObjId++);
 
     if(!obj)
 	PrintErrorExit();

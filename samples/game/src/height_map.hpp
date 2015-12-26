@@ -65,25 +65,26 @@ private:
     MultArray<unsigned short>* m_heightData;
     MultArray<SplatColor>* m_splatData;
 
-    Config& m_config;
+    Config* m_config;
 
     Vector2i m_cursorPosition;
     bool m_cursorPositionWasUpdated;
 
     Vector3f m_offset;
-    const float m_xzScale;
-    const float m_yScale;
-    const size_t m_resolution;
+    float m_xzScale;
+    float m_yScale;
+    size_t m_resolution;
 
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);
 
-    void CreateHeightmap(const std::string& path);
+    void CreateHeightmap(const std::string& heightMapFilename);
     void CreateCursor();
-    void CreateSplatMap();
+    void CreateSplatMap(const std::string& splatMapFilename );
 
-    void LoadHeightmap();
+    void LoadHeightmap(const std::string& heightMapFilename);
+    void LoadSplatMap(const std::string& splatMapFilename);
 
     void RenderHeightMap(const ICamera* camera, const Vector4f& lightPosition);
     void RenderCursor(const ICamera* camera);
@@ -98,9 +99,14 @@ private:
 		      const float framebufferWidth,
 		      const float framebufferHeight);
 
+    void Init(const std::string& heightMapFilename, const std::string& splatMapFilename );
+
 public:
 
-    HeightMap(const std::string& path);
+    HeightMap(const std::string& heightMapFilename, const std::string& splatMapFilename );
+    HeightMap();
+
+
     ~HeightMap();
 
     void Render(const ICamera* camera, const Vector4f& lightPosition);
