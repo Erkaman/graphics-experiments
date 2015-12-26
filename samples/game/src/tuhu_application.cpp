@@ -186,6 +186,8 @@ void TuhuApplication::Init() {
     m_curCamera = m_freeCamera;
 
 //    StartPhysics();
+
+    LOG_I("end init");
 }
 
 
@@ -368,7 +370,7 @@ void TuhuApplication::RenderId() {
     // set viewport
     m_heightMap->RenderId(m_curCamera);
 
-    m_pickingFbo->Unbind();
+       m_pickingFbo->Unbind();
 
 
 /*
@@ -469,9 +471,9 @@ void TuhuApplication::Render() {
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-/*   if(m_pickingFbo)
+   if(m_pickingFbo)
 	RenderId();
-*/
+
    RenderScene();
 
 
@@ -487,13 +489,15 @@ void TuhuApplication::Render() {
 
 	m_gui->Render(windowWidth, windowHeight);
     }
+
 }
 
 void TuhuApplication::Update(const float delta) {
 
     MouseState& ms = MouseState::GetInstance();
 
-    GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
+    if(m_gui)
+	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
 
 
     m_heightMap->Update(delta, m_curCamera, GetFramebufferWidth(),GetFramebufferHeight());
@@ -517,7 +521,9 @@ void TuhuApplication::Update(const float delta) {
 
 //      m_grass->Update(delta);
 
-    m_gui->Update();
+
+    if(m_gui)
+	m_gui->Update();
 
     KeyboardState& kbs = KeyboardState::GetInstance();
 
@@ -590,7 +596,7 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 	}
     }
 
-     if(m_gui->GetGuiMode() == ModelMode) {
+     if(m_gui && m_gui->GetGuiMode() == ModelMode) {
 
 	 if(m_gui->WasAccepted() ) {
 
@@ -615,9 +621,6 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
      }
 
 
-
-
-
     static bool b= false;
 
     if( kbs.IsPressed(GLFW_KEY_B) && !b ) {
@@ -638,6 +641,7 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 	}
 	m_curCamera->Update(0);
     }
+
 }
 
 void TuhuApplication::RenderText()  {
