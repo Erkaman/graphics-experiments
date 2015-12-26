@@ -99,7 +99,6 @@ static Texture* LoadTexture(const string& filename) {
 
 GeometryObject::GeometryObject(): m_rigidBody(NULL) {}
 
-
 GeometryObject* GeometryObject::Load(
     const std::string& filename,
     const Vector3f& position,

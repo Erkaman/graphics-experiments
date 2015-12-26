@@ -140,6 +140,12 @@ void TuhuApplication::Init() {
 
     string dir = Config::GetInstance().GetWorldFilename();
 
+
+    m_car = Car::Load(m_physicsWorld, Vector3f(0,-1.5,0)+trans);
+    if(!m_car)
+	PrintErrorExit();
+    m_geoObjs.push_back(m_car);
+
     if(File::PathExists(dir)) {
 
 	m_heightMap = new HeightMap(
@@ -181,12 +187,6 @@ void TuhuApplication::Init() {
 
     }
 
-
-
-    m_car = Car::Load(m_physicsWorld, Vector3f(0,-1.5,0)+trans);
-    if(!m_car)
-	PrintErrorExit();
-    m_geoObjs.push_back(m_car);
 
     m_depthFbo = new DepthFBO();
 
@@ -626,14 +626,12 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 
 	    PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 
-
 	    unsigned int id = (unsigned int)pi.id;
 
 	    if(id != 0) {
 		LOG_I("triangle: %f, %f", pi.unused1, pi.id);
 
-		m_selected = m_geoObjs[id-1];
-
+		m_selected = m_geoObjs[id];
 	    }
 
 
