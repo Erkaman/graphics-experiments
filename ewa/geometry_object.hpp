@@ -17,6 +17,7 @@ class PhysicsWorld;
 class btRigidBody;
 class btMotionState;
 
+
 class GeometryObject : public IGeometryObject {
 private:
 
@@ -43,6 +44,7 @@ private:
     ShaderProgram* m_defaultShader;
     ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
     ShaderProgram* m_outlineShader; //Used for drawing an outline of the object.
+    ShaderProgram* m_outputIdShader;
 
     bool m_hasNormalMap;
     bool m_hasSpecularMap;
@@ -54,6 +56,8 @@ private:
     btRigidBody* m_rigidBody;
     btMotionState* m_motionState;
 
+    unsigned int m_id;
+
     GeometryObject();
 
     Vector3f m_position;
@@ -62,7 +66,7 @@ private:
     Vector3f m_editPosition;
     btQuaternion m_editRotation;
 
-    void CreateCollisionShape(const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld);
+    void createcollisionshape(const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld);
 
     Matrix4f GetModelMatrix(const Matrix4f& scaling = Matrix4f::CreateIdentity() )const;
 
@@ -72,7 +76,8 @@ protected:
 
 public:
 
-    static GeometryObject* Load(const std::string& filename, const Vector3f& position,PhysicsWorld* physicsWorld);
+    static GeometryObject* Load(const std::string& filename, const Vector3f& position,PhysicsWorld* physicsWorld,
+	unsigned int id);
 
     virtual ~GeometryObject();
 
@@ -88,6 +93,8 @@ public:
 	const Matrix4f& lightVp,
 	const DepthFBO& shadowMap);
 
+    virtual void RenderId(
+	const ICamera* camera);
 
     AABB GetModelSpaceAABB()const;
 

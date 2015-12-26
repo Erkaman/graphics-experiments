@@ -77,9 +77,12 @@ private:
 
     ViewFrustum* m_viewFrustum;
 
+    PhysicsWorld* m_physicsWorld;
+
+    unsigned int currentObjId;
+
     std::vector<IGeometryObject*> m_geoObjs;
 
-    PhysicsWorld* m_physicsWorld;
 
     IGeometryObject* LoadObj(const std::string& path, const Vector3f& position);
 

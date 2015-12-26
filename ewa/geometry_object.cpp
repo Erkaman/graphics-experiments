@@ -100,7 +100,8 @@ static Texture* LoadTexture(const string& filename) {
 GeometryObject::GeometryObject(): m_rigidBody(NULL) {}
 
 
-GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f& position, PhysicsWorld* physicsWorld) {
+GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f& position, PhysicsWorld* physicsWorld,
+    unsigned int id) {
 
 
     GeometryObjectData* data = EobFile::Read(filename);
@@ -111,6 +112,7 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
 
     GeometryObject* geoObj = new GeometryObject();
     geoObj->m_data = data;
+    geoObj->m_id = id;
 
 
     geoObj->SetPosition(position);
@@ -154,7 +156,7 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
 	}
     }
 
-    string shaderName = "shader/simple";
+    string shaderName = "shader/geo_obj_render";
 
 
 
@@ -176,9 +178,12 @@ GeometryObject* GeometryObject::Load(const std::string& filename, const Vector3f
 	return NULL;
     }
 
-    geoObj->m_outlineShader = ShaderProgram::Load("shader/draw_outline");
+    geoObj->m_outlineShader = ShaderProgram::Load("shader/geo_obj_draw_outline");
 
-    geoObj->m_depthShader = ShaderProgram::Load("shader/output_depth");
+    geoObj->m_depthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
+
+    geoObj->m_outputIdShader = ShaderProgram::Load("shader/geo_obj_output_id");
+
 
     if(!geoObj->m_depthShader) {
 	return NULL;
@@ -324,9 +329,26 @@ void GeometryObject::RenderWithOutlines(
     // render.
 
     GL_C(glDisable(GL_STENCIL_TEST));
+}
 
+void GeometryObject::RenderId(
+	const ICamera* camera) {
 
+    m_outputIdShader->Bind();
 
+    Matrix4f modelMatrix = GetModelMatrix( );
+
+    const Matrix4f mvp = camera->GetVp() * modelMatrix;
+    m_outputIdShader->SetUniform("mvp", mvp  );
+    m_outputIdShader->SetUniform("id", (float)m_id  );
+
+    for(size_t i = 0; i < m_chunks.size(); ++i) {
+	Chunk* chunk = m_chunks[i];
+
+	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+    }
+
+    m_outputIdShader->Unbind();
 }
 
 void GeometryObject::Render(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {

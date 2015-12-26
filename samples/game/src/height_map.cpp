@@ -89,7 +89,7 @@ HeightMap::HeightMap(const std::string& path): m_isWireframe(false),
     */
     m_shader = ShaderProgram::Load("shader/height_map");
 
-    m_depthShader = ShaderProgram::Load("shader/output_depth");
+//    m_depthShader = ShaderProgram::Load("shader/output_depth");
 
     m_idShader = ShaderProgram::Load("shader/height_map_output_id");
     m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
@@ -288,7 +288,6 @@ void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
 void HeightMap::RenderId(const ICamera* camera) {
 
     m_idShader->Bind();
-
 
     m_idShader->SetShaderUniforms(Matrix4f::CreateTranslation(0,0,0), camera);
 

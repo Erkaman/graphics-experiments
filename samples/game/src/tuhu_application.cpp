@@ -78,6 +78,8 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
+    currentObjId = 0;
+
     Config& m_config = Config::GetInstance();
     if(m_config.IsGui()) {
 
@@ -370,7 +372,22 @@ void TuhuApplication::RenderId() {
     // set viewport
     m_heightMap->RenderId(m_curCamera);
 
-       m_pickingFbo->Unbind();
+
+    for(IGeometryObject* geoObj: m_geoObjs) {
+
+	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetModelSpaceAABB())) {
+
+	    if(geoObj != m_car) {
+		geoObj->RenderId(m_curCamera);
+	    }
+
+	}
+    }
+
+
+    m_wall2->RenderId(m_curCamera);
+
+    m_pickingFbo->Unbind();
 
 
 /*
@@ -441,7 +458,6 @@ void TuhuApplication::RenderScene() {
 	    }
 
 	}
-
     }
 
     totalObjects = m_geoObjs.size();
@@ -596,6 +612,32 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 	}
     }
 
+    if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 )) {
+
+
+	if(m_gui->GetGuiMode() == ModelMode) {
+
+	    float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
+	    float x = GuiMouseState::GetX();
+
+	    PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
+
+
+	    unsigned int id = (unsigned int)pi.id;
+
+	    if(id != 0) {
+		LOG_I("triangle: %f, %f", pi.unused1, pi.id);
+		m_selected = m_geoObjs[id-1];
+
+	    }
+
+
+	}
+
+
+    }
+
+
      if(m_gui && m_gui->GetGuiMode() == ModelMode) {
 
 	 if(m_gui->WasAccepted() ) {
@@ -657,7 +699,7 @@ void TuhuApplication::RenderText()  {
 
 IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position) {
 
-    IGeometryObject* obj = GeometryObject::Load(path, position, m_physicsWorld);
+    IGeometryObject* obj = GeometryObject::Load(path, position, m_physicsWorld, currentObjId++);
 
     if(!obj)
 	PrintErrorExit();
