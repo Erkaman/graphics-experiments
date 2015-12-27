@@ -8,6 +8,7 @@
 #include "ewa/file.hpp"
 #include "ewa/buffered_file_reader.hpp"
 #include "ewa/string_util.hpp"
+#include "ewa/resource_manager.hpp"
 
 
 #include "ewa/gl/depth_fbo.hpp"
@@ -62,12 +63,13 @@ void ToClipboard(const std::string& str) {
 }
 
 //(0.705072, 0.0758142, 0.705072)
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), m_curCamera(NULL), m_heightMap(NULL), m_skydome(NULL), m_gui(NULL), m_lightDirection (
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), 
+m_curCamera(NULL), m_heightMap(NULL), m_skydome(NULL), m_gui(NULL), m_lightDirection (
 
     -0.705072f, -0.458142f, -0.705072f,
 //    -0.705072f, -0.0758142f, -0.705072f ,
 
-    0.0f)   { }
+    0.0f), m_pickingFbo(NULL)   { }
 
 TuhuApplication::~TuhuApplication() {
     MY_DELETE(m_carCamera);
@@ -146,7 +148,7 @@ void TuhuApplication::Init() {
 	PrintErrorExit();
     m_geoObjs.push_back(m_car);
 
-    if(File::PathExists(dir)) {
+    if(ResourceManager::GetInstance().PathExists(dir)) {
 
 	m_heightMap = new HeightMap(
 	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,

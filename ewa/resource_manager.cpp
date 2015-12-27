@@ -49,14 +49,9 @@ std::string* ResourceManager::SearchResource(const std::string& resourceName) {
 
 bool ResourceManager::ResourceExists(const std::string& resourceName, std::string& foundResource) {
 
-    //  LOG_I("resourceName: %s",  resourceName.c_str() );
-
     for(const std::string& path : resourcePaths ) {
 
 	std::string resourcePath = File::AppendPaths(path, resourceName);
-
-//	LOG_I("append: %s",  resourcePath.c_str() );
-
 
 	if(FileExists(resourcePath)) {
 	    foundResource = resourcePath;
@@ -67,6 +62,21 @@ bool ResourceManager::ResourceExists(const std::string& resourceName, std::strin
 
     foundResource = "";
     return false;
+}
+
+
+bool ResourceManager::PathExists(const std::string& path) {
+
+	for (const std::string& upperPath : resourcePaths) {
+
+		std::string resourcePath = File::AppendPaths(upperPath, path);
+
+		if (File::PathExists(resourcePath)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool ResourceManager::ResourceExists(const std::string& resourceName) {

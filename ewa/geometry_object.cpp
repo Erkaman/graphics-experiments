@@ -102,7 +102,7 @@ GeometryObject::GeometryObject(): m_rigidBody(NULL) {}
 GeometryObject* GeometryObject::Load(
     const std::string& filename,
     const Vector3f& position,
-    btQuaternion rotation,
+    const btQuaternion& rotation,
     PhysicsWorld* physicsWorld,
     unsigned int id) {
 

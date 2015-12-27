@@ -177,7 +177,6 @@ std::string File::AppendPaths(const std::string& path1, const std::string& path2
 	path1 +
 	(includeSeparator ? PATH_SEPARATOR : "") +
 	path2;
-
 }
 
 bool File::PathExists(const std::string& path ) {

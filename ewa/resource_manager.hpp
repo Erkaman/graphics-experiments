@@ -39,6 +39,8 @@ public:
 
     static File* OpenResourceForReading(const std::string& resourcePath);
 
+	bool PathExists(const std::string& path);
+
 
     static ShaderProgram* LoadShader(
 	std::string vertexShaderPath,

@@ -494,7 +494,9 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 	ImGui::Text(mode.c_str() );
 
+#if !defined(_WIN32)
 	if (ImGui::Button("Add Model")) {
+
 	    nfdchar_t *outPath = NULL;
 
 	    nfdresult_t result = NFD_OpenDialog( "eob", "obj/", &outPath );
@@ -519,7 +521,6 @@ void Gui::Render(int windowWidth, int windowHeight) {
 			listener->ModelAdded(objPath);
 		    }
 
-
 		} else {
  		    LOG_W("You can only load obj files from obj/");
 		}
@@ -530,8 +531,15 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 	    }
 	}
+#else
+
+	LOG_W("This feature is not yet supported on windows");
+#endif
+
 
     }
+
+	
 
     ImGui::End();
 
