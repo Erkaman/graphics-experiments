@@ -13,7 +13,7 @@ private:
 
     IGeometryObject* m_geoObj;
 
-    Car(IGeometryObject* geoObj, PhysicsWorld* physicsWorld);
+    Car(IGeometryObject* geoObj);
 
     btVehicleRaycaster* m_vehicleRaycaster;
 
@@ -22,6 +22,7 @@ private:
 public:
 
     static Car* Load(PhysicsWorld* physicsWorld, const Vector3f& position);
+
     virtual ~Car();
 
     virtual void Render(

@@ -93,7 +93,7 @@ private:
     void Render(ShaderProgram* shader);
 
     void RenderSetup(ShaderProgram* shader);
-    void RenderUnsetup(ShaderProgram* shader);
+    void RenderUnsetup();
 
     void UpdateCursor(ICamera* camera,
 		      const float framebufferWidth,

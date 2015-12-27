@@ -37,14 +37,12 @@ Car* Car::Load(PhysicsWorld* physicsWorld, const Vector3f& position) {
 	return NULL;
     }
 
-    return new Car(geoObj, physicsWorld);
+    return new Car(geoObj);
 }
 
-Car::Car(IGeometryObject* geoObj, PhysicsWorld* physicsWorld): m_raycastVehicle(NULL) {
+Car::Car(IGeometryObject* geoObj): m_raycastVehicle(NULL) {
 
     m_geoObj = geoObj;
-
-
 }
 
 

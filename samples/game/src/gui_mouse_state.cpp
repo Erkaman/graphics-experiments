@@ -11,7 +11,7 @@ float GuiMouseState::m_y;
 bool GuiMouseState::m_withinWindow;
 
 
-void GuiMouseState::Update(int framebufferWidth, int framebufferHeight) {
+void GuiMouseState::Update(int framebufferWidth, int) {
 
 
     MouseState& ms = MouseState::GetInstance();

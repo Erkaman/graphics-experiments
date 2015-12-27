@@ -25,6 +25,9 @@ public:
 
     virtual void RenderShadowMap(const Matrix4f& lightVp) = 0;
 
+#pragma warning(disable : 4100) // temporarily disable warning: "unreferenced formal parameter.
+
+
     virtual void RenderWithOutlines(
 	const ICamera* camera,
 	const Vector4f& lightPosition,
@@ -36,8 +39,6 @@ public:
     virtual AABB GetModelSpaceAABB()const=0;
 
     virtual ~IGeometryObject() {}
-
-#pragma warning( disable : 4100 ) // temporarily disable warning: "unreferenced formal parameter.
 
     virtual void ApplyCentralForce(const Vector3f& force) {LOG_E("ApplyCentralForce not yet implemented!"); }
 

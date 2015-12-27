@@ -119,13 +119,13 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     const Vector3f pos =
-	Vector3f(51.479908, 40.918278, 70.826126);
+	Vector3f(51.479908f, 40.918278f, 70.826126f);
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(-0.613098, -0.523130, -0.591984)
+	Vector3f(-0.613098f, -0.523130f, -0.591984f)
 	);
 
     m_snow = new SnowEffect(pos);
@@ -147,7 +147,7 @@ void TuhuApplication::Init() {
     if(!m_car)
 	PrintErrorExit();
     m_geoObjs.push_back(m_car);
-
+		
     if(ResourceManager::GetInstance().PathExists(dir)) {
 
 	m_heightMap = new HeightMap(
@@ -514,8 +514,8 @@ void TuhuApplication::Render() {
 	fb_width = GetFramebufferWidth();
 	fb_height = GetFramebufferHeight();
 
- 	windowWidth = fb_width*SCALE * 0.5;
-	windowHeight = fb_height * 0.5;
+ 	windowWidth = fb_width*SCALE * 0.5f;
+	windowHeight = fb_height * 0.5f;
 
 
 	m_gui->Render(windowWidth, windowHeight);
@@ -531,7 +531,7 @@ void TuhuApplication::Update(const float delta) {
 	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
 
 
-    m_heightMap->Update(delta, m_curCamera, GetFramebufferWidth(),GetFramebufferHeight());
+    m_heightMap->Update(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
 
     m_viewFrustum->Update( m_curCamera->GetVp() );
 
@@ -626,7 +626,7 @@ PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
 	    float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
 	    float x = GuiMouseState::GetX();
 
-	    PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
+	    PixelInfo pi = m_pickingFbo->ReadPixel((unsigned int)x,(unsigned int)y);
 
 	    unsigned int id = (unsigned int)pi.id;
 

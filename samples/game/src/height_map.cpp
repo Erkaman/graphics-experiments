@@ -73,15 +73,15 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_grassTexture = NULL;
     m_dirtTexture = NULL;
     m_config = &Config::GetInstance();
-    m_cursorPosition = 0.0;
+    m_cursorPosition = Vector2i(0,0);
     m_cursorPositionWasUpdated = true;
-    m_xzScale = 100.0;
-    m_yScale = 4.0;
+    m_xzScale = 100.0f;
+    m_yScale = 4.0f;
     m_resolution = 256;
 
 
     // position the heightfield so that it is centered at the origin:
-    m_offset = Vector3f(-m_xzScale/2.0,0,-m_xzScale/2.0);
+    m_offset = Vector3f(-m_xzScale/2.0f,0,-m_xzScale/2.0f);
 
     m_grassTexture = LoadTexture("img/grass.png");
 
@@ -149,7 +149,7 @@ void HeightMap::CreateCursor() {
     m_cursorVertexBuffer->SetBufferData(points);
     m_cursorVertexBuffer->Unbind();
 
-    m_numCursorPoints = points.size();
+    m_numCursorPoints = (unsigned short)points.size();
 }
 
 void HeightMap::RenderSetup(ShaderProgram* shader) {
@@ -169,7 +169,7 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
     shader->SetUniform("resolution", (float)m_resolution);
 }
 
-void HeightMap::RenderUnsetup(ShaderProgram* shader) {
+void HeightMap::RenderUnsetup() {
     m_heightMap->Unbind();
     m_splatMap->Unbind();
 }
@@ -196,7 +196,7 @@ void HeightMap::Render(ShaderProgram* shader) {
     m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
 
 
-    RenderUnsetup(shader);
+    RenderUnsetup();
 
 
 }
@@ -269,7 +269,7 @@ void HeightMap::RenderCursor(const ICamera* camera) {
 
 
     m_cursorShader->SetUniform("cursorPosition",
-			       Vector3f(m_cursorPosition.x, 0, m_cursorPosition.y) );
+			       Vector3f((float)m_cursorPosition.x, 0.0f, (float)m_cursorPosition.y) );
 
 
     // set point size.
@@ -282,7 +282,7 @@ void HeightMap::RenderCursor(const ICamera* camera) {
     m_cursorVertexBuffer->DisableVertexAttribInterleaved();
 
 
-    RenderUnsetup(m_cursorShader);
+    RenderUnsetup();
 
     m_cursorShader->Unbind();
 
@@ -556,8 +556,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 
 	for(size_t i = 0; i < width; ++i) {
 
-	    unsigned short h = 0;
-
+	  
 	    for(size_t j = 0; j < depth; ++j) {
 
 		heightData(j,i) = MIN_HEIGHT;
@@ -612,7 +611,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 		z
 		);
 
-	c.id = id++;
+	c.id = (float)id++;
 
 	c.texCoord = Vector2f(x,z);
 
@@ -674,26 +673,8 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 
 }
 
-float HeightMap::GetHeightAt(float x, float z)const {
-    /*
-      Vector2f p = Vector2f( ((float)x / SCALE_XZ), ((float)z / SCALE_XZ) );
-
-      Vector2i P =  Vector2i( Floor(p.x),  Floor(p.y) );
-
-      const Vector2f f = Fade(
-      p.x - Floor(p.x),
-      p.y - Floor(p.y));
-
-
-
-      float AA = ((*m_map)(  P.x, P.y )).position.y;
-      float AB = ((*m_map)(  P.x, P.y+1 )).position.y;
-      float BA = ((*m_map)(  P.x+1, P.y )).position.y;
-      float BB = ((*m_map)(  P.x+1, P.y+1 )).position.y;
-
-
-      return Lerp(Lerp(AA, BA, f.x), Lerp(AB, BB, f.x), f.y);
-    */
+float HeightMap::GetHeightAt(float, float)const {
+  
 
     return 0;
 }
@@ -747,11 +728,11 @@ void HeightMap::UpdateCursor(ICamera* camera,
 	// now find which, exact, height position is hit by the ray.
 
 	hit -= m_offset;
-	hit = hit * (1.0 / m_xzScale);
-	hit = hit * m_resolution;
+	hit = hit * (1.0f / m_xzScale);
+	hit = hit * (float)m_resolution;
 
-	int xHit = hit.x;
-	int zHit = hit.z;
+	int xHit = (int)hit.x;
+	int zHit = (int)hit.z;
 
 	if(xHit >= 0 && xHit < (int)m_resolution &&
 	   zHit >= 0 && zHit < (int)m_resolution) {
