@@ -1,0 +1,51 @@
+numObjs 10
+beginObj
+filename obj/rock_floor.eob
+translation -80.000000 -1.000000 -40.000000
+rotation 0.000000 0.000000 0.000000 1.000000 
+endObj
+beginObj
+filename obj/flat_wood_floor.eob
+translation -70.000000 -1.000000 -40.000000
+rotation 0.000000 0.000000 0.000000 1.000000 
+endObj
+beginObj
+filename obj/wood_floor.eob
+translation -90.000000 -1.000000 -40.000000
+rotation 0.000000 0.000000 0.000000 1.000000 
+endObj
+beginObj
+filename obj/sunball.eob
+translation -12.705261 12.744261 8.352551
+rotation 0.000000 0.000000 0.000000 1.000000 
+endObj
+beginObj
+filename obj/plane.eob
+translation -80.000000 -3.500000 -80.000000
+rotation 0.000000 0.000000 0.000000 1.000000 
+endObj
+beginObj
+filename obj/tree.eob
+translation -70.000000 -3.500000 -70.000000
+rotation 0.000000 0.000000 0.000000 1.000000 
+endObj
+beginObj
+filename obj/wall.eob
+translation -85.000000 -3.500000 -85.000000
+rotation 0.000000 0.000000 0.000000 1.000000 
+endObj
+beginObj
+filename obj/wall.eob
+translation -60.000000 -7.500000 -85.000000
+rotation 0.000000 0.000000 0.000000 1.000000 
+endObj
+beginObj
+filename obj/wall.eob
+translation 23.008411 12.744261 1.152161
+rotation 0.316199 0.335709 0.120756 0.879054 
+endObj
+beginObj
+filename obj/sunball.eob
+translation 5.541406 0.000000 0.000000
+rotation 0.000000 0.000000 0.000000 1.000000 
+endObj
