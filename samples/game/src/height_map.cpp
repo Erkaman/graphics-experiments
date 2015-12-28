@@ -491,8 +491,8 @@ void HeightMap::CreateSplatMap(const std::string& splatMapFilename ) {
     Random random(3);
 
     SplatColor def; // default splat color.
-    def.r = 255;
-    def.g = 0;
+    def.r = 0;
+    def.g = 255;
     def.b = 0;
     def.a = 0;
 
@@ -623,7 +623,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 
 	c.id = (float)id++;
 
-	c.texCoord = Vector2f(x,z) ;;
+	c.texCoord = Vector2f(x,z) *0.07;;
 
 	++xpos;
 	if(xpos != 0 && ( xpos % (width) == 0)) {
@@ -1163,3 +1163,10 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 }
 
 //btHeightfieldTerrainShape
+/*
+    also, fix texture drawing!
+tomorrow, we will figure out(or simply implement) how to set noise scale.
+
+    next, make an actual dirt texture.
+    then an asphalt texture.
+*/
