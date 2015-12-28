@@ -35,27 +35,12 @@ m_rand {
 
 float ValueNoise::Sample(const Vector2f& p)const {
 
-//    LOG_I("p: %s", std::string(p).c_str());
-
-
-
     const Vector2f P =
 	Vector2f( (float)(Floor(p.x) % 256), (float)(Floor(p.y) % 256) );
-	
-//      LOG_I("P: %s", std::string(P).c_str());
-
-//    p -= floor(p);
 
     const Vector2f f = Fade(
 	p.x - Floor(p.x),
 	p.y - Floor(p.y));
-
-//    LOG_I("f: %s", std::string(f).c_str());
-
-
-    //   LOG_I("f m: %f", p.y - Floor(p.y) );
-
-
 
     const int A = GetPerm((int)P.x) +(int) P.y;
     const int AA = GetPerm(A);
@@ -64,12 +49,6 @@ float ValueNoise::Sample(const Vector2f& p)const {
     const int BA = GetPerm(B);
     const int BB = GetPerm(B + 1);
 
-//    LOG_I("AB : %d %d %d %d", AA,AB,BA,BB);
-
-
-    // put AA, AB, BA, BB in texture. 256x256 texture.
-
-    // put random integer in range [0,1] in 256x1 texture
 
 /*
     return mix(
@@ -80,10 +59,8 @@ float ValueNoise::Sample(const Vector2f& p)const {
 	f.z);
 */
 
-//    LOG_I("rand : %f",GetRand(AA) );
-
-
-    return Lerp(Lerp(GetRand(AA), GetRand(BA), f.x), Lerp(GetRand(AB), GetRand(BB), f.x), f.y);
+    return
+	Lerp(Lerp(GetRand(AA), GetRand(BA), f.x), Lerp(GetRand(AB), GetRand(BB), f.x), f.y);
 }
 
 int ValueNoise::GetPerm(int i)const {

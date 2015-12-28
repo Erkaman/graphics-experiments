@@ -26,7 +26,7 @@
 
 #include "gui_enum.hpp"
 #include "ewa/physics_world.hpp"
-
+#include "ewa/value_noise.hpp"
 
 #include <vector>
 
@@ -78,6 +78,8 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_xzScale = 100.0f;
     m_yScale = 8.0f;
     m_resolution = 256;
+
+    m_noise = new ValueNoise(2);
 
 
     // position the heightfield so that it is centered at the origin:
@@ -621,7 +623,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 
 	c.id = (float)id++;
 
-	c.texCoord = Vector2f(x,z);
+	c.texCoord = Vector2f(x,z) * 0.2;;
 
 	++xpos;
 	if(xpos != 0 && ( xpos % (width) == 0)) {
@@ -758,6 +760,78 @@ void HeightMap::UpdateCursor(ICamera* camera,
     }
 }
 
+
+
+void HeightMap::DistortTerrain(const float delta, const float strength) {
+
+    static float total = 0;
+
+    total += delta;
+
+    MultArray<unsigned short>& heightData = *m_heightData;
+
+    int cx = m_cursorPosition.x;
+    int cz = m_cursorPosition.y;
+
+    float fade_rad = m_cursorSize-5;
+    float rad = m_cursorSize;
+
+    if(total > 0.05) {
+
+	total = 0;
+
+	for(int ix = -rad; ix <= +rad; ++ix) {
+
+	    for(int iz = -rad; iz <= +rad; ++iz) {
+
+		// distance from center of hill.
+		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
+
+		// if within the radius of the hill(this ensures that the hill is round)
+		if(dist <= rad) {
+
+		    // y is some value  [-1,1]
+		    float y = m_noise->Turbulence(
+			7,
+			0.04f* Vector2f(cx+ix,cz+iz),
+			2.0f,
+			0.5f);
+
+		    // maximum height of the hill
+		    float maxHeight =y * (float)(MAX_HEIGHT-MID_HEIGHT);
+
+		    /*
+		      Note that cx and cz describe the center position of the hill.
+		    */
+
+		    // if we hold down the mouse for 30 frames, the hill will reach its maximum height
+		    float increment = maxHeight * strength; //
+
+		    if(heightData(cx+ix,cz+iz) + increment > MAX_HEIGHT) {
+			heightData(cx+ix,cz+iz) = MAX_HEIGHT;
+		    } else if(heightData(cx+ix,cz+iz) + increment < MIN_HEIGHT) {
+			heightData(cx+ix,cz+iz) = MIN_HEIGHT;
+		    } else {
+			heightData(cx+ix,cz+iz) += increment;
+		    }
+
+		}
+
+
+	    } // end for
+	} // end for
+
+	m_heightMap->Bind();
+
+	//TODO: methods better exist:
+	// http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
+	m_heightMap->UpdateTexture(heightData.GetData());
+
+	m_heightMap->Unbind();
+    }
+}
+
+
 void HeightMap::ModifyTerrain(const float delta, const float strength) {
 
     static float total = 0;
@@ -812,12 +886,8 @@ void HeightMap::ModifyTerrain(const float delta, const float strength) {
 		    float increment = maxHeight * strength; //
 
 		    if(heightData(cx+ix,cz+iz) + increment > MAX_HEIGHT) {
-			// clamp the hill height so that it does not exceed the maximum height of the
-			// height map.
 			heightData(cx+ix,cz+iz) = MAX_HEIGHT;
 		    } else if(heightData(cx+ix,cz+iz) + increment < MIN_HEIGHT) {
-			// clamp the hill height so that it does not exceed the maximum height of the
-			// height map.
 			heightData(cx+ix,cz+iz) = MIN_HEIGHT;
 		    } else {
 			heightData(cx+ix,cz+iz) += increment;

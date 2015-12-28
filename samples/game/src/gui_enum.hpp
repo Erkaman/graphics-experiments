@@ -6,8 +6,14 @@ enum GuiMode {
     ModifyTerrainMode,
     DrawTextureMode,
     ModelMode
-
 };
+
+enum TerrainMode {
+    ModifyElevationMode,
+    DistortMode
+};
+
+
 
 // if in DrawTextureMode, specify which texture we are currently drawing.
 enum DrawTextureType {

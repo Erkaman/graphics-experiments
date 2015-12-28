@@ -18,6 +18,7 @@ class ShaderProgra;
 class Config;
 class ICamera;
 class PhysicsWorld;
+class ValueNoise;
 
 // the data associated with every triangle in the heightmap mesh.
 struct Cell {
@@ -77,6 +78,8 @@ private:
 
     int m_cursorSize;
 
+    ValueNoise* m_noise;
+
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);
@@ -126,6 +129,7 @@ public:
 		const float framebufferHeight);
 
     void ModifyTerrain(const float delta, const float strength);
+    void DistortTerrain(const float delta, const float strength);
     void DrawTexture(const float delta, int drawTextureType);
 
     void SaveHeightMap(const std::string& filename);

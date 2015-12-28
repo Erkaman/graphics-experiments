@@ -432,6 +432,8 @@ Gui::Gui(GLFWwindow* window) {
     m_cursorSize = DEFAULT_RADIUS;
     m_strength = 10;
 
+    m_terrainMode = ModifyElevationMode;
+
     // init gui:
     if(ImGui_ImplGlfwGL3_Init(window, true)) {
 	LOG_I("IMGUI initialization succeeded");
@@ -472,12 +474,19 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
     ImGui::SetWindowPos(ImVec2(0,0) );
 
+    ImGui::Text("Global mode:");
 
     ImGui::RadioButton("MT", &m_guiMode, ModifyTerrainMode); ImGui::SameLine();
     ImGui::RadioButton("DT", &m_guiMode, DrawTextureMode);  ImGui::SameLine();
     ImGui::RadioButton("M", &m_guiMode, ModelMode);
 
     if(m_guiMode == ModifyTerrainMode) {
+
+	ImGui::Text("Local mode:");
+
+	ImGui::RadioButton("ME", &m_terrainMode, ModifyElevationMode); ImGui::SameLine();
+	ImGui::RadioButton("D", &m_terrainMode, DistortMode);
+
 
 	int oldCursorSize = m_cursorSize;
 
@@ -729,6 +738,10 @@ void Gui::SetCursorSize(int cursorSize) {
 
 }
 
-float Gui::GetStrength() {
+float Gui::GetStrength()const {
     return 1.0f / (40.0 - m_strength);
+}
+
+int Gui::GetTerrainMode()const {
+    return m_terrainMode;
 }

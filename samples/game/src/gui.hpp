@@ -14,6 +14,7 @@ private:
     int m_drawTextureType;
     int m_inputMode;
     int m_axisMode;
+    int m_terrainMode;
 
     Vector3f m_translation;
     Vector3f m_rotation; // describes the rotation in euler angles.
@@ -47,6 +48,9 @@ public:
     int GetCursorSize()const;
     void SetCursorSize(int cursorSize);
 
-    float GetStrength();
+    float GetStrength()const;
+
+
+    int GetTerrainMode()const;
 
 };

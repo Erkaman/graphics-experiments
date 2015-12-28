@@ -584,9 +584,6 @@ void TuhuApplication::Update(const float delta) {
       }
     */
 
-
-
-
     if( kbs.WasPressed(GLFW_KEY_6)/* && !m_gui*/ ) {
 	StartPhysics();
     }
@@ -599,13 +596,17 @@ void TuhuApplication::Update(const float delta) {
 
 	    if(ms.IsPressed(GLFW_MOUSE_BUTTON_1 )) {
 
-		m_heightMap->ModifyTerrain(delta, +m_gui->GetStrength()  );
-
+		if(m_gui->GetTerrainMode() == ModifyElevationMode)
+		    m_heightMap->ModifyTerrain(delta, +m_gui->GetStrength()  );
+		else {
+		    m_heightMap->DistortTerrain(delta, +m_gui->GetStrength()  );
+		}
 	    }
 
-
 	    if(ms.IsPressed(GLFW_MOUSE_BUTTON_2 )) {
-		m_heightMap->ModifyTerrain(delta, -m_gui->GetStrength() );
+
+		if(m_gui->GetTerrainMode() == ModifyElevationMode)
+		    m_heightMap->ModifyTerrain(delta, -m_gui->GetStrength() );
 	    }
 
 	} else if(m_gui->GetGuiMode() == DrawTextureMode) {
