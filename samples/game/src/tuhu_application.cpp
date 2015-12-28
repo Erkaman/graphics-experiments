@@ -610,7 +610,11 @@ void TuhuApplication::Update(const float delta) {
 	    }
 
 	} else if(m_gui->GetGuiMode() == DrawTextureMode) {
-	    m_heightMap->DrawTexture(delta, m_gui->GetDrawTextureType() );
+
+
+	    if(ms.IsPressed(GLFW_MOUSE_BUTTON_1 )) {
+		m_heightMap->DrawTexture(delta, m_gui->GetDrawTextureType() );
+	    }
 	}
     }
 

@@ -623,7 +623,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 
 	c.id = (float)id++;
 
-	c.texCoord = Vector2f(x,z) * 0.2;;
+	c.texCoord = Vector2f(x,z) ;;
 
 	++xpos;
 	if(xpos != 0 && ( xpos % (width) == 0)) {
@@ -784,6 +784,16 @@ void HeightMap::DistortTerrain(const float delta, const float strength) {
 
 	    for(int iz = -rad; iz <= +rad; ++iz) {
 
+		int ax = cx+ix;
+		int az = cz+iz;
+
+		if(
+		    ax < 0 || ax >= m_resolution ||
+		    az < 0 || az >= m_resolution) {
+		    continue; // out of range.
+		}
+
+
 		// distance from center of hill.
 		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
@@ -807,12 +817,12 @@ void HeightMap::DistortTerrain(const float delta, const float strength) {
 		    // if we hold down the mouse for 30 frames, the hill will reach its maximum height
 		    float increment = maxHeight * strength; //
 
-		    if(heightData(cx+ix,cz+iz) + increment > MAX_HEIGHT) {
-			heightData(cx+ix,cz+iz) = MAX_HEIGHT;
-		    } else if(heightData(cx+ix,cz+iz) + increment < MIN_HEIGHT) {
-			heightData(cx+ix,cz+iz) = MIN_HEIGHT;
+		    if(heightData(ax,az) + increment > MAX_HEIGHT) {
+			heightData(ax,az) = MAX_HEIGHT;
+		    } else if(heightData(ax,az) + increment < MIN_HEIGHT) {
+			heightData(ax,az) = MIN_HEIGHT;
 		    } else {
-			heightData(cx+ix,cz+iz) += increment;
+			heightData(ax,az) += increment;
 		    }
 
 		}
