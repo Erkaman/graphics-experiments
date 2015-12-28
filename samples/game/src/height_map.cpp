@@ -76,7 +76,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_cursorPosition = Vector2i(0,0);
     m_cursorPositionWasUpdated = true;
     m_xzScale = 100.0f;
-    m_yScale = 4.0f;
+    m_yScale = 8.0f;
     m_resolution = 256;
 
 
@@ -103,8 +103,16 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
 
     CreateSplatMap(splatMapFilename);
 
-    CreateCursor();
 
+    SetCursorSize(35);
+}
+
+
+void HeightMap::SetCursorSize(int cursorSize) {
+
+    m_cursorSize = cursorSize;
+
+    CreateCursor();
 
 }
 
@@ -131,7 +139,7 @@ HeightMap::~HeightMap() {
 void HeightMap::CreateCursor() {
     vector<Vector3f> points;
 
-    const float rad = 35;
+    const float rad = m_cursorSize;
 
     for(int ix = -rad; ix <= +rad; ++ix) {
 
@@ -559,7 +567,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 
 	    for(size_t j = 0; j < depth; ++j) {
 
-		heightData(j,i) = MIN_HEIGHT;
+		heightData(j,i) = MID_HEIGHT;
 	    }
 	}
 
@@ -746,17 +754,11 @@ void HeightMap::UpdateCursor(ICamera* camera,
 	    } else {
 	    }
 
-
-
-
 	}
     }
 }
 
-
-
-
-void HeightMap::ModifyTerrain(const float delta) {
+void HeightMap::ModifyTerrain(const float delta, const float strength) {
 
     static float total = 0;
 
@@ -767,8 +769,8 @@ void HeightMap::ModifyTerrain(const float delta) {
     int cx = m_cursorPosition.x;
     int cz = m_cursorPosition.y;
 
-    float fade_rad = 30;
-    float rad = 35;
+    float fade_rad = m_cursorSize-5;
+    float rad = m_cursorSize;
 
     if(total > 0.05) {
 
@@ -798,27 +800,28 @@ void HeightMap::ModifyTerrain(const float delta) {
 			y *=  (1.0f- x2*x2  );
 		    }
 
+
 		    // maximum height of the hill
-		    float maxHeight =y * (float)MAX_HEIGHT;
+		    float maxHeight =y * (float)(MAX_HEIGHT-MID_HEIGHT);
 
 		    /*
 		      Note that cx and cz describe the center position of the hill.
-		     */
+		    */
 
-		    if( heightData(cx+ix,cz+iz) < (float)MAX_HEIGHT) { // do not exceed the maximum height
+		    // if we hold down the mouse for 30 frames, the hill will reach its maximum height
+		    float increment = maxHeight * strength; //
 
-			// if we hold down the mouse for 30 frames, the hill will reach its maximum height
-			float increment = maxHeight  / 30.0;
-
-			if(heightData(cx+ix,cz+iz) + increment > MAX_HEIGHT) {
-			    // clamp the hill height so that it does not exceed the maximum height of the
-			    // height map.
-			    heightData(cx+ix,cz+iz) = MAX_HEIGHT;
-			} else {
-			    heightData(cx+ix,cz+iz) += increment;
-			}
+		    if(heightData(cx+ix,cz+iz) + increment > MAX_HEIGHT) {
+			// clamp the hill height so that it does not exceed the maximum height of the
+			// height map.
+			heightData(cx+ix,cz+iz) = MAX_HEIGHT;
+		    } else if(heightData(cx+ix,cz+iz) + increment < MIN_HEIGHT) {
+			// clamp the hill height so that it does not exceed the maximum height of the
+			// height map.
+			heightData(cx+ix,cz+iz) = MIN_HEIGHT;
+		    } else {
+			heightData(cx+ix,cz+iz) += increment;
 		    }
-
 
 		}
 
@@ -840,7 +843,7 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 
     MultArray<SplatColor>& splatData = *m_splatData;
 
-    float rad = 35;
+    float rad = m_cursorSize;
 
     float fadeRad = 30;
 

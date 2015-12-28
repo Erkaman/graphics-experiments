@@ -116,7 +116,12 @@ public:
     void RenderId();
 
 
+    /*
+      Implementation of GuiListener
+     */
     virtual void TranslationAccepted();
     virtual void RotationAccepted();
     virtual void ModelAdded(const std::string& filename);
+    virtual void CursorSizeChanged();
+
 };

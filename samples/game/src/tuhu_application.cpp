@@ -110,7 +110,7 @@ void TuhuApplication::Init() {
     m_totalDelta = 0;
 
     // NOTE: we can fix the shadows by setting trans to (0,0,0).
-    Vector3f trans = Vector3f(-80,-1,-80);
+    Vector3f trans = Vector3f(-80,5,-80);
 
     m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
     m_smoke->Init();
@@ -188,6 +188,8 @@ void TuhuApplication::Init() {
 
 
     }
+
+    m_heightMap->SetCursorSize(m_gui->GetCursorSize());
 
 
     m_depthFbo = new DepthFBO();
@@ -589,34 +591,30 @@ void TuhuApplication::Update(const float delta) {
 	StartPhysics();
     }
 
-    if(ms.IsPressed(GLFW_MOUSE_BUTTON_1 )) {
+    const float inc = 30;
 
-	if(GuiMouseState::isWithinWindow()) {
-	    // remap the mouse position to the game framebuffer:
+    if(GuiMouseState::isWithinWindow()) {
 
+	if(m_gui->GetGuiMode() == ModifyTerrainMode) {
 
-	    if(m_gui->GetGuiMode() == ModifyTerrainMode) {
+	    if(ms.IsPressed(GLFW_MOUSE_BUTTON_1 )) {
 
-		m_heightMap->ModifyTerrain(delta);
+		m_heightMap->ModifyTerrain(delta, +m_gui->GetStrength()  );
 
-	    } else if(m_gui->GetGuiMode() == DrawTextureMode) {
-		m_heightMap->DrawTexture(delta, m_gui->GetDrawTextureType() );
-
-	    } else {
 	    }
 
-/*		float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
-		float x = GuiMouseState::GetX();
 
-//		LOG_I("mouse: %f, %f", x, y);
+	    if(ms.IsPressed(GLFW_MOUSE_BUTTON_2 )) {
+		m_heightMap->ModifyTerrain(delta, -m_gui->GetStrength() );
+	    }
 
-PixelInfo pi = m_pickingFbo->ReadPixel(x,y);
-*/
-//		LOG_I("triangle: %f", pi.unused1);
-	} else {
-//	    LOG_I("IGNORE");
+	} else if(m_gui->GetGuiMode() == DrawTextureMode) {
+	    m_heightMap->DrawTexture(delta, m_gui->GetDrawTextureType() );
+
 	}
     }
+
+
 
     if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 )) {
 
@@ -829,4 +827,8 @@ void TuhuApplication::RotationAccepted() {
 
 void TuhuApplication::ModelAdded(const std::string& filename) {
     m_selected = LoadObj(filename, Vector3f(0,0,0) );
+}
+
+void TuhuApplication::CursorSizeChanged() {
+    m_heightMap->SetCursorSize(m_gui->GetCursorSize());
 }

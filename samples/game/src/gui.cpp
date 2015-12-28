@@ -19,12 +19,21 @@
 
 #include <stdio.h>
 
+float deltaScroll;
+
 #ifdef _WIN32
 #undef APIENTRY
 #define GLFW_EXPOSE_NATIVE_WIN32
 #define GLFW_EXPOSE_NATIVE_WGL
 #include <GLFW/glfw3native.h>
 #endif
+
+
+constexpr int MIN_CURSOR_SIZE = 10;
+constexpr int MAX_CURSOR_SIZE = 40;
+constexpr int DEFAULT_RADIUS = 35;
+
+
 
 // Data
 static GLFWwindow*  g_Window = NULL;
@@ -149,6 +158,10 @@ void ImGui_ImplGlfwGL3_MouseButtonCallback(GLFWwindow*, int button, int action, 
 
 void ImGui_ImplGlfwGL3_ScrollCallback(GLFWwindow*, double /*xoffset*/, double yoffset)
 {
+
+    deltaScroll = (float)yoffset;
+
+
     g_MouseWheel += (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
 }
 
@@ -416,6 +429,8 @@ Gui::Gui(GLFWwindow* window) {
     m_axisMode = NoneAxis;
     m_translation = Vector3f(0);
     m_rotation = Vector3f(0);
+    m_cursorSize = DEFAULT_RADIUS;
+    m_strength = 10;
 
     // init gui:
     if(ImGui_ImplGlfwGL3_Init(window, true)) {
@@ -463,8 +478,16 @@ void Gui::Render(int windowWidth, int windowHeight) {
     ImGui::RadioButton("M", &m_guiMode, ModelMode);
 
     if(m_guiMode == ModifyTerrainMode) {
-	ImGui::Text("Radius:");
-	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+	int oldCursorSize = m_cursorSize;
+
+	ImGui::SliderInt("Radius", &m_cursorSize, MIN_CURSOR_SIZE, MAX_CURSOR_SIZE);
+	if(oldCursorSize != m_cursorSize) {
+	    SetCursorSize(m_cursorSize);
+	}
+
+	ImGui::SliderInt("Strength", &m_strength, 1, 35);
+
     } else if(m_guiMode == DrawTextureMode) {
 
 	ImGui::Text("Radius2:");
@@ -658,7 +681,16 @@ void Gui::Update() {
 		}
 	    }
 	}
+    } else if(m_guiMode == ModifyTerrainMode) {
+
+	float diff = deltaScroll;
+
+	SetCursorSize( GetCursorSize() - 1.5 * diff  );
+
+	deltaScroll = 0;
+
     }
+
 }
 
 Vector3f Gui::GetTranslation()const {
@@ -671,4 +703,32 @@ Vector3f Gui::GetRotation()const {
 
 void Gui::AddListener(GuiListener* listener) {
     m_listeners.push_back(listener);
+}
+
+
+int Gui::GetCursorSize()const {
+    return m_cursorSize;
+}
+
+
+void Gui::SetCursorSize(int cursorSize) {
+
+    if(cursorSize < MIN_CURSOR_SIZE) {
+	cursorSize = MIN_CURSOR_SIZE;
+    }
+
+    if(cursorSize > MAX_CURSOR_SIZE) {
+	cursorSize = MAX_CURSOR_SIZE;
+    }
+
+    m_cursorSize = cursorSize;
+
+    for(GuiListener* listener : m_listeners) {
+	listener->CursorSizeChanged();
+    }
+
+}
+
+float Gui::GetStrength() {
+    return 1.0f / (40.0 - m_strength);
 }

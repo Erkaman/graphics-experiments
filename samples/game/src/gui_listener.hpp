@@ -10,4 +10,6 @@ public:
 
     virtual void ModelAdded(const std::string& filename)=0;
 
+    virtual void CursorSizeChanged()=0;
+
 };

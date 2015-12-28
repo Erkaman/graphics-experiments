@@ -3,6 +3,9 @@
 #include "gl/gl_common.hpp"
 #include "log.hpp"
 
+void ScrollCallback(GLFWwindow*, double /*xoffset*/, double yoffset)
+{
+}
 
 MouseState::MouseState():m_previousX(0), m_previousY(0) {
 
@@ -66,5 +69,6 @@ float MouseState::GetY() const {
 }
 
 void MouseState::Init(GLFWwindow* window) {
+
     m_window = window;
 }

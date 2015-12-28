@@ -22,6 +22,9 @@ private:
 
     void ResetModelMode();
 
+    int m_cursorSize;
+    int m_strength;
+
 public:
 
     Gui(GLFWwindow* window);
@@ -40,5 +43,10 @@ public:
     Vector3f GetRotation()const;
 
     void AddListener(GuiListener* listener);
+
+    int GetCursorSize()const;
+    void SetCursorSize(int cursorSize);
+
+    float GetStrength();
 
 };

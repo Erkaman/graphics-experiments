@@ -75,6 +75,8 @@ private:
     float m_yScale;
     size_t m_resolution;
 
+    int m_cursorSize;
+
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);
@@ -123,14 +125,16 @@ public:
 		const float framebufferWidth,
 		const float framebufferHeight);
 
-    void ModifyTerrain(const float delta);
+    void ModifyTerrain(const float delta, const float strength);
     void DrawTexture(const float delta, int drawTextureType);
 
     void SaveHeightMap(const std::string& filename);
     void SaveSplatMap(const std::string& filename);
 
 
+
     void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
 
+    void SetCursorSize(int cursorSize);
 
 };
