@@ -127,10 +127,11 @@ HeightMap::~HeightMap() {
     MY_DELETE(m_map)
 }
 
+
 void HeightMap::CreateCursor() {
     vector<Vector3f> points;
 
-    const int rad = 35;
+    const float rad = 35;
 
     for(int ix = -rad; ix <= +rad; ++ix) {
 
@@ -138,7 +139,7 @@ void HeightMap::CreateCursor() {
 
 	    float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
-	    if(dist <= rad) {
+	    if((dist-0.1) <= rad) {
 		points.push_back(Vector3f((float)ix / (float)m_resolution, 0, (float)iz / (float)m_resolution));
 	    }
 	}
@@ -276,11 +277,11 @@ void HeightMap::RenderCursor(const ICamera* camera) {
     glPointSize(7.0);
 
     RenderSetup(m_cursorShader);
-/*
+
     m_cursorVertexBuffer->EnableVertexAttribInterleaved();
     m_cursorVertexBuffer->DrawVertices(GL_POINTS, m_numCursorPoints);
     m_cursorVertexBuffer->DisableVertexAttribInterleaved();
-*/
+
 
     RenderUnsetup();
 
@@ -764,12 +765,10 @@ void HeightMap::ModifyTerrain(const float delta) {
 
     MultArray<unsigned short>& heightData = *m_heightData;
 
-
     int cx = m_cursorPosition.x;
     int cz = m_cursorPosition.y;
 
-
-    float rad = 35;
+    float rad = 30;
 
     if(total > 0.05) {
 
@@ -790,8 +789,35 @@ void HeightMap::ModifyTerrain(const float delta) {
 		    // heightmap.
 		    // Note that we use "x*x" instead of "x", because this results in a
 		    // more round and natural-looking hill
-		    float x = dist / rad;
-		    float y = (1.0 - x*x);
+
+		    float y;
+/*		    if(dist >= 30) {
+
+			float x1 = 30.0f / rad;
+			float y1 = (1.0 - x1*x1);
+
+			float t = (35.0f - dist) / 5.0f;
+
+			y = (t) * y1 + (1.0-t) * 0.0f;
+
+
+
+
+			} else {*/
+
+			float x = dist / rad;
+			y = (1.0 - x*x);
+
+
+			if(dist > 15.0f) {
+
+			    y *=  (1.0f- (dist - 15.0f) / 15.0f);
+
+			    }
+
+			//}
+
+
 
 		    // maximum height of the hill
 		    float maxHeight =y * (float)MAX_HEIGHT;
@@ -953,7 +979,7 @@ void HeightMap::SaveHeightMap(const std::string& filename) {
 
     File::WriteArray(filename, data, m_resolution * m_resolution*2);
 
-//    m_heightMap->Write16ToFile(filename);
+    m_heightMap->Write16ToFile("height.png");
 }
 
 void HeightMap::SaveSplatMap(const std::string& filename) {
