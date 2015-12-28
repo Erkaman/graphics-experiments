@@ -276,11 +276,11 @@ void HeightMap::RenderCursor(const ICamera* camera) {
     glPointSize(7.0);
 
     RenderSetup(m_cursorShader);
-
+/*
     m_cursorVertexBuffer->EnableVertexAttribInterleaved();
     m_cursorVertexBuffer->DrawVertices(GL_POINTS, m_numCursorPoints);
     m_cursorVertexBuffer->DisableVertexAttribInterleaved();
-
+*/
 
     RenderUnsetup();
 
@@ -556,7 +556,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 
 	for(size_t i = 0; i < width; ++i) {
 
-	  
+
 	    for(size_t j = 0; j < depth; ++j) {
 
 		heightData(j,i) = MIN_HEIGHT;
@@ -674,7 +674,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 }
 
 float HeightMap::GetHeightAt(float, float)const {
-  
+
 
     return 0;
 }
@@ -762,18 +762,14 @@ void HeightMap::ModifyTerrain(const float delta) {
 
     total += delta;
 
-    MultArray<unsigned short>& image = *m_heightData;
+    MultArray<unsigned short>& heightData = *m_heightData;
 
-    float rad = 35;
 
     int cx = m_cursorPosition.x;
     int cz = m_cursorPosition.y;
 
 
-    float maxdist = rad;
-
-    static int istep = 0;
-    const int max_step = 30;
+    float rad = 35;
 
     if(total > 0.05) {
 
@@ -783,56 +779,55 @@ void HeightMap::ModifyTerrain(const float delta) {
 
 	    for(int iz = -rad; iz <= +rad; ++iz) {
 
+		// distance from center of hill.
 		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
+		// if within the radius of the hill(this ensures that the hill is round)
 		if(dist <= rad) {
 
-		    float x = dist / maxdist; // in range [0,1].
-
+		    // the farther we get from the center, the less we increase the height.
+		    // this effectively results in a radial gradient being added to the
+		    // heightmap.
+		    // Note that we use "x*x" instead of "x", because this results in a
+		    // more round and natural-looking hill
+		    float x = dist / rad;
 		    float y = (1.0 - x*x);
 
-		    if(y < 0) {
-			y = 0;
-		    }
+		    // maximum height of the hill
+		    float maxHeight =y * (float)MAX_HEIGHT;
 
-		    if(y > 1.0) {
-			y = 1.0;
-		    }
+		    /*
+		      Note that cx and cz describe the center position of the hill.
+		     */
 
-		    float max =y * (float)MAX_HEIGHT;
+		    if( heightData(cx+ix,cz+iz) < (float)MAX_HEIGHT) { // do not exceed the maximum height
 
-		    if( image(cx+ix,cz+iz) < (float)MAX_HEIGHT) {
+			// if we hold down the mouse for 30 frames, the hill will reach its maximum height
+			float increment = maxHeight  / 30.0;
 
-			float increment = max  / (max_step);
-
-
-			if(image(cx+ix,cz+iz) + increment > MAX_HEIGHT) {
-			    image(cx+ix,cz+iz) = MAX_HEIGHT;
-
+			if(heightData(cx+ix,cz+iz) + increment > MAX_HEIGHT) {
+			    // clamp the hill height so that it does not exceed the maximum height of the
+			    // height map.
+			    heightData(cx+ix,cz+iz) = MAX_HEIGHT;
 			} else {
-			image(cx+ix,cz+iz) += increment;
-
+			    heightData(cx+ix,cz+iz) += increment;
 			}
 		    }
 
-//		    istep = max_step+1;
-
-		    //	    if(image(cx+ix,cz+iz) >= 240) {
 
 		}
-//		}
-	    }
-	}
+
+
+	    } // end for
+	} // end for
 
 	m_heightMap->Bind();
 
 	//TODO: methods better exist:
 	// http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
-	m_heightMap->UpdateTexture(image.GetData());
+	m_heightMap->UpdateTexture(heightData.GetData());
 
 	m_heightMap->Unbind();
-
-	++istep;
     }
 }
 

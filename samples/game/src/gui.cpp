@@ -410,7 +410,7 @@ using std::string;
 
 Gui::Gui(GLFWwindow* window) {
 
-    m_guiMode = ModelMode;//ModifyTerrainMode;
+    m_guiMode = ModifyTerrainMode;
     m_drawTextureType = GrassTexture;
     m_inputMode = InputNoneMode;
     m_axisMode = NoneAxis;
@@ -539,7 +539,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
     }
 
-	
+
 
     ImGui::End();
 

@@ -63,7 +63,7 @@ void ToClipboard(const std::string& str) {
 }
 
 //(0.705072, 0.0758142, 0.705072)
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv), 
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv),
 m_curCamera(NULL), m_heightMap(NULL), m_skydome(NULL), m_gui(NULL), m_lightDirection (
 
     -0.705072f, -0.458142f, -0.705072f,
@@ -147,8 +147,8 @@ void TuhuApplication::Init() {
     if(!m_car)
 	PrintErrorExit();
     m_geoObjs.push_back(m_car);
-		
-    if(ResourceManager::GetInstance().PathExists(dir)) {
+
+    if(ResourceManager::GetInstance().PathExists(dir) && false) {
 
 	m_heightMap = new HeightMap(
 	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,
