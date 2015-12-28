@@ -585,7 +585,7 @@ void TuhuApplication::Update(const float delta) {
 
 
 
-    if( kbs.WasPressed(GLFW_KEY_6) && !m_gui ) {
+    if( kbs.WasPressed(GLFW_KEY_6)/* && !m_gui*/ ) {
 	StartPhysics();
     }
 

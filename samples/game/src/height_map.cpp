@@ -557,7 +557,6 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 
 	for(size_t i = 0; i < width; ++i) {
 
-
 	    for(size_t j = 0; j < depth; ++j) {
 
 		heightData(j,i) = MIN_HEIGHT;
@@ -768,7 +767,8 @@ void HeightMap::ModifyTerrain(const float delta) {
     int cx = m_cursorPosition.x;
     int cz = m_cursorPosition.y;
 
-    float rad = 30;
+    float fade_rad = 30;
+    float rad = 35;
 
     if(total > 0.05) {
 
@@ -789,35 +789,14 @@ void HeightMap::ModifyTerrain(const float delta) {
 		    // heightmap.
 		    // Note that we use "x*x" instead of "x", because this results in a
 		    // more round and natural-looking hill
-
 		    float y;
-/*		    if(dist >= 30) {
+		    float x = dist / rad;
+		    y = (1.0 - x*x);
 
-			float x1 = 30.0f / rad;
-			float y1 = (1.0 - x1*x1);
-
-			float t = (35.0f - dist) / 5.0f;
-
-			y = (t) * y1 + (1.0-t) * 0.0f;
-
-
-
-
-			} else {*/
-
-			float x = dist / rad;
-			y = (1.0 - x*x);
-
-
-			if(dist > 15.0f) {
-
-			    y *=  (1.0f- (dist - 15.0f) / 15.0f);
-
-			    }
-
-			//}
-
-
+		    if(dist > fade_rad) {
+			float x2 = (dist - fade_rad  ) /  (rad-fade_rad);
+			y *=  (1.0f- x2*x2  );
+		    }
 
 		    // maximum height of the hill
 		    float maxHeight =y * (float)MAX_HEIGHT;
