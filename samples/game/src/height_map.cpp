@@ -854,6 +854,15 @@ void HeightMap::ModifyTerrain(const float delta, const float strength) {
 
 	    for(int iz = -rad; iz <= +rad; ++iz) {
 
+		int ax = cx+ix;
+		int az = cz+iz;
+
+		if(
+		    ax < 0 || ax >= m_resolution ||
+		    az < 0 || az >= m_resolution) {
+		    continue; // out of range.
+		}
+
 		// distance from center of hill.
 		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
@@ -874,7 +883,6 @@ void HeightMap::ModifyTerrain(const float delta, const float strength) {
 			y *=  (1.0f- x2*x2  );
 		    }
 
-
 		    // maximum height of the hill
 		    float maxHeight =y * (float)(MAX_HEIGHT-MID_HEIGHT);
 
@@ -885,12 +893,12 @@ void HeightMap::ModifyTerrain(const float delta, const float strength) {
 		    // if we hold down the mouse for 30 frames, the hill will reach its maximum height
 		    float increment = maxHeight * strength; //
 
-		    if(heightData(cx+ix,cz+iz) + increment > MAX_HEIGHT) {
-			heightData(cx+ix,cz+iz) = MAX_HEIGHT;
-		    } else if(heightData(cx+ix,cz+iz) + increment < MIN_HEIGHT) {
-			heightData(cx+ix,cz+iz) = MIN_HEIGHT;
+		    if(heightData(ax,az) + increment > MAX_HEIGHT) {
+			heightData(ax,az) = MAX_HEIGHT;
+		    } else if(heightData(ax,az) + increment < MIN_HEIGHT) {
+			heightData(ax,az) = MIN_HEIGHT;
 		    } else {
-			heightData(cx+ix,cz+iz) += increment;
+			heightData(ax,az) += increment;
 		    }
 
 		}
@@ -986,7 +994,6 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 
 
 		    } else {
-
 
 			SplatColor& color =  splatData(px,pz);
 			color.r = 255;
