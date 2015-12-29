@@ -85,7 +85,7 @@ private:
 
     ValueNoise* m_noise;
 
-    unsigned int pboId;
+    unsigned int pboIds[2];
 
     // if true, update heightmap using FBO this frame.
     int m_updateHeightMap;

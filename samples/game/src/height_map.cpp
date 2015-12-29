@@ -105,8 +105,10 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
 	m_idShader = ShaderProgram::Load("shader/height_map_output_id");
 	m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
 
-        GL_C(glGenBuffersARB(1, &pboId));
-        GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER, pboId));
+        GL_C(glGenBuffersARB(2, pboIds));
+        GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER, pboIds[0]));
+        GL_C(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER,HEIGHT_MAP_SIZE,0, GL_STREAM_DRAW));
+        GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER, pboIds[1]));
         GL_C(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER,HEIGHT_MAP_SIZE,0, GL_STREAM_DRAW));
         GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER, 0));
 
@@ -1257,12 +1259,20 @@ bool HeightMap::InBounds(int x, int z) {
 
 
 void HeightMap::UpdateHeightMap() {
+
+    static int index = 0;
+    int nextIndex = 0;
+
     if(m_updateHeightMap > 0) {
+
+
+	index = (index + 1) % 2;
+	nextIndex = (index + 1) % 2;
 
 	m_heightMap->Bind();
 
 
-	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboId));
+	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboIds[index] ));
 
 	m_heightMap->UpdateTexture(0);
 
@@ -1272,11 +1282,8 @@ void HeightMap::UpdateHeightMap() {
 
 	m_heightMap->Unbind();
 
-
-
-
 	// bind PBO to update texture source
-	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboId));
+	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboIds[nextIndex] ));
 
 	GL_C(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, HEIGHT_MAP_SIZE, 0, GL_STREAM_DRAW_ARB));
 
@@ -1292,16 +1299,6 @@ void HeightMap::UpdateHeightMap() {
 
 	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
 
-
-
-
-
-
-
 	--m_updateHeightMap;
-
-//	m_updateHeightMap = false;
     }
-
-
 }
