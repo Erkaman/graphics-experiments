@@ -25,6 +25,7 @@ private:
 
     int m_cursorSize;
     int m_strength;
+    float m_noiseScale;
 
     void RadiusSlider();
 
@@ -55,4 +56,5 @@ public:
 
     int GetTerrainMode()const;
 
+    float GetNoiseScale()const;
 };

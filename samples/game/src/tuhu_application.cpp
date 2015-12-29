@@ -599,7 +599,7 @@ void TuhuApplication::Update(const float delta) {
 		if(m_gui->GetTerrainMode() == ModifyElevationMode)
 		    m_heightMap->ModifyTerrain(delta, +m_gui->GetStrength()  );
 		else {
-		    m_heightMap->DistortTerrain(delta, +m_gui->GetStrength()  );
+		    m_heightMap->DistortTerrain(delta, +m_gui->GetStrength(), m_gui->GetNoiseScale()  );
 		}
 	    }
 

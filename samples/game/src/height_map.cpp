@@ -763,7 +763,7 @@ void HeightMap::UpdateCursor(ICamera* camera,
 
 
 
-void HeightMap::DistortTerrain(const float delta, const float strength) {
+void HeightMap::DistortTerrain(const float delta, const float strength, float noiseScale) {
 
     static float total = 0;
 
@@ -804,7 +804,7 @@ void HeightMap::DistortTerrain(const float delta, const float strength) {
 		    // y is some value  [-1,1]
 		    float y = m_noise->Turbulence(
 			7,
-			0.04f* Vector2f(cx+ix,cz+iz),
+			noiseScale* Vector2f(cx+ix,cz+iz),
 			2.0f,
 			0.5f);
 

@@ -130,7 +130,7 @@ public:
 		const float framebufferHeight);
 
     void ModifyTerrain(const float delta, const float strength);
-    void DistortTerrain(const float delta, const float strength);
+    void DistortTerrain(const float delta, const float strength, float noiseScale);
     void DrawTexture(const float delta, int drawTextureType);
 
     void SaveHeightMap(const std::string& filename);

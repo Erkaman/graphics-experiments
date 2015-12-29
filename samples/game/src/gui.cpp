@@ -33,6 +33,9 @@ constexpr int MIN_CURSOR_SIZE = 10;
 constexpr int MAX_CURSOR_SIZE = 40;
 constexpr int DEFAULT_RADIUS = 35;
 
+constexpr float MIN_NOISE_SCALE = 0.004;
+constexpr float MAX_NOISE_SCALE = 0.1;
+constexpr float DEFAULT_NOISE_SCALE = 0.04;
 
 
 // Data
@@ -431,6 +434,7 @@ Gui::Gui(GLFWwindow* window) {
     m_rotation = Vector3f(0);
     m_cursorSize = DEFAULT_RADIUS;
     m_strength = 10;
+    m_noiseScale = DEFAULT_NOISE_SCALE;
 
     m_terrainMode = ModifyElevationMode;
 
@@ -499,6 +503,9 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 
 	ImGui::SliderInt("Strength", &m_strength, 1, 35);
+
+	ImGui::SliderFloat("Noise Scale", &m_noiseScale, MIN_NOISE_SCALE, MAX_NOISE_SCALE);
+
 
     } else if(m_guiMode == DrawTextureMode) {
 
@@ -747,4 +754,9 @@ float Gui::GetStrength()const {
 
 int Gui::GetTerrainMode()const {
     return m_terrainMode;
+}
+
+
+float Gui::GetNoiseScale()const {
+    return m_noiseScale;
 }
