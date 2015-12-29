@@ -156,6 +156,8 @@ void TuhuApplication::Init() {
 
 	ParseObjs(File::AppendPaths(dir, OBJS_FILENAME ));
 
+	LOG_I("loaded heightmap");
+
 
     } else {
 
@@ -185,11 +187,10 @@ void TuhuApplication::Init() {
 				 Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
 	    );
 
-
-
     }
 
-    m_heightMap->SetCursorSize(m_gui->GetCursorSize());
+    if(m_gui)
+	m_heightMap->SetCursorSize(m_gui->GetCursorSize());
 
 
     m_depthFbo = new DepthFBO();
@@ -200,6 +201,8 @@ void TuhuApplication::Init() {
     m_carCamera = new CarCamera(GetFramebufferWidth(),GetFramebufferHeight(),
 				m_car
 	);
+
+    LOG_I("added camera");
 
     if(m_gui) {
 	m_pickingFbo = new PickingFBO();
