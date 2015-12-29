@@ -75,6 +75,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_dirtTexture = NULL;
     m_tempData = NULL;
     m_heightMapPbo = NULL;
+    m_splatMapPbo = NULL;
     m_config = &Config::GetInstance();
     m_cursorPosition = Vector2i(0,0);
     m_cursorPositionWasUpdated = true;
@@ -83,6 +84,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_resolution = 512;
     m_textureScale = 0.07f;
     HEIGHT_MAP_SIZE = m_resolution * m_resolution * sizeof(unsigned short);
+    SPLAT_MAP_SIZE = m_resolution * m_resolution * sizeof(SplatColor);
 
 
     // position the heightfield so that it is centered at the origin:
@@ -114,6 +116,8 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
 
     if(guiMode) {
 	m_heightMapPbo = new PBO<unsigned short>(m_heightMap, m_heightData, HEIGHT_MAP_SIZE);
+	m_splatMapPbo = new PBO<SplatColor>(m_splatMap, m_splatData, SPLAT_MAP_SIZE);
+
     }
 
 }
@@ -1149,9 +1153,7 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 	    }
 	}
 
-	m_splatMap->Bind();
-	m_splatMap->UpdateTexture(splatData.GetData());
-	m_splatMap->Unbind();
+	m_splatMapPbo->RequestUpdate();
 
     } else {
 
@@ -1170,6 +1172,9 @@ void HeightMap::Update(const float delta, ICamera* camera,
 
     if(m_heightMapPbo)
 	m_heightMapPbo->Update();
+
+    if(m_splatMapPbo)
+	m_splatMapPbo->Update();
 }
 
 void HeightMap::SaveHeightMap(const std::string& filename) {
