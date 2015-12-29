@@ -1143,11 +1143,7 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 			color.g = 0;
 			color.b = 0;
 			color.a = 0;
-
-
 		    }
-
-
 
 		}
 	    }
