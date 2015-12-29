@@ -81,6 +81,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_resolution = 256;
     m_textureScale = 0.07f;
     HEIGHT_MAP_SIZE = m_resolution * m_resolution * sizeof(unsigned short);
+    m_updateHeightMap = 2;
 
     // position the heightfield so that it is centered at the origin:
     m_offset = Vector3f(-m_xzScale/2.0f,0,-m_xzScale/2.0f);
@@ -807,7 +808,7 @@ void HeightMap::DistortTerrain(const float delta, const float strength, float no
 	    } // end for
 	} // end for
 
-	UpdateHeightMap();
+	m_updateHeightMap = 2;
     }
 }
 
@@ -898,7 +899,7 @@ void HeightMap::SmoothTerrain(const float delta, const int smoothRadius) {
 	}
 
 
-	UpdateHeightMap();
+	m_updateHeightMap = 2;
 
     }
 
@@ -979,7 +980,7 @@ void HeightMap::ModifyTerrain(const float delta, const float strength) {
 	    } // end for
 	} // end for
 
-	UpdateHeightMap();
+	m_updateHeightMap = 2;
     }
 }
 
@@ -1045,7 +1046,7 @@ void HeightMap::LevelTerrain(const float delta, const float strength) {
 	    } // end for
 	} // end for
 
-	UpdateHeightMap();
+	m_updateHeightMap = 2;
     }
 }
 
@@ -1161,9 +1162,12 @@ void HeightMap::Update(const float delta, ICamera* camera,
 		       const float framebufferWidth,
 		       const float framebufferHeight) {
 
-    if(m_config->IsGui()) {
+    if(m_config->IsGui() && camera) {
 	UpdateCursor(camera,framebufferWidth, framebufferHeight);
     }
+
+    UpdateHeightMap();
+
 }
 
 void HeightMap::SaveHeightMap(const std::string& filename) {
@@ -1253,58 +1257,51 @@ bool HeightMap::InBounds(int x, int z) {
 
 
 void HeightMap::UpdateHeightMap() {
+    if(m_updateHeightMap > 0) {
 
-// bind PBO to update texture source
-    GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboId));
+	m_heightMap->Bind();
 
-// Note that glMapBufferARB() causes sync issue.
-// If GPU is working with this buffer, glMapBufferARB() will wait(stall)
-// until GPU to finish its job. To avoid waiting (idle), you can call
-// first glBufferDataARB() with NULL pointer before glMapBufferARB().
-// If you do that, the previous data in PBO will be discarded and
-// glMapBufferARB() returns a new allocated pointer immediately
-// even if GPU is still working with the previous data.
-    GL_C(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, HEIGHT_MAP_SIZE, 0, GL_STREAM_DRAW_ARB));
 
-// map the buffer object into client's memory
-    GLubyte* ptr = (GLubyte*)glMapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB,
-					    GL_WRITE_ONLY_ARB);
+	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboId));
 
-    if(ptr)
-    {
-	// update data directly on the mapped buffer
-//    updatePixels(ptr, DATA_SIZE);
+	m_heightMap->UpdateTexture(0);
 
-	memcpy(ptr, m_heightData->GetData(), HEIGHT_MAP_SIZE );
 
-//	LOG_I("ptr");
+	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
 
-	GL_C(glUnmapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB)); // release the mapped buffer
+
+	m_heightMap->Unbind();
+
+
+
+
+	// bind PBO to update texture source
+	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboId));
+
+	GL_C(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, HEIGHT_MAP_SIZE, 0, GL_STREAM_DRAW_ARB));
+
+	GLubyte* ptr = (GLubyte*)glMapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB,
+						GL_WRITE_ONLY_ARB);
+
+	if(ptr)
+	{
+	    memcpy(ptr, m_heightData->GetData(), HEIGHT_MAP_SIZE );
+
+	    GL_C(glUnmapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB)); // release the mapped buffer
+	}
+
+	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
+
+
+
+
+
+
+
+	--m_updateHeightMap;
+
+//	m_updateHeightMap = false;
     }
 
-// it is good idea to release PBOs with ID 0 after use.
-// Once bound with 0, all pixel operations are back to normal ways.
-    GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
-
-
-
-
-
-  m_heightMap->Bind();
-
-
-  GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboId));
-
-
-  m_heightMap->UpdateTexture(0);
-
-
-  //m_heightMap->UpdateTexture(m_heightData->GetData());
-
-
-  GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
-
-
-  m_heightMap->Unbind();
 
 }

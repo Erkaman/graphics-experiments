@@ -442,7 +442,7 @@ Gui::Gui(GLFWwindow* window) {
     m_noiseScale = DEFAULT_NOISE_SCALE;
     m_smoothRadius = DEFAULT_SMOOTH_RADIUS;
 
-    m_terrainMode = SmoothMode;
+    m_terrainMode = ModifyElevationMode;
 
     // init gui:
     if(ImGui_ImplGlfwGL3_Init(window, true)) {

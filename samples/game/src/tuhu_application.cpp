@@ -191,8 +191,14 @@ void TuhuApplication::Init() {
 
     }
 
-    if(m_gui)
+    if(m_gui) {
 	m_heightMap->SetCursorSize(m_gui->GetCursorSize());
+
+	// do a first update, in order to setup the PBOs
+	m_heightMap->Update(0, NULL, 0,0);
+	m_heightMap->Update(0, NULL, 0,0);
+
+    }
 
 
     m_depthFbo = new DepthFBO();
@@ -538,7 +544,6 @@ void TuhuApplication::Update(const float delta) {
 	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
 
 
-    m_heightMap->Update(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
 
     m_viewFrustum->Update( m_curCamera->GetVp() );
 
@@ -680,6 +685,9 @@ void TuhuApplication::Update(const float delta) {
 	}
 	m_curCamera->Update(0);
     }
+
+    m_heightMap->Update(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
+
 
 }
 

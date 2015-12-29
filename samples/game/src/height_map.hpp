@@ -87,6 +87,8 @@ private:
 
     unsigned int pboId;
 
+    // if true, update heightmap using FBO this frame.
+    int m_updateHeightMap;
 
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
