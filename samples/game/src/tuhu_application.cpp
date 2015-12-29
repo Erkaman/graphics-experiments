@@ -600,7 +600,7 @@ void TuhuApplication::Update(const float delta) {
 		    m_heightMap->DistortTerrain(delta, +m_gui->GetStrength(), m_gui->GetNoiseScale()  );
 		} else {
 
-		    m_heightMap->SmoothTerrain(delta);
+		    m_heightMap->SmoothTerrain(delta, m_gui->GetSmoothRadius() );
 		    // LOL
 		}
 	    }

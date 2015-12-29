@@ -136,7 +136,7 @@ public:
 
     void ModifyTerrain(const float delta, const float strength);
     void DistortTerrain(const float delta, const float strength, float noiseScale);
-    void SmoothTerrain(const float delta);
+    void SmoothTerrain(const float delta, const int smoothRadius);
 
     void DrawTexture(const float delta, int drawTextureType);
 

@@ -75,7 +75,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_cursorPosition = Vector2i(0,0);
     m_cursorPositionWasUpdated = true;
     m_xzScale = 100.0f;
-    m_yScale = 8.0f;
+    m_yScale = 18.0f;
     m_resolution = 256;
     m_textureScale = 0.07f;
 
@@ -848,7 +848,7 @@ void HeightMap::DistortTerrain(const float delta, const float strength, float no
     }
 }
 
-void HeightMap::SmoothTerrain(const float delta) {
+void HeightMap::SmoothTerrain(const float delta, const int smoothRadius) {
 
     static float total = 0;
 
@@ -888,7 +888,7 @@ void HeightMap::SmoothTerrain(const float delta) {
 		    int sum = 0;
 		    int num = 0;
 
-		    const int FILTER_RAD = 1;
+		    const int FILTER_RAD = smoothRadius;
 
 		    for(int mx = -FILTER_RAD; mx <= +FILTER_RAD; ++mx) {
 			for(int mz = -FILTER_RAD; mz <= +FILTER_RAD; ++mz) {

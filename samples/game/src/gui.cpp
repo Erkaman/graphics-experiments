@@ -37,6 +37,11 @@ constexpr float MIN_NOISE_SCALE = 0.004;
 constexpr float MAX_NOISE_SCALE = 0.1;
 constexpr float DEFAULT_NOISE_SCALE = 0.04;
 
+constexpr int MIN_SMOOTH_RADIUS = 1;
+constexpr int MAX_SMOOTH_RADIUS = 4;
+constexpr int DEFAULT_SMOOTH_RADIUS = 1;
+
+
 
 // Data
 static GLFWwindow*  g_Window = NULL;
@@ -435,6 +440,7 @@ Gui::Gui(GLFWwindow* window) {
     m_cursorSize = DEFAULT_RADIUS;
     m_strength = 10;
     m_noiseScale = DEFAULT_NOISE_SCALE;
+    m_smoothRadius = DEFAULT_SMOOTH_RADIUS;
 
     m_terrainMode = SmoothMode;
 
@@ -506,6 +512,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	ImGui::SliderInt("Strength", &m_strength, 1, 35);
 
 	ImGui::SliderFloat("Noise Scale", &m_noiseScale, MIN_NOISE_SCALE, MAX_NOISE_SCALE);
+	ImGui::SliderInt("Smooth Radius", &m_smoothRadius, MIN_SMOOTH_RADIUS, MAX_SMOOTH_RADIUS);
 
 
     } else if(m_guiMode == DrawTextureMode) {
@@ -760,4 +767,8 @@ int Gui::GetTerrainMode()const {
 
 float Gui::GetNoiseScale()const {
     return m_noiseScale;
+}
+
+int Gui::GetSmoothRadius()const {
+    return m_smoothRadius;
 }
