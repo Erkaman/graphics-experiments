@@ -603,7 +603,7 @@ void TuhuApplication::Update(const float delta) {
 		    m_heightMap->SmoothTerrain(delta, m_gui->GetSmoothRadius() );
 		} else {
 		    // flat.
-		    m_heightMap->FlattenTerrain(delta , m_gui->GetStrength());
+		    m_heightMap->LevelTerrain(delta , m_gui->GetStrength());
 		}
 	    }
 

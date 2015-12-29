@@ -12,7 +12,7 @@ enum TerrainMode {
     ModifyElevationMode,
     DistortMode,
     SmoothMode,
-    FlatMode
+    LevelMode
 
 };
 
