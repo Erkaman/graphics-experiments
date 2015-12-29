@@ -1027,7 +1027,7 @@ void HeightMap::ModifyTerrain(const float delta, const float strength) {
     }
 }
 
-void HeightMap::FlattenTerrain(const float delta) {
+void HeightMap::FlattenTerrain(const float delta, const float strength) {
 
     static float total = 0;
 
@@ -1061,7 +1061,7 @@ void HeightMap::FlattenTerrain(const float delta) {
 		// if within the radius of the hill(this ensures that the hill is round)
 		if(dist <= rad) {
 
-		    unsigned short INC = 400;
+		    unsigned short INC =strength * (float)(MAX_HEIGHT-MID_HEIGHT);
 
 		    unsigned short h = heightData(ax,az);
 
