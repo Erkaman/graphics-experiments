@@ -505,6 +505,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	ImGui::RadioButton("Elevation", &m_terrainMode, ModifyElevationMode);
 	ImGui::RadioButton("Distort", &m_terrainMode, DistortMode);
 	ImGui::RadioButton("Smooth", &m_terrainMode, SmoothMode);
+	ImGui::RadioButton("Flat", &m_terrainMode, FlatMode);
 
 	RadiusSlider();
 

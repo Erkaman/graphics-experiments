@@ -1027,6 +1027,77 @@ void HeightMap::ModifyTerrain(const float delta, const float strength) {
     }
 }
 
+void HeightMap::FlattenTerrain(const float delta) {
+
+    static float total = 0;
+
+    total += delta;
+
+    MultArray<unsigned short>& heightData = *m_heightData;
+
+    int cx = m_cursorPosition.x;
+    int cz = m_cursorPosition.y;
+
+    float rad = m_cursorSize;
+
+    if(total > 0.05) {
+
+	total = 0;
+
+	for(int ix = -rad; ix <= +rad; ++ix) {
+
+	    for(int iz = -rad; iz <= +rad; ++iz) {
+
+		int ax = cx+ix;
+		int az = cz+iz;
+
+		if(!InBounds(ax,az)) {
+		    continue; // out of range.
+		}
+
+		// distance from center of hill.
+		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
+
+		// if within the radius of the hill(this ensures that the hill is round)
+		if(dist <= rad) {
+
+		    unsigned short INC = 400;
+
+		    unsigned short h = heightData(ax,az);
+
+		    unsigned short newH;
+
+		    if(h == MID_HEIGHT) {
+			newH = MID_HEIGHT;
+		    } else if(abs(h - MID_HEIGHT) < INC ) {
+			newH = MID_HEIGHT;
+		    } else if(h < MID_HEIGHT) {
+			newH = h + INC;
+		    } else { // h > MID_HEIGHT
+			newH = h - INC;
+		    }
+
+		    heightData(ax,az) = newH;
+
+
+
+		}
+
+
+	    } // end for
+	} // end for
+
+	m_heightMap->Bind();
+
+	//TODO: methods better exist:
+	// http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
+	m_heightMap->UpdateTexture(heightData.GetData());
+
+	m_heightMap->Unbind();
+    }
+}
+
+
 void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 
     MultArray<SplatColor>& splatData = *m_splatData;

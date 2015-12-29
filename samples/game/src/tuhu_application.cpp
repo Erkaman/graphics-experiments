@@ -598,10 +598,12 @@ void TuhuApplication::Update(const float delta) {
 		    m_heightMap->ModifyTerrain(delta, +m_gui->GetStrength()  );
 		else if(m_gui->GetTerrainMode() == DistortMode){
 		    m_heightMap->DistortTerrain(delta, +m_gui->GetStrength(), m_gui->GetNoiseScale()  );
-		} else {
+		} else if(m_gui->GetTerrainMode() == SmoothMode) {
 
 		    m_heightMap->SmoothTerrain(delta, m_gui->GetSmoothRadius() );
-		    // LOL
+		} else {
+		    // flat.
+		    m_heightMap->FlattenTerrain(delta );
 		}
 	    }
 

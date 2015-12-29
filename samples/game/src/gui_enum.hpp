@@ -11,10 +11,10 @@ enum GuiMode {
 enum TerrainMode {
     ModifyElevationMode,
     DistortMode,
-    SmoothMode
+    SmoothMode,
+    FlatMode
+
 };
-
-
 
 // if in DrawTextureMode, specify which texture we are currently drawing.
 enum DrawTextureType {
