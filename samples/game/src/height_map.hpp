@@ -4,8 +4,12 @@
 #include "math/color.hpp"
 #include "math/vector4f.hpp"
 #include "math/vector2f.hpp"
+
 #include "ewa/mult_array.hpp"
 #include "math/vector2i.hpp"
+
+#include "ewa/gl/gl_common.hpp"
+#include "ewa/gl/texture2d.hpp"
 
 class VBO;
 class ShaderProgram;
@@ -13,12 +17,94 @@ class ICamera;
 class Texture;
 class PerlinSeed;
 class Texture;
-class Texture2D;
 class ShaderProgra;
 class Config;
 class ICamera;
 class PhysicsWorld;
 class ValueNoise;
+
+
+
+template<typename T>
+class PBO {
+private:
+    int m_updateCount; // how many more updates are necesssary.
+
+    Texture2D* m_texture;
+    MultArray<T> *m_textureData;
+    const int TEXTURE_SIZE;
+
+    unsigned int m_pboIds[2];
+
+public:
+    PBO(Texture2D* texture, MultArray<T> *textureData, const int textureSize):
+	TEXTURE_SIZE(textureSize){
+	m_texture = texture;
+	m_textureData = textureData;
+
+	RequestUpdate(); // need some initial updates to properly setup the PBOs
+
+        GL_C(glGenBuffers(2, m_pboIds));
+        GL_C(glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboIds[0]));
+        GL_C(glBufferData(GL_PIXEL_UNPACK_BUFFER,TEXTURE_SIZE,0, GL_STREAM_DRAW));
+        GL_C(glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboIds[1]));
+        GL_C(glBufferData(GL_PIXEL_UNPACK_BUFFER,TEXTURE_SIZE,0, GL_STREAM_DRAW));
+        GL_C(glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0));
+    }
+
+    ~PBO() {
+        glDeleteBuffers(2, m_pboIds);
+    }
+
+    void RequestUpdate() {
+	m_updateCount = 2;
+    }
+
+    void Update() {
+
+	static int index = 0;
+	int nextIndex = 0;
+
+	if(m_updateCount > 0) {
+
+	    index = (index + 1) % 2;
+	    nextIndex = (index + 1) % 2;
+
+	    m_texture->Bind();
+
+
+	    GL_C(glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboIds[index] ));
+
+	    m_texture->UpdateTexture(0);
+
+
+	    GL_C(glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0));
+
+	    m_texture->Unbind();
+
+	    // bind PBO to update texture source
+	    GL_C(glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboIds[nextIndex] ));
+
+	    GL_C(glBufferData(GL_PIXEL_UNPACK_BUFFER, TEXTURE_SIZE, 0, GL_STREAM_DRAW));
+
+	    GLubyte* ptr = (GLubyte*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER,
+						    GL_WRITE_ONLY);
+
+	    if(ptr) {
+		memcpy(ptr, m_textureData->GetData(), TEXTURE_SIZE );
+
+		GL_C(glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER)); // release the mapped buffer
+	    }
+
+	    GL_C(glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0));
+
+	    --m_updateCount;
+	}
+    }
+
+
+};
+
 
 // the data associated with every triangle in the heightmap mesh.
 struct Cell {
@@ -85,10 +171,7 @@ private:
 
     ValueNoise* m_noise;
 
-    unsigned int pboIds[2];
-
-    // if true, update heightmap using FBO this frame.
-    int m_updateHeightMap;
+    PBO<unsigned short>* m_heightMapPbo;
 
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
@@ -117,8 +200,6 @@ private:
     void Init(const std::string& heightMapFilename, const std::string& splatMapFilename, bool guiMode );
 
     bool InBounds(int x, int z);
-
-    void UpdateHeightMap();
 
 public:
 

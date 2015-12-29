@@ -43,6 +43,7 @@ constexpr unsigned short MID_HEIGHT = 32768;
 constexpr unsigned short MIN_HEIGHT = 0;
 
 
+
 static Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
 
@@ -81,12 +82,10 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_resolution = 256;
     m_textureScale = 0.07f;
     HEIGHT_MAP_SIZE = m_resolution * m_resolution * sizeof(unsigned short);
-    m_updateHeightMap = 2;
+
 
     // position the heightfield so that it is centered at the origin:
     m_offset = Vector3f(-m_xzScale/2.0f,0,-m_xzScale/2.0f);
-
-
 
 
     m_grassTexture = LoadTexture("img/grass.png");
@@ -105,18 +104,17 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
 	m_idShader = ShaderProgram::Load("shader/height_map_output_id");
 	m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
 
-        GL_C(glGenBuffersARB(2, pboIds));
-        GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER, pboIds[0]));
-        GL_C(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER,HEIGHT_MAP_SIZE,0, GL_STREAM_DRAW));
-        GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER, pboIds[1]));
-        GL_C(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER,HEIGHT_MAP_SIZE,0, GL_STREAM_DRAW));
-        GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER, 0));
 
     }
 
     CreateHeightmap(heightMapFilename, guiMode);
 
     CreateSplatMap(splatMapFilename, guiMode);
+
+    if(guiMode) {
+	m_heightMapPbo = new PBO<unsigned short>(m_heightMap, m_heightData, HEIGHT_MAP_SIZE);
+    }
+
 }
 
 void HeightMap::SetCursorSize(int cursorSize) {
@@ -810,7 +808,7 @@ void HeightMap::DistortTerrain(const float delta, const float strength, float no
 	    } // end for
 	} // end for
 
-	m_updateHeightMap = 2;
+	m_heightMapPbo->RequestUpdate();
     }
 }
 
@@ -900,8 +898,7 @@ void HeightMap::SmoothTerrain(const float delta, const int smoothRadius) {
 
 	}
 
-
-	m_updateHeightMap = 2;
+	m_heightMapPbo->RequestUpdate();
 
     }
 
@@ -982,7 +979,7 @@ void HeightMap::ModifyTerrain(const float delta, const float strength) {
 	    } // end for
 	} // end for
 
-	m_updateHeightMap = 2;
+	m_heightMapPbo->RequestUpdate();
     }
 }
 
@@ -1048,7 +1045,8 @@ void HeightMap::LevelTerrain(const float delta, const float strength) {
 	    } // end for
 	} // end for
 
-	m_updateHeightMap = 2;
+
+	m_heightMapPbo->RequestUpdate();
     }
 }
 
@@ -1168,8 +1166,8 @@ void HeightMap::Update(const float delta, ICamera* camera,
 	UpdateCursor(camera,framebufferWidth, framebufferHeight);
     }
 
-    UpdateHeightMap();
 
+    m_heightMapPbo->Update();
 }
 
 void HeightMap::SaveHeightMap(const std::string& filename) {
@@ -1255,50 +1253,4 @@ bool HeightMap::InBounds(int x, int z) {
     return
 	x >= 0 && x < m_resolution &&
 		      z >= 0 && z < m_resolution;
-}
-
-
-void HeightMap::UpdateHeightMap() {
-
-    static int index = 0;
-    int nextIndex = 0;
-
-    if(m_updateHeightMap > 0) {
-
-
-	index = (index + 1) % 2;
-	nextIndex = (index + 1) % 2;
-
-	m_heightMap->Bind();
-
-
-	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboIds[index] ));
-
-	m_heightMap->UpdateTexture(0);
-
-
-	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
-
-
-	m_heightMap->Unbind();
-
-	// bind PBO to update texture source
-	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboIds[nextIndex] ));
-
-	GL_C(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, HEIGHT_MAP_SIZE, 0, GL_STREAM_DRAW_ARB));
-
-	GLubyte* ptr = (GLubyte*)glMapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB,
-						GL_WRITE_ONLY_ARB);
-
-	if(ptr)
-	{
-	    memcpy(ptr, m_heightData->GetData(), HEIGHT_MAP_SIZE );
-
-	    GL_C(glUnmapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB)); // release the mapped buffer
-	}
-
-	GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
-
-	--m_updateHeightMap;
-    }
 }
