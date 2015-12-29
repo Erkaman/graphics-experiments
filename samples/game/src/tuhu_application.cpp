@@ -228,6 +228,8 @@ void TuhuApplication::Init() {
 
     m_curCamera = m_freeCamera;
 
+    LOG_I("lol");
+
 //    StartPhysics();
 
 }
@@ -538,6 +540,7 @@ void TuhuApplication::Render() {
 
 void TuhuApplication::Update(const float delta) {
 
+
     MouseState& ms = MouseState::GetInstance();
 
     if(m_gui)
@@ -550,7 +553,6 @@ void TuhuApplication::Update(const float delta) {
     m_physicsWorld->Update(delta);
 
     m_car->Update();
-
 
     m_totalDelta += delta;
 
@@ -574,8 +576,6 @@ void TuhuApplication::Update(const float delta) {
   add to object.
   }
 */
-
-
 
     if( kbs.IsPressed(GLFW_KEY_P) ) {
 
@@ -657,6 +657,7 @@ void TuhuApplication::Update(const float delta) {
 
     }
 
+
     if(m_gui && m_gui->GetGuiMode() == ModelMode && m_selected ) {
 
 	m_selected->SetEditPosition( m_gui->GetTranslation() );
@@ -687,7 +688,6 @@ void TuhuApplication::Update(const float delta) {
     }
 
     m_heightMap->Update(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
-
 
 }
 

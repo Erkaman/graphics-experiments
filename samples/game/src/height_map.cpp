@@ -74,6 +74,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_grassTexture = NULL;
     m_dirtTexture = NULL;
     m_tempData = NULL;
+    m_heightMapPbo = NULL;
     m_config = &Config::GetInstance();
     m_cursorPosition = Vector2i(0,0);
     m_cursorPositionWasUpdated = true;
@@ -1167,7 +1168,8 @@ void HeightMap::Update(const float delta, ICamera* camera,
     }
 
 
-    m_heightMapPbo->Update();
+    if(m_heightMapPbo)
+	m_heightMapPbo->Update();
 }
 
 void HeightMap::SaveHeightMap(const std::string& filename) {
