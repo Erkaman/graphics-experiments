@@ -588,8 +588,6 @@ void TuhuApplication::Update(const float delta) {
 	StartPhysics();
     }
 
-    const float inc = 30;
-
     if(GuiMouseState::isWithinWindow()) {
 
 	if(m_gui->GetGuiMode() == ModifyTerrainMode) {
@@ -598,8 +596,12 @@ void TuhuApplication::Update(const float delta) {
 
 		if(m_gui->GetTerrainMode() == ModifyElevationMode)
 		    m_heightMap->ModifyTerrain(delta, +m_gui->GetStrength()  );
-		else {
+		else if(m_gui->GetTerrainMode() == DistortMode){
 		    m_heightMap->DistortTerrain(delta, +m_gui->GetStrength(), m_gui->GetNoiseScale()  );
+		} else {
+
+		    m_heightMap->SmoothTerrain(delta);
+		    // LOL
 		}
 	    }
 
@@ -786,8 +788,6 @@ void TuhuApplication::ParseObjs(const std::string& filename) {
     string firstLine = reader->ReadLine();
 
     size_t numObjs = stoi(StringUtil::SplitString(firstLine, " ")[1]);
-
-    LOG_I("numObjs: %d", numObjs );
 
     for(size_t iObj = 0; iObj < numObjs; ++iObj) {
 

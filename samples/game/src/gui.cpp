@@ -436,7 +436,7 @@ Gui::Gui(GLFWwindow* window) {
     m_strength = 10;
     m_noiseScale = DEFAULT_NOISE_SCALE;
 
-    m_terrainMode = ModifyElevationMode;
+    m_terrainMode = SmoothMode;
 
     // init gui:
     if(ImGui_ImplGlfwGL3_Init(window, true)) {
@@ -498,6 +498,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 	ImGui::RadioButton("Elevation", &m_terrainMode, ModifyElevationMode);
 	ImGui::RadioButton("Distort", &m_terrainMode, DistortMode);
+	ImGui::RadioButton("Smooth", &m_terrainMode, SmoothMode);
 
 	RadiusSlider();
 

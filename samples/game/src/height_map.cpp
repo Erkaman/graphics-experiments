@@ -70,6 +70,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_cursorShader = NULL;
     m_grassTexture = NULL;
     m_dirtTexture = NULL;
+    m_tempData = NULL;
     m_config = &Config::GetInstance();
     m_cursorPosition = Vector2i(0,0);
     m_cursorPositionWasUpdated = true;
@@ -138,6 +139,7 @@ HeightMap::~HeightMap() {
 
 
 void HeightMap::CreateCursor() {
+
     vector<Vector3f> points;
 
     const float rad = m_cursorSize;
@@ -160,6 +162,13 @@ void HeightMap::CreateCursor() {
     m_cursorVertexBuffer->Unbind();
 
     m_numCursorPoints = (unsigned short)points.size();
+
+    if(m_tempData) {
+	MY_DELETE(m_tempData);
+    }
+
+    m_tempData = new MultArray<unsigned short>(m_cursorSize*2+1, m_cursorSize*2+1, (unsigned short)0  );
+
 }
 
 void HeightMap::RenderSetup(ShaderProgram* shader) {
@@ -356,9 +365,9 @@ void HeightMap::LoadSplatMap(const std::string& splatMapFilename) {
 
     MultArray<SplatColor>& splatData = *m_splatData;
 
-    for(size_t j = 0; j < m_resolution; ++j) {
+    for(int j = 0; j < m_resolution; ++j) {
 
-	for(size_t i = 0; i < m_resolution; ++i) {
+	for(int i = 0; i < m_resolution; ++i) {
 
 	    splatData(i,j) = *data;
 
@@ -418,9 +427,9 @@ void HeightMap::LoadHeightmap(const std::string& heightMapFilename) {
 
     MultArray<unsigned short>& heightData = *m_heightData;
 
-    for(size_t j = 0; j < m_resolution; ++j) {
+    for(int j = 0; j < m_resolution; ++j) {
 
-	for(size_t i = 0; i < m_resolution; ++i) {
+	for(int i = 0; i < m_resolution; ++i) {
 
 	    heightData(i,j) = *data;
 
@@ -574,6 +583,8 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 	    }
 	}
 
+
+//	heightData(200,200) = MAX_HEIGHT;
 
     } else {
 	LoadHeightmap(heightMapFilename);
@@ -774,7 +785,6 @@ void HeightMap::DistortTerrain(const float delta, const float strength, float no
     int cx = m_cursorPosition.x;
     int cz = m_cursorPosition.y;
 
-    float fade_rad = m_cursorSize-5;
     float rad = m_cursorSize;
 
     if(total > 0.05) {
@@ -833,13 +843,103 @@ void HeightMap::DistortTerrain(const float delta, const float strength, float no
 	} // end for
 
 	m_heightMap->Bind();
-
-	//TODO: methods better exist:
-	// http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
 	m_heightMap->UpdateTexture(heightData.GetData());
-
 	m_heightMap->Unbind();
     }
+}
+
+void HeightMap::SmoothTerrain(const float delta) {
+
+    static float total = 0;
+
+    total += delta;
+
+    MultArray<unsigned short>& heightData = *m_heightData;
+    MultArray<unsigned short>& tempData = *m_tempData;
+
+    int cx = m_cursorPosition.x;
+    int cz = m_cursorPosition.y;
+
+    float rad = m_cursorSize;
+
+    if(total > 0.1) {
+
+	total = 0;
+
+	for(int ix = -rad; ix <= +rad; ++ix) {
+
+	    for(int iz = -rad; iz <= +rad; ++iz) {
+
+		int ax = cx+ix;
+		int az = cz+iz;
+
+
+		if(!InBounds(ax,az)) {
+		    continue; // out of range.
+		}
+
+		// distance from center of hill.
+		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
+
+		// if within the radius of the hill(this ensures that the hill is round)
+		if(dist <= rad) {
+
+
+		    int sum = 0;
+		    int num = 0;
+
+		    const int FILTER_RAD = 1;
+
+		    for(int mx = -FILTER_RAD; mx <= +FILTER_RAD; ++mx) {
+			for(int mz = -FILTER_RAD; mz <= +FILTER_RAD; ++mz) {
+
+			    if(InBounds(ax+mx,az+mz)) {
+
+				sum += heightData(ax+mx,az+mz);
+				++num;
+			    }
+			}
+		    }
+
+		    unsigned short average = sum / num;
+
+		    tempData(ix+m_cursorSize, iz+m_cursorSize) = average;
+
+		} else {
+		    tempData(ix+m_cursorSize, iz+m_cursorSize) =
+			heightData(ax,az);
+		    // then value should be unchanged.
+		}
+
+	    } // end for
+	} // end for
+
+
+	// now transfer over the averaged values:
+
+	for(int ix = 0; ix <= 2*rad; ++ix) {
+
+	    for(int iz = 0; iz <= 2*rad; ++iz) {
+
+//		LOG_I("lal3");
+		if(InBounds(cx+ix-m_cursorSize, cz+iz-m_cursorSize)) {
+
+
+		    unsigned short avg = tempData(ix,iz);
+		    heightData(cx+ix-m_cursorSize, cz+iz-m_cursorSize) = avg;
+		}
+//		LOG_I("lal4");
+
+	    }
+
+	}
+
+
+	m_heightMap->Bind();
+	m_heightMap->UpdateTexture(heightData.GetData());
+	m_heightMap->Unbind();
+    }
+
 }
 
 
@@ -868,9 +968,8 @@ void HeightMap::ModifyTerrain(const float delta, const float strength) {
 		int ax = cx+ix;
 		int az = cz+iz;
 
-		if(
-		    ax < 0 || ax >= m_resolution ||
-		    az < 0 || az >= m_resolution) {
+
+		if(!InBounds(ax,az)) {
 		    continue; // out of range.
 		}
 
@@ -951,10 +1050,10 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 		int px = cx+ix;
 		int pz = cz+iz;
 
-		if(px < 0 || px >= m_resolution || pz < 0 || pz >= m_resolution) {
-
-		    continue;
+		if(!InBounds(px,pz)) {
+		    continue; // out of range.
 		}
+
 
 /*
 		px *= TEXTURE_SCALE;
@@ -1108,7 +1207,7 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     // create a signed height map.
     signed short* signedRawHeightMap = new signed short[m_resolution* m_resolution *2];
 
-    for(size_t i = 0; i < m_resolution* m_resolution; ++i) {
+    for(int i = 0; i < m_resolution* m_resolution; ++i) {
 
 	unsigned short us = rawHeightMap[i];
 
@@ -1180,3 +1279,11 @@ tomorrow, we will figure out(or simply implement) how to set noise scale.
     next, make an actual dirt texture.
     then an asphalt texture.
 */
+
+
+bool HeightMap::InBounds(int x, int z) {
+
+    return
+	x >= 0 && x < m_resolution &&
+       z >= 0 && z < m_resolution;
+}

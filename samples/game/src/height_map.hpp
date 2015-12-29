@@ -66,6 +66,9 @@ private:
     MultArray<unsigned short>* m_heightData;
     MultArray<SplatColor>* m_splatData;
 
+    // used to store temp data in SmoothTerrain()
+    MultArray<unsigned short>* m_tempData;
+
     Config* m_config;
 
     Vector2i m_cursorPosition;
@@ -74,7 +77,7 @@ private:
     Vector3f m_offset;
     float m_xzScale;
     float m_yScale;
-    size_t m_resolution;
+    int m_resolution;
     float m_textureScale;
 
     int m_cursorSize;
@@ -107,6 +110,8 @@ private:
 
     void Init(const std::string& heightMapFilename, const std::string& splatMapFilename );
 
+    bool InBounds(int x, int z);
+
 public:
 
     HeightMap(const std::string& heightMapFilename, const std::string& splatMapFilename );
@@ -131,11 +136,13 @@ public:
 
     void ModifyTerrain(const float delta, const float strength);
     void DistortTerrain(const float delta, const float strength, float noiseScale);
+    void SmoothTerrain(const float delta);
+
     void DrawTexture(const float delta, int drawTextureType);
+
 
     void SaveHeightMap(const std::string& filename);
     void SaveSplatMap(const std::string& filename);
-
 
 
     void AddToPhysicsWorld(PhysicsWorld* physicsWorld);

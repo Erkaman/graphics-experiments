@@ -10,7 +10,8 @@ enum GuiMode {
 
 enum TerrainMode {
     ModifyElevationMode,
-    DistortMode
+    DistortMode,
+    SmoothMode
 };
 
 
