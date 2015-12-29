@@ -496,8 +496,8 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 	ImGui::Text("Local mode:");
 
-	ImGui::RadioButton("ME", &m_terrainMode, ModifyElevationMode); ImGui::SameLine();
-	ImGui::RadioButton("D", &m_terrainMode, DistortMode);
+	ImGui::RadioButton("Elevation", &m_terrainMode, ModifyElevationMode);
+	ImGui::RadioButton("Distort", &m_terrainMode, DistortMode);
 
 	RadiusSlider();
 
