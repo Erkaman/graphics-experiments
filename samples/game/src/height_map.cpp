@@ -42,8 +42,6 @@ constexpr unsigned short MAX_HEIGHT = 65535;
 constexpr unsigned short MID_HEIGHT = 32768;
 constexpr unsigned short MIN_HEIGHT = 0;
 
-//const Vector3f offset(0, 0, 0);
-
 static Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
 
@@ -78,6 +76,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_xzScale = 100.0f;
     m_yScale = 8.0f;
     m_resolution = 256;
+    m_textureScale = 0.07f;
 
     m_noise = new ValueNoise(2);
 
@@ -178,6 +177,8 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
     shader->SetUniform("yScale", m_yScale);
     shader->SetUniform("offset", m_offset);
     shader->SetUniform("resolution", (float)m_resolution);
+    shader->SetUniform("textureScale", (float)m_textureScale);
+
 }
 
 void HeightMap::RenderUnsetup() {
@@ -491,8 +492,8 @@ void HeightMap::CreateSplatMap(const std::string& splatMapFilename ) {
     Random random(3);
 
     SplatColor def; // default splat color.
-    def.r = 0;
-    def.g = 255;
+    def.r = 255;
+    def.g = 0;
     def.b = 0;
     def.a = 0;
 
@@ -623,7 +624,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 
 	c.id = (float)id++;
 
-	c.texCoord = Vector2f(x,z) *0.07;;
+	c.texCoord = Vector2f(x,z);
 
 	++xpos;
 	if(xpos != 0 && ( xpos % (width) == 0)) {
@@ -933,7 +934,7 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 
     float rad = m_cursorSize;
 
-    float fadeRad = 30;
+    float fadeRad = (m_cursorSize-5 );
 
     int cx = m_cursorPosition.x;
     int cz = m_cursorPosition.y;
@@ -951,8 +952,14 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 		int pz = cz+iz;
 
 		if(px < 0 || px >= m_resolution || pz < 0 || pz >= m_resolution) {
+
 		    continue;
 		}
+
+/*
+		px *= TEXTURE_SCALE;
+		pz *= TEXTURE_SCALE;
+*/
 
 		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
@@ -974,7 +981,10 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 		    if(drawTextureType != EraserTexture) {
 
 
-			unsigned char* textures =  (unsigned char *)&splatData(px,pz);
+			unsigned char* textures =  (unsigned char *)&splatData(
+			    px ,
+			    pz
+			    );
 
 			// find the texture that has the most influence on the pixel.
 			// we will blend between this texture and the current texture.
@@ -1164,7 +1174,7 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
 //btHeightfieldTerrainShape
 /*
-    also, fix texture drawing!
+    fix texture drawing!
 tomorrow, we will figure out(or simply implement) how to set noise scale.
 
     next, make an actual dirt texture.

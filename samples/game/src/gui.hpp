@@ -26,6 +26,8 @@ private:
     int m_cursorSize;
     int m_strength;
 
+    void RadiusSlider();
+
 public:
 
     Gui(GLFWwindow* window);

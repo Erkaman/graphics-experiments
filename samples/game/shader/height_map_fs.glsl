@@ -6,6 +6,7 @@ out vec4 fragmentColor;
 
 uniform vec3 viewSpaceLightDirection;
 uniform float resolution;
+uniform float textureScale;
 
 //in vec3 vertexColor;
 in vec2 texCoord;
@@ -18,6 +19,7 @@ uniform sampler2D dirt;
 uniform sampler2D rock;
 
 uniform sampler2D splatMap;
+
 
 in float id;
 
@@ -65,11 +67,9 @@ vec3 sampleDiffuseTexture() {
 
 void main()
 {
-    vec2 scaledTexcoord = texCoord * resolution;
+    vec2 scaledTexcoord = texCoord * resolution * textureScale;
 
     vec4 splat =texture(splatMap, texCoord);
-
-
 
     vec3 diffuse =
 	splat.r * texture(grass, scaledTexcoord).xyz +

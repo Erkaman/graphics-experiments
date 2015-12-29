@@ -75,6 +75,7 @@ private:
     float m_xzScale;
     float m_yScale;
     size_t m_resolution;
+    float m_textureScale;
 
     int m_cursorSize;
 

@@ -453,6 +453,14 @@ void Gui::NewFrame(const float guiVerticalScale) {
     ImGui_ImplGlfwGL3_NewFrame(guiVerticalScale);
 }
 
+void Gui::RadiusSlider() {
+	int oldCursorSize = m_cursorSize;
+	ImGui::SliderInt("Radius", &m_cursorSize, MIN_CURSOR_SIZE, MAX_CURSOR_SIZE);
+	if(oldCursorSize != m_cursorSize) {
+	    SetCursorSize(m_cursorSize);
+	}
+}
+
 void Gui::Render(int windowWidth, int windowHeight) {
     static float f = 0.0f;
 
@@ -487,20 +495,15 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	ImGui::RadioButton("ME", &m_terrainMode, ModifyElevationMode); ImGui::SameLine();
 	ImGui::RadioButton("D", &m_terrainMode, DistortMode);
 
+	RadiusSlider();
 
-	int oldCursorSize = m_cursorSize;
-
-	ImGui::SliderInt("Radius", &m_cursorSize, MIN_CURSOR_SIZE, MAX_CURSOR_SIZE);
-	if(oldCursorSize != m_cursorSize) {
-	    SetCursorSize(m_cursorSize);
-	}
 
 	ImGui::SliderInt("Strength", &m_strength, 1, 35);
 
     } else if(m_guiMode == DrawTextureMode) {
 
-	ImGui::Text("Radius2:");
-	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+	RadiusSlider();
+
 
         ImGui::Combo("Texture", &m_drawTextureType, "Grass\0Dirt\0Rock\0Eraser\0\0");   // Combo using values packed in a single
     } else {
