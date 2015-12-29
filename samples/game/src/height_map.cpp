@@ -1027,6 +1027,8 @@ void HeightMap::ModifyTerrain(const float delta, const float strength) {
     }
 }
 
+
+
 void HeightMap::LevelTerrain(const float delta, const float strength) {
 
     static float total = 0;
