@@ -79,10 +79,14 @@ private:
     float m_yScale;
     int m_resolution;
     float m_textureScale;
+    int HEIGHT_MAP_SIZE;
 
     int m_cursorSize;
 
     ValueNoise* m_noise;
+
+    unsigned int pboId;
+
 
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);

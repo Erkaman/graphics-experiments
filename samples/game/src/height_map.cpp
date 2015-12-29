@@ -42,6 +42,7 @@ constexpr unsigned short MAX_HEIGHT = 65535;
 constexpr unsigned short MID_HEIGHT = 32768;
 constexpr unsigned short MIN_HEIGHT = 0;
 
+
 static Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
 
@@ -79,6 +80,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_yScale = 18.0f;
     m_resolution = 256;
     m_textureScale = 0.07f;
+    HEIGHT_MAP_SIZE = m_resolution * m_resolution * sizeof(unsigned short);
 
     // position the heightfield so that it is centered at the origin:
     m_offset = Vector3f(-m_xzScale/2.0f,0,-m_xzScale/2.0f);
@@ -101,6 +103,12 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
 	m_noise = new ValueNoise(2);
 	m_idShader = ShaderProgram::Load("shader/height_map_output_id");
 	m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
+
+        GL_C(glGenBuffersARB(1, &pboId));
+        GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER, pboId));
+        GL_C(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER,HEIGHT_MAP_SIZE,0, GL_STREAM_DRAW));
+        GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER, 0));
+
     }
 
     CreateHeightmap(heightMapFilename, guiMode);
@@ -1246,9 +1254,57 @@ bool HeightMap::InBounds(int x, int z) {
 
 void HeightMap::UpdateHeightMap() {
 
+// bind PBO to update texture source
+    GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboId));
+
+// Note that glMapBufferARB() causes sync issue.
+// If GPU is working with this buffer, glMapBufferARB() will wait(stall)
+// until GPU to finish its job. To avoid waiting (idle), you can call
+// first glBufferDataARB() with NULL pointer before glMapBufferARB().
+// If you do that, the previous data in PBO will be discarded and
+// glMapBufferARB() returns a new allocated pointer immediately
+// even if GPU is still working with the previous data.
+    GL_C(glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, HEIGHT_MAP_SIZE, 0, GL_STREAM_DRAW_ARB));
+
+// map the buffer object into client's memory
+    GLubyte* ptr = (GLubyte*)glMapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB,
+					    GL_WRITE_ONLY_ARB);
+
+    if(ptr)
+    {
+	// update data directly on the mapped buffer
+//    updatePixels(ptr, DATA_SIZE);
+
+	memcpy(ptr, m_heightData->GetData(), HEIGHT_MAP_SIZE );
+
+//	LOG_I("ptr");
+
+	GL_C(glUnmapBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB)); // release the mapped buffer
+    }
+
+// it is good idea to release PBOs with ID 0 after use.
+// Once bound with 0, all pixel operations are back to normal ways.
+    GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
 
 
-    m_heightMap->Bind();
-    m_heightMap->UpdateTexture(m_heightData->GetData());
-    m_heightMap->Unbind();
+
+
+
+  m_heightMap->Bind();
+
+
+  GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboId));
+
+
+  m_heightMap->UpdateTexture(0);
+
+
+  //m_heightMap->UpdateTexture(m_heightData->GetData());
+
+
+  GL_C(glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0));
+
+
+  m_heightMap->Unbind();
+
 }
