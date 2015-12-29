@@ -110,7 +110,7 @@ void TuhuApplication::Init() {
     m_totalDelta = 0;
 
     // NOTE: we can fix the shadows by setting trans to (0,0,0).
-    Vector3f trans = Vector3f(-80,5,-80);
+    Vector3f trans = Vector3f(-130,5,-130);
 
     m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
     m_smoke->Init();
@@ -674,7 +674,6 @@ void TuhuApplication::Update(const float delta) {
 
 	b = true;
     }
-
 
     if( kbs.WasPressed(GLFW_KEY_N) ) {
 

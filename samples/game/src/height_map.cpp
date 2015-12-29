@@ -78,9 +78,9 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_config = &Config::GetInstance();
     m_cursorPosition = Vector2i(0,0);
     m_cursorPositionWasUpdated = true;
-    m_xzScale = 100.0f;
+    m_xzScale = 200.0f;
     m_yScale = 18.0f;
-    m_resolution = 256;
+    m_resolution = 512;
     m_textureScale = 0.07f;
     HEIGHT_MAP_SIZE = m_resolution * m_resolution * sizeof(unsigned short);
 
@@ -1228,7 +1228,7 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     // scale the shape
 //	btVector3 localScaling = getUpVector(m_upAxis, s_gridSpacing, 1.0);
     heightfieldShape->setLocalScaling(
-	btVector3(100.0f/(float)m_resolution,1, 100.0f/(float)m_resolution)
+	btVector3(m_xzScale/(float)m_resolution,1, m_xzScale/(float)m_resolution)
 	);
 
     // set origin to middle of heightfield

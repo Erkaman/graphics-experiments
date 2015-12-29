@@ -234,9 +234,7 @@ public:
     void SaveHeightMap(const std::string& filename);
     void SaveSplatMap(const std::string& filename);
 
-
     void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
 
     void SetCursorSize(int cursorSize);
-
 };
