@@ -148,11 +148,13 @@ void TuhuApplication::Init() {
 	PrintErrorExit();
     m_geoObjs.push_back(m_car);
 
+    bool guiMode = (m_gui != 0);
+
     if(ResourceManager::GetInstance().PathExists(dir) && false) {
 
 	m_heightMap = new HeightMap(
 	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,
-	    File::AppendPaths(dir, SPLAT_MAP_FILENAME ));
+	    File::AppendPaths(dir, SPLAT_MAP_FILENAME ), guiMode);
 
 	ParseObjs(File::AppendPaths(dir, OBJS_FILENAME ));
 
@@ -161,7 +163,7 @@ void TuhuApplication::Init() {
 
     } else {
 
-	m_heightMap = new HeightMap();
+	m_heightMap = new HeightMap(guiMode);
 
 	m_stoneFloor = LoadObj("obj/rock_floor.eob", Vector3f(0,0,40) + trans);
 

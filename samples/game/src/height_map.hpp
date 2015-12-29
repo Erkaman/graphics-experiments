@@ -88,9 +88,9 @@ private:
     static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);
 
-    void CreateHeightmap(const std::string& heightMapFilename);
+    void CreateHeightmap(const std::string& heightMapFilename, bool guiMode);
     void CreateCursor();
-    void CreateSplatMap(const std::string& splatMapFilename );
+    void CreateSplatMap(const std::string& splatMapFilename, bool guiMode);
 
     void LoadHeightmap(const std::string& heightMapFilename);
     void LoadSplatMap(const std::string& splatMapFilename);
@@ -108,14 +108,16 @@ private:
 		      const float framebufferWidth,
 		      const float framebufferHeight);
 
-    void Init(const std::string& heightMapFilename, const std::string& splatMapFilename );
+    void Init(const std::string& heightMapFilename, const std::string& splatMapFilename, bool guiMode );
 
     bool InBounds(int x, int z);
 
+    void UpdateHeightMap();
+
 public:
 
-    HeightMap(const std::string& heightMapFilename, const std::string& splatMapFilename );
-    HeightMap();
+    HeightMap(const std::string& heightMapFilename, const std::string& splatMapFilename, bool guiMode );
+    HeightMap(bool guiMode );
 
 
     ~HeightMap();

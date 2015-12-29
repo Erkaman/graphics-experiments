@@ -61,7 +61,8 @@ static Texture* LoadTexture(const string& filename) {
 
 
 
-void HeightMap::Init(const std::string& heightMapFilename, const std::string& splatMapFilename ) {
+void HeightMap::Init(const std::string& heightMapFilename, const std::string& splatMapFilename,
+		     bool guiMode ) {
 
     m_isWireframe = false;
     m_shader = NULL;
@@ -79,11 +80,11 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_resolution = 256;
     m_textureScale = 0.07f;
 
-    m_noise = new ValueNoise(2);
-
-
     // position the heightfield so that it is centered at the origin:
     m_offset = Vector3f(-m_xzScale/2.0f,0,-m_xzScale/2.0f);
+
+
+
 
     m_grassTexture = LoadTexture("img/grass.png");
 
@@ -96,35 +97,30 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     */
     m_shader = ShaderProgram::Load("shader/height_map");
 
-//    m_depthShader = ShaderProgram::Load("shader/output_depth");
+    if(guiMode) {
+	m_noise = new ValueNoise(2);
+	m_idShader = ShaderProgram::Load("shader/height_map_output_id");
+	m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
+    }
 
-    m_idShader = ShaderProgram::Load("shader/height_map_output_id");
-    m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
+    CreateHeightmap(heightMapFilename, guiMode);
 
-    CreateHeightmap(heightMapFilename);
-
-    CreateSplatMap(splatMapFilename);
-
-
-    SetCursorSize(35);
+    CreateSplatMap(splatMapFilename, guiMode);
 }
 
-
 void HeightMap::SetCursorSize(int cursorSize) {
-
     m_cursorSize = cursorSize;
 
     CreateCursor();
-
 }
 
-HeightMap::HeightMap( ) {
-    Init("", "");
+HeightMap::HeightMap( bool guiMode) {
+    Init("", "", guiMode);
 }
 
-HeightMap::HeightMap(const std::string& heightMapFilename, const std::string& splatMapFilename ){
+HeightMap::HeightMap(const std::string& heightMapFilename, const std::string& splatMapFilename, bool guiMode ){
 
-    Init(heightMapFilename, splatMapFilename );
+    Init(heightMapFilename, splatMapFilename, guiMode);
 
 }
 
@@ -135,7 +131,7 @@ HeightMap::~HeightMap() {
     MY_DELETE(m_vertexBuffer);
     MY_DELETE(m_grassTexture);
     MY_DELETE(m_map)
-}
+	}
 
 
 void HeightMap::CreateCursor() {
@@ -226,14 +222,14 @@ void HeightMap::RenderShadowMap(const ICamera* camera) {
 
     // TODO: implement shadow mapping for height map.
 /*
-    m_depthShader->Bind();
+  m_depthShader->Bind();
 
-    const Matrix4f mvp = camera->GetMvp(Matrix4f::CreateTranslation(0,0,0));
-    m_depthShader->SetUniform("mvp", mvp  );
+  const Matrix4f mvp = camera->GetMvp(Matrix4f::CreateTranslation(0,0,0));
+  m_depthShader->SetUniform("mvp", mvp  );
 
-    Render();
+  Render();
 
-    m_depthShader->Unbind();
+  m_depthShader->Unbind();
 */
 
 }
@@ -256,9 +252,9 @@ void HeightMap::RenderHeightMap(const ICamera* camera, const Vector4f& lightPosi
     m_rockTexture->Bind();
 
 /*
-    m_shader->SetUniform("snow", 2);
-    Texture::SetActiveTextureUnit(2);
-    m_snowTexture->Bind();
+  m_shader->SetUniform("snow", 2);
+  Texture::SetActiveTextureUnit(2);
+  m_snowTexture->Bind();
 */
 
     // set textures and stuff.
@@ -377,45 +373,45 @@ void HeightMap::LoadSplatMap(const std::string& splatMapFilename) {
 
 
     /*
-    unsigned int width;
-    unsigned int height;
+      unsigned int width;
+      unsigned int height;
 
 
-    std::string* resourcePath = ResourceManager::GetInstance().SearchResource(splatMapFilename);
-    if(!resourcePath) {
-	PrintErrorExit();
-    }
+      std::string* resourcePath = ResourceManager::GetInstance().SearchResource(splatMapFilename);
+      if(!resourcePath) {
+      PrintErrorExit();
+      }
 
-    std::vector<unsigned char> tempBuffer;
-    lodepng::load_file(tempBuffer,
-		       *resourcePath);
+      std::vector<unsigned char> tempBuffer;
+      lodepng::load_file(tempBuffer,
+      *resourcePath);
 
-    lodepng::State state;
-    unsigned int unused1;
-    unsigned int unused2;
+      lodepng::State state;
+      unsigned int unused1;
+      unsigned int unused2;
 
-    std::vector<unsigned char> buffer;
-    unsigned error =
-	 lodepng::decode(buffer, unused1, unused2, tempBuffer, LCT_RGBA, 8);
+      std::vector<unsigned char> buffer;
+      unsigned error =
+      lodepng::decode(buffer, unused1, unused2, tempBuffer, LCT_RGBA, 8);
 
-	//lodepng::decode(buffer, width, height, state, buffer);
+      //lodepng::decode(buffer, width, height, state, buffer);
 
-    if(error != 0){
-	SetError("could not load splstmap png %s: %s", resourcePath->c_str(), lodepng_error_text(error));
-	PrintErrorExit();
-    }
+      if(error != 0){
+      SetError("could not load splstmap png %s: %s", resourcePath->c_str(), lodepng_error_text(error));
+      PrintErrorExit();
+      }
 
 
 
-    unsigned char* splatData = (unsigned char*)m_splatData->GetData();
+      unsigned char* splatData = (unsigned char*)m_splatData->GetData();
 
-    for(size_t i = 0; i < buffer.size(); ++i) {
-	*splatData = buffer[i];
-	++splatData;
-    }
+      for(size_t i = 0; i < buffer.size(); ++i) {
+      *splatData = buffer[i];
+      ++splatData;
+      }
 
-    //  vector<unsigned char>& imageData = textureInfo->imageData;
-    */
+      //  vector<unsigned char>& imageData = textureInfo->imageData;
+      */
 }
 
 
@@ -438,62 +434,60 @@ void HeightMap::LoadHeightmap(const std::string& heightMapFilename) {
     }
 
     /*
-    std::string* resourcePath = ResourceManager::GetInstance().SearchResource(heightMapFilename);
-    if(!resourcePath) {
-	PrintErrorExit();
-    }
+      std::string* resourcePath = ResourceManager::GetInstance().SearchResource(heightMapFilename);
+      if(!resourcePath) {
+      PrintErrorExit();
+      }
 
-    std::vector<unsigned char> tempBuffer;
-    lodepng::load_file(tempBuffer,
-		       *resourcePath);
+      std::vector<unsigned char> tempBuffer;
+      lodepng::load_file(tempBuffer,
+      *resourcePath);
 
-    std::vector<unsigned char> buffer;
+      std::vector<unsigned char> buffer;
 
-    unsigned int unused1;
-    unsigned int unused2;
+      unsigned int unused1;
+      unsigned int unused2;
 
-    lodepng::State state;
-    unsigned error = lodepng::decode(buffer, unused1, unused2, tempBuffer, LCT_GREY, 16);
+      lodepng::State state;
+      unsigned error = lodepng::decode(buffer, unused1, unused2, tempBuffer, LCT_GREY, 16);
 
-    if(error != 0){
-	SetError("could not loa heightmapd png %s: %s", resourcePath->c_str(), lodepng_error_text(error));
-	PrintErrorExit();
-    }
-
-
-    size_t width = m_resolution;
-    size_t depth = m_resolution;
+      if(error != 0){
+      SetError("could not loa heightmapd png %s: %s", resourcePath->c_str(), lodepng_error_text(error));
+      PrintErrorExit();
+      }
 
 
-    size_t iBuffer = 0;
-
-    MultArray<unsigned short>& heightData = *m_heightData;
-
-    for(size_t j = 0; j < depth; ++j) {
-
-	for(size_t i = 0; i < width; ++i) {
-
-	    unsigned char c1 = buffer[iBuffer+0];
-	    unsigned char c2 = buffer[iBuffer+1];
-
-	    unsigned short s = (c1 << 8) | c2;
-
-	    heightData(i,j) = s;
-
-	    iBuffer += 2;
-
-	    if(iBuffer > buffer.size() ) {
-		LOG_I("exceeded size: %ld, %ld, %ld", iBuffer, i, j);
-		exit(1);
-	    }
-	}
-    }
-*/
+      size_t width = m_resolution;
+      size_t depth = m_resolution;
 
 
+      size_t iBuffer = 0;
+
+      MultArray<unsigned short>& heightData = *m_heightData;
+
+      for(size_t j = 0; j < depth; ++j) {
+
+      for(size_t i = 0; i < width; ++i) {
+
+      unsigned char c1 = buffer[iBuffer+0];
+      unsigned char c2 = buffer[iBuffer+1];
+
+      unsigned short s = (c1 << 8) | c2;
+
+      heightData(i,j) = s;
+
+      iBuffer += 2;
+
+      if(iBuffer > buffer.size() ) {
+      LOG_I("exceeded size: %ld, %ld, %ld", iBuffer, i, j);
+      exit(1);
+      }
+      }
+      }
+    */
 }
 
-void HeightMap::CreateSplatMap(const std::string& splatMapFilename ) {
+void HeightMap::CreateSplatMap(const std::string& splatMapFilename, bool guiMode) {
 
     size_t width = m_resolution;
     size_t depth = m_resolution;
@@ -514,34 +508,10 @@ void HeightMap::CreateSplatMap(const std::string& splatMapFilename ) {
 	LoadSplatMap(splatMapFilename);
     }
 
-/*
-    bool firstHalf = true;
-
-
-    for(size_t i = 0; i < width; ++i) {
-
-	for(size_t j = 0; j < depth; ++j) {
-
-	    if(firstHalf) {
-		splatData(i,j).r = 255;
-		splatData(i,j).g = 0;
-	    } else {
-		splatData(i,j).r = 0;
-		splatData(i,j).g = 255;
-	    }
-
-	}
-
-	if(i > width/2) {
-	    firstHalf = false;
-	}
-    }
-*/
-
     m_splatMap = new Texture2D(splatData.GetData(), width, depth,
-				   GL_RGBA8, // internal format
-				   GL_RGBA, // format
-				   GL_UNSIGNED_BYTE);
+			       GL_RGBA8, // internal format
+			       GL_RGBA, // format
+			       GL_UNSIGNED_BYTE);
 
     m_splatMap->Bind();
     m_splatMap->SetTextureClamping();
@@ -550,28 +520,20 @@ void HeightMap::CreateSplatMap(const std::string& splatMapFilename ) {
     m_splatMap->SetMagFilter(GL_LINEAR);
     m_splatMap->Unbind();
 
-//    image(20,20) = 10000;
-
-    m_splatMap->Bind();
-    m_splatMap->UpdateTexture(splatData.GetData());
-    m_splatMap->Unbind();
-
+    if(!guiMode){
+	// if not in GUI, we do not need this array beyond this point.
+	MY_DELETE(m_splatData);
+    }
 }
 
-
-void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
-
-
+void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMode) {
 
     size_t width = m_resolution;
     size_t depth = m_resolution;
 
-    Random random(3);
-
     m_heightData = new MultArray<unsigned short>(width, depth, (unsigned short)0);
 
     MultArray<unsigned short>& heightData = *m_heightData;
-
 
     if(heightMapFilename == "") { // if no heightmap to load.
 
@@ -582,18 +544,14 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 		heightData(j,i) = MID_HEIGHT;
 	    }
 	}
-
-
-//	heightData(200,200) = MAX_HEIGHT;
-
     } else {
 	LoadHeightmap(heightMapFilename);
     }
 
     m_heightMap = new Texture2D(heightData.GetData(), width, depth,
-				   GL_R16, // internal format
-				   GL_RED, // format
-				   GL_UNSIGNED_SHORT
+				GL_R16, // internal format
+				GL_RED, // format
+				GL_UNSIGNED_SHORT
 	);
 
     m_heightMap->Bind();
@@ -603,13 +561,15 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
     m_heightMap->SetMagFilter(GL_LINEAR);
     m_heightMap->Unbind();
 
-//    image(20,20) = 10000;
+    if(!guiMode){
+	// if not in GUI, we do not need this array beyond this point.
+	MY_DELETE(m_heightData);
+    }
 
-    m_heightMap->Bind();
+    /*
+      Create the heightmap mesh:
+    */
 
-    m_heightMap->UpdateTexture(heightData.GetData());
-
-    m_heightMap->Unbind();
 
     m_map = new MultArray<Cell>(width, depth);
     MultArray<Cell> &map = *m_map;
@@ -642,8 +602,6 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 	    xpos = 0;
 	    ++zpos;
 	}
-
-//	LOG_I("x = %d, z = %d", xpos, zpos);
     }
 
     m_vertexBuffer = VBO::CreateInterleaved(
@@ -682,7 +640,6 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename) {
 	baseIndex += 1;
     }
 
-
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_INT);
 
     m_indexBuffer->Bind();
@@ -702,8 +659,8 @@ float HeightMap::GetHeightAt(float, float)const {
 }
 
 void HeightMap::UpdateCursor(ICamera* camera,
-		       const float framebufferWidth,
-		       const float framebufferHeight) {
+			     const float framebufferWidth,
+			     const float framebufferHeight) {
 
     float x = GuiMouseState::GetX();
     float y = framebufferHeight -GuiMouseState::GetY()-1;
@@ -842,9 +799,7 @@ void HeightMap::DistortTerrain(const float delta, const float strength, float no
 	    } // end for
 	} // end for
 
-	m_heightMap->Bind();
-	m_heightMap->UpdateTexture(heightData.GetData());
-	m_heightMap->Unbind();
+	UpdateHeightMap();
     }
 }
 
@@ -935,9 +890,8 @@ void HeightMap::SmoothTerrain(const float delta, const int smoothRadius) {
 	}
 
 
-	m_heightMap->Bind();
-	m_heightMap->UpdateTexture(heightData.GetData());
-	m_heightMap->Unbind();
+	UpdateHeightMap();
+
     }
 
 }
@@ -1017,13 +971,7 @@ void HeightMap::ModifyTerrain(const float delta, const float strength) {
 	    } // end for
 	} // end for
 
-	m_heightMap->Bind();
-
-	//TODO: methods better exist:
-	// http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
-	m_heightMap->UpdateTexture(heightData.GetData());
-
-	m_heightMap->Unbind();
+	UpdateHeightMap();
     }
 }
 
@@ -1089,13 +1037,7 @@ void HeightMap::LevelTerrain(const float delta, const float strength) {
 	    } // end for
 	} // end for
 
-	m_heightMap->Bind();
-
-	//TODO: methods better exist:
-	// http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
-	m_heightMap->UpdateTexture(heightData.GetData());
-
-	m_heightMap->Unbind();
+	UpdateHeightMap();
     }
 }
 
@@ -1127,11 +1069,6 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 		    continue; // out of range.
 		}
 
-
-/*
-		px *= TEXTURE_SCALE;
-		pz *= TEXTURE_SCALE;
-*/
 
 		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 
@@ -1235,39 +1172,11 @@ void HeightMap::SaveHeightMap(const std::string& filename) {
 
 void HeightMap::SaveSplatMap(const std::string& filename) {
 
-    //  unsigned char* data = m_splatMap->GetPixels<unsigned char>(m_resolution * m_resolution * 4, GL_RGBA8, GL_UNSIGNED_BYTE);
-
     MultArray<SplatColor>& splatData = *m_splatData;
 
-//    SplatColor s =splatData(2,2);  //data[4];
-/*    LOG_I("data: %d, %d, %d, %d, %d, %d, %d", data[0], data[1], data[2], data[3],  data[4], data[5], data[6] );
-
-    LOG_I("data: %d, %d, %d, %d", s.r,s.g,s.b,s.a );
-*/
     File::WriteArray(filename, splatData.GetData(), m_resolution * m_resolution*4);
-
-//    m_splatMap->WriteToFile(filename);
 }
 
-
-//the bad lightning may be caused beccause the transition from hill to grass is very bad.
-
-/*
-
-btHeightfieldTerrainShape::btHeightfieldTerrainShape	(
-    int 	heightStickWidth, // number of squares in heightmap. 256 in our case.
-    int 	heightStickLength, // see above
-    const void * 	heightfieldData, // byte(?)  sequence of the heightmap.  data.
-    btScalar 	heightScale, // not sure...
-    btScalar 	minHeight, // max height in float. should be 1 in our case, since this is the true range.
-btScalar 	maxHeight,
-
-    int 	upAxis, // should be 1, if y-axis is up.
-PHY_ScalarType 	heightDataType,
-bool 	flipQuadEdges
-)
-
-*/
 
 void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
@@ -1284,79 +1193,62 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
 	unsigned short us = rawHeightMap[i];
 
-//LOG_I("us: %d", us );
-
 	signed short ss =
 	    us >= MID_HEIGHT ?
 	    us - MID_HEIGHT :
 	    -(MID_HEIGHT -us);
-//	signed short ss = us;
-//	LOG_I("ss: %d", ss );
 	signedRawHeightMap[i] = ss;
-
-//	LOG_I("lol: %d", signedRawHeightMap[i] );
     }
 
-/*
-    LOG_I("raw: %d",  rawHeightMap[0] );
-    LOG_I("raw: %d",  rawHeightMap[1] );
-    LOG_I("raw: %d",  rawHeightMap[2] );
+    bool flipQuadEdges = false;
+    btHeightfieldTerrainShape * heightfieldShape =
+	new btHeightfieldTerrainShape(m_resolution, m_resolution,
+				      signedRawHeightMap,
+				      m_yScale / 32767.0,  //s_gridHeightScale,
+				      -4, // min height
+				      +4, // max height
+				      1, // y-axis is up.
+				      PHY_SHORT,
+				      flipQuadEdges);
 
-*/
-
-	bool flipQuadEdges = false;
-	btHeightfieldTerrainShape * heightfieldShape =
-	    new btHeightfieldTerrainShape(m_resolution, m_resolution,
-					  signedRawHeightMap,
-					  m_yScale / 32767.0,  //s_gridHeightScale,
-					  -4, // min height
-					  +4, // max height
-					  1, // y-axis is up.
-					  PHY_SHORT,
-					  flipQuadEdges);
-
-	// scale the shape
+    // scale the shape
 //	btVector3 localScaling = getUpVector(m_upAxis, s_gridSpacing, 1.0);
-	heightfieldShape->setLocalScaling(
-	    btVector3(100.0f/(float)m_resolution,1, 100.0f/(float)m_resolution)
-	    );
+    heightfieldShape->setLocalScaling(
+	btVector3(100.0f/(float)m_resolution,1, 100.0f/(float)m_resolution)
+	);
 
-	// set origin to middle of heightfield
-	btTransform tr;
-	tr.setIdentity();
-	tr.setOrigin(btVector3(0,0,0));
+    // set origin to middle of heightfield
+    btTransform tr;
+    tr.setIdentity();
+    tr.setOrigin(btVector3(0,0,0));
 
-	// create ground object
-	float mass = 0.0;
+    // create ground object
+    float mass = 0.0;
 
-	btVector3 inertia(0, 0, 0);
+    btVector3 inertia(0, 0, 0);
 
-	btMotionState* motionState = new btDefaultMotionState(tr);
+    btMotionState* motionState = new btDefaultMotionState(tr);
 
-	btRigidBody::btRigidBodyConstructionInfo ci(mass, motionState, heightfieldShape, inertia);
+    btRigidBody::btRigidBodyConstructionInfo ci(mass, motionState, heightfieldShape, inertia);
 
-	btRigidBody* rigidBody = new btRigidBody(ci);
+    btRigidBody* rigidBody = new btRigidBody(ci);
 
-	physicsWorld->AddRigidBody(rigidBody);
-//	localCreateRigidBody(mass, tr, heightfieldShape);
-
-
-
+    physicsWorld->AddRigidBody(rigidBody);
 }
-
-//btHeightfieldTerrainShape
-/*
-    fix texture drawing!
-tomorrow, we will figure out(or simply implement) how to set noise scale.
-
-    next, make an actual dirt texture.
-    then an asphalt texture.
-*/
-
 
 bool HeightMap::InBounds(int x, int z) {
 
     return
 	x >= 0 && x < m_resolution &&
-       z >= 0 && z < m_resolution;
+		      z >= 0 && z < m_resolution;
+}
+
+
+void HeightMap::UpdateHeightMap() {
+
+
+
+    m_heightMap->Bind();
+    m_heightMap->UpdateTexture(m_heightData->GetData());
+    m_heightMap->Unbind();
 }
