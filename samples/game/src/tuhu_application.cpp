@@ -150,7 +150,7 @@ void TuhuApplication::Init() {
 
     bool guiMode = (m_gui != 0);
 
-    if(ResourceManager::GetInstance().PathExists(dir) && false) {
+    if(ResourceManager::GetInstance().PathExists(dir)/* && false*/) {
 
 	m_heightMap = new HeightMap(
 	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,
