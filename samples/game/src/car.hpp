@@ -12,13 +12,12 @@ class Car : public GeometryObject{
 private:
 
     btVehicleRaycaster* m_vehicleRaycaster;
-
     btRaycastVehicle* m_raycastVehicle;
 
 public:
     Car();
 
-    bool Init(PhysicsWorld* physicsWorld, const Vector3f& position);
+    bool Init(const Vector3f& position);
 
     virtual ~Car();
 

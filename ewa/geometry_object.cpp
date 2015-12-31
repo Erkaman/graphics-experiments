@@ -325,10 +325,6 @@ bool GeometryObject::Init(
 
     m_data = data;
 
-
-
-
-
     return true;
 
 }

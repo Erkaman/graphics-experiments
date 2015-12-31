@@ -145,7 +145,7 @@ void TuhuApplication::Init() {
 
 
     m_car = new Car();
-    bool result = m_car->Init(m_physicsWorld, Vector3f(0,-1.5,0)+trans);
+    bool result = m_car->Init(Vector3f(0,-1.5,0)+trans);
 
     if(!result) {
 	LOG_I("could not load car");

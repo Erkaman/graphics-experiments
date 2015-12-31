@@ -21,14 +21,13 @@ const float SUSPENSION_REST_LENGTH = 0.6f; // (see also maxSuspensionTravelCm)
 const float ROLL_INFLUENCE = 0.1f;
 const unsigned int CAR_ID = 1337;
 
-
 float	maxEngineForce = 1000.f;
 
 const btVector3 FRONT_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, (CAR_DIMENSIONS.z()/2 - 0.3f - WHEEL_RADIUS));
 const btVector3 BACK_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, -(CAR_DIMENSIONS.z()/2 - 0.1f - WHEEL_RADIUS));
 
 
-bool Car::Init(PhysicsWorld* physicsWorld, const Vector3f& position) {
+bool Car::Init(const Vector3f& position) {
 
     bool ret = GeometryObject::Init("obj/car.eob",
 			 position, btQuaternion::getIdentity(), CAR_ID);
@@ -43,16 +42,6 @@ Car::Car(): m_raycastVehicle(NULL) {
 Car::~Car() {
 }
 
-/*
-void Car::Render(
-    const ICamera* camera,
-    const Vector4f& lightPosition,
-    const Matrix4f& lightVp,
-    const DepthFBO& shadowMap) {
-    m_geoObj->Render(camera, lightPosition, lightVp, shadowMap);
-}
-*/
-
 void Car::Update() {
 
     if(!m_raycastVehicle) {
@@ -60,7 +49,6 @@ void Car::Update() {
 	return;
     }
 
-//    LOG_I("car update");
     const KeyboardState& kbs = KeyboardState::GetInstance();
 
 
