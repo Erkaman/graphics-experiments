@@ -106,8 +106,6 @@ public:
 	    // add it as an object to be rendered.
 	    it->second->m_geoObjs.push_back(geoObj);
 
-	    LOG_I("already loaded");
-
 	    return it->second->m_data;
 	}
 
@@ -120,7 +118,6 @@ public:
 	geoObjRender->m_geoObjs.push_back(geoObj);
 
 	if(!data) {
-	    LOG_I("eobfile read failed");
 	    return NULL;
 	}
 
@@ -168,8 +165,6 @@ public:
 	if(!geoObjRender->m_defaultShader) {
 	    return NULL;
 	}
-
-	LOG_I("lals");
 	geoObjRender->m_outlineShader = ShaderProgram::Load("shader/geo_obj_draw_outline");
 
 	geoObjRender->m_depthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
@@ -231,8 +226,6 @@ public:
 
 	    geoObjRender->m_chunks.push_back(newChunk);
 	}
-
-	LOG_I("return data: %s", filename.c_str() );
 	return data;
     }
 
@@ -280,16 +273,7 @@ public:
     {
         if(m_obj == NULL)
             return; // silently return before we set a node
-/*
-  btMatrix3x3 r = worldTrans.getBasis();
 
-  Matrix4f rot(
-  r[0].x(),r[0].y(),r[0].z(),0,
-  r[1].x(),r[1].y(),r[1].z(),0,
-  r[2].x(),r[2].y(),r[2].z(),0,
-  0            , 0           , 0           ,1
-  );
-*/
         btVector3 pos = worldTrans.getOrigin();
         m_obj->SetPosition(Vector3f(pos.x(), pos.y(), pos.z()) );
 	m_obj->SetRotation(/*rot*/ worldTrans.getRotation() );
@@ -438,8 +422,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
     auto& geoObjs = GeoObjManager::GetInstance().GetGeoObjs();
 
-//    LOG_I("BEGIN");
-
     for(auto& it : geoObjs) {
 
 	const GeoObjRender* gRender = it.second;
@@ -455,9 +437,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 
 	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
-
-	    //    LOG_I("model: %s",  tocstr(modelMatrix) );
-//	    LOG_I("filename: %s",  geoObj->GetFilename().c_str() );
 
 	    gRender->m_defaultShader->SetPhongUniforms(
 		modelMatrix
@@ -499,7 +478,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 		gRender->m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
 
-		//	LOG_I("render chunk");
 		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 
 		if(chunk->m_texture != NULL) {
@@ -556,16 +534,7 @@ void GeometryObject::SetPosition(const Vector3f& position) {
 void GeometryObject::SetRotation(const btQuaternion& rotation) {
 
     m_rotation = rotation;
-
-//    this->SetModelMatrix(Matrix4f::CreateTranslation(m_position) * rotation );
 }
-
-/*
-  void GeometryObject::CreateCollisionShape(
-  const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld) {
-
-  }
-*/
 
 void GeometryObject::ApplyCentralForce(const Vector3f& force) {
     if(m_rigidBody)
@@ -592,9 +561,6 @@ Vector3f GeometryObject::GetPosition() const {
 }
 
 void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
-/*    if(m_rigidBody) {
-      LOG_I("rigidbody null");
-      }*/
 
     CollisionShape* colShape = m_data->m_collisionShape;
     EntityInfo* entityInfo = m_data->m_entityInfo;
@@ -628,7 +594,6 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     m_motionState = new MyMotionState(transform, this);
 
     btVector3 inertia(0, 0, 0);
-
     // static objects dont move, so they have no intertia
     if(!entityInfo->m_isStatic) {
         btShape->calculateLocalInertia(entityInfo->m_mass, inertia);
@@ -638,14 +603,11 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
     m_rigidBody = new btRigidBody(ci);
 
-//    physicsWorld->AddRigidBody(m_rigidBody);
-
     physicsWorld->AddRigidBody(m_rigidBody);
 }
 
 Matrix4f GeometryObject::GetModelMatrix(const Matrix4f& scaling)const {
     return
-
 	Matrix4f::CreateTranslation(m_position + m_editPosition) * // translate
 	fromBtMat( btMatrix3x3(m_rotation * m_editRotation) ) * // rotate
     	scaling; // scale

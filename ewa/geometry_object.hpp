@@ -17,20 +17,22 @@ class PhysicsWorld;
 class btRigidBody;
 class btMotionState;
 
-
 class GeometryObject : public IGeometryObject {
 private:
 
+    // the AABB of the object. Used for view-frustrum culling.
     AABB m_aabb;
+
+    // wireframe cube used to visualize the AABB of the object.
     Cube* m_aabbWireframe;
 
     btRigidBody* m_rigidBody;
     btMotionState* m_motionState;
 
+    // the id of this object. Used for object picking.
     unsigned int m_id;
 
     GeometryObjectData* m_data;
-
 
 
     Vector3f m_position;
@@ -41,11 +43,9 @@ private:
 
     std::string m_filename;
 
-    void createcollisionshape(const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld);
-
     Matrix4f GetModelMatrix(const Matrix4f& scaling = Matrix4f::CreateIdentity() )const;
 
-protected:
+    AABB GetModelSpaceAABB()const;
 
     void RenderVertices(ShaderProgram& shader);
 
@@ -77,7 +77,6 @@ public:
     virtual void RenderId(
 	const ICamera* camera);
 
-    AABB GetModelSpaceAABB()const;
 
     virtual void SetPosition(const Vector3f& position);
     virtual void SetRotation(const btQuaternion& rotation);

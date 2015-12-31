@@ -1,4 +1,4 @@
-numObjs 10
+numObjs 9
 beginObj
 filename obj/rock_floor.eob
 translation -130.000000 5.000000 -90.000000
@@ -16,8 +16,8 @@ rotation 0.000000 0.000000 0.000000 1.000000
 endObj
 beginObj
 filename obj/sunball.eob
-translation -46.489464 1.785933 -49.642632
-rotation 0.427002 -0.569211 0.702002 -0.029347 
+translation -48.847839 18.744261 -48.847839
+rotation 0.000000 0.000000 0.000000 1.000000 
 endObj
 beginObj
 filename obj/plane.eob
@@ -42,10 +42,5 @@ endObj
 beginObj
 filename obj/wall.eob
 translation -40.847839 18.744261 -48.847839
-rotation 0.000000 0.000000 0.000000 1.000000 
-endObj
-beginObj
-filename obj/sunball.eob
-translation 0.000000 -2471.770752 0.000000
 rotation 0.000000 0.000000 0.000000 1.000000 
 endObj
