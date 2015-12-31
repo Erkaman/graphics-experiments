@@ -118,7 +118,6 @@ void TuhuApplication::Init() {
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
-    LOG_I("lol1");
 
     const Vector3f pos =
 	Vector3f(51.479908f, 40.918278f, 70.826126f);
@@ -144,19 +143,17 @@ void TuhuApplication::Init() {
 
     string dir = Config::GetInstance().GetWorldFilename();
 
-    LOG_I("lol2");
 
+    m_car = new Car();
+    bool result = m_car->Init(m_physicsWorld, Vector3f(0,-1.5,0)+trans);
 
-    m_car = Car::Load(m_physicsWorld, Vector3f(0,-1.5,0)+trans);
-    if(!m_car) {
+    if(!result) {
 	LOG_I("could not load car");
 	PrintErrorExit();
     }
     m_geoObjs.push_back(m_car);
 
     bool guiMode = (m_gui != 0);
-
-    LOG_I("lol3");
 
     if(ResourceManager::GetInstance().PathExists(dir)/* && false*/) {
 
@@ -218,8 +215,6 @@ void TuhuApplication::Init() {
 				m_car
 	);
 
-    LOG_I("added camera");
-
     if(m_gui) {
 	m_pickingFbo = new PickingFBO();
 
@@ -236,7 +231,6 @@ void TuhuApplication::Init() {
 
     m_curCamera = m_freeCamera;
 
-    LOG_I("lol");
 
 //    StartPhysics();
 
@@ -484,7 +478,6 @@ void TuhuApplication::RenderScene() {
 
     Matrix4f lightVp =  biasMatrix *  m_lightProjectionMatrix * m_lightViewMatrix;
 
-
     GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
 
     /*
@@ -553,7 +546,6 @@ void TuhuApplication::Render() {
 }
 
 void TuhuApplication::Update(const float delta) {
-
 
     MouseState& ms = MouseState::GetInstance();
 
@@ -719,11 +711,11 @@ IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3
 					  const btQuaternion& rotation) {
 
 
+    GeometryObject* obj = new GeometryObject();
 
-    IGeometryObject* obj = GeometryObject::Load(path, position,
-						rotation, m_physicsWorld, currentObjId++);
+    bool result = obj->Init(path, position,rotation, currentObjId++);
 
-    if(!obj)
+    if(!result)
 	PrintErrorExit();
 
     m_geoObjs.push_back(obj);

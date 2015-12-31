@@ -1,27 +1,24 @@
 #pragma once
 
-#include "ewa/igeometry_object.hpp"
+#include "ewa/geometry_object.hpp"
 
 class PhysicsWorld;
 struct btVehicleRaycaster;
 class btRaycastVehicle;
 
 
-class Car : public IGeometryObject{
+class Car : public GeometryObject{
 
 private:
-
-    IGeometryObject* m_geoObj;
-
-    Car(IGeometryObject* geoObj);
 
     btVehicleRaycaster* m_vehicleRaycaster;
 
     btRaycastVehicle* m_raycastVehicle;
 
 public:
+    Car();
 
-    static Car* Load(PhysicsWorld* physicsWorld, const Vector3f& position);
+    bool Init(PhysicsWorld* physicsWorld, const Vector3f& position);
 
     virtual ~Car();
 
@@ -33,15 +30,9 @@ public:
 	const DepthFBO& shadowMap);
     */
 
-    virtual void RenderShadowMap(const Matrix4f& lightVp);
-
-    virtual AABB GetModelSpaceAABB()const;
-
     void Update();
 
     Vector3f GetForwardVector()const;
-
-    virtual Vector3f GetPosition() const;
 
     virtual void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
 

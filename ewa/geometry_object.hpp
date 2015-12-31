@@ -32,7 +32,6 @@ private:
     GeometryObjectData* m_data;
 
 
-    GeometryObject();
 
     Vector3f m_position;
     btQuaternion m_rotation;
@@ -52,11 +51,14 @@ protected:
 
 public:
 
-    static GeometryObject* Load(const std::string& filename,
-				const Vector3f& position,
-				const btQuaternion& rotation,
-				PhysicsWorld* physicsWorld,
-	unsigned int id);
+    GeometryObject() {}
+
+    bool Init(
+    const std::string& filename,
+    const Vector3f& position,
+    const btQuaternion& rotation,
+    unsigned int id);
+
 
     virtual ~GeometryObject();
 

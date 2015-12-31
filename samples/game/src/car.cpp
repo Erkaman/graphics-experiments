@@ -28,26 +28,19 @@ const btVector3 FRONT_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, (
 const btVector3 BACK_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, -(CAR_DIMENSIONS.z()/2 - 0.1f - WHEEL_RADIUS));
 
 
-Car* Car::Load(PhysicsWorld* physicsWorld, const Vector3f& position) {
+bool Car::Init(PhysicsWorld* physicsWorld, const Vector3f& position) {
 
-    IGeometryObject* geoObj = GeometryObject::Load("obj/car.eob",
-						   position, btQuaternion::getIdentity(),physicsWorld, CAR_ID);
+    bool ret = GeometryObject::Init("obj/car.eob",
+			 position, btQuaternion::getIdentity(), CAR_ID);
 
-    if(!geoObj) {
-	return NULL;
-    }
-
-    return new Car(geoObj);
+    return ret;
 }
 
-Car::Car(IGeometryObject* geoObj): m_raycastVehicle(NULL) {
-
-    m_geoObj = geoObj;
+Car::Car(): m_raycastVehicle(NULL) {
 }
 
 
 Car::~Car() {
-    delete m_geoObj;
 }
 
 /*
@@ -59,14 +52,6 @@ void Car::Render(
     m_geoObj->Render(camera, lightPosition, lightVp, shadowMap);
 }
 */
-
-void Car::RenderShadowMap(const Matrix4f& lightVp) {
-    m_geoObj->RenderShadowMap(lightVp);
-}
-
-AABB Car::GetModelSpaceAABB()const {
-    return m_geoObj->GetModelSpaceAABB();
-}
 
 void Car::Update() {
 
@@ -129,14 +114,10 @@ Vector3f Car::GetForwardVector()const {
     }
 }
 
-Vector3f Car::GetPosition() const {
-    return m_geoObj->GetPosition();
-}
-
 void Car::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
-    m_geoObj->AddToPhysicsWorld(physicsWorld);
-    btRigidBody* rigidBody = m_geoObj->GetRigidBody();
+    GeometryObject::AddToPhysicsWorld(physicsWorld);
+    btRigidBody* rigidBody = GetRigidBody();
 
     rigidBody->setActivationState(DISABLE_DEACTIVATION); // Needed for btRaycastVehicles
 

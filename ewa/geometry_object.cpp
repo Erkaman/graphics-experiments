@@ -119,9 +119,6 @@ public:
 	m_cache[filename] = geoObjRender;
 	geoObjRender->m_geoObjs.push_back(geoObj);
 
-
-
-
 	if(!data) {
 	    LOG_I("eobfile read failed");
 	    return NULL;
@@ -299,45 +296,40 @@ public:
     }
 };
 
-
-GeometryObject::GeometryObject(): m_rigidBody(NULL) {}
-
-GeometryObject* GeometryObject::Load(
+bool GeometryObject::Init(
     const std::string& filename,
     const Vector3f& position,
     const btQuaternion& rotation,
-    PhysicsWorld* physicsWorld,
     unsigned int id) {
 
+    m_id = id;
+    m_filename = filename;
 
-    GeometryObject* geoObj = new GeometryObject();
 
-    GeometryObjectData* data = GeoObjManager::GetInstance().LoadObj(filename, geoObj);
+    SetPosition(position);
+    SetEditPosition( Vector3f(0.0f) );
+    SetRotation( rotation  );
+    SetEditRotation( btQuaternion::getIdentity() );
+
+    GeometryObjectData* data = GeoObjManager::GetInstance().LoadObj(filename, this);
 
     if(!data) {
-
-	LOG_I("geo obj manager failed, %s",  filename.c_str() );
-
-	return NULL;
+	return false;
     }
-
-    geoObj->m_data = data;
-    geoObj->m_id = id;
-    geoObj->m_filename = filename;
 
     /*
       Bounding Volume
     */
-    geoObj->m_aabb = data->aabb;
-    geoObj->m_aabbWireframe = Cube::Load();
+    m_aabb = data->aabb;
+    m_aabbWireframe = Cube::Load();
 
-    geoObj->SetPosition(position);
-    geoObj->SetEditPosition( Vector3f(0.0f) );
-    geoObj->SetRotation( rotation  );
-    geoObj->SetEditRotation( btQuaternion::getIdentity() );
+    m_data = data;
 
 
-    return geoObj;
+
+
+
+    return true;
 
 }
 
@@ -446,9 +438,6 @@ void GeometryObject::RenderId(
 */
 }
 
-
-
-
 void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
 
     auto& geoObjs = GeoObjManager::GetInstance().GetGeoObjs();
@@ -550,7 +539,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	shadowMap.GetRenderTargetTexture().Unbind();
 	gRender->m_defaultShader->Unbind();
     }
-//    exit(1);
 }
 
 AABB GeometryObject::GetModelSpaceAABB()const {
