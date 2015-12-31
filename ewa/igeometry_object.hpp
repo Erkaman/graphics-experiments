@@ -16,13 +16,13 @@ class PhysicsWorld;
 class IGeometryObject {
 
 public:
-
+/*
     virtual void Render(
 	const ICamera* camera,
 	const Vector4f& lightPosition,
 	const Matrix4f& lightVp,
 	const DepthFBO& shadowMap) = 0;
-
+*/
     virtual void RenderShadowMap(const Matrix4f& lightVp) = 0;
 
 #pragma warning(disable : 4100) // temporarily disable warning: "unreferenced formal parameter.

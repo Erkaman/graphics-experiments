@@ -118,6 +118,8 @@ void TuhuApplication::Init() {
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
+    LOG_I("lol1");
+
     const Vector3f pos =
 	Vector3f(51.479908f, 40.918278f, 70.826126f);
 
@@ -142,13 +144,19 @@ void TuhuApplication::Init() {
 
     string dir = Config::GetInstance().GetWorldFilename();
 
+    LOG_I("lol2");
+
 
     m_car = Car::Load(m_physicsWorld, Vector3f(0,-1.5,0)+trans);
-    if(!m_car)
+    if(!m_car) {
+	LOG_I("could not load car");
 	PrintErrorExit();
+    }
     m_geoObjs.push_back(m_car);
 
     bool guiMode = (m_gui != 0);
+
+    LOG_I("lol3");
 
     if(ResourceManager::GetInstance().PathExists(dir)/* && false*/) {
 
@@ -165,25 +173,25 @@ void TuhuApplication::Init() {
 
 	m_heightMap = new HeightMap(guiMode);
 
-	m_stoneFloor = LoadObj("obj/rock_floor.eob", Vector3f(0,0,40) + trans);
+	LoadObj("obj/rock_floor.eob", Vector3f(0,0,40) + trans);
 
-	m_flatWoodFloor = LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40)+ trans );
+	LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40)+ trans );
 
-	m_woodFloor = LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40)+ trans );
+	LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40)+ trans );
 
-	m_sphere = LoadObj("obj/sunball.eob",
+	LoadObj("obj/sunball.eob",
 
 			   Vector3f(21.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60) );
 
-	m_plane = LoadObj("obj/plane.eob", Vector3f(0,-2.5,0)+ trans);
+	LoadObj("obj/plane.eob", Vector3f(0,-2.5,0)+ trans);
 
-	m_tree = LoadObj("obj/tree.eob", Vector3f(10,-2.5,10) + trans);
+	IGeometryObject* tree = LoadObj("obj/tree.eob", Vector3f(10,-2.5,10) + trans);
 
-	m_wall = LoadObj("obj/wall.eob", Vector3f(-5,-2.5,-5)  + trans);
+	LoadObj("obj/wall.eob", Vector3f(-5,-2.5,-5)  + trans);
 
-	m_wall2 = LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) + trans);
+	LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) + trans);
 
-	m_selected = m_tree;
+	m_selected = tree;
 
 	/*m_selected = */LoadObj("obj/wall.eob",
 				 Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
@@ -476,6 +484,10 @@ void TuhuApplication::RenderScene() {
 
     Matrix4f lightVp =  biasMatrix *  m_lightProjectionMatrix * m_lightViewMatrix;
 
+
+    GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+
+    /*
     nonCulledObjects = 0;
     for(IGeometryObject* geoObj: m_geoObjs) {
 
@@ -483,7 +495,7 @@ void TuhuApplication::RenderScene() {
 	    ++nonCulledObjects;
 
 	    if(m_selected && m_selected == geoObj) {
-		geoObj->RenderWithOutlines(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+		geoObj->RenderWithOutlines( m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
 	    } else {
 		geoObj->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
 	    }
@@ -492,6 +504,8 @@ void TuhuApplication::RenderScene() {
     }
 
     totalObjects = m_geoObjs.size();
+    */
+
 
     m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 

@@ -25,11 +25,13 @@ public:
 
     virtual ~Car();
 
+    /*
     virtual void Render(
 	const ICamera* camera,
 	const Vector4f& lightPosition,
 	const Matrix4f& lightVp,
 	const DepthFBO& shadowMap);
+    */
 
     virtual void RenderShadowMap(const Matrix4f& lightVp);
 

@@ -50,6 +50,7 @@ Car::~Car() {
     delete m_geoObj;
 }
 
+/*
 void Car::Render(
     const ICamera* camera,
     const Vector4f& lightPosition,
@@ -57,6 +58,7 @@ void Car::Render(
     const DepthFBO& shadowMap) {
     m_geoObj->Render(camera, lightPosition, lightVp, shadowMap);
 }
+*/
 
 void Car::RenderShadowMap(const Matrix4f& lightVp) {
     m_geoObj->RenderShadowMap(lightVp);

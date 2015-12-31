@@ -21,8 +21,225 @@
 
 #include <btBulletDynamicsCommon.h>
 
+#include <map>
+
 using std::string;
 using std::vector;
+using std::map;
+
+static Texture* LoadTexture(const string& filename) {
+    Texture* texture = Texture2D::Load(filename);
+    if(!texture)
+	return NULL;
+
+    texture->Bind();
+    texture->SetTextureRepeat();
+    texture->GenerateMipmap();
+    texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    texture->SetMagFilter(GL_LINEAR);
+    texture->Unbind();
+
+    return texture;
+}
+
+struct Chunk {
+    VBO* m_vertexBuffer;
+    VBO* m_indexBuffer;
+    GLuint m_numTriangles;
+
+    // the material.
+    Texture* m_texture;
+    Texture* m_normalMap;
+    Texture* m_specularMap;
+
+    float m_shininess;
+    Vector3f m_specularColor;
+};
+
+// contains the info needed to render a GeObj
+struct GeoObjRender{
+public:
+
+    std::vector<Chunk*> m_chunks;
+
+    GeometryObjectData* m_data;
+
+    ShaderProgram* m_defaultShader;
+    ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
+    ShaderProgram* m_outlineShader; //Used for drawing an outline of the object.
+    ShaderProgram* m_outputIdShader;
+
+    bool m_hasNormalMap;
+    bool m_hasSpecularMap;
+    bool m_hasHeightMap;
+
+    // the geoObjs that needs the info of this struct to be rendered.
+    vector<GeometryObject*> m_geoObjs;
+};
+
+class GeoObjManager {
+
+private:
+
+    map<string, GeoObjRender*> m_cache;
+
+    GeoObjManager() {}
+
+public:
+
+    static GeoObjManager& GetInstance(){
+	static GeoObjManager instance;
+
+	return instance;
+    }
+
+    const map<string, GeoObjRender*> GetGeoObjs()const {
+	return m_cache;
+    }
+
+    GeometryObjectData* LoadObj(const std::string& filename, GeometryObject* geoObj) {
+
+	// check if already loaded:
+	map<string, GeoObjRender*>::iterator it = m_cache.find(filename);
+	if(it != m_cache.end() ) {
+
+	    // add it as an object to be rendered.
+	    it->second->m_geoObjs.push_back(geoObj);
+
+	    LOG_I("already loaded");
+
+	    return it->second->m_data;
+	}
+
+	// else, we start loading.
+	GeoObjRender* geoObjRender = new GeoObjRender();
+	GeometryObjectData* data = EobFile::Read(filename);
+	geoObjRender->m_data = data;
+
+	m_cache[filename] = geoObjRender;
+	geoObjRender->m_geoObjs.push_back(geoObj);
+
+
+
+
+	if(!data) {
+	    LOG_I("eobfile read failed");
+	    return NULL;
+	}
+
+	string basePath = File::GetFilePath(filename);
+
+	geoObjRender->m_hasNormalMap = false;
+	geoObjRender->m_hasSpecularMap = false;
+	geoObjRender->m_hasHeightMap = false;
+
+	for(size_t i = 0; i < data->m_chunks.size(); ++i) {
+	    Material* mat = data->m_chunks[i]->m_material;
+
+	    if(mat->m_textureFilename != ""){ // empty textures should remain empty.
+		mat->m_textureFilename = File::AppendPaths(basePath, mat->m_textureFilename);
+	    }
+
+	    if(mat->m_normalMapFilename != ""){ // empty textures should remain empty->
+		mat->m_normalMapFilename = File::AppendPaths(basePath, mat->m_normalMapFilename);
+		geoObjRender->m_hasNormalMap = true;
+		geoObjRender->m_hasHeightMap = mat->m_hasHeightMap;
+	    }
+
+	    if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
+		mat->m_specularMapFilename = File::AppendPaths(basePath, mat->m_specularMapFilename);
+		geoObjRender->m_hasSpecularMap = true;
+	    }
+	}
+
+	string shaderName = "shader/geo_obj_render";
+
+	vector<string> defines;
+
+	if(geoObjRender->m_hasSpecularMap) {
+	    defines.push_back("SPEC_MAPPING");
+	}
+
+	if(geoObjRender->m_hasHeightMap) {
+	    defines.push_back("HEIGHT_MAPPING");
+	} else if(geoObjRender->m_hasNormalMap) { // only a normal map, no height map.
+	    defines.push_back("NORMAL_MAPPING");
+	}
+
+	geoObjRender->m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+
+	if(!geoObjRender->m_defaultShader) {
+	    return NULL;
+	}
+
+	LOG_I("lals");
+	geoObjRender->m_outlineShader = ShaderProgram::Load("shader/geo_obj_draw_outline");
+
+	geoObjRender->m_depthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
+
+	geoObjRender->m_outputIdShader = ShaderProgram::Load("shader/geo_obj_output_id");
+
+
+	for(size_t i = 0; i < data->m_chunks.size(); ++i) {
+	    GeometryObjectData::Chunk* baseChunk = data->m_chunks[i];
+
+	    Chunk* newChunk = new Chunk;
+
+	    newChunk->m_vertexBuffer = VBO::CreateInterleaved(
+		data->m_vertexAttribsSizes);
+
+	    newChunk->m_indexBuffer = VBO::CreateIndex(data->m_indexType);
+
+
+	    newChunk->m_numTriangles = baseChunk->m_numTriangles;
+
+	    newChunk->m_vertexBuffer->Bind();
+	    newChunk->m_vertexBuffer->SetBufferData(baseChunk->m_verticesSize, baseChunk->m_vertices);
+	    newChunk->m_vertexBuffer->Unbind();
+
+	    newChunk->m_indexBuffer->Bind();
+	    newChunk->m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
+	    newChunk->m_indexBuffer->Unbind();
+
+
+	    if(baseChunk->m_material->m_textureFilename != "") {
+		newChunk->m_texture = LoadTexture(baseChunk->m_material->m_textureFilename);
+		if(!newChunk->m_texture) {
+		    return NULL;
+		}
+	    } else {
+		newChunk->m_texture = NULL;
+	    }
+
+	    if(geoObjRender->m_hasNormalMap) {
+		newChunk->m_normalMap = LoadTexture(baseChunk->m_material->m_normalMapFilename);
+		if(!newChunk->m_normalMap) {
+		    return NULL;
+		}
+	    } else {
+		newChunk->m_normalMap = NULL;
+	    }
+
+	    if(geoObjRender->m_hasSpecularMap) {
+		newChunk->m_specularMap = LoadTexture(baseChunk->m_material->m_specularMapFilename);
+		if(!newChunk->m_specularMap) {
+		    return NULL;
+		}
+	    } else {
+		newChunk->m_specularMap = NULL;
+	    }
+
+	    newChunk->m_shininess = baseChunk->m_material->m_shininess;
+	    newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
+
+	    geoObjRender->m_chunks.push_back(newChunk);
+	}
+
+	LOG_I("return data: %s", filename.c_str() );
+	return data;
+    }
+
+};
 
 
 Matrix4f fromBtMat(const btMatrix3x3& m) {
@@ -33,9 +250,9 @@ Matrix4f fromBtMat(const btMatrix3x3& m) {
 	m[2].x(),m[2].y(),m[2].z(),0,
 	0            , 0           , 0           ,1
 	);
-
-
 }
+
+
 
 ATTRIBUTE_ALIGNED16(class) MyMotionState : public btMotionState
 {
@@ -45,7 +262,7 @@ protected:
 
 public:
 
-	BT_DECLARE_ALIGNED_ALLOCATOR();
+    BT_DECLARE_ALIGNED_ALLOCATOR();
 
     MyMotionState(const btTransform& initialPosition, GeometryObject *obj)
     {
@@ -67,14 +284,14 @@ public:
         if(m_obj == NULL)
             return; // silently return before we set a node
 /*
-	btMatrix3x3 r = worldTrans.getBasis();
+  btMatrix3x3 r = worldTrans.getBasis();
 
-	Matrix4f rot(
-	    r[0].x(),r[0].y(),r[0].z(),0,
-	    r[1].x(),r[1].y(),r[1].z(),0,
-	    r[2].x(),r[2].y(),r[2].z(),0,
-	    0            , 0           , 0           ,1
-	    );
+  Matrix4f rot(
+  r[0].x(),r[0].y(),r[0].z(),0,
+  r[1].x(),r[1].y(),r[1].z(),0,
+  r[2].x(),r[2].y(),r[2].z(),0,
+  0            , 0           , 0           ,1
+  );
 */
         btVector3 pos = worldTrans.getOrigin();
         m_obj->SetPosition(Vector3f(pos.x(), pos.y(), pos.z()) );
@@ -82,20 +299,6 @@ public:
     }
 };
 
-static Texture* LoadTexture(const string& filename) {
-    Texture* texture = Texture2D::Load(filename);
-    if(!texture)
-	return NULL;
-
-    texture->Bind();
-    texture->SetTextureRepeat();
-    texture->GenerateMipmap();
-    texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-    texture->SetMagFilter(GL_LINEAR);
-    texture->Unbind();
-
-    return texture;
-}
 
 GeometryObject::GeometryObject(): m_rigidBody(NULL) {}
 
@@ -107,17 +310,26 @@ GeometryObject* GeometryObject::Load(
     unsigned int id) {
 
 
-    GeometryObjectData* data = EobFile::Read(filename);
+    GeometryObject* geoObj = new GeometryObject();
+
+    GeometryObjectData* data = GeoObjManager::GetInstance().LoadObj(filename, geoObj);
 
     if(!data) {
+
+	LOG_I("geo obj manager failed, %s",  filename.c_str() );
+
 	return NULL;
     }
 
-    GeometryObject* geoObj = new GeometryObject();
     geoObj->m_data = data;
     geoObj->m_id = id;
     geoObj->m_filename = filename;
 
+    /*
+      Bounding Volume
+    */
+    geoObj->m_aabb = data->aabb;
+    geoObj->m_aabbWireframe = Cube::Load();
 
     geoObj->SetPosition(position);
     geoObj->SetEditPosition( Vector3f(0.0f) );
@@ -125,139 +337,12 @@ GeometryObject* GeometryObject::Load(
     geoObj->SetEditRotation( btQuaternion::getIdentity() );
 
 
-    /*
-      Load collision shape into physics engine.
-     */
-
-    /*
-      Bounding Volume
-     */
-    geoObj->m_aabb = data->aabb;
-    geoObj->m_aabbWireframe = Cube::Load();
-
-    string basePath = File::GetFilePath(filename);
-
-    geoObj->m_hasNormalMap = false;
-    geoObj->m_hasSpecularMap = false;
-    geoObj->m_hasHeightMap = false;
-
-    for(size_t i = 0; i < data->m_chunks.size(); ++i) {
-	Material* mat = data->m_chunks[i]->m_material;
-
-	if(mat->m_textureFilename != ""){ // empty textures should remain empty.
-	    mat->m_textureFilename = File::AppendPaths(basePath, mat->m_textureFilename);
-	}
-
-	if(mat->m_normalMapFilename != ""){ // empty textures should remain empty->
-	    mat->m_normalMapFilename = File::AppendPaths(basePath, mat->m_normalMapFilename);
-	    geoObj->m_hasNormalMap = true;
-	    geoObj->m_hasHeightMap = mat->m_hasHeightMap;
-	}
-
-	if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
-	    mat->m_specularMapFilename = File::AppendPaths(basePath, mat->m_specularMapFilename);
-	    geoObj->m_hasSpecularMap = true;
-	}
-    }
-
-    string shaderName = "shader/geo_obj_render";
-
-
-
-    vector<string> defines;
-
-    if(geoObj->m_hasSpecularMap) {
-	defines.push_back("SPEC_MAPPING");
-    }
-
-    if(geoObj->m_hasHeightMap) {
-	defines.push_back("HEIGHT_MAPPING");
-    } else if(geoObj->m_hasNormalMap) { // only a normal map, no height map.
-	defines.push_back("NORMAL_MAPPING");
-    }
-
-    geoObj->m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
-
-    if(!geoObj->m_defaultShader) {
-	return NULL;
-    }
-
-    geoObj->m_outlineShader = ShaderProgram::Load("shader/geo_obj_draw_outline");
-
-    geoObj->m_depthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
-
-    geoObj->m_outputIdShader = ShaderProgram::Load("shader/geo_obj_output_id");
-
-
-    if(!geoObj->m_depthShader) {
-	return NULL;
-    }
-
-
-    for(size_t i = 0; i < data->m_chunks.size(); ++i) {
-	GeometryObjectData::Chunk* baseChunk = data->m_chunks[i];
-
-	Chunk* newChunk = new Chunk;
-
-	newChunk->m_vertexBuffer = VBO::CreateInterleaved(
-	    data->m_vertexAttribsSizes);
-
-	newChunk->m_indexBuffer = VBO::CreateIndex(data->m_indexType);
-
-
-	newChunk->m_numTriangles = baseChunk->m_numTriangles;
-
-	newChunk->m_vertexBuffer->Bind();
-	newChunk->m_vertexBuffer->SetBufferData(baseChunk->m_verticesSize, baseChunk->m_vertices);
-	newChunk->m_vertexBuffer->Unbind();
-
-	newChunk->m_indexBuffer->Bind();
-	newChunk->m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
-	newChunk->m_indexBuffer->Unbind();
-
-
-	if(baseChunk->m_material->m_textureFilename != "") {
-	    newChunk->m_texture = LoadTexture(baseChunk->m_material->m_textureFilename);
-	    if(!newChunk->m_texture) {
-		return NULL;
-	    }
-	} else {
-	    newChunk->m_texture = NULL;
-	}
-
-	if(geoObj->m_hasNormalMap) {
-	    newChunk->m_normalMap = LoadTexture(baseChunk->m_material->m_normalMapFilename);
-	    if(!newChunk->m_normalMap) {
-		return NULL;
-	    }
-	} else {
-	    newChunk->m_normalMap = NULL;
-	}
-
-	if(geoObj->m_hasSpecularMap) {
-	    newChunk->m_specularMap = LoadTexture(baseChunk->m_material->m_specularMapFilename);
-	    if(!newChunk->m_specularMap) {
-		return NULL;
-	    }
-	} else {
-	    newChunk->m_specularMap = NULL;
-	}
-
-	newChunk->m_shininess = baseChunk->m_material->m_shininess;
-	newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
-
-	geoObj->m_chunks.push_back(newChunk);
-    }
-
-
-
     return geoObj;
 
 }
 
-
 GeometryObject::~GeometryObject() {
-
+/*
     for(size_t i = 0; i < m_chunks.size(); ++i) {
 	Chunk* chunk = m_chunks[i];
 
@@ -265,11 +350,16 @@ GeometryObject::~GeometryObject() {
 	MY_DELETE(chunk->m_indexBuffer);
 
 	MY_DELETE(chunk);
-    }
+	}*/
+    // should instead do this in GeoObjManager.
 }
 
 void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
 
+
+
+
+/*
     m_depthShader->Bind();
 
     Matrix4f modelMatrix = GetModelMatrix();
@@ -284,15 +374,15 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
     }
 
     m_depthShader->Unbind();
-
+*/
 }
 
 void GeometryObject::RenderWithOutlines(
-	const ICamera* camera,
-	const Vector4f& lightPosition,
-	const Matrix4f& lightVp,
-	const DepthFBO& shadowMap) {
-
+    const ICamera* camera,
+    const Vector4f& lightPosition,
+    const Matrix4f& lightVp,
+    const DepthFBO& shadowMap) {
+/*
     // Enable stencil tests.
     GL_C(glEnable(GL_STENCIL_TEST));
     GL_C(glStencilFunc(GL_ALWAYS,1,1));
@@ -306,10 +396,9 @@ void GeometryObject::RenderWithOutlines(
     Render(camera, lightPosition, lightVp,shadowMap);
 
 
-    /*
-      Only render where the corresponding pixel in the stencil buffer is zero.
-      This ensures that the outline is drawn around the object.
-     */
+
+    //  Only render where the corresponding pixel in the stencil buffer is zero.
+    //  This ensures that the outline is drawn around the object.
     GL_C(glStencilFunc(GL_EQUAL,0,1));
     GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_KEEP));
     GL_C(glStencilMask(0x00));
@@ -333,11 +422,12 @@ void GeometryObject::RenderWithOutlines(
     // render.
 
     GL_C(glDisable(GL_STENCIL_TEST));
+    */
 }
 
 void GeometryObject::RenderId(
-	const ICamera* camera) {
-
+    const ICamera* camera) {
+/*
     m_outputIdShader->Bind();
 
     Matrix4f modelMatrix = GetModelMatrix( );
@@ -353,121 +443,119 @@ void GeometryObject::RenderId(
     }
 
     m_outputIdShader->Unbind();
+*/
 }
 
-void GeometryObject::Render(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
-
-    Matrix4f modelMatrix = GetModelMatrix();
-
-    m_defaultShader->Bind();
-
-    m_defaultShader->SetPhongUniforms(
-
-	modelMatrix
-	, camera, lightPosition,
-	lightVp);
-
-    m_defaultShader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
-    Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
-    shadowMap.GetRenderTargetTexture().Bind();
 
 
 
-    for(size_t i = 0; i < m_chunks.size(); ++i) {
-	Chunk* chunk = m_chunks[i];
+void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
+
+    auto& geoObjs = GeoObjManager::GetInstance().GetGeoObjs();
+
+//    LOG_I("BEGIN");
+
+    for(auto& it : geoObjs) {
+
+	const GeoObjRender* gRender = it.second;
+
+	// bind shader.
+	gRender->m_defaultShader->Bind();
+
+	gRender->m_defaultShader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
+	Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
+	shadowMap.GetRenderTargetTexture().Bind();
+
+	for(GeometryObject* geoObj : gRender->m_geoObjs ) {
 
 
-	if(m_hasHeightMap) {
-	    Config& config = Config::GetInstance();
+	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
 
-	    m_defaultShader->SetUniform("zNear", config.GetZNear());
-	    m_defaultShader->SetUniform("zFar", config.GetZFar());
+	    //    LOG_I("model: %s",  tocstr(modelMatrix) );
+//	    LOG_I("filename: %s",  geoObj->GetFilename().c_str() );
+
+	    gRender->m_defaultShader->SetPhongUniforms(
+		modelMatrix
+		, camera, lightPosition,
+		lightVp);
+
+
+	    for(size_t i = 0; i < gRender->m_chunks.size(); ++i) {
+
+		Chunk* chunk = gRender->m_chunks[i];
+
+		if(gRender->m_hasHeightMap) {
+		    Config& config = Config::GetInstance();
+
+		    gRender->m_defaultShader->SetUniform("zNear", config.GetZNear());
+		    gRender->m_defaultShader->SetUniform("zFar", config.GetZFar());
+		}
+
+		if(chunk->m_texture != NULL) {
+		    gRender->m_defaultShader->SetUniform("diffMap", 0);
+		    Texture::SetActiveTextureUnit(0);
+		    chunk->m_texture->Bind();
+		}
+
+		if(chunk->m_normalMap != NULL) {
+		    gRender->m_defaultShader->SetUniform("normalMap", 1);
+		    Texture::SetActiveTextureUnit(1);
+		    chunk->m_normalMap->Bind();
+		}
+
+		if(chunk->m_specularMap != NULL) {
+		    gRender->m_defaultShader->SetUniform("specMap", 2);
+		    Texture::SetActiveTextureUnit(2);
+		    chunk->m_specularMap->Bind();
+		} else {
+		    // if no spec map, the model has the same specular color all over the texture.
+		    gRender->m_defaultShader->SetUniform("specColor", chunk->m_specularColor);
+		}
+
+		gRender->m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
+
+		//	LOG_I("render chunk");
+		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+
+		if(chunk->m_texture != NULL) {
+		    chunk->m_texture->Unbind();
+		}
+
+		if(chunk->m_normalMap != NULL) {
+		    chunk->m_normalMap->Unbind();
+		}
+
+		if(chunk->m_specularMap != NULL) {
+		    chunk->m_specularMap->Unbind();
+		}
+	    }
+
+	    /*
+	    Vector3f center = (geoObj->m_aabb.min + geoObj->m_aabb.max) * 0.5f;
+
+	    Vector3f radius = geoObj->m_aabb.max - center;
+
+	    geoObj->m_aabbWireframe->SetModelMatrix(
+		modelMatrix *
+		Matrix4f::CreateTranslation(center) *
+		Matrix4f::CreateScale(radius)
+		);
+
+
+	    geoObj->m_aabbWireframe->Render(camera->GetVp());
+	    */
+
 	}
 
-
-	if(chunk->m_texture != NULL) {
-	    m_defaultShader->SetUniform("diffMap", 0);
-	    Texture::SetActiveTextureUnit(0);
-	    chunk->m_texture->Bind();
-
-
-
-	}
-
-	if(chunk->m_normalMap != NULL) {
-	    m_defaultShader->SetUniform("normalMap", 1);
-	    Texture::SetActiveTextureUnit(1);
-	    chunk->m_normalMap->Bind();
-	}
-
-	if(chunk->m_specularMap != NULL) {
-	    m_defaultShader->SetUniform("specMap", 2);
-	    Texture::SetActiveTextureUnit(2);
-	    chunk->m_specularMap->Bind();
-	} else {
-	    // if no spec map, the model has the same specular color all over the texture.
-	    m_defaultShader->SetUniform("specColor", chunk->m_specularColor);
-	}
-
-	m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
-
-	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
-
-	if(chunk->m_texture != NULL) {
-	    chunk->m_texture->Unbind();
-	}
-
-	if(chunk->m_normalMap != NULL) {
-	    chunk->m_normalMap->Unbind();
-	}
-
-	if(chunk->m_specularMap != NULL) {
-	    chunk->m_specularMap->Unbind();
-	}
+	shadowMap.GetRenderTargetTexture().Unbind();
+	gRender->m_defaultShader->Unbind();
     }
-
-    shadowMap.GetRenderTargetTexture().Unbind();
-
-
-    m_defaultShader->Unbind();
-
-
-/*
-    m_aabb.min = Vector3f((m_modelMatrix * Vector4f(m_aabb.min, 1.0f)));
-    m_aabb.max = Vector3f((m_modelMatrix * Vector4f(m_aabb.max, 1.0f)));
-
-    Vector3f center = (m_aabb.min + m_aabb.max) * 0.5f;
-
-    Vector3f radius = m_aabb.max - center;
-
-    m_aabbWireframe->SetModelMatrix(
-//	Matrix4f::CreateTranslation(center) *
-	Matrix4f::CreateScale(radius)
-	);
-    */
-
-
-
-    Vector3f center = (m_aabb.min + m_aabb.max) * 0.5f;
-
-    Vector3f radius = m_aabb.max - center;
-
-
-
-    m_aabbWireframe->SetModelMatrix(
-	modelMatrix *
-	Matrix4f::CreateTranslation(center) *
-	Matrix4f::CreateScale(radius)
-	);
-
-
-    m_aabbWireframe->Render(camera->GetVp());
+//    exit(1);
 }
 
 AABB GeometryObject::GetModelSpaceAABB()const {
 
     AABB temp;
-
 
     Matrix4f modelMatrix = GetModelMatrix();
 
@@ -489,15 +577,15 @@ void GeometryObject::SetRotation(const btQuaternion& rotation) {
 }
 
 /*
-void GeometryObject::CreateCollisionShape(
-    const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld) {
+  void GeometryObject::CreateCollisionShape(
+  const CollisionShape* colShape, const EntityInfo* entityInfo, PhysicsWorld* physicsWorld) {
 
-}
+  }
 */
+
 void GeometryObject::ApplyCentralForce(const Vector3f& force) {
     if(m_rigidBody)
 	m_rigidBody->applyCentralForce(toBtVec(force));
-
 }
 
 void GeometryObject::ApplyForce(const Vector3f& force, const Vector3f& relPos) {
@@ -521,8 +609,8 @@ Vector3f GeometryObject::GetPosition() const {
 
 void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 /*    if(m_rigidBody) {
-	LOG_I("rigidbody null");
-	}*/
+      LOG_I("rigidbody null");
+      }*/
 
     CollisionShape* colShape = m_data->m_collisionShape;
     EntityInfo* entityInfo = m_data->m_entityInfo;
@@ -535,7 +623,7 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
     /*
       create collison shape.
-     */
+    */
     if(colShape->m_shape == BoxShape) {
 	btShape = new btBoxShape(toBtVec(colShape->m_halfExtents) );
     } else if(colShape->m_shape == SphereShape) {
@@ -551,7 +639,7 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
     /*
       Create motion state
-     */
+    */
     btTransform transform(m_rotation* toBtQuat(colShape->m_rotate), toBtVec(m_position + colShape->m_origin));
     m_motionState = new MyMotionState(transform, this);
 

@@ -21,35 +21,6 @@ class btMotionState;
 class GeometryObject : public IGeometryObject {
 private:
 
-    struct Chunk {
-	VBO* m_vertexBuffer;
-	VBO* m_indexBuffer;
-	GLuint m_numTriangles;
-
-	// the material.
-	Texture* m_texture;
-	Texture* m_normalMap;
-	Texture* m_specularMap;
-
-	float m_shininess;
-	Vector3f m_specularColor;
-
-    };
-
-    GeometryObjectData* m_data;
-
-
-    std::vector<Chunk*> m_chunks;
-
-    ShaderProgram* m_defaultShader;
-    ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
-    ShaderProgram* m_outlineShader; //Used for drawing an outline of the object.
-    ShaderProgram* m_outputIdShader;
-
-    bool m_hasNormalMap;
-    bool m_hasSpecularMap;
-    bool m_hasHeightMap;
-
     AABB m_aabb;
     Cube* m_aabbWireframe;
 
@@ -57,6 +28,9 @@ private:
     btMotionState* m_motionState;
 
     unsigned int m_id;
+
+    GeometryObjectData* m_data;
+
 
     GeometryObject();
 
@@ -86,7 +60,7 @@ public:
 
     virtual ~GeometryObject();
 
-    virtual void Render(
+    static void RenderAll(
 
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
 
