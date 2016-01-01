@@ -47,10 +47,6 @@ struct Chunk {
     VBO* m_indexBuffer;
     GLuint m_numTriangles;
 
-    // the material.
-    Texture* m_texture;
-    Texture* m_normalMap;
-    Texture* m_specularMap;
 
     float m_shininess;
     Vector3f m_specularColor;
@@ -69,12 +65,17 @@ public:
     ShaderProgram* m_outlineShader; //Used for drawing an outline of the object.
     ShaderProgram* m_outputIdShader;
 
-    bool m_hasNormalMap;
-    bool m_hasSpecularMap;
     bool m_hasHeightMap;
 
     // the geoObjs that needs the info of this struct to be rendered.
     vector<GeometryObject*> m_geoObjs;
+
+
+    // the material.
+    Texture* m_texture;
+    Texture* m_normalMap;
+    Texture* m_specularMap;
+
 };
 
 class GeoObjManager {
@@ -123,26 +124,48 @@ public:
 
 	string basePath = File::GetFilePath(filename);
 
-	geoObjRender->m_hasNormalMap = false;
-	geoObjRender->m_hasSpecularMap = false;
 	geoObjRender->m_hasHeightMap = false;
+
+	geoObjRender->m_texture = NULL;
+	geoObjRender->m_normalMap = NULL;
+	geoObjRender->m_specularMap = NULL;
+
 
 	for(size_t i = 0; i < data->m_chunks.size(); ++i) {
 	    Material* mat = data->m_chunks[i]->m_material;
 
 	    if(mat->m_textureFilename != ""){ // empty textures should remain empty.
-		mat->m_textureFilename = File::AppendPaths(basePath, mat->m_textureFilename);
+
+		geoObjRender->m_texture = LoadTexture(File::AppendPaths(basePath, mat->m_textureFilename));
+
+		if(!geoObjRender->m_texture) {
+		    return NULL;
+		}
+
 	    }
 
 	    if(mat->m_normalMapFilename != ""){ // empty textures should remain empty->
-		mat->m_normalMapFilename = File::AppendPaths(basePath, mat->m_normalMapFilename);
-		geoObjRender->m_hasNormalMap = true;
+
+
+		geoObjRender->m_normalMap = LoadTexture(File::AppendPaths(basePath, mat->m_normalMapFilename));
+		if(!geoObjRender->m_normalMap) {
+		    return NULL;
+		}
+
 		geoObjRender->m_hasHeightMap = mat->m_hasHeightMap;
 	    }
 
 	    if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
-		mat->m_specularMapFilename = File::AppendPaths(basePath, mat->m_specularMapFilename);
-		geoObjRender->m_hasSpecularMap = true;
+
+
+
+		geoObjRender->m_specularMap = LoadTexture(File::AppendPaths(basePath, mat->m_specularMapFilename));
+
+		if(!geoObjRender->m_specularMap) {
+		    return NULL;
+		}
+
+
 	    }
 	}
 
@@ -150,13 +173,13 @@ public:
 
 	vector<string> defines;
 
-	if(geoObjRender->m_hasSpecularMap) {
+	if(geoObjRender->m_specularMap) {
 	    defines.push_back("SPEC_MAPPING");
 	}
 
 	if(geoObjRender->m_hasHeightMap) {
 	    defines.push_back("HEIGHT_MAPPING");
-	} else if(geoObjRender->m_hasNormalMap) { // only a normal map, no height map.
+	} else if(geoObjRender->m_normalMap) { // only a normal map, no height map.
 	    defines.push_back("NORMAL_MAPPING");
 	}
 
@@ -193,33 +216,34 @@ public:
 	    newChunk->m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
 	    newChunk->m_indexBuffer->Unbind();
 
+/*
+  if(baseChunk->m_material->m_textureFilename != "") {
+  newChunk->m_texture = LoadTexture(baseChunk->m_material->m_textureFilename);
+  if(!newChunk->m_texture) {
+  return NULL;
+  }
+  } else {
+  newChunk->m_texture = NULL;
+  }
 
-	    if(baseChunk->m_material->m_textureFilename != "") {
-		newChunk->m_texture = LoadTexture(baseChunk->m_material->m_textureFilename);
-		if(!newChunk->m_texture) {
-		    return NULL;
-		}
-	    } else {
-		newChunk->m_texture = NULL;
-	    }
+  if(geoObjRender->m_hasNormalMap) {
+  newChunk->m_normalMap = LoadTexture(baseChunk->m_material->m_normalMapFilename);
+  if(!newChunk->m_normalMap) {
+  return NULL;
+  }
+  } else {
+  newChunk->m_normalMap = NULL;
+  }
 
-	    if(geoObjRender->m_hasNormalMap) {
-		newChunk->m_normalMap = LoadTexture(baseChunk->m_material->m_normalMapFilename);
-		if(!newChunk->m_normalMap) {
-		    return NULL;
-		}
-	    } else {
-		newChunk->m_normalMap = NULL;
-	    }
-
-	    if(geoObjRender->m_hasSpecularMap) {
-		newChunk->m_specularMap = LoadTexture(baseChunk->m_material->m_specularMapFilename);
-		if(!newChunk->m_specularMap) {
-		    return NULL;
-		}
-	    } else {
-		newChunk->m_specularMap = NULL;
-	    }
+  if(geoObjRender->m_hasSpecularMap) {
+  newChunk->m_specularMap = LoadTexture(baseChunk->m_material->m_specularMapFilename);
+  if(!newChunk->m_specularMap) {
+  return NULL;
+  }
+  } else {
+  newChunk->m_specularMap = NULL;
+  }
+*/
 
 	    newChunk->m_shininess = baseChunk->m_material->m_shininess;
 	    newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
@@ -315,14 +339,14 @@ bool GeometryObject::Init(
 
 GeometryObject::~GeometryObject() {
 /*
-    for(size_t i = 0; i < m_chunks.size(); ++i) {
-	Chunk* chunk = m_chunks[i];
+  for(size_t i = 0; i < m_chunks.size(); ++i) {
+  Chunk* chunk = m_chunks[i];
 
-	MY_DELETE(chunk->m_vertexBuffer);
-	MY_DELETE(chunk->m_indexBuffer);
+  MY_DELETE(chunk->m_vertexBuffer);
+  MY_DELETE(chunk->m_indexBuffer);
 
-	MY_DELETE(chunk);
-	}*/
+  MY_DELETE(chunk);
+  }*/
     // should instead do this in GeoObjManager.
 }
 
@@ -332,20 +356,20 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
 
 
 /*
-    m_depthShader->Bind();
+  m_depthShader->Bind();
 
-    Matrix4f modelMatrix = GetModelMatrix();
+  Matrix4f modelMatrix = GetModelMatrix();
 
-    const Matrix4f mvp = lightVp * modelMatrix;
-    m_depthShader->SetUniform("mvp", mvp  );
+  const Matrix4f mvp = lightVp * modelMatrix;
+  m_depthShader->SetUniform("mvp", mvp  );
 
-    for(size_t i = 0; i < m_chunks.size(); ++i) {
-	Chunk* chunk = m_chunks[i];
+  for(size_t i = 0; i < m_chunks.size(); ++i) {
+  Chunk* chunk = m_chunks[i];
 
-	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
-    }
+  VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+  }
 
-    m_depthShader->Unbind();
+  m_depthShader->Unbind();
 */
 }
 
@@ -355,66 +379,66 @@ void GeometryObject::RenderWithOutlines(
     const Matrix4f& lightVp,
     const DepthFBO& shadowMap) {
 /*
-    // Enable stencil tests.
-    GL_C(glEnable(GL_STENCIL_TEST));
-    GL_C(glStencilFunc(GL_ALWAYS,1,1));
-    GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE));
-    GL_C(glStencilMask(1));
-    GL_C(glClearStencil(0));
-    GL_C(glClear(GL_STENCIL_BUFFER_BIT));
+// Enable stencil tests.
+GL_C(glEnable(GL_STENCIL_TEST));
+GL_C(glStencilFunc(GL_ALWAYS,1,1));
+GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE));
+GL_C(glStencilMask(1));
+GL_C(glClearStencil(0));
+GL_C(glClear(GL_STENCIL_BUFFER_BIT));
 
-    // render normally. All the pixels that are covered with the objects, will be assigned a value of 1
-    // in the stencil buffer.
-    Render(camera, lightPosition, lightVp,shadowMap);
-
-
-
-    //  Only render where the corresponding pixel in the stencil buffer is zero.
-    //  This ensures that the outline is drawn around the object.
-    GL_C(glStencilFunc(GL_EQUAL,0,1));
-    GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_KEEP));
-    GL_C(glStencilMask(0x00));
-
-    m_outlineShader->Bind();
-
-    Matrix4f modelMatrix = GetModelMatrix( Matrix4f::CreateScale(Vector3f(1.05)) );
-
-    const Matrix4f mvp = camera->GetVp() * modelMatrix;
-    m_outlineShader->SetUniform("mvp", mvp  );
-
-    for(size_t i = 0; i < m_chunks.size(); ++i) {
-	Chunk* chunk = m_chunks[i];
-
-	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
-    }
-
-    m_outlineShader->Unbind();
+// render normally. All the pixels that are covered with the objects, will be assigned a value of 1
+// in the stencil buffer.
+Render(camera, lightPosition, lightVp,shadowMap);
 
 
-    // render.
 
-    GL_C(glDisable(GL_STENCIL_TEST));
-    */
+//  Only render where the corresponding pixel in the stencil buffer is zero.
+//  This ensures that the outline is drawn around the object.
+GL_C(glStencilFunc(GL_EQUAL,0,1));
+GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_KEEP));
+GL_C(glStencilMask(0x00));
+
+m_outlineShader->Bind();
+
+Matrix4f modelMatrix = GetModelMatrix( Matrix4f::CreateScale(Vector3f(1.05)) );
+
+const Matrix4f mvp = camera->GetVp() * modelMatrix;
+m_outlineShader->SetUniform("mvp", mvp  );
+
+for(size_t i = 0; i < m_chunks.size(); ++i) {
+Chunk* chunk = m_chunks[i];
+
+VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+}
+
+m_outlineShader->Unbind();
+
+
+// render.
+
+GL_C(glDisable(GL_STENCIL_TEST));
+*/
 }
 
 void GeometryObject::RenderId(
     const ICamera* camera) {
 /*
-    m_outputIdShader->Bind();
+  m_outputIdShader->Bind();
 
-    Matrix4f modelMatrix = GetModelMatrix( );
+  Matrix4f modelMatrix = GetModelMatrix( );
 
-    const Matrix4f mvp = camera->GetVp() * modelMatrix;
-    m_outputIdShader->SetUniform("mvp", mvp  );
-    m_outputIdShader->SetUniform("id", (float)m_id  );
+  const Matrix4f mvp = camera->GetVp() * modelMatrix;
+  m_outputIdShader->SetUniform("mvp", mvp  );
+  m_outputIdShader->SetUniform("id", (float)m_id  );
 
-    for(size_t i = 0; i < m_chunks.size(); ++i) {
-	Chunk* chunk = m_chunks[i];
+  for(size_t i = 0; i < m_chunks.size(); ++i) {
+  Chunk* chunk = m_chunks[i];
 
-	VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
-    }
+  VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+  }
 
-    m_outputIdShader->Unbind();
+  m_outputIdShader->Unbind();
 */
 }
 
@@ -443,36 +467,38 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		, camera, lightPosition,
 		lightVp);
 
+	    if(gRender->m_hasHeightMap) {
+		Config& config = Config::GetInstance();
+
+		gRender->m_defaultShader->SetUniform("zNear", config.GetZNear());
+		gRender->m_defaultShader->SetUniform("zFar", config.GetZFar());
+	    }
+
+	    if(gRender->m_texture != NULL) {
+		gRender->m_defaultShader->SetUniform("diffMap", 0);
+		Texture::SetActiveTextureUnit(0);
+		gRender->m_texture->Bind();
+	    }
+
+	    if(gRender->m_normalMap != NULL) {
+		gRender->m_defaultShader->SetUniform("normalMap", 1);
+		Texture::SetActiveTextureUnit(1);
+		gRender->m_normalMap->Bind();
+	    }
+
+	    if(gRender->m_specularMap != NULL) {
+		gRender->m_defaultShader->SetUniform("specMap", 2);
+		Texture::SetActiveTextureUnit(2);
+		gRender->m_specularMap->Bind();
+	    }
+
 
 	    for(size_t i = 0; i < gRender->m_chunks.size(); ++i) {
 
 		Chunk* chunk = gRender->m_chunks[i];
 
-		if(gRender->m_hasHeightMap) {
-		    Config& config = Config::GetInstance();
-
-		    gRender->m_defaultShader->SetUniform("zNear", config.GetZNear());
-		    gRender->m_defaultShader->SetUniform("zFar", config.GetZFar());
-		}
-
-		if(chunk->m_texture != NULL) {
-		    gRender->m_defaultShader->SetUniform("diffMap", 0);
-		    Texture::SetActiveTextureUnit(0);
-		    chunk->m_texture->Bind();
-		}
-
-		if(chunk->m_normalMap != NULL) {
-		    gRender->m_defaultShader->SetUniform("normalMap", 1);
-		    Texture::SetActiveTextureUnit(1);
-		    chunk->m_normalMap->Bind();
-		}
-
-		if(chunk->m_specularMap != NULL) {
-		    gRender->m_defaultShader->SetUniform("specMap", 2);
-		    Texture::SetActiveTextureUnit(2);
-		    chunk->m_specularMap->Bind();
-		} else {
-		    // if no spec map, the model has the same specular color all over the texture.
+		if(gRender->m_specularMap == NULL) {
+		    // if no spec map, the chunk has the same specular color all over the texture.
 		    gRender->m_defaultShader->SetUniform("specColor", chunk->m_specularColor);
 		}
 
@@ -480,32 +506,35 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 
-		if(chunk->m_texture != NULL) {
-		    chunk->m_texture->Unbind();
-		}
-
-		if(chunk->m_normalMap != NULL) {
-		    chunk->m_normalMap->Unbind();
-		}
-
-		if(chunk->m_specularMap != NULL) {
-		    chunk->m_specularMap->Unbind();
-		}
 	    }
 
+
+	    if(gRender->m_texture != NULL) {
+		gRender->m_texture->Unbind();
+	    }
+
+	    if(gRender->m_normalMap != NULL) {
+		gRender->m_normalMap->Unbind();
+	    }
+
+	    if(gRender->m_specularMap != NULL) {
+		gRender->m_specularMap->Unbind();
+	    }
+
+
 	    /*
-	    Vector3f center = (geoObj->m_aabb.min + geoObj->m_aabb.max) * 0.5f;
+	      Vector3f center = (geoObj->m_aabb.min + geoObj->m_aabb.max) * 0.5f;
 
-	    Vector3f radius = geoObj->m_aabb.max - center;
+	      Vector3f radius = geoObj->m_aabb.max - center;
 
-	    geoObj->m_aabbWireframe->SetModelMatrix(
-		modelMatrix *
-		Matrix4f::CreateTranslation(center) *
-		Matrix4f::CreateScale(radius)
-		);
+	      geoObj->m_aabbWireframe->SetModelMatrix(
+	      modelMatrix *
+	      Matrix4f::CreateTranslation(center) *
+	      Matrix4f::CreateScale(radius)
+	      );
 
 
-	    geoObj->m_aabbWireframe->Render(camera->GetVp());
+	      geoObj->m_aabbWireframe->Render(camera->GetVp());
 	    */
 
 	}

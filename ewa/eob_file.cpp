@@ -285,11 +285,10 @@ AABB* ReadAABB(const std::string& infile) {
 
 }
 
-
-
 // for every eob filed named XYZ.eob, we store a material file in the same directory.
 // It is name XYZ.mat
-map<string, Material*>* ReadMaterialFile(const std::string& infile) {
+map<string, Material*>* ReadMaterialFile(
+    const std::string& infile) {
 
 
     // strip ".eob" extension,

@@ -118,7 +118,7 @@ void Camera::Update(const float delta) {
     }
 
     if(   kbs.IsPressed(GLFW_KEY_M)  ) {
-	cameraSpeed = 15.0f;
+	cameraSpeed = 40.0f;
     }else {
 	cameraSpeed = 1.0f;
     }

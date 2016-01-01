@@ -1,7 +1,7 @@
 implement better batching
 implement scaling matrix support
-figure out how to have better game objects.
-
+output_id and output_depth shader should be the same for all geoObjs,
+for better performance.
 
 
 Main features:
