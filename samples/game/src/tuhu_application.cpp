@@ -189,6 +189,7 @@ void TuhuApplication::Init() {
 	LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) + trans);
 
 	m_selected = tree;
+	m_selected->SetSelected(true);
 
 	/*m_selected = */LoadObj("obj/wall.eob",
 				 Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
@@ -409,7 +410,9 @@ void TuhuApplication::RenderId() {
     // set viewport
     m_heightMap->RenderId(m_curCamera);
 
+    GeometryObject::RenderIdAll(m_curCamera);
 
+/*
     for(IGeometryObject* geoObj: m_geoObjs) {
 
 	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetModelSpaceAABB())) {
@@ -420,6 +423,7 @@ void TuhuApplication::RenderId() {
 
 	}
     }
+*/
 
     m_pickingFbo->Unbind();
 
@@ -654,7 +658,14 @@ void TuhuApplication::Update(const float delta) {
 	    if(id != 0) {
 		LOG_I("triangle: %f, %f", pi.unused1, pi.id);
 
+		if(m_selected){
+		    // deselected formerly selected object.
+		    m_selected->SetSelected(false);
+		}
+
 		m_selected = m_geoObjs[id];
+		m_selected->SetSelected(true);
+
 	    }
 
 

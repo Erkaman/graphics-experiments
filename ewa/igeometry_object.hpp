@@ -37,8 +37,9 @@ public:
 	const Matrix4f& lightVp,
 	const DepthFBO& shadowMap)=0;
 
+    /*
     virtual void RenderId(const ICamera* camera)=0;
-
+*/
 
     virtual void ApplyCentralForce(const Vector3f& force)=0;
     virtual void ApplyForce(const Vector3f& force, const Vector3f& relPos)=0;
@@ -65,4 +66,8 @@ public:
     virtual void SetEditRotation(const btQuaternion& editRotation)=0;
 
     virtual std::string GetFilename() const=0;
+
+    virtual bool IsSelected()const=0;
+    virtual void SetSelected(bool selected)=0;
+
 };

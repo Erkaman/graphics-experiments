@@ -61,8 +61,6 @@ public:
 
     ShaderProgram* m_defaultShader;
     ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
-    ShaderProgram* m_outlineShader; //Used for drawing an outline of the object.
-    ShaderProgram* m_outputIdShader;
 
     bool m_hasHeightMap;
 
@@ -83,9 +81,20 @@ private:
 
     map<string, GeoObjBatch*> m_batches;
 
-    GeoObjManager() {}
+
+    GeoObjManager() {
+	m_outputIdShader = ShaderProgram::Load("shader/geo_obj_output_id");
+
+	m_outlineShader = ShaderProgram::Load("shader/geo_obj_draw_outline");
+    }
 
 public:
+
+    ShaderProgram* m_outputIdShader;
+
+    ShaderProgram* m_outlineShader;
+
+
 
     static GeoObjManager& GetInstance(){
 	static GeoObjManager instance;
@@ -196,9 +205,7 @@ public:
 
 
 	// create the rest of the shaders.
-	geoObjBatch->m_outlineShader = ShaderProgram::Load("shader/geo_obj_draw_outline");
 	geoObjBatch->m_depthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
-	geoObjBatch->m_outputIdShader = ShaderProgram::Load("shader/geo_obj_output_id");
 
 
 	/*
@@ -294,7 +301,7 @@ bool GeometryObject::Init(
     m_id = id;
     m_filename = filename;
 
-
+    SetSelected(false);
     SetPosition(position);
     SetEditPosition( Vector3f(0.0f) );
     SetRotation( rotation  );
@@ -402,8 +409,52 @@ GL_C(glDisable(GL_STENCIL_TEST));
 */
 }
 
-void GeometryObject::RenderId(
+void GeometryObject::RenderIdAll(
     const ICamera* camera) {
+
+    auto& batches = GeoObjManager::GetInstance().GetBatches();
+
+    ShaderProgram* outputIdShader = GeoObjManager::GetInstance().m_outputIdShader;
+
+
+
+    // bind shader of all the batches.
+    outputIdShader->Bind();
+
+
+    // render all batches, one after one.
+    for(auto& itBatch : batches) {
+
+	const GeoObjBatch* batch = itBatch.second;
+
+
+	// render the objects of the batch, one after one.
+	for(GeometryObject* geoObj : batch->m_geoObjs ) {
+
+
+	    Matrix4f modelMatrix = geoObj->GetModelMatrix( );
+
+	    const Matrix4f mvp = camera->GetVp() * modelMatrix;
+	    outputIdShader->SetUniform("mvp", mvp  );
+	    outputIdShader->SetUniform("id", (float)geoObj->m_id  );
+
+	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
+
+		Chunk* chunk = batch->m_chunks[i];
+
+
+		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+	    }
+
+	}
+
+    }
+
+
+    outputIdShader->Unbind();
+
+
+
 /*
   m_outputIdShader->Bind();
 
@@ -428,6 +479,9 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
     auto& batches = GeoObjManager::GetInstance().GetBatches();
 
+    GeometryObject* selectedObj = NULL;
+    const GeoObjBatch* selectedBatch = NULL;
+
     // render all batches, one after one.
     for(auto& itBatch : batches) {
 
@@ -439,10 +493,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	batch->m_defaultShader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
 	Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
 	shadowMap.GetRenderTargetTexture().Bind();
-
-
-
-
 
 
 	if(batch->m_hasHeightMap) {
@@ -481,6 +531,21 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		, camera, lightPosition,
 		lightVp);
 
+	    if(geoObj->IsSelected() ) {
+		// for the selected object, we also render to the stencil buffer
+		// so that we later can draw an outline.
+
+		GL_C(glEnable(GL_STENCIL_TEST));
+		GL_C(glStencilFunc(GL_ALWAYS,1,1));
+		GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE));
+		GL_C(glStencilMask(1));
+		GL_C(glClearStencil(0));
+		GL_C(glClear(GL_STENCIL_BUFFER_BIT));
+
+		selectedObj = geoObj;
+		selectedBatch = batch;
+	    }
+
 	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
 
 		Chunk* chunk = batch->m_chunks[i];
@@ -493,6 +558,11 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		batch->m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
 
 		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+	    }
+
+	    if(geoObj->IsSelected() ) {
+		// dont render to stencil buffer for remaining objects.
+		GL_C(glStencilMask(0));
 	    }
 
 	    /*
@@ -526,6 +596,34 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 	shadowMap.GetRenderTargetTexture().Unbind();
 	batch->m_defaultShader->Unbind();
+    }
+
+    if(selectedObj != NULL) {
+	// also render outline for selected object.
+	GL_C(glStencilFunc(GL_EQUAL,0,1));
+	GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_KEEP));
+	GL_C(glStencilMask(0x00));
+
+
+	ShaderProgram* outlineShader = GeoObjManager::GetInstance().m_outlineShader;
+
+	outlineShader->Bind();
+
+	Matrix4f modelMatrix = selectedObj->GetModelMatrix( Matrix4f::CreateScale(Vector3f(1.05)) );
+
+	const Matrix4f mvp = camera->GetVp() * modelMatrix;
+	outlineShader->SetUniform("mvp", mvp  );
+
+	for(size_t i = 0; i < selectedBatch->m_chunks.size(); ++i) {
+	    Chunk* chunk = selectedBatch->m_chunks[i];
+
+	    VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+	}
+
+	outlineShader->Unbind();
+
+	GL_C(glDisable(GL_STENCIL_TEST));
+
     }
 }
 
@@ -641,4 +739,12 @@ btQuaternion GeometryObject::GetRotation() const {
 
 std::string GeometryObject::GetFilename() const {
     return m_filename;
+}
+
+bool GeometryObject::IsSelected()const {
+    return m_selected;
+}
+
+void GeometryObject::SetSelected(bool selected) {
+    m_selected = selected;
 }

@@ -43,6 +43,8 @@ private:
 
     std::string m_filename;
 
+    bool m_selected;
+
     Matrix4f GetModelMatrix(const Matrix4f& scaling = Matrix4f::CreateIdentity() )const;
 
     AABB GetModelSpaceAABB()const;
@@ -63,8 +65,11 @@ public:
     virtual ~GeometryObject();
 
     static void RenderAll(
-
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
+
+    static void RenderIdAll(
+	const ICamera* camera);
+
 
     virtual void RenderShadowMap(const Matrix4f& lightVp); // vp = view projection matrix.
 
@@ -74,9 +79,10 @@ public:
 	const Matrix4f& lightVp,
 	const DepthFBO& shadowMap);
 
+    /*
     virtual void RenderId(
 	const ICamera* camera);
-
+    */
 
     virtual void SetPosition(const Vector3f& position);
     virtual void SetRotation(const btQuaternion& rotation);
@@ -97,5 +103,10 @@ public:
     virtual void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
 
     virtual std::string GetFilename() const;
+
+
+
+    virtual bool IsSelected()const;
+    virtual void SetSelected(bool selected);
 
 };
