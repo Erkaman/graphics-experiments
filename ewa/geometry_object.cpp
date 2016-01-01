@@ -416,17 +416,13 @@ void GeometryObject::RenderIdAll(
 
     ShaderProgram* outputIdShader = GeoObjManager::GetInstance().m_outputIdShader;
 
-
-
     // bind shader of all the batches.
     outputIdShader->Bind();
-
 
     // render all batches, one after one.
     for(auto& itBatch : batches) {
 
 	const GeoObjBatch* batch = itBatch.second;
-
 
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
@@ -565,21 +561,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		GL_C(glStencilMask(0));
 	    }
 
-	    /*
-	      Vector3f center = (geoObj->m_aabb.min + geoObj->m_aabb.max) * 0.5f;
-
-	      Vector3f radius = geoObj->m_aabb.max - center;
-
-	      geoObj->m_aabbWireframe->SetModelMatrix(
-	      modelMatrix *
-	      Matrix4f::CreateTranslation(center) *
-	      Matrix4f::CreateScale(radius)
-	      );
-
-
-	      geoObj->m_aabbWireframe->Render(camera->GetVp());
-	    */
-
 	}
 
 	if(batch->m_texture != NULL) {
@@ -623,7 +604,35 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	outlineShader->Unbind();
 
 	GL_C(glDisable(GL_STENCIL_TEST));
+    }
 
+    /*
+      Render the AABBs of all objects
+    */
+
+
+    // render all batches, one after one.
+    for(auto& itBatch : batches) {
+
+	const GeoObjBatch* batch = itBatch.second;
+
+	// render the objects of the batch, one after one.
+	for(GeometryObject* geoObj : batch->m_geoObjs ) {
+
+	    Vector3f center = (geoObj->m_aabb.min + geoObj->m_aabb.max) * 0.5f;
+	    Vector3f radius = geoObj->m_aabb.max - center;
+	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
+
+	    geoObj->m_aabbWireframe->SetModelMatrix(
+		modelMatrix *
+		Matrix4f::CreateTranslation(center) *
+		Matrix4f::CreateScale(radius)
+		);
+
+
+	    geoObj->m_aabbWireframe->Render(camera->GetVp());
+
+	}
     }
 }
 
