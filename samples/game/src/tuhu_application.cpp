@@ -865,9 +865,11 @@ void TuhuApplication::RotationAccepted() {
 }
 
 void TuhuApplication::ModelAdded(const std::string& filename) {
-    Timer t; t.Start();
+
+    m_selected->SetSelected(false);
+
     m_selected = LoadObj(filename, Vector3f(0,0,0) );
-    LOG_I("loadObj timer: %f", t.Stop() );
+    m_selected->SetSelected(true);
 }
 
 void TuhuApplication::CursorSizeChanged() {
