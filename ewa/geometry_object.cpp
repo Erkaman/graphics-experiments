@@ -122,8 +122,15 @@ public:
 	    // add it as an object to be batched
 	    it->second->m_geoObjs.push_back(geoObj);
 
+
+	    LOG_I("about to return");
+
+
+
 	    return it->second->m_data;
 	}
+
+	LOG_I("load obj from scratch");
 
 	// else, we load the object and create a batch for that object.
 	GeoObjBatch* geoObjBatch = new GeoObjBatch();
@@ -315,6 +322,8 @@ bool GeometryObject::Init(
 
     GeometryObjectData* data = GeoObjManager::GetInstance().LoadObj(filename, this);
 
+
+
     if(!data) {
 	return false;
     }
@@ -323,9 +332,12 @@ bool GeometryObject::Init(
       Bounding Volume
     */
     m_aabb = data->aabb;
-    m_aabbWireframe = Cube::Load();
+
+//    m_aabbWireframe = Cube::Load();
 
     m_data = data;
+
+
 
     return true;
 
@@ -601,6 +613,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
     */
 
 
+    /*
     // render all batches, one after one.
     for(auto& itBatch : batches) {
 
@@ -623,7 +636,8 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    geoObj->m_aabbWireframe->Render(camera->GetVp());
 
 	}
-    }
+	}
+    */
 
 }
 

@@ -1,8 +1,6 @@
-implement better batching
 implement scaling matrix support
 output_id and output_depth shader should be the same for all geoObjs,
 for better performance.
-
 
 Main features:
 * Environment mapping.(then water reflection. )
