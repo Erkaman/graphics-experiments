@@ -31,10 +31,7 @@ PhysicsWorld::~PhysicsWorld() {
 }
 
 void PhysicsWorld::AddRigidBody(btRigidBody* rigidBody) {
-    LOG_I("AddRigidBody");
     m_world->addRigidBody(rigidBody);
-    LOG_I("success AddRigidBody");
-
 }
 
 void PhysicsWorld::Update(const float delta) {
@@ -43,7 +40,6 @@ void PhysicsWorld::Update(const float delta) {
 }
 
 void PhysicsWorld::AddVehicle(btActionInterface* vehicle) {
-    LOG_I("AddVechicle");
     m_world->addVehicle(vehicle);
 }
 

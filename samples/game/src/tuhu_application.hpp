@@ -10,6 +10,8 @@
 
 #include "gui_listener.hpp"
 
+#include <map>
+
 class ICamera;
 class HeightMap;
 class Skydome;
@@ -74,8 +76,7 @@ private:
 
     unsigned int currentObjId;
 
-    std::vector<IGeometryObject*> m_geoObjs;
-
+    std::map<unsigned int,IGeometryObject*> m_geoObjs;
 
     IGeometryObject* LoadObj(const std::string& path, const Vector3f& position,
 	const btQuaternion& rotation = btQuaternion::getIdentity());
@@ -113,6 +114,6 @@ public:
     virtual void ModelAdded(const std::string& filename);
     virtual void CursorSizeChanged();
     virtual void Duplicate();
-
+    virtual void Delete();
 
 };

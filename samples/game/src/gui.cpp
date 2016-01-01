@@ -597,8 +597,16 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	    for(GuiListener* listener : m_listeners) {
 		listener->Duplicate();
 	    }
-
 	}
+
+	if (ImGui::Button("Delete")) {
+
+	    for(GuiListener* listener : m_listeners) {
+		listener->Delete();
+	    }
+	}
+
+
     }
 
 

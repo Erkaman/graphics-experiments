@@ -69,4 +69,5 @@ public:
     virtual bool IsSelected()const=0;
     virtual void SetSelected(bool selected)=0;
 
+    virtual unsigned int GetId()=0;
 };

@@ -104,4 +104,6 @@ public:
     virtual bool IsSelected()const;
     virtual void SetSelected(bool selected);
 
+
+    virtual unsigned int GetId();
 };

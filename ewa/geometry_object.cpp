@@ -772,3 +772,8 @@ IGeometryObject* GeometryObject::Duplicate(unsigned int id) {
 
     return newObj;
 }
+
+
+unsigned int GeometryObject::GetId() {
+    return m_id;
+}

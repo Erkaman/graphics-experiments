@@ -152,11 +152,12 @@ void TuhuApplication::Init() {
 	LOG_I("could not load car");
 	PrintErrorExit();
     }
-    m_geoObjs.push_back(m_car);
+
+    m_geoObjs[m_car->GetId()] = m_car;
 
     bool guiMode = (m_gui != 0);
 
-    if(ResourceManager::GetInstance().PathExists(dir) && false) {
+    if(ResourceManager::GetInstance().PathExists(dir)/* && false*/) {
 
 	m_heightMap = new HeightMap(
 	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,
@@ -410,22 +411,9 @@ void TuhuApplication::RenderId() {
     Clear(0.0f, 0.0f, 0.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // set viewport
-    m_heightMap->RenderId(m_curCamera);
+//    m_heightMap->RenderId(m_curCamera);
 
     GeometryObject::RenderIdAll(m_curCamera);
-
-/*
-    for(IGeometryObject* geoObj: m_geoObjs) {
-
-	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetModelSpaceAABB())) {
-
-	    if(geoObj != m_car) {
-		geoObj->RenderId(m_curCamera);
-	    }
-
-	}
-    }
-*/
 
     m_pickingFbo->Unbind();
 
@@ -486,24 +474,6 @@ void TuhuApplication::RenderScene() {
 
     GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
 
-    /*
-    nonCulledObjects = 0;
-    for(IGeometryObject* geoObj: m_geoObjs) {
-
-	if(m_viewFrustum->IsAABBInFrustum(geoObj->GetModelSpaceAABB())) {
-	    ++nonCulledObjects;
-
-	    if(m_selected && m_selected == geoObj) {
-		geoObj->RenderWithOutlines( m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
-	    } else {
-		geoObj->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
-	    }
-
-	}
-    }
-
-    totalObjects = m_geoObjs.size();
-    */
 
 
     m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
@@ -563,7 +533,9 @@ void TuhuApplication::Update(const float delta) {
 
     m_physicsWorld->Update(delta);
 
-    for(IGeometryObject* geoObj: m_geoObjs) {
+    for(auto& it : m_geoObjs) {
+//    for(IGeometryObject* geoObj: m_geoObjs) {
+	IGeometryObject* geoObj = it.second;
 
 	geoObj->Update(*m_viewFrustum);
 
@@ -661,7 +633,11 @@ void TuhuApplication::Update(const float delta) {
 	    unsigned int id = (unsigned int)pi.id;
 
 	    if(id != 0) {
-//		LOG_I("triangle: %f, %f", pi.unused1, pi.id);
+
+		// id of 0 is no object picked at all
+		// however, the ids in the map are 0-based.
+		// thus decrease by one.
+		id -= 1;
 
 		if(m_selected){
 		    // deselected formerly selected object.
@@ -729,19 +705,22 @@ IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3
 
     GeometryObject* obj = new GeometryObject();
 
+    LOG_I("add id: %d", currentObjId);
     bool result = obj->Init(path, position,rotation, currentObjId++);
 
     if(!result)
 	PrintErrorExit();
 
-    m_geoObjs.push_back(obj);
+    m_geoObjs[obj->GetId()] = obj;
 
     return obj;
 }
 
 void TuhuApplication::StartPhysics()  {
 
-    for(IGeometryObject* geoObj: m_geoObjs) {
+    for(auto& it : m_geoObjs) {
+	IGeometryObject* geoObj = it.second;
+
 	geoObj->AddToPhysicsWorld(m_physicsWorld);
     }
 
@@ -773,7 +752,9 @@ void TuhuApplication::Cleanup() {
 	outFile->WriteLine("numObjs " + to_string(m_geoObjs.size()-1) );
 
 
-	for(IGeometryObject* geoObj: m_geoObjs) {
+	for(auto& it : m_geoObjs) {
+
+	    IGeometryObject* geoObj = it.second;
 
 	    if(geoObj != m_car ) {
 //		LOG_I("geoOjb: %s",  geoObj->GetFilename().c_str() );
@@ -889,8 +870,13 @@ void TuhuApplication::Duplicate() {
 
 
 
-	m_geoObjs.push_back(dupObj);
+	m_geoObjs[dupObj->GetId()] = dupObj;
 
 
     }
+}
+
+
+void TuhuApplication::Delete() {
+    LOG_I("delete");
 }
