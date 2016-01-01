@@ -60,7 +60,7 @@ public:
     const btQuaternion& rotation,
     unsigned int id);
 
-    GeometryObject* Duplicate(unsigned int id);
+    virtual IGeometryObject* Duplicate(unsigned int id);
 
 
     virtual ~GeometryObject();

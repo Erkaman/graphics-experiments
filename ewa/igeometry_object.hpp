@@ -22,6 +22,8 @@ public:
     // Desctructor.
     virtual ~IGeometryObject() {}
 
+    virtual IGeometryObject* Duplicate(unsigned int id)=0;
+
     virtual void Update(const ViewFrustum& viewFrustum)=0;
 
 /*

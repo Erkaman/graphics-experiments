@@ -765,7 +765,7 @@ void GeometryObject::Update(const ViewFrustum& viewFrustum) {
     m_culled = !viewFrustum.IsAABBInFrustum(GetModelSpaceAABB());
 }
 
-GeometryObject* GeometryObject::Duplicate(unsigned int id) {
+IGeometryObject* GeometryObject::Duplicate(unsigned int id) {
     GeometryObject* newObj = new GeometryObject();
 
     newObj->Init(m_filename, m_position, m_rotation, id);

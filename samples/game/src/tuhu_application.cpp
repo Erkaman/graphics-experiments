@@ -875,3 +875,22 @@ void TuhuApplication::ModelAdded(const std::string& filename) {
 void TuhuApplication::CursorSizeChanged() {
     m_heightMap->SetCursorSize(m_gui->GetCursorSize());
 }
+
+void TuhuApplication::Duplicate() {
+    if(m_selected) {
+
+
+	IGeometryObject* dupObj = m_selected->Duplicate(currentObjId++);
+
+	// select duplicated object:
+	m_selected->SetSelected(false);
+	dupObj->SetSelected(true);
+	m_selected = dupObj;
+
+
+
+	m_geoObjs.push_back(dupObj);
+
+
+    }
+}

@@ -12,4 +12,6 @@ public:
 
     virtual void CursorSizeChanged()=0;
 
+    virtual void Duplicate()=0;
+
 };

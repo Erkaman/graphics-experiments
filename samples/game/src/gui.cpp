@@ -592,7 +592,13 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	LOG_W("This feature is not yet supported on windows");
 #endif
 
+	if (ImGui::Button("Duplicate")) {
 
+	    for(GuiListener* listener : m_listeners) {
+		listener->Duplicate();
+	    }
+
+	}
     }
 
 

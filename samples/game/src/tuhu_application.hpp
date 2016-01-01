@@ -112,5 +112,7 @@ public:
     virtual void RotationAccepted();
     virtual void ModelAdded(const std::string& filename);
     virtual void CursorSizeChanged();
+    virtual void Duplicate();
+
 
 };

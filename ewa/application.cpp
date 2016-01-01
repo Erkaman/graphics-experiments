@@ -135,9 +135,8 @@ void Application::DoMainLoop() {
 //	std::string str = camera
 
     }
+
 }
-
-
 
 
 void Application::Cleanup_internal() {
