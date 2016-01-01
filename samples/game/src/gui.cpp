@@ -11,11 +11,15 @@
 
 #include "nfd.h"
 
-
 #include <imgui.h>
 
 #include <GL/glew.h> // include GLEW and new version of GL on Windows
 #include <GLFW/glfw3.h> // GLFW helper library
+
+
+#if !defined(_WIN32)
+#include "cocoa_util.hpp"
+#endif
 
 #include <stdio.h>
 
@@ -39,7 +43,6 @@ constexpr float DEFAULT_NOISE_SCALE = 0.04;
 constexpr int MIN_SMOOTH_RADIUS = 1;
 constexpr int MAX_SMOOTH_RADIUS = 4;
 constexpr int DEFAULT_SMOOTH_RADIUS = 1;
-
 
 
 // Data
@@ -550,6 +553,9 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	    nfdchar_t *outPath = NULL;
 
 	    nfdresult_t result = NFD_OpenDialog( "eob", "obj/", &outPath );
+
+	    FocusWindow(g_Window);
+
 
 	    if ( result == NFD_OKAY ) {
 

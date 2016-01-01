@@ -46,6 +46,6 @@ rotation 0.000000 0.000000 0.000000 1.000000
 endObj
 beginObj
 filename obj/sunball.eob
-translation 0.000000 0.000000 0.000000
+translation -24.668755 0.000000 -32.393356
 rotation 0.000000 0.000000 0.000000 1.000000 
 endObj

@@ -9,6 +9,7 @@
 #include "ewa/buffered_file_reader.hpp"
 #include "ewa/string_util.hpp"
 #include "ewa/resource_manager.hpp"
+#include "ewa/timer.hpp"
 
 
 #include "ewa/gl/depth_fbo.hpp"
@@ -524,7 +525,6 @@ void TuhuApplication::Render() {
     int windowWidth;
     int windowHeight;
 
-
     SetViewport();
 
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -865,9 +865,9 @@ void TuhuApplication::RotationAccepted() {
 }
 
 void TuhuApplication::ModelAdded(const std::string& filename) {
-//    Timer t; t.Start();
+    Timer t; t.Start();
     m_selected = LoadObj(filename, Vector3f(0,0,0) );
-//    LOG_I("loadObj timer: %f", t.Stop() );
+    LOG_I("loadObj timer: %f", t.Stop() );
 }
 
 void TuhuApplication::CursorSizeChanged() {

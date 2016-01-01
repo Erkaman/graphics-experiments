@@ -59,7 +59,7 @@ LIST(APPEND game_libs glfw3)
 
 IF(APPLE)
 
-  LIST(APPEND ENGINE_SRC deps/src/nfd/nfd_common.c deps/src/nfd/nfd_cocoa.m)
+  LIST(APPEND ENGINE_SRC deps/src/nfd/nfd_common.c deps/src/nfd/nfd_cocoa.m samples/game/src/cocoa_util.m)
 
 
   LINK_DIRECTORIES("deps/libs/mac")
