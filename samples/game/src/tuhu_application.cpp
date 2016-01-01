@@ -847,7 +847,8 @@ void TuhuApplication::RotationAccepted() {
 
 void TuhuApplication::ModelAdded(const std::string& filename) {
 
-    m_selected->SetSelected(false);
+    if(m_selected)
+	m_selected->SetSelected(false);
 
     m_selected = LoadObj(filename, Vector3f(0,0,0) );
     m_selected->SetSelected(true);
@@ -871,12 +872,25 @@ void TuhuApplication::Duplicate() {
 
 
 	m_geoObjs[dupObj->GetId()] = dupObj;
-
-
     }
 }
 
 
 void TuhuApplication::Delete() {
     LOG_I("delete");
+
+    if(m_selected) {
+
+	// not selected anymore.
+	m_selected->SetSelected(false);
+
+	// delete from map:
+	auto it = m_geoObjs.find(m_selected->GetId());
+	GeometryObject::Delete(it->second );
+	m_geoObjs.erase(it);
+
+
+	m_selected = NULL;
+    }
+
 }

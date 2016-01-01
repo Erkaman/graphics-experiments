@@ -80,7 +80,6 @@ class GeoObjManager {
 
 private:
 
-    map<string, GeoObjBatch*> m_batches;
 
     GeoObjManager() {
 	m_outputIdShader = ShaderProgram::Load("shader/geo_obj_output_id");
@@ -96,6 +95,8 @@ public:
     Cube* m_aabbWireframe;
 
 
+    map<string, GeoObjBatch*> m_batches;
+
     ShaderProgram* m_outputIdShader;
 
     ShaderProgram* m_outlineShader;
@@ -109,10 +110,6 @@ public:
 	static GeoObjManager instance;
 
 	return instance;
-    }
-
-    const map<string, GeoObjBatch*> GetBatches()const {
-	return m_batches;
     }
 
     GeometryObjectData* LoadObj(const std::string& filename, GeometryObject* geoObj) {
@@ -353,7 +350,7 @@ GeometryObject::~GeometryObject() {
 }
 
 void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
-
+/*
     auto& batches = GeoObjManager::GetInstance().GetBatches();
 
     ShaderProgram* outputDepthShader = GeoObjManager::GetInstance().m_outputDepthShader;
@@ -392,6 +389,7 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
     }
 
     outputDepthShader->Unbind();
+*/
 
 
 
@@ -417,7 +415,7 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
 void GeometryObject::RenderIdAll(
     const ICamera* camera) {
 
-    auto& batches = GeoObjManager::GetInstance().GetBatches();
+    map<string, GeoObjBatch*>& batches = GeoObjManager::GetInstance().m_batches;
 
     ShaderProgram* outputIdShader = GeoObjManager::GetInstance().m_outputIdShader;
 
@@ -464,7 +462,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
     int nonCulled = 0;
 
 
-    auto& batches = GeoObjManager::GetInstance().GetBatches();
+    auto& batches = GeoObjManager::GetInstance().m_batches;
 
     GeometryObject* selectedObj = NULL;
     const GeoObjBatch* selectedBatch = NULL;
@@ -776,4 +774,26 @@ IGeometryObject* GeometryObject::Duplicate(unsigned int id) {
 
 unsigned int GeometryObject::GetId() {
     return m_id;
+}
+
+
+void GeometryObject::Delete(IGeometryObject* geoObj) {
+
+    // remove the obj from its corresponding batch:
+
+    // find the batch:x
+    GeoObjBatch* batch = GeoObjManager::GetInstance().m_batches[geoObj->GetFilename()];
+
+
+    vector<GeometryObject*>::iterator it;
+
+    for(it = batch->m_geoObjs.begin(); it !=batch->m_geoObjs.end(); ++it ) {
+
+	if(*it == geoObj) {
+	    break;
+	}
+    }
+
+    batch->m_geoObjs.erase(it);
+
 }

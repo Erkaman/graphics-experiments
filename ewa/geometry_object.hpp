@@ -71,6 +71,9 @@ public:
     static void RenderIdAll(
 	const ICamera* camera);
 
+    static void Delete(IGeometryObject* geoObj);
+
+
     virtual void RenderShadowMap(const Matrix4f& lightVp); // vp = view projection matrix.
 
     virtual void Update(const ViewFrustum& viewFrustum);
