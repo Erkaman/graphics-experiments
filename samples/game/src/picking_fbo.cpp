@@ -62,7 +62,7 @@ PixelInfo PickingFBO::ReadPixel(unsigned int x, unsigned int y) {
     BindForReading();
     GL_C(glReadBuffer(GL_COLOR_ATTACHMENT0));
 
-    LOG_I("read pixel: %d, %d", x, y);
+//    LOG_I("read pixel: %d, %d", x, y);
 
      PixelInfo pixel;
     glReadPixels(x, y, 1, 1, GL_RGB, GL_FLOAT, &pixel);

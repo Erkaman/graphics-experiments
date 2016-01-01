@@ -82,7 +82,6 @@ private:
 
     map<string, GeoObjBatch*> m_batches;
 
-
     GeoObjManager() {
 	m_outputIdShader = ShaderProgram::Load("shader/geo_obj_output_id");
 
@@ -90,9 +89,12 @@ private:
 
 	m_outputDepthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
 
+	m_aabbWireframe = Cube::Load();
     }
 
 public:
+    Cube* m_aabbWireframe;
+
 
     ShaderProgram* m_outputIdShader;
 
@@ -123,14 +125,9 @@ public:
 	    it->second->m_geoObjs.push_back(geoObj);
 
 
-	    LOG_I("about to return");
-
-
 
 	    return it->second->m_data;
 	}
-
-	LOG_I("load obj from scratch");
 
 	// else, we load the object and create a batch for that object.
 	GeoObjBatch* geoObjBatch = new GeoObjBatch();
@@ -333,7 +330,6 @@ bool GeometryObject::Init(
     */
     m_aabb = data->aabb;
 
-//    m_aabbWireframe = Cube::Load();
 
     m_data = data;
 
@@ -613,7 +609,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
     */
 
 
-    /*
+
     // render all batches, one after one.
     for(auto& itBatch : batches) {
 
@@ -626,18 +622,19 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    Vector3f radius = geoObj->m_aabb.max - center;
 	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
 
-	    geoObj->m_aabbWireframe->SetModelMatrix(
+	    Cube* aabbWireframe = GeoObjManager::GetInstance().m_aabbWireframe;
+
+	    aabbWireframe->SetModelMatrix(
 		modelMatrix *
 		Matrix4f::CreateTranslation(center) *
 		Matrix4f::CreateScale(radius)
 		);
 
 
-	    geoObj->m_aabbWireframe->Render(camera->GetVp());
+	    aabbWireframe->Render(camera->GetVp());
 
 	}
 	}
-    */
 
 }
 

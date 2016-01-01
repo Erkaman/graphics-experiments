@@ -23,9 +23,6 @@ private:
     // the AABB of the object. Used for view-frustrum culling.
     AABB m_aabb;
 
-    // wireframe cube used to visualize the AABB of the object.
-    Cube* m_aabbWireframe;
-
     btRigidBody* m_rigidBody;
     btMotionState* m_motionState;
 

@@ -661,7 +661,7 @@ void TuhuApplication::Update(const float delta) {
 	    unsigned int id = (unsigned int)pi.id;
 
 	    if(id != 0) {
-		LOG_I("triangle: %f, %f", pi.unused1, pi.id);
+//		LOG_I("triangle: %f, %f", pi.unused1, pi.id);
 
 		if(m_selected){
 		    // deselected formerly selected object.
