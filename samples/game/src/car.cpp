@@ -42,7 +42,9 @@ Car::Car(): m_raycastVehicle(NULL) {
 Car::~Car() {
 }
 
-void Car::Update() {
+void Car::Update(const ViewFrustum& viewFrustum) {
+
+    GeometryObject::Update(viewFrustum);
 
     if(!m_raycastVehicle) {
 	// if not yet added to physicsworld, there is nothing we can do.

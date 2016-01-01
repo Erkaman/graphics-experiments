@@ -369,6 +369,7 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
 
 void TuhuApplication::RenderShadowMap() {
+
 /*
   m_depthFbo->Bind();
   {
@@ -562,7 +563,11 @@ void TuhuApplication::Update(const float delta) {
 
     m_physicsWorld->Update(delta);
 
-    m_car->Update();
+    for(IGeometryObject* geoObj: m_geoObjs) {
+
+	geoObj->Update(*m_viewFrustum);
+
+    }
 
     m_totalDelta += delta;
 

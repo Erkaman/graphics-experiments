@@ -15,10 +15,10 @@ public:
 
     void Update(const Matrix4f& vp);
 
-    bool IsAABBInFrustum(const AABB& aabb );
+    bool IsAABBInFrustum(const AABB& aabb )const;
 
     bool IsCuboidInFrustum(
 	const float x, const float y, const float z,
-	const float xSize, const float ySize, const float zSize );
+	const float xSize, const float ySize, const float zSize )const;
 
 };

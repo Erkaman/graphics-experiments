@@ -12,6 +12,7 @@ class DepthFBO;
 class btMotionState;
 class btRigidBody;
 class PhysicsWorld;
+class ViewFrustum;
 
 class IGeometryObject {
 
@@ -21,6 +22,7 @@ public:
     // Desctructor.
     virtual ~IGeometryObject() {}
 
+    virtual void Update(const ViewFrustum& viewFrustum)=0;
 
 /*
     virtual void Render(
@@ -31,11 +33,6 @@ public:
 */
     virtual void RenderShadowMap(const Matrix4f& lightVp) = 0;
 
-    virtual void RenderWithOutlines(
-	const ICamera* camera,
-	const Vector4f& lightPosition,
-	const Matrix4f& lightVp,
-	const DepthFBO& shadowMap)=0;
 
     /*
     virtual void RenderId(const ICamera* camera)=0;

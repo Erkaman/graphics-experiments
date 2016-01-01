@@ -10,6 +10,7 @@
 #include "ewa/bt_util.hpp"
 
 #include "ewa/common.hpp"
+#include "ewa/view_frustum.hpp"
 #include "ewa/icamera.hpp"
 #include "ewa/file.hpp"
 #include "ewa/cube.hpp"
@@ -86,6 +87,9 @@ private:
 	m_outputIdShader = ShaderProgram::Load("shader/geo_obj_output_id");
 
 	m_outlineShader = ShaderProgram::Load("shader/geo_obj_draw_outline");
+
+	m_outputDepthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
+
     }
 
 public:
@@ -93,6 +97,9 @@ public:
     ShaderProgram* m_outputIdShader;
 
     ShaderProgram* m_outlineShader;
+
+    ShaderProgram* m_outputDepthShader;
+
 
 
 
@@ -204,8 +211,6 @@ public:
 	geoObjBatch->m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 
 
-	// create the rest of the shaders.
-	geoObjBatch->m_depthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
 
 
 	/*
@@ -301,6 +306,7 @@ bool GeometryObject::Init(
     m_id = id;
     m_filename = filename;
 
+    m_culled = false;
     SetSelected(false);
     SetPosition(position);
     SetEditPosition( Vector3f(0.0f) );
@@ -340,6 +346,44 @@ GeometryObject::~GeometryObject() {
 
 void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
 
+    auto& batches = GeoObjManager::GetInstance().GetBatches();
+
+    ShaderProgram* outputDepthShader = GeoObjManager::GetInstance().m_outputDepthShader;
+
+    // bind shader of all the batches.
+    outputDepthShader->Bind();
+
+    // render all batches, one after one.
+    for(auto& itBatch : batches) {
+
+	const GeoObjBatch* batch = itBatch.second;
+
+	// render the objects of the batch, one after one.
+	for(GeometryObject* geoObj : batch->m_geoObjs ) {
+
+	    if(geoObj->m_culled) {
+		continue; // if culled, do nothing.
+	    }
+
+	    Matrix4f modelMatrix = geoObj->GetModelMatrix( );
+
+
+	    const Matrix4f mvp = lightVp * modelMatrix;
+	    outputDepthShader->SetUniform("mvp", mvp  );
+
+
+	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
+
+		Chunk* chunk = batch->m_chunks[i];
+
+		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+	    }
+
+	}
+
+    }
+
+    outputDepthShader->Unbind();
 
 
 
@@ -361,53 +405,6 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
 */
 }
 
-void GeometryObject::RenderWithOutlines(
-    const ICamera* camera,
-    const Vector4f& lightPosition,
-    const Matrix4f& lightVp,
-    const DepthFBO& shadowMap) {
-/*
-// Enable stencil tests.
-GL_C(glEnable(GL_STENCIL_TEST));
-GL_C(glStencilFunc(GL_ALWAYS,1,1));
-GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE));
-GL_C(glStencilMask(1));
-GL_C(glClearStencil(0));
-GL_C(glClear(GL_STENCIL_BUFFER_BIT));
-
-// render normally. All the pixels that are covered with the objects, will be assigned a value of 1
-// in the stencil buffer.
-Render(camera, lightPosition, lightVp,shadowMap);
-
-
-
-//  Only render where the corresponding pixel in the stencil buffer is zero.
-//  This ensures that the outline is drawn around the object.
-GL_C(glStencilFunc(GL_EQUAL,0,1));
-GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_KEEP));
-GL_C(glStencilMask(0x00));
-
-m_outlineShader->Bind();
-
-Matrix4f modelMatrix = GetModelMatrix( Matrix4f::CreateScale(Vector3f(1.05)) );
-
-const Matrix4f mvp = camera->GetVp() * modelMatrix;
-m_outlineShader->SetUniform("mvp", mvp  );
-
-for(size_t i = 0; i < m_chunks.size(); ++i) {
-Chunk* chunk = m_chunks[i];
-
-VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
-}
-
-m_outlineShader->Unbind();
-
-
-// render.
-
-GL_C(glDisable(GL_STENCIL_TEST));
-*/
-}
 
 void GeometryObject::RenderIdAll(
     const ICamera* camera) {
@@ -427,6 +424,9 @@ void GeometryObject::RenderIdAll(
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
+	    if(geoObj->m_culled) {
+		continue; // if culled, do nothing.
+	    }
 
 	    Matrix4f modelMatrix = geoObj->GetModelMatrix( );
 
@@ -446,31 +446,14 @@ void GeometryObject::RenderIdAll(
 
     }
 
-
     outputIdShader->Unbind();
 
-
-
-/*
-  m_outputIdShader->Bind();
-
-  Matrix4f modelMatrix = GetModelMatrix( );
-
-  const Matrix4f mvp = camera->GetVp() * modelMatrix;
-  m_outputIdShader->SetUniform("mvp", mvp  );
-  m_outputIdShader->SetUniform("id", (float)m_id  );
-
-  for(size_t i = 0; i < m_chunks.size(); ++i) {
-  Chunk* chunk = m_chunks[i];
-
-  VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
-  }
-
-  m_outputIdShader->Unbind();
-*/
 }
 
 void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
+
+    int total = 0;
+    int nonCulled = 0;
 
 
     auto& batches = GeoObjManager::GetInstance().GetBatches();
@@ -519,6 +502,13 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
+	    ++total;
+
+	    if(geoObj->m_culled) {
+		continue; // if culled, do nothing.
+	    }
+
+	    ++nonCulled;
 
 	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
 
@@ -634,6 +624,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 	}
     }
+
 }
 
 AABB GeometryObject::GetModelSpaceAABB()const {
@@ -756,4 +747,9 @@ bool GeometryObject::IsSelected()const {
 
 void GeometryObject::SetSelected(bool selected) {
     m_selected = selected;
+}
+
+void GeometryObject::Update(const ViewFrustum& viewFrustum) {
+
+    m_culled = !viewFrustum.IsAABBInFrustum(GetModelSpaceAABB());
 }

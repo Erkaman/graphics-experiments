@@ -102,7 +102,7 @@ void ViewFrustum::Update(const Matrix4f& vp) {
 
 // solve for left, near, bottom.
 
-bool ViewFrustum::IsCuboidInFrustum( const float x, const float y, const float z, const float xSize, const float ySize, const float zSize )
+bool ViewFrustum::IsCuboidInFrustum( const float x, const float y, const float z, const float xSize, const float ySize, const float zSize )const
 {
     int p;
 
@@ -135,7 +135,7 @@ bool ViewFrustum::IsCuboidInFrustum( const float x, const float y, const float z
     return true;
 }
 
-bool ViewFrustum::IsAABBInFrustum(const AABB& aabb ) {
+bool ViewFrustum::IsAABBInFrustum(const AABB& aabb )const {
     Vector3f center = (aabb.min + aabb.max) * 0.5f;
 
     Vector3f radius = (aabb.max - center);
