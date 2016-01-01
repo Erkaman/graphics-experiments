@@ -47,13 +47,12 @@ struct Chunk {
     VBO* m_indexBuffer;
     GLuint m_numTriangles;
 
-
     float m_shininess;
     Vector3f m_specularColor;
 };
 
-// contains the info needed to render a GeObj
-struct GeoObjRender{
+// contains the info needed to render a batch of GeoObjs
+struct GeoObjBatch{
 public:
 
     std::vector<Chunk*> m_chunks;
@@ -82,7 +81,7 @@ class GeoObjManager {
 
 private:
 
-    map<string, GeoObjRender*> m_cache;
+    map<string, GeoObjBatch*> m_batches;
 
     GeoObjManager() {}
 
@@ -94,51 +93,56 @@ public:
 	return instance;
     }
 
-    const map<string, GeoObjRender*> GetGeoObjs()const {
-	return m_cache;
+    const map<string, GeoObjBatch*> GetBatches()const {
+	return m_batches;
     }
 
     GeometryObjectData* LoadObj(const std::string& filename, GeometryObject* geoObj) {
 
-	// check if already loaded:
-	map<string, GeoObjRender*>::iterator it = m_cache.find(filename);
-	if(it != m_cache.end() ) {
+	// check if already a batch for this object has been created.
+	map<string, GeoObjBatch*>::iterator it = m_batches.find(filename);
+	if(it != m_batches.end() ) {
 
-	    // add it as an object to be rendered.
+	    // add it as an object to be batched
 	    it->second->m_geoObjs.push_back(geoObj);
 
 	    return it->second->m_data;
 	}
 
-	// else, we start loading.
-	GeoObjRender* geoObjRender = new GeoObjRender();
+	// else, we load the object and create a batch for that object.
+	GeoObjBatch* geoObjBatch = new GeoObjBatch();
 	GeometryObjectData* data = EobFile::Read(filename);
-	geoObjRender->m_data = data;
+	geoObjBatch->m_data = data;
 
-	m_cache[filename] = geoObjRender;
-	geoObjRender->m_geoObjs.push_back(geoObj);
+	m_batches[filename] = geoObjBatch;
+	geoObjBatch->m_geoObjs.push_back(geoObj);
 
 	if(!data) {
 	    return NULL;
 	}
 
+
+	/*
+	  Load the textures of the object.
+	 */
+
 	string basePath = File::GetFilePath(filename);
 
-	geoObjRender->m_hasHeightMap = false;
+	geoObjBatch->m_hasHeightMap = false;
 
-	geoObjRender->m_texture = NULL;
-	geoObjRender->m_normalMap = NULL;
-	geoObjRender->m_specularMap = NULL;
-
+	geoObjBatch->m_texture = NULL;
+	geoObjBatch->m_normalMap = NULL;
+	geoObjBatch->m_specularMap = NULL;
 
 	for(size_t i = 0; i < data->m_chunks.size(); ++i) {
 	    Material* mat = data->m_chunks[i]->m_material;
 
 	    if(mat->m_textureFilename != ""){ // empty textures should remain empty.
 
-		geoObjRender->m_texture = LoadTexture(File::AppendPaths(basePath, mat->m_textureFilename));
+		geoObjBatch->m_texture = LoadTexture(File::AppendPaths(basePath, mat->m_textureFilename));
 
-		if(!geoObjRender->m_texture) {
+		if(!geoObjBatch->m_texture) {
+		    // loading texture failed.
 		    return NULL;
 		}
 
@@ -147,21 +151,21 @@ public:
 	    if(mat->m_normalMapFilename != ""){ // empty textures should remain empty->
 
 
-		geoObjRender->m_normalMap = LoadTexture(File::AppendPaths(basePath, mat->m_normalMapFilename));
-		if(!geoObjRender->m_normalMap) {
+		geoObjBatch->m_normalMap = LoadTexture(File::AppendPaths(basePath, mat->m_normalMapFilename));
+		if(!geoObjBatch->m_normalMap) {
 		    return NULL;
 		}
 
-		geoObjRender->m_hasHeightMap = mat->m_hasHeightMap;
+		geoObjBatch->m_hasHeightMap = mat->m_hasHeightMap;
 	    }
 
 	    if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
 
 
 
-		geoObjRender->m_specularMap = LoadTexture(File::AppendPaths(basePath, mat->m_specularMapFilename));
+		geoObjBatch->m_specularMap = LoadTexture(File::AppendPaths(basePath, mat->m_specularMapFilename));
 
-		if(!geoObjRender->m_specularMap) {
+		if(!geoObjBatch->m_specularMap) {
 		    return NULL;
 		}
 
@@ -171,30 +175,35 @@ public:
 
 	string shaderName = "shader/geo_obj_render";
 
+	/*
+	  Next, we create a shader that supports all the texture types.
+	 */
+
+
 	vector<string> defines;
 
-	if(geoObjRender->m_specularMap) {
+	if(geoObjBatch->m_specularMap) {
 	    defines.push_back("SPEC_MAPPING");
 	}
 
-	if(geoObjRender->m_hasHeightMap) {
+	if(geoObjBatch->m_hasHeightMap) {
 	    defines.push_back("HEIGHT_MAPPING");
-	} else if(geoObjRender->m_normalMap) { // only a normal map, no height map.
+	} else if(geoObjBatch->m_normalMap) { // only a normal map, no height map.
 	    defines.push_back("NORMAL_MAPPING");
 	}
 
-	geoObjRender->m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
-
-	if(!geoObjRender->m_defaultShader) {
-	    return NULL;
-	}
-	geoObjRender->m_outlineShader = ShaderProgram::Load("shader/geo_obj_draw_outline");
-
-	geoObjRender->m_depthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
-
-	geoObjRender->m_outputIdShader = ShaderProgram::Load("shader/geo_obj_output_id");
+	geoObjBatch->m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 
 
+	// create the rest of the shaders.
+	geoObjBatch->m_outlineShader = ShaderProgram::Load("shader/geo_obj_draw_outline");
+	geoObjBatch->m_depthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
+	geoObjBatch->m_outputIdShader = ShaderProgram::Load("shader/geo_obj_output_id");
+
+
+	/*
+	  Next, we create VBOs from the vertex data in the chunks.
+	 */
 	for(size_t i = 0; i < data->m_chunks.size(); ++i) {
 	    GeometryObjectData::Chunk* baseChunk = data->m_chunks[i];
 
@@ -216,39 +225,11 @@ public:
 	    newChunk->m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
 	    newChunk->m_indexBuffer->Unbind();
 
-/*
-  if(baseChunk->m_material->m_textureFilename != "") {
-  newChunk->m_texture = LoadTexture(baseChunk->m_material->m_textureFilename);
-  if(!newChunk->m_texture) {
-  return NULL;
-  }
-  } else {
-  newChunk->m_texture = NULL;
-  }
-
-  if(geoObjRender->m_hasNormalMap) {
-  newChunk->m_normalMap = LoadTexture(baseChunk->m_material->m_normalMapFilename);
-  if(!newChunk->m_normalMap) {
-  return NULL;
-  }
-  } else {
-  newChunk->m_normalMap = NULL;
-  }
-
-  if(geoObjRender->m_hasSpecularMap) {
-  newChunk->m_specularMap = LoadTexture(baseChunk->m_material->m_specularMapFilename);
-  if(!newChunk->m_specularMap) {
-  return NULL;
-  }
-  } else {
-  newChunk->m_specularMap = NULL;
-  }
-*/
 
 	    newChunk->m_shininess = baseChunk->m_material->m_shininess;
 	    newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
 
-	    geoObjRender->m_chunks.push_back(newChunk);
+	    geoObjBatch->m_chunks.push_back(newChunk);
 	}
 	return data;
     }
@@ -444,83 +425,75 @@ void GeometryObject::RenderId(
 
 void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
 
-    auto& geoObjs = GeoObjManager::GetInstance().GetGeoObjs();
 
-    for(auto& it : geoObjs) {
+    auto& batches = GeoObjManager::GetInstance().GetBatches();
 
-	const GeoObjRender* gRender = it.second;
+    // render all batches, one after one.
+    for(auto& itBatch : batches) {
 
-	// bind shader.
-	gRender->m_defaultShader->Bind();
+	const GeoObjBatch* batch = itBatch.second;
 
-	gRender->m_defaultShader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
+	// bind shader of the batch.
+	batch->m_defaultShader->Bind();
+
+	batch->m_defaultShader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
 	Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
 	shadowMap.GetRenderTargetTexture().Bind();
 
-	for(GeometryObject* geoObj : gRender->m_geoObjs ) {
+
+
+
+
+
+	if(batch->m_hasHeightMap) {
+	    Config& config = Config::GetInstance();
+
+	    batch->m_defaultShader->SetUniform("zNear", config.GetZNear());
+	    batch->m_defaultShader->SetUniform("zFar", config.GetZFar());
+	}
+
+	if(batch->m_texture != NULL) {
+	    batch->m_defaultShader->SetUniform("diffMap", 0);
+	    Texture::SetActiveTextureUnit(0);
+	    batch->m_texture->Bind();
+	}
+
+	if(batch->m_normalMap != NULL) {
+	    batch->m_defaultShader->SetUniform("normalMap", 1);
+	    Texture::SetActiveTextureUnit(1);
+	    batch->m_normalMap->Bind();
+	}
+
+	if(batch->m_specularMap != NULL) {
+	    batch->m_defaultShader->SetUniform("specMap", 2);
+	    Texture::SetActiveTextureUnit(2);
+	    batch->m_specularMap->Bind();
+	}
+
+	// render the objects of the batch, one after one.
+	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
 
 	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
 
-	    gRender->m_defaultShader->SetPhongUniforms(
+	    batch->m_defaultShader->SetPhongUniforms(
 		modelMatrix
 		, camera, lightPosition,
 		lightVp);
 
-	    if(gRender->m_hasHeightMap) {
-		Config& config = Config::GetInstance();
+	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
 
-		gRender->m_defaultShader->SetUniform("zNear", config.GetZNear());
-		gRender->m_defaultShader->SetUniform("zFar", config.GetZFar());
-	    }
+		Chunk* chunk = batch->m_chunks[i];
 
-	    if(gRender->m_texture != NULL) {
-		gRender->m_defaultShader->SetUniform("diffMap", 0);
-		Texture::SetActiveTextureUnit(0);
-		gRender->m_texture->Bind();
-	    }
-
-	    if(gRender->m_normalMap != NULL) {
-		gRender->m_defaultShader->SetUniform("normalMap", 1);
-		Texture::SetActiveTextureUnit(1);
-		gRender->m_normalMap->Bind();
-	    }
-
-	    if(gRender->m_specularMap != NULL) {
-		gRender->m_defaultShader->SetUniform("specMap", 2);
-		Texture::SetActiveTextureUnit(2);
-		gRender->m_specularMap->Bind();
-	    }
-
-
-	    for(size_t i = 0; i < gRender->m_chunks.size(); ++i) {
-
-		Chunk* chunk = gRender->m_chunks[i];
-
-		if(gRender->m_specularMap == NULL) {
+		if(batch->m_specularMap == NULL) {
 		    // if no spec map, the chunk has the same specular color all over the texture.
-		    gRender->m_defaultShader->SetUniform("specColor", chunk->m_specularColor);
+		    batch->m_defaultShader->SetUniform("specColor", chunk->m_specularColor);
 		}
 
-		gRender->m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
+		batch->m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
 
 		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
-
 	    }
-
-
-	    if(gRender->m_texture != NULL) {
-		gRender->m_texture->Unbind();
-	    }
-
-	    if(gRender->m_normalMap != NULL) {
-		gRender->m_normalMap->Unbind();
-	    }
-
-	    if(gRender->m_specularMap != NULL) {
-		gRender->m_specularMap->Unbind();
-	    }
-
 
 	    /*
 	      Vector3f center = (geoObj->m_aabb.min + geoObj->m_aabb.max) * 0.5f;
@@ -539,8 +512,20 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 	}
 
+	if(batch->m_texture != NULL) {
+	    batch->m_texture->Unbind();
+	}
+
+	if(batch->m_normalMap != NULL) {
+	    batch->m_normalMap->Unbind();
+	}
+
+	if(batch->m_specularMap != NULL) {
+	    batch->m_specularMap->Unbind();
+	}
+
 	shadowMap.GetRenderTargetTexture().Unbind();
-	gRender->m_defaultShader->Unbind();
+	batch->m_defaultShader->Unbind();
     }
 }
 
