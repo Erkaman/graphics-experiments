@@ -1191,10 +1191,10 @@ void HeightMap::SaveSplatMap(const std::string& filename) {
 
 
 void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
-/*
+
 
     Vector3f* LandscapeVtx = new Vector3f[m_resolution*m_resolution];
-
+    Vector3f* LandscapeVtxBeg = LandscapeVtx;
 
     unsigned short* rawHeightMap = m_heightMap->GetPixels<unsigned short>(
 	m_resolution* m_resolution * 1, GL_RED, GL_UNSIGNED_SHORT
@@ -1223,11 +1223,13 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
 	// scale us to [-1,1], then use formula.
 
+	float SCALE = 1000.0f;
 	Vector3f v =
 	    m_offset + Vector3f(
-		pos.x * m_xzScale,
+		pos.x * m_xzScale * SCALE,
 	       	h*m_yScale,
-		pos.z * m_xzScale);
+		pos.z * m_xzScale * SCALE);
+
 
 	*LandscapeVtx = v;
 	++LandscapeVtx;
@@ -1244,17 +1246,16 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 	++rawHeightMap;
     }
 
-*/
 
 
+/*
     Vector3f* LandscapeVtx = new Vector3f[2*2];
 
     LandscapeVtx[0] = Vector3f(-100.0f,0.0f,-100.0f);
     LandscapeVtx[1] = Vector3f(+100.0f,0.0f,-100.0f);
     LandscapeVtx[2] = Vector3f(-100.0f,0.0f,+100.0f);
     LandscapeVtx[3] = Vector3f(+100.0f,0.0f,+100.0f);
-
-
+*/
 
 
 
@@ -1263,8 +1264,8 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     unsigned int numTriangles = 0;
     GLuint baseIndex = 0;
     //UintVector indices;
-    unsigned int* indices = new unsigned int[6];
-    unsigned int* beg = indices;
+    unsigned int* indices = new unsigned int[(m_resolution-1)*(m_resolution-1)*6];
+    unsigned int* indicesBeg = indices;
 
     numTriangles = 0;
 
@@ -1280,24 +1281,49 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     */
 
 
+    /*
     *indices = 0; ++indices;
     *indices = 1; ++indices;
     *indices = 2; ++indices;
-
 
     // clock-wise, we specify the vertices.
     *indices = 1; ++indices;
     *indices = 3; ++indices;
     *indices = 2; ++indices;
+    */
 
 
+//    numTriangles = 2;
 
-    numTriangles = 2;
 
-    /*
     for(size_t x = 0; x < (m_resolution-1); ++x) {
 	for(size_t z = 0; z < (m_resolution-1); ++z) {
 
+
+	    *indices = baseIndex+m_resolution;
+	    indices++;
+
+
+	    *indices = baseIndex+1;
+	    indices++;
+
+	    *indices = baseIndex+0;
+	    indices++;
+
+
+
+	    *indices = baseIndex+m_resolution+1;
+	    indices++;
+
+
+	    *indices = baseIndex+1;
+	    indices++;
+
+	    *indices = baseIndex+m_resolution;
+	    indices++;
+
+
+/*
 	    indices.push_back(baseIndex+m_resolution);
 	    indices.push_back(baseIndex+1);
 	    indices.push_back(baseIndex+0);
@@ -1305,6 +1331,7 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 	    indices.push_back(baseIndex+m_resolution+1);
 	    indices.push_back(baseIndex+1);
 	    indices.push_back(baseIndex+m_resolution);
+*/
 
 	    numTriangles+=2;
 
@@ -1312,7 +1339,7 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 	}
 	baseIndex += 1;
     }
-    */
+
 
     btTransform trans;
     trans.setIdentity();
@@ -1321,11 +1348,12 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     btTriangleIndexVertexArray* meshInterface = new btTriangleIndexVertexArray();
     btIndexedMesh part;
 
-    part.m_vertexBase = (const unsigned char*)LandscapeVtx;
+    part.m_vertexBase = (const unsigned char*)LandscapeVtxBeg;
     part.m_vertexStride = sizeof(btScalar) * 3;
     part.m_numVertices = m_resolution * m_resolution;
-    part.m_triangleIndexBase =   (const unsigned char*)beg;
+    part.m_triangleIndexBase =   (const unsigned char*)indicesBeg;
     part.m_triangleIndexStride = sizeof(unsigned int) * 3;
+
     part.m_numTriangles = numTriangles;
     part.m_indexType = PHY_INTEGER;
 

@@ -1,55 +1,55 @@
 numObjs 9
 beginObj
 filename obj/rock_floor.eob
-translation -130.000000 5.000000 -90.000000
+translation -130.000000 3.000000 -90.000000
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
 beginObj
 filename obj/flat_wood_floor.eob
-translation -120.000000 5.000000 -90.000000
+translation -120.000000 3.000000 -90.000000
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
 beginObj
 filename obj/wood_floor.eob
-translation -140.000000 5.000000 -90.000000
+translation -140.000000 3.000000 -90.000000
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
 beginObj
 filename obj/sunball.eob
-translation 124.483322 -73.554916 209.577271
-rotation 0.027517 0.037970 -0.812690 0.580806 
+translation -48.847839 1.000000 -48.847839
+rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
 beginObj
 filename obj/plane.eob
-translation -130.000000 2.500000 -130.000000
+translation -130.000000 0.500000 -130.000000
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
 beginObj
 filename obj/tree.eob
-translation -120.000000 2.500000 -120.000000
+translation -120.000000 0.500000 -120.000000
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
 beginObj
 filename obj/wall.eob
-translation -135.000000 2.500000 -135.000000
+translation -135.000000 0.500000 -135.000000
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
 beginObj
 filename obj/wall.eob
-translation -110.000000 -1.500000 -135.000000
+translation -110.000000 -3.500000 -135.000000
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
 beginObj
 filename obj/wall.eob
-translation -40.847839 18.744261 -48.847839
+translation -40.847839 16.744261 -48.847839
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
