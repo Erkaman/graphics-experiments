@@ -19,8 +19,8 @@ scale 1.000000
 endObj
 beginObj
 filename obj/sunball.eob
-translation -48.847839 1.000000 -48.847839
-rotation 0.000000 0.000000 0.000000 1.000000 
+translation 124.483322 -73.554916 209.577271
+rotation 0.027517 0.037970 -0.812690 0.580806 
 scale 1.000000
 endObj
 beginObj
