@@ -1193,193 +1193,8 @@ void HeightMap::SaveSplatMap(const std::string& filename) {
 void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
 
-    Vector3f* LandscapeVtx = new Vector3f[m_resolution*m_resolution];
-    Vector3f* LandscapeVtxBeg = LandscapeVtx;
 
-    unsigned short* rawHeightMap = m_heightMap->GetPixels<unsigned short>(
-	m_resolution* m_resolution * 1, GL_RED, GL_UNSIGNED_SHORT
-	);
-    unsigned int xpos = 0;
-    unsigned int zpos = 0;
 
-    for(size_t i = 0; i < m_resolution*m_resolution; ++i) {
-
-	Vector3f pos(
-	    (float)xpos / (float)m_resolution,
-	    0,
-	    (float)zpos / (float)m_resolution
-
-	    );
-
-
-	unsigned short us = *rawHeightMap;
-
-	signed short ss =
-	    us >= MID_HEIGHT ?
-	    us - MID_HEIGHT :
-	    -(MID_HEIGHT -us);
-	float h =  ss / (float)MID_HEIGHT;
-
-
-	// scale us to [-1,1], then use formula.
-
-	float SCALE = 1000.0f;
-	Vector3f v =
-	    m_offset + Vector3f(
-		pos.x * m_xzScale * SCALE,
-	       	h*m_yScale,
-		pos.z * m_xzScale * SCALE);
-
-
-	*LandscapeVtx = v;
-	++LandscapeVtx;
-
-	++xpos;
-	if(xpos != 0 && ( xpos % (m_resolution) == 0)) {
-
-//	    LOG_I("v: %s", tocstr(v) );
-
-	    xpos = 0;
-	    ++zpos;
-	}
-
-	++rawHeightMap;
-    }
-
-
-
-/*
-    Vector3f* LandscapeVtx = new Vector3f[2*2];
-
-    LandscapeVtx[0] = Vector3f(-100.0f,0.0f,-100.0f);
-    LandscapeVtx[1] = Vector3f(+100.0f,0.0f,-100.0f);
-    LandscapeVtx[2] = Vector3f(-100.0f,0.0f,+100.0f);
-    LandscapeVtx[3] = Vector3f(+100.0f,0.0f,+100.0f);
-*/
-
-
-
-
-
-    unsigned int numTriangles = 0;
-    GLuint baseIndex = 0;
-    //UintVector indices;
-    unsigned int* indices = new unsigned int[(m_resolution-1)*(m_resolution-1)*6];
-    unsigned int* indicesBeg = indices;
-
-    numTriangles = 0;
-
-
-    /*
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(2);
-
-    indices.push_back(3);
-    indices.push_back(1);
-    indices.push_back(2);
-    */
-
-
-    /*
-    *indices = 0; ++indices;
-    *indices = 1; ++indices;
-    *indices = 2; ++indices;
-
-    // clock-wise, we specify the vertices.
-    *indices = 1; ++indices;
-    *indices = 3; ++indices;
-    *indices = 2; ++indices;
-    */
-
-
-//    numTriangles = 2;
-
-
-    for(size_t x = 0; x < (m_resolution-1); ++x) {
-	for(size_t z = 0; z < (m_resolution-1); ++z) {
-
-
-	    *indices = baseIndex+m_resolution;
-	    indices++;
-
-
-	    *indices = baseIndex+1;
-	    indices++;
-
-	    *indices = baseIndex+0;
-	    indices++;
-
-
-
-	    *indices = baseIndex+m_resolution+1;
-	    indices++;
-
-
-	    *indices = baseIndex+1;
-	    indices++;
-
-	    *indices = baseIndex+m_resolution;
-	    indices++;
-
-
-/*
-	    indices.push_back(baseIndex+m_resolution);
-	    indices.push_back(baseIndex+1);
-	    indices.push_back(baseIndex+0);
-
-	    indices.push_back(baseIndex+m_resolution+1);
-	    indices.push_back(baseIndex+1);
-	    indices.push_back(baseIndex+m_resolution);
-*/
-
-	    numTriangles+=2;
-
-	    baseIndex += 1;
-	}
-	baseIndex += 1;
-    }
-
-
-    btTransform trans;
-    trans.setIdentity();
-
-
-    btTriangleIndexVertexArray* meshInterface = new btTriangleIndexVertexArray();
-    btIndexedMesh part;
-
-    part.m_vertexBase = (const unsigned char*)LandscapeVtxBeg;
-    part.m_vertexStride = sizeof(btScalar) * 3;
-    part.m_numVertices = m_resolution * m_resolution;
-    part.m_triangleIndexBase =   (const unsigned char*)indicesBeg;
-    part.m_triangleIndexStride = sizeof(unsigned int) * 3;
-
-    part.m_numTriangles = numTriangles;
-    part.m_indexType = PHY_INTEGER;
-
-    meshInterface->addIndexedMesh(part,PHY_INTEGER);
-
-    bool	useQuantizedAabbCompression = true;
-    btBvhTriangleMeshShape* trimeshShape = new btBvhTriangleMeshShape(meshInterface,useQuantizedAabbCompression);
-    btVector3 localInertia(0,0,0);
-    //trans.setOrigin(btVector3(0,-25,0));
-
-
-    btDefaultMotionState* motionState = new btDefaultMotionState(trans);
-
-
-
-    btVector3 inertia(0,0,0);
-
-    btRigidBody::btRigidBodyConstructionInfo ci(0.0f, motionState, trimeshShape, inertia);
-
-    btRigidBody* body = new btRigidBody(ci);
-
-    physicsWorld->AddRigidBody(body);
-
-
-
-    /*
     // get new heightfield of appropriate type
 
     unsigned short* rawHeightMap = m_heightMap->GetPixels<unsigned short>(
@@ -1413,8 +1228,11 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
     // scale the shape
 //	btVector3 localScaling = getUpVector(m_upAxis, s_gridSpacing, 1.0);
+
+    float SCALE = 1.0f
+	;
     heightfieldShape->setLocalScaling(
-	btVector3(m_xzScale/(float)m_resolution,1, m_xzScale/(float)m_resolution)
+	btVector3(SCALE * m_xzScale/(float)m_resolution,1, SCALE * m_xzScale/(float)m_resolution)
 	);
 
     // set origin to middle of heightfield
@@ -1434,7 +1252,7 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     btRigidBody* rigidBody = new btRigidBody(ci);
 
     physicsWorld->AddRigidBody(rigidBody);
-    */
+
 }
 
 bool HeightMap::InBounds(int x, int z) {
