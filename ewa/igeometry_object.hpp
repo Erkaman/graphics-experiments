@@ -70,4 +70,10 @@ public:
     virtual void SetSelected(bool selected)=0;
 
     virtual unsigned int GetId()=0;
+
+
+    virtual float GetScale() const=0;
+    virtual void SetScale(const float scale)=0;
+    virtual void SetEditScale(const float editScale)=0;
+
 };

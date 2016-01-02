@@ -29,6 +29,7 @@ enum DrawTextureType {
 enum InputMode {
     InputTranslateMode,
     InputRotateMode,
+    InputScaleMode,
     InputNoneMode,
 };
 

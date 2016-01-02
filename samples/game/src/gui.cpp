@@ -439,6 +439,8 @@ Gui::Gui(GLFWwindow* window) {
     m_axisMode = NoneAxis;
     m_translation = Vector3f(0);
     m_rotation = Vector3f(0);
+    m_scale = 1.0f;
+
     m_cursorSize = DEFAULT_RADIUS;
     m_strength = 10;
     m_noiseScale = DEFAULT_NOISE_SCALE;
@@ -543,6 +545,8 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	    mode += "rotate: ";
 
 	    mode += AxisModeToStr(m_axisMode);
+	}  else if(m_inputMode == InputScaleMode) {
+	    mode += "scale: ";
 	}
 
 	ImGui::Text(mode.c_str() );
@@ -633,6 +637,7 @@ void Gui::ResetModelMode() {
 
     m_translation = Vector3f(0);
     m_rotation = Vector3f(0);
+    m_scale =1.0f;
 
     m_inputMode = InputNoneMode;
     m_axisMode = NoneAxis;
@@ -652,6 +657,8 @@ void Gui::Update() {
 		m_inputMode = InputTranslateMode;
 	    } else if( kbs.WasPressed(GLFW_KEY_R) ) {
 		m_inputMode = InputRotateMode;
+	    }else if( kbs.WasPressed(GLFW_KEY_E) ) {
+		m_inputMode = InputScaleMode;
 	    }
 
 	}else if(m_inputMode == InputRotateMode) {
@@ -682,15 +689,11 @@ void Gui::Update() {
 		    }
 
 		} else {
-		    // get keyboard number input.
-
 		    float* tr = (float*)&m_rotation;
 
 		    tr[m_axisMode] += ms.GetDeltaX() * 0.01;
 		}
 	    }
-
-
 
 	}else if(m_inputMode == InputTranslateMode) {
 
@@ -727,7 +730,29 @@ void Gui::Update() {
 		    tr[m_axisMode] += ms.GetDeltaX() * 0.1;
 		}
 	    }
+	}else if(m_inputMode == InputScaleMode) {
+
+	    if(kbs.IsPressed(GLFW_KEY_BACKSPACE) ) {
+		ResetModelMode();
+
+	    } else if(kbs.IsPressed(GLFW_KEY_ENTER) ) {
+
+		for(GuiListener* listener : m_listeners) {
+		    listener->ScaleAccepted();
+		}
+
+		ResetModelMode();
+
+	    } else {
+
+		m_scale += ms.GetDeltaX() * 0.01;
+	    }
 	}
+
+
+
+
+
     } else if(m_guiMode == ModifyTerrainMode) {
 
 	float diff = deltaScroll;
@@ -747,6 +772,11 @@ Vector3f Gui::GetTranslation()const {
 Vector3f Gui::GetRotation()const {
     return m_rotation;
 }
+
+float Gui::GetScale()const {
+    return m_scale;
+}
+
 
 void Gui::AddListener(GuiListener* listener) {
     m_listeners.push_back(listener);

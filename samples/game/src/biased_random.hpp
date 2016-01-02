@@ -46,8 +46,3 @@ public:
 	}
     }
 };
-
-
-//try to use the vertex normal formula from game gems.
-
-//	also, make scale of scale noise bigger.

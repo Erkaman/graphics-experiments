@@ -18,6 +18,7 @@ private:
 
     Vector3f m_translation;
     Vector3f m_rotation; // describes the rotation in euler angles.
+    float m_scale;
 
     std::vector<GuiListener*> m_listeners;
 
@@ -46,6 +47,7 @@ public:
 
     Vector3f GetTranslation()const;
     Vector3f GetRotation()const;
+    float GetScale()const;
 
     void AddListener(GuiListener* listener);
 

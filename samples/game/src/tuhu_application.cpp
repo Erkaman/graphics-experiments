@@ -167,7 +167,6 @@ void TuhuApplication::Init() {
 
 	LOG_I("loaded heightmap");
 
-
     } else {
 
 	m_heightMap = new HeightMap(guiMode);
@@ -660,6 +659,7 @@ void TuhuApplication::Update(const float delta) {
 
 	m_selected->SetEditPosition( m_gui->GetTranslation() );
 	m_selected->SetEditRotation( toBtQuat(m_gui->GetRotation()) );
+	m_selected->SetEditScale( m_gui->GetScale());
 
     }
 
@@ -700,13 +700,13 @@ void TuhuApplication::RenderText()  {
 }
 
 IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position,
-					  const btQuaternion& rotation) {
+					  const btQuaternion& rotation, float scale) {
 
 
     GeometryObject* obj = new GeometryObject();
 
     LOG_I("add id: %d", currentObjId);
-    bool result = obj->Init(path, position,rotation, currentObjId++);
+    bool result = obj->Init(path, position,rotation, scale, currentObjId++);
 
     if(!result)
 	PrintErrorExit();
@@ -780,6 +780,13 @@ void TuhuApplication::Cleanup() {
 		    );
 
 
+		float s = geoObj->GetScale();
+		outFile->WriteLine("scale " +
+				   to_string(s )
+
+		    );
+
+
 		outFile->WriteLine("endObj");
 
 
@@ -813,9 +820,11 @@ void TuhuApplication::ParseObjs(const std::string& filename) {
 	string filenameLine = reader->ReadLine();
 	string filename = StringUtil::SplitString(filenameLine, " ")[1];
 
+	// read translation.
 	vector<string> tokens = StringUtil::SplitString(reader->ReadLine(), " ");
 	Vector3f translation = Vector3f(stof(tokens[1]),stof(tokens[2]), stof(tokens[3]) );
 
+	// read rotation
 	tokens = StringUtil::SplitString(reader->ReadLine(), " ");
 	btQuaternion rotation = btQuaternion(
 	    stof(tokens[1]),
@@ -823,10 +832,14 @@ void TuhuApplication::ParseObjs(const std::string& filename) {
 	    stof(tokens[3]),
 	    stof(tokens[4]));
 
+	// read scale.
+	tokens = StringUtil::SplitString(reader->ReadLine(), " ");
+	float scale = stof(tokens[1]);
+
 	reader->ReadLine(); // endObj
 
 	// parsed the object. now add it to the world.
-	LoadObj(filename, translation, rotation);
+	LoadObj(filename, translation, rotation, scale);
 
     }
 }
@@ -842,7 +855,14 @@ void TuhuApplication::RotationAccepted() {
 
 	m_selected->GetRotation() * toBtQuat(m_gui->GetRotation()));
     m_selected->SetEditRotation( btQuaternion::getIdentity()  );
+}
 
+void TuhuApplication::ScaleAccepted() {
+    m_selected->SetScale(
+
+	m_selected->GetScale() * m_gui->GetScale());
+
+    m_selected->SetEditScale( 1.0f  );
 }
 
 void TuhuApplication::ModelAdded(const std::string& filename) {

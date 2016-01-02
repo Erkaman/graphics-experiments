@@ -302,6 +302,7 @@ bool GeometryObject::Init(
     const std::string& filename,
     const Vector3f& position,
     const btQuaternion& rotation,
+    float scale,
     unsigned int id) {
 
     m_id = id;
@@ -309,10 +310,15 @@ bool GeometryObject::Init(
 
     m_culled = false;
     SetSelected(false);
+
     SetPosition(position);
     SetEditPosition( Vector3f(0.0f) );
+
     SetRotation( rotation  );
     SetEditRotation( btQuaternion::getIdentity() );
+
+    SetScale(scale);
+    SetEditScale( 1.0f );
 
     GeometryObjectData* data = GeoObjManager::GetInstance().LoadObj(filename, this);
 
@@ -691,7 +697,6 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
     btCollisionShape* btShape = NULL;
 
-
     /*
       create collison shape.
     */
@@ -707,6 +712,12 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
 	return;
     }
+
+    // set scaling.
+    LOG_I("scale: %f", m_scale );
+    btShape->setLocalScaling(
+	btVector3(m_scale, m_scale, m_scale)
+	);
 
     /*
       Create motion state
@@ -731,7 +742,11 @@ Matrix4f GeometryObject::GetModelMatrix(const Matrix4f& scaling)const {
     return
 	Matrix4f::CreateTranslation(m_position + m_editPosition) * // translate
 	fromBtMat( btMatrix3x3(m_rotation * m_editRotation) ) * // rotate
-    	scaling; // scale
+
+    	scaling *
+
+	Matrix4f::CreateScale(m_scale * m_editScale)
+	;
 }
 
 void GeometryObject::SetEditPosition(const Vector3f& editPosition) {
@@ -766,7 +781,7 @@ void GeometryObject::Update(const ViewFrustum& viewFrustum) {
 IGeometryObject* GeometryObject::Duplicate(unsigned int id) {
     GeometryObject* newObj = new GeometryObject();
 
-    newObj->Init(m_filename, m_position, m_rotation, id);
+    newObj->Init(m_filename, m_position, m_rotation, m_scale, id);
 
     return newObj;
 }
@@ -796,4 +811,18 @@ void GeometryObject::Delete(IGeometryObject* geoObj) {
 
     batch->m_geoObjs.erase(it);
 
+}
+
+
+
+float GeometryObject::GetScale() const {
+    return m_scale;
+}
+
+void GeometryObject::SetScale(const float scale) {
+    m_scale = scale;
+}
+
+void GeometryObject::SetEditScale(const float editScale) {
+    m_editScale = editScale;
 }

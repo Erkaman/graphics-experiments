@@ -79,7 +79,7 @@ private:
     std::map<unsigned int,IGeometryObject*> m_geoObjs;
 
     IGeometryObject* LoadObj(const std::string& path, const Vector3f& position,
-	const btQuaternion& rotation = btQuaternion::getIdentity());
+			     const btQuaternion& rotation = btQuaternion::getIdentity(), float scale = 1.0f);
 
     Matrix4f MakeLightProj()const;
 
@@ -111,6 +111,8 @@ public:
      */
     virtual void TranslationAccepted();
     virtual void RotationAccepted();
+    virtual void ScaleAccepted();
+
     virtual void ModelAdded(const std::string& filename);
     virtual void CursorSizeChanged();
     virtual void Duplicate();

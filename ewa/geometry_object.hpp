@@ -38,6 +38,10 @@ private:
     Vector3f m_editPosition;
     btQuaternion m_editRotation;
 
+    float m_scale;
+    float m_editScale;
+
+
     std::string m_filename;
 
     bool m_selected;
@@ -58,6 +62,7 @@ public:
     const std::string& filename,
     const Vector3f& position,
     const btQuaternion& rotation,
+    float scale,
     unsigned int id);
 
     virtual IGeometryObject* Duplicate(unsigned int id);
@@ -109,4 +114,10 @@ public:
 
 
     virtual unsigned int GetId();
+
+
+    virtual float GetScale() const;
+    virtual void SetScale(const float scale);
+    virtual void SetEditScale(const float editScale);
+
 };
