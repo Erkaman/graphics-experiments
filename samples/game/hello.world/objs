@@ -1,4 +1,4 @@
-numObjs 11
+numObjs 9
 beginObj
 filename obj/rock_floor.eob
 translation -130.000000 5.000000 -90.000000
@@ -19,8 +19,8 @@ scale 1.000000
 endObj
 beginObj
 filename obj/sunball.eob
-translation -27.769968 1.000000 -69.174393
-rotation 0.819519 -0.007307 -0.418908 0.390962 
+translation -48.847839 1.000000 -48.847839
+rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
 beginObj
@@ -48,20 +48,8 @@ rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj
 beginObj
-filename obj/fuck_tree.eob
-translation 0.210548 0.000000 0.000000
-rotation 0.000000 -0.677153 0.000000 0.735842 
-scale 3.389259
-endObj
-beginObj
-filename obj/fuck_tree.eob
-translation -69.107025 0.000000 -59.155861
-rotation 0.000000 -0.677153 0.000000 0.735842 
-scale 3.389259
-endObj
-beginObj
 filename obj/wall.eob
-translation -37.538666 0.000000 -50.648827
-rotation 0.000000 0.410647 0.000000 0.911794 
-scale 4.937267
+translation -40.847839 18.744261 -48.847839
+rotation 0.000000 0.000000 0.000000 1.000000 
+scale 1.000000
 endObj

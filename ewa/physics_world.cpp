@@ -36,7 +36,7 @@ void PhysicsWorld::AddRigidBody(btRigidBody* rigidBody) {
 
 void PhysicsWorld::Update(const float delta) {
 //    LOG_I("delta: %f", delta);
-    m_world->stepSimulation(delta, 10);
+    m_world->stepSimulation(delta, 1);
 }
 
 void PhysicsWorld::AddVehicle(btActionInterface* vehicle) {
