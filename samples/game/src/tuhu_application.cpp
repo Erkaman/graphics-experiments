@@ -144,7 +144,6 @@ void TuhuApplication::Init() {
 
     string dir = Config::GetInstance().GetWorldFilename();
 
-
     m_car = new Car();
     bool result = m_car->Init(Vector3f(0,-1.5,0)+trans);
 

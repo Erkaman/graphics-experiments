@@ -31,3 +31,5 @@ typedef unsigned long long uint64;
 #define MY_DELETE(p)      if ( (p) != NULL ) { delete p; p = NULL; }
 
 #define MY_DELETEA(p)     if ( (p) ) { delete [] (p); p = NULL; }
+
+constexpr float WORLD_SCALE = 1.0f;

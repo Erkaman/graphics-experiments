@@ -40,8 +40,11 @@ public:
     virtual void RenderId(const ICamera* camera)=0;
 */
 
+    /*
     virtual void ApplyCentralForce(const Vector3f& force)=0;
     virtual void ApplyForce(const Vector3f& force, const Vector3f& relPos)=0;
+    */
+
     virtual void AddToPhysicsWorld(PhysicsWorld* physicsWorld)=0;
 
 

@@ -187,3 +187,29 @@ void Car::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     leftBackWheel.m_frictionSlip = BACK_WHEEL_FRICTION;
 
 }
+
+/*
+:m_suspensionStiffness(btScalar(5.88)),
+stiffness: N/m
+
+     m_suspensionCompression(btScalar(0.83)),
+measures in meters.
+
+     m_suspensionDamping(btScalar(0.88)),
+     N s / m
+
+     m_maxSuspensionTravelCm(btScalar(500.)),
+     cm
+
+     m_frictionSlip(btScalar(10.5)),
+
+
+     m_maxSuspensionForce(btScalar(6000.))
+*/
+
+
+/*m_maxSuspensionTravelCm could be preventing it from going further. Be sure to multiply by scale!
+
+
+m_frictionSlip, is friciton, and friciton is unitless i I think.
+*/

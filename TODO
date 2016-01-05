@@ -4,6 +4,10 @@ for better performance.
 
 Main features:
 * Environment mapping.(then water reflection. )
+http://ivanleben.blogspot.se/2008/03/water-reflections-with-opengl.html
+http://khayyam.kaplinski.com/2011/09/reflective-water-with-glsl-part-i.html
+
+
 * deferred shading.
 * SSAO
 * particle system.
@@ -24,6 +28,7 @@ http://www.gamedev.net/topic/629976-tips-for-programming-a-road-building-tool/
 http://www.gamedev.net/topic/645080-good-way-to-manage-grass-rendering/
 http://www.kevinboulanger.net/grass.html
 http://outerra.blogspot.se/2012/05/procedural-grass-rendering.html
+https://upvoid.com/devblog/2013/02/prototype-grass/
 
 tree
 torch.

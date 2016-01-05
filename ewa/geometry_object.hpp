@@ -93,9 +93,10 @@ public:
     virtual void SetEditPosition(const Vector3f& editPosition);
     virtual void SetEditRotation(const btQuaternion& editRotation);
 
+    /*
     virtual void ApplyCentralForce(const Vector3f& force);
-
     virtual void ApplyForce(const Vector3f& force, const Vector3f& relPos);
+*/
 
     virtual btRigidBody* GetRigidBody() const;
 

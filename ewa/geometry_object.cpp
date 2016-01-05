@@ -293,7 +293,12 @@ public:
             return; // silently return before we set a node
 
         btVector3 pos = worldTrans.getOrigin();
-        m_obj->SetPosition(Vector3f(pos.x(), pos.y(), pos.z()) );
+        m_obj->SetPosition(Vector3f(
+			       pos.x() / WORLD_SCALE,
+			       pos.y() / WORLD_SCALE,
+			       pos.z() / WORLD_SCALE) );
+
+	// TODO: also scale the rotation?
 	m_obj->SetRotation(/*rot*/ worldTrans.getRotation() );
     }
 };
@@ -663,6 +668,7 @@ void GeometryObject::SetRotation(const btQuaternion& rotation) {
     m_rotation = rotation;
 }
 
+/*
 void GeometryObject::ApplyCentralForce(const Vector3f& force) {
     if(m_rigidBody)
 	m_rigidBody->applyCentralForce(toBtVec(force));
@@ -673,6 +679,7 @@ void GeometryObject::ApplyForce(const Vector3f& force, const Vector3f& relPos) {
     if(m_rigidBody)
 	m_rigidBody->applyForce(toBtVec(force), toBtVec(relPos) );
 }
+*/
 
 btRigidBody* GeometryObject::GetRigidBody() const {
     return m_rigidBody;
@@ -716,13 +723,17 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     // set scaling.
     LOG_I("scale: %f", m_scale );
     btShape->setLocalScaling(
-	btVector3(m_scale, m_scale, m_scale)
+	btVector3(m_scale, m_scale, m_scale) * WORLD_SCALE
 	);
 
     /*
       Create motion state
     */
-    btTransform transform(m_rotation* toBtQuat(colShape->m_rotate), toBtVec(m_position + colShape->m_origin));
+    btTransform transform(m_rotation* toBtQuat(colShape->m_rotate),
+			  toBtVec(
+			      (m_position + colShape->m_origin) * WORLD_SCALE
+
+			      ));
     m_motionState = new MyMotionState(transform, this);
 
     btVector3 inertia(0, 0, 0);

@@ -598,6 +598,10 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 	float x = (float)xpos / (float)width;
 	float z = (float)zpos / (float)depth;
 
+	/*
+	  This is very wasteful! We y is always 0, so we do not need a Vector3f
+  Vector2f is enough.
+	 */
 	c.position =
 	    Vector3f(
 		x,
@@ -1220,11 +1224,12 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 	new btHeightfieldTerrainShape(m_resolution, m_resolution,
 				      signedRawHeightMap,
 				      m_yScale / 32767.0,  //s_gridHeightScale,
-				      -4, // min height
-				      +4, // max height
+				      -m_yScale, // min height
+				      +m_yScale, // max height
 				      1, // y-axis is up.
 				      PHY_SHORT,
 				      flipQuadEdges);
+
 
     // scale the shape
 //	btVector3 localScaling = getUpVector(m_upAxis, s_gridSpacing, 1.0);
@@ -1232,7 +1237,7 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     float SCALE = 1.0f
 	;
     heightfieldShape->setLocalScaling(
-	btVector3(SCALE * m_xzScale/(float)m_resolution,1, SCALE * m_xzScale/(float)m_resolution)
+	btVector3(SCALE * m_xzScale/(float)m_resolution,1, SCALE * m_xzScale/(float)m_resolution) * WORLD_SCALE
 	);
 
     // set origin to middle of heightfield
@@ -1261,3 +1266,5 @@ bool HeightMap::InBounds(int x, int z) {
 	x >= 0 && x < m_resolution &&
 		      z >= 0 && z < m_resolution;
 }
+
+//fix this;
