@@ -455,9 +455,13 @@ void TuhuApplication::RenderScene() {
 
 
 
+    m_gpuProfiler->Begin(GTS_Sky);
     m_skydome->Draw(m_curCamera);
+    m_gpuProfiler->End(GTS_Sky);
 
+    m_gpuProfiler->Begin(GTS_Terrain);
     m_heightMap->Render(m_curCamera, m_lightDirection);
+    m_gpuProfiler->End(GTS_Terrain);
 
 //    m_grass->Draw(m_curCamera, m_lightDirection);
 
@@ -468,32 +472,38 @@ void TuhuApplication::RenderScene() {
     //   m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 
-    Matrix4f biasMatrix(
-	0.5f, 0.0f, 0.0f, 0.5f,
-	0.0f, 0.5f, 0.0f, 0.5f,
-	0.0f, 0.0f, 0.5f, 0.5f,
-	0.0f, 0.0f, 0.0f, 1.0f
-	);
+    m_gpuProfiler->Begin(GTS_Objects);
+    {
 
-    Matrix4f lightVp =  biasMatrix *  m_lightProjectionMatrix * m_lightViewMatrix;
+	Matrix4f biasMatrix(
+	    0.5f, 0.0f, 0.0f, 0.5f,
+	    0.0f, 0.5f, 0.0f, 0.5f,
+	    0.0f, 0.0f, 0.5f, 0.5f,
+	    0.0f, 0.0f, 0.0f, 1.0f
+	    );
 
-    GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+	Matrix4f lightVp =  biasMatrix *  m_lightProjectionMatrix * m_lightViewMatrix;
 
+	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
 
+    }
 
     m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
+
+    m_gpuProfiler->End(GTS_Objects);
+
+
 
 }
 
 void TuhuApplication::Render() {
 
-    m_gpuProfiler->Begin(GTS_Objects);
 
     if(m_gui) {
 	m_gui->NewFrame(m_guiVerticalScale);
     }
 
-    RenderShadowMap();
+//    RenderShadowMap();
 
     float SCALE = m_guiVerticalScale;
 
@@ -525,16 +535,22 @@ void TuhuApplication::Render() {
 	m_gui->Render(windowWidth, windowHeight);
     }
 
-    m_gpuProfiler->End(GTS_Objects);
 
 
     m_gpuProfiler->WaitForDataAndUpdate();
 
-    char buffer[30];
+    char buffer[100];
 
     sprintf(buffer,
-	    "Draw time: %0.2f ms",
-		m_gpuProfiler->DtAvg(GTS_Objects) );
+	    "Objects: %0.2f ms,"
+	    "Sky: %0.2f ms,"
+	    "Terrain: %0.2f ms"
+	    ,
+	    m_gpuProfiler->DtAvg(GTS_Objects),
+	    m_gpuProfiler->DtAvg(GTS_Sky),
+	    m_gpuProfiler->DtAvg(GTS_Terrain)
+	);
+
 
     m_profileStr = string(buffer);
 
@@ -720,10 +736,7 @@ void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 750,120, tos(m_curCamera->GetPosition())  );
 
-
-    m_font->DrawString(*m_fontShader, 750,210, m_profileStr  );
-
-//    m_font->DrawString(*m_fontShader, 600,120, cull );
+    m_font->DrawString(*m_fontShader, 750,220, m_profileStr  );
 }
 
 IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position,
