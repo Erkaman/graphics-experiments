@@ -281,8 +281,6 @@ void Skydome::Update(const float delta) {
 	    cloud.m_orientation += cloud.m_orientationVelocity * delta;
 	    cloud.m_rotation += cloud.m_rotationVelocity * delta;
 	    cloud.m_elevation += cloud.m_elevationVelocity * delta;
-
-
 	}
 
 	cloudGroup->m_cloudTexture->Unbind();
