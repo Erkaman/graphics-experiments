@@ -26,6 +26,7 @@ class Car;
 class CarCamera;
 class Gui;
 class PickingFBO;
+class GpuProfiler;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
@@ -88,6 +89,10 @@ private:
 
 
     void ParseObjs(const std::string& filename);
+
+    GpuProfiler* m_gpuProfiler;
+
+    std::string m_profileStr;
 
 public:
 

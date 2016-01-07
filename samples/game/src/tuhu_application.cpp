@@ -46,6 +46,8 @@
 #include "gui.hpp"
 #include "gui_mouse_state.hpp"
 
+#include "gpu_profiler.hpp"
+
 
 using namespace std;
 
@@ -87,6 +89,9 @@ TuhuApplication::~TuhuApplication() {
 }
 
 void TuhuApplication::Init() {
+
+    m_gpuProfiler = new GpuProfiler();
+    m_profileStr = "";
 
     currentObjId = 0;
 
@@ -448,6 +453,8 @@ void TuhuApplication::RenderId() {
 
 void TuhuApplication::RenderScene() {
 
+
+
     m_skydome->Draw(m_curCamera);
 
     m_heightMap->Render(m_curCamera, m_lightDirection);
@@ -479,6 +486,8 @@ void TuhuApplication::RenderScene() {
 }
 
 void TuhuApplication::Render() {
+
+    m_gpuProfiler->Begin(GTS_Objects);
 
     if(m_gui) {
 	m_gui->NewFrame(m_guiVerticalScale);
@@ -515,6 +524,22 @@ void TuhuApplication::Render() {
 
 	m_gui->Render(windowWidth, windowHeight);
     }
+
+    m_gpuProfiler->End(GTS_Objects);
+
+
+    m_gpuProfiler->WaitForDataAndUpdate();
+
+    char buffer[30];
+
+    sprintf(buffer,
+	    "Draw time: %0.2f ms",
+		m_gpuProfiler->DtAvg(GTS_Objects) );
+
+    m_profileStr = string(buffer);
+
+
+    m_gpuProfiler->EndFrame();
 
 }
 
@@ -694,6 +719,9 @@ void TuhuApplication::RenderText()  {
     m_font->DrawString(*m_fontShader, 750,170, cull);
 
     m_font->DrawString(*m_fontShader, 750,120, tos(m_curCamera->GetPosition())  );
+
+
+    m_font->DrawString(*m_fontShader, 750,210, m_profileStr  );
 
 //    m_font->DrawString(*m_fontShader, 600,120, cull );
 }
