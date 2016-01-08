@@ -740,11 +740,18 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     // static objects dont move, so they have no intertia
     if(!entityInfo->m_isStatic) {
         btShape->calculateLocalInertia(entityInfo->m_mass, inertia);
+
+
     }
 
     btRigidBody::btRigidBodyConstructionInfo ci(entityInfo->m_mass, m_motionState, btShape, inertia);
 
     m_rigidBody = new btRigidBody(ci);
+
+    if(!entityInfo->m_isStatic) {
+	m_rigidBody->setCollisionFlags(btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+
+    }
 
     physicsWorld->AddRigidBody(m_rigidBody);
 }

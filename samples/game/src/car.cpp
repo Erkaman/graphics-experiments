@@ -112,6 +112,7 @@ void Car::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     GeometryObject::AddToPhysicsWorld(physicsWorld);
     btRigidBody* rigidBody = GetRigidBody();
 
+
     rigidBody->setActivationState(DISABLE_DEACTIVATION); // Needed for btRaycastVehicles
 
     // Tuning for car (applied to all the wheels internally).
