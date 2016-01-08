@@ -18,7 +18,7 @@ const float WHEEL_RADIUS = 0.3f;
 const float FRONT_WHEEL_FRICTION = 1.9f;
 const float BACK_WHEEL_FRICTION = 1.9f;
 const float SUSPENSION_REST_LENGTH = 0.6f; // (see also maxSuspensionTravelCm)
-const float ROLL_INFLUENCE = 0.1f;
+const float ROLL_INFLUENCE = 0.4f;
 const unsigned int CAR_ID = 1337;
 
 float	maxEngineForce = 1000.f;

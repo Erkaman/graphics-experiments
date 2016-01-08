@@ -1198,9 +1198,7 @@ void HeightMap::SaveSplatMap(const std::string& filename) {
 
 void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
-
-
-  Vector3f* LandscapeVtx = new Vector3f[m_resolution*m_resolution];
+    Vector3f* LandscapeVtx = new Vector3f[m_resolution*m_resolution];
     Vector3f* LandscapeVtxBeg = LandscapeVtx;
 
     unsigned short* rawHeightMap = m_heightMap->GetPixels<unsigned short>(
@@ -1244,29 +1242,12 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 	++xpos;
 	if(xpos != 0 && ( xpos % (m_resolution) == 0)) {
 
-//	    LOG_I("v: %s", tocstr(v) );
-
 	    xpos = 0;
 	    ++zpos;
 	}
 
 	++rawHeightMap;
     }
-
-
-
-/*
-    Vector3f* LandscapeVtx = new Vector3f[2*2];
-
-    LandscapeVtx[0] = Vector3f(-100.0f,0.0f,-100.0f);
-    LandscapeVtx[1] = Vector3f(+100.0f,0.0f,-100.0f);
-    LandscapeVtx[2] = Vector3f(-100.0f,0.0f,+100.0f);
-    LandscapeVtx[3] = Vector3f(+100.0f,0.0f,+100.0f);
-*/
-
-
-
-
 
     unsigned int numTriangles = 0;
     GLuint baseIndex = 0;
@@ -1275,32 +1256,6 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     unsigned int* indicesBeg = indices;
 
     numTriangles = 0;
-
-
-    /*
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(2);
-
-    indices.push_back(3);
-    indices.push_back(1);
-    indices.push_back(2);
-    */
-
-
-    /*
-    *indices = 0; ++indices;
-    *indices = 1; ++indices;
-    *indices = 2; ++indices;
-
-    // clock-wise, we specify the vertices.
-    *indices = 1; ++indices;
-    *indices = 3; ++indices;
-    *indices = 2; ++indices;
-    */
-
-
-//    numTriangles = 2;
 
 
     for(size_t x = 0; x < (m_resolution-1); ++x) {
@@ -1329,16 +1284,6 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 	    *indices = baseIndex+m_resolution;
 	    indices++;
 
-
-/*
-	    indices.push_back(baseIndex+m_resolution);
-	    indices.push_back(baseIndex+1);
-	    indices.push_back(baseIndex+0);
-
-	    indices.push_back(baseIndex+m_resolution+1);
-	    indices.push_back(baseIndex+1);
-	    indices.push_back(baseIndex+m_resolution);
-*/
 
 	    numTriangles+=2;
 
@@ -1377,8 +1322,6 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
 
     btVector3 localInertia(0,0,0);
-    //trans.setOrigin(btVector3(0,-25,0));
-
 
     btDefaultMotionState* motionState = new btDefaultMotionState(trans);
 
@@ -1387,6 +1330,8 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     btVector3 inertia(0,0,0);
 
     btRigidBody::btRigidBodyConstructionInfo ci(0.0f, motionState, trimeshShape, inertia);
+
+    ci.m_friction=2.0f;
 
     btRigidBody* body = new btRigidBody(ci);
 
@@ -1397,72 +1342,6 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
     physicsWorld->AddRigidBody(body);
 
-
-
-
-
-
-
-/*
-    // get new heightfield of appropriate type
-
-    unsigned short* rawHeightMap = m_heightMap->GetPixels<unsigned short>(
-	m_resolution* m_resolution * 1, GL_RED, GL_UNSIGNED_SHORT
-	);
-
-    // create a signed height map.
-    signed short* signedRawHeightMap = new signed short[m_resolution* m_resolution *2];
-
-    for(int i = 0; i < m_resolution* m_resolution; ++i) {
-
-	unsigned short us = rawHeightMap[i];
-
-	signed short ss =
-	    us >= MID_HEIGHT ?
-	    us - MID_HEIGHT :
-	    -(MID_HEIGHT -us);
-	signedRawHeightMap[i] = ss;
-    }
-
-    bool flipQuadEdges = false;
-    btHeightfieldTerrainShape * heightfieldShape =
-	new btHeightfieldTerrainShape(m_resolution, m_resolution,
-				      signedRawHeightMap,
-				      m_yScale / 32767.0,  //s_gridHeightScale,
-				      -m_yScale, // min height
-				      +m_yScale, // max height
-				      1, // y-axis is up.
-				      PHY_SHORT,
-				      flipQuadEdges);
-
-
-    // scale the shape
-//	btVector3 localScaling = getUpVector(m_upAxis, s_gridSpacing, 1.0);
-
-    float SCALE = 1.0f
-	;
-    heightfieldShape->setLocalScaling(
-	btVector3(SCALE * m_xzScale/(float)m_resolution,1, SCALE * m_xzScale/(float)m_resolution) * WORLD_SCALE
-	);
-
-    // set origin to middle of heightfield
-    btTransform tr;
-    tr.setIdentity();
-    tr.setOrigin(btVector3(0,0,0));
-
-    // create ground object
-    float mass = 0.0;
-
-    btVector3 inertia(0, 0, 0);
-
-    btMotionState* motionState = new btDefaultMotionState(tr);
-
-    btRigidBody::btRigidBodyConstructionInfo ci(mass, motionState, heightfieldShape, inertia);
-
-    btRigidBody* rigidBody = new btRigidBody(ci);
-
-    physicsWorld->AddRigidBody(rigidBody);
-*/
 }
 
 bool HeightMap::InBounds(int x, int z) {
