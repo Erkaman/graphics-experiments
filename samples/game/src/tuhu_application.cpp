@@ -174,7 +174,7 @@ void TuhuApplication::Init() {
     } else {
 
 	m_heightMap = new HeightMap(guiMode);
-
+/*
 	LoadObj("obj/rock_floor.eob", Vector3f(0,0,40) + trans);
 
 	LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40)+ trans );
@@ -196,9 +196,10 @@ void TuhuApplication::Init() {
 	m_selected = tree;
 	m_selected->SetSelected(true);
 
-	/*m_selected = */LoadObj("obj/wall.eob",
+	LoadObj("obj/wall.eob",
 				 Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
 	    );
+	*/
 
     }
 
@@ -456,7 +457,7 @@ void TuhuApplication::RenderScene() {
 
 
     m_gpuProfiler->Begin(GTS_Sky);
-    m_skydome->Draw(m_curCamera);
+//    m_skydome->Draw(m_curCamera);
     m_gpuProfiler->End(GTS_Sky);
 
     m_gpuProfiler->Begin(GTS_Terrain);
@@ -588,7 +589,7 @@ void TuhuApplication::Update(const float delta) {
 /*    //   m_snow->Update(delta);
       m_fire->Update(delta);
 */
-    m_skydome->Update(delta);
+//    m_skydome->Update(delta);
 
 //      m_grass->Update(delta);
 

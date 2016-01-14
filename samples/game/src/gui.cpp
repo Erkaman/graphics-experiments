@@ -33,7 +33,7 @@ float deltaScroll;
 #endif
 
 constexpr int MIN_CURSOR_SIZE = 10;
-constexpr int MAX_CURSOR_SIZE = 50;
+constexpr int MAX_CURSOR_SIZE = 90;
 constexpr int DEFAULT_RADIUS = 35;
 
 constexpr float MIN_NOISE_SCALE = 0.004;

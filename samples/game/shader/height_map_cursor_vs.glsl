@@ -13,7 +13,11 @@ uniform vec3 offset;
 uniform float yScale;
 uniform float resolution;
 
-uniform vec3 cursorPosition;
+uniform vec3 cursorPos;
+uniform vec3 cameraPos;
+
+out float isRender;
+out float d;
 
 vec3 getDir(sampler2D hm, vec2 texCoord, float resolution)
 {
@@ -68,9 +72,34 @@ void main()
 
 
     vec3 pos = computePos(
-	positionIn + vec3(cursorPosition.x / resolution, 0, cursorPosition.z / resolution),
+	positionIn + vec3(cursorPos.x / resolution, 0, cursorPos.z / resolution),
 	heightMap,  xzScale, offset, yScale);
 
-
     gl_Position = mvp * vec4(pos,1);
+
+/*
+
+    float ix = positionIn.x * resolution;
+    float iz = positionIn.z * resolution;
+    float dist = sqrt( ix * ix + iz * iz  );
+    int idist = int(dist);
+
+//    if(m_cursorSize > 15 && idist % 3 != 0 )
+
+
+
+    // cursor center pos
+     vec3 cursorCenter = computePos(
+	vec3(cursorPos.x / resolution, 0, cursorPos.z / resolution),
+	heightMap,  xzScale, offset, yScale);
+
+    float cameraDist = distance( vec2(cameraPos.x, cameraPos.z), vec2(cursorCenter.x, cursorCenter.z)  );
+
+    d = 2 + float(int(cameraDist / 100));
+
+    if(idist % int(d) != 0 )
+	isRender = 0;
+    else
+	isRender = 1;
+*/
 }

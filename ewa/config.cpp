@@ -3,7 +3,7 @@
 Config::Config() {
 
     m_zNear = 0.1f;
-    m_zFar = 300.0f;
+    m_zFar = 500.0f;
     m_gui = false;
 }
 

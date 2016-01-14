@@ -82,7 +82,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_cursorPosition = Vector2i(0,0);
     m_cursorPositionWasUpdated = true;
     m_xzScale = 200.0f;
-    m_yScale = 18.0f;
+    m_yScale = 30.0f;
     m_resolution = 512;
     m_textureScale = 0.07f;
     HEIGHT_MAP_SIZE = m_resolution * m_resolution * sizeof(unsigned short);
@@ -159,8 +159,9 @@ void HeightMap::CreateCursor() {
 	for(int iz = -rad; iz <= +rad; ++iz) {
 
 	    float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
+	    int idist = dist;
 
-	    if((dist-0.1) <= rad) {
+	    if( idist == m_cursorSize || idist == 0) {
 		points.push_back(Vector3f((float)ix / (float)m_resolution, 0, (float)iz / (float)m_resolution));
 	    }
 	}
@@ -299,8 +300,11 @@ void HeightMap::RenderCursor(const ICamera* camera) {
     m_cursorShader->SetShaderUniforms(Matrix4f::CreateTranslation(0,0,0), camera);
 
 
-    m_cursorShader->SetUniform("cursorPosition",
+    m_cursorShader->SetUniform("cursorPos",
 			       Vector3f((float)m_cursorPosition.x, 0.0f, (float)m_cursorPosition.y) );
+
+    m_cursorShader->SetUniform("cameraPos",
+			       camera->GetPosition() );
 
 
     // set point size.
@@ -742,6 +746,8 @@ void HeightMap::UpdateCursor(ICamera* camera,
 		m_cursorPositionWasUpdated = true;
 	    } else {
 	    }
+
+
 
 	}
     }
