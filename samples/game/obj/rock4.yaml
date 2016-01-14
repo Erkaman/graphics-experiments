@@ -1,0 +1,5 @@
+StaticMesh/rock4:
+  physics:
+  - shape: Box
+    origin: [-0.0955665,0,0.12143]
+    half-extents: [1.14368,1,0.823234]

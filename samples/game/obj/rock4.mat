@@ -1,0 +1,5 @@
+new_mat Material.009
+diff_map rock4_d.png
+norm_map rock4_n.png
+shininess 1.000000
+spec_color 0.000000 0.000000 0.000000
