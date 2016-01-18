@@ -1,5 +1,5 @@
 // TODO:we can remove the y component as an easy optimization!
-
+// TODO: since we have such high resolution, we might as well stretch the map some, to save triangles.
 
 
 

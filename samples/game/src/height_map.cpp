@@ -1,3 +1,6 @@
+//todo: tweak the noise tool some.
+
+
 
 #include "height_map.hpp"
 
@@ -81,7 +84,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_config = &Config::GetInstance();
     m_cursorPosition = Vector2i(0,0);
     m_cursorPositionWasUpdated = true;
-    m_xzScale = 200.0f;
+    m_xzScale = 500.0f;
     m_yScale = 30.0f;
     m_resolution = 512;
     m_textureScale = 0.07f;
@@ -767,6 +770,7 @@ void HeightMap::DistortTerrain(const float delta, const float strength, float no
     int cz = m_cursorPosition.y;
 
     float rad = m_cursorSize;
+    float fade_rad = m_cursorSize-5;
 
     if(total > 0.05) {
 
@@ -798,6 +802,12 @@ void HeightMap::DistortTerrain(const float delta, const float strength, float no
 			noiseScale* Vector2f(cx+ix,cz+iz),
 			2.0f,
 			0.5f);
+
+
+		    if(dist > fade_rad) {
+			float x2 = (dist - fade_rad  ) /  (rad-fade_rad);
+			y *= x2;
+		    }
 
 		    // maximum height of the hill
 		    float maxHeight =y * (float)(MAX_HEIGHT-MID_HEIGHT);

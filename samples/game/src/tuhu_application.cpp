@@ -116,7 +116,7 @@ void TuhuApplication::Init() {
     m_totalDelta = 0;
 
     // NOTE: we can fix the shadows by setting trans to (0,0,0).
-    Vector3f trans = Vector3f(-130,3.0,-130);
+    Vector3f trans = Vector3f(-130,9.0,-130);
 
     m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
     m_smoke->Init();
@@ -174,7 +174,7 @@ void TuhuApplication::Init() {
     } else {
 
 	m_heightMap = new HeightMap(guiMode);
-/*
+
 	LoadObj("obj/rock_floor.eob", Vector3f(0,0,40) + trans);
 
 	LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40)+ trans );
@@ -199,8 +199,6 @@ void TuhuApplication::Init() {
 	LoadObj("obj/wall.eob",
 				 Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
 	    );
-	*/
-
     }
 
     if(m_gui) {

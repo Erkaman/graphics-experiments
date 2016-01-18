@@ -1,3 +1,7 @@
+heightmap reference:
+https://www.youtube.com/watch?v=j4CE7G4TOyI
+https://www.youtube.com/watch?v=q4B0cTgqXtw
+
 implement scaling matrix support
 output_id and output_depth shader should be the same for all geoObjs,
 for better performance.

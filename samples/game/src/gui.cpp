@@ -36,7 +36,7 @@ constexpr int MIN_CURSOR_SIZE = 10;
 constexpr int MAX_CURSOR_SIZE = 90;
 constexpr int DEFAULT_RADIUS = 35;
 
-constexpr float MIN_NOISE_SCALE = 0.004;
+constexpr float MIN_NOISE_SCALE = 0.0004;
 constexpr float MAX_NOISE_SCALE = 0.1;
 constexpr float DEFAULT_NOISE_SCALE = 0.04;
 
@@ -753,7 +753,7 @@ void Gui::Update() {
 
 
 
-    } else if(m_guiMode == ModifyTerrainMode) {
+    } else if(m_guiMode == ModifyTerrainMode || m_guiMode == DrawTextureMode) {
 
 	float diff = deltaScroll;
 
