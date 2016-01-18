@@ -27,6 +27,7 @@ class CarCamera;
 class Gui;
 class PickingFBO;
 class GpuProfiler;
+class Line;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
@@ -56,6 +57,8 @@ private:
 
 
     Car* m_car;
+
+    Line* m_line;
 
     Gui* m_gui;
 

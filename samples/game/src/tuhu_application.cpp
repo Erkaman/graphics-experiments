@@ -116,7 +116,7 @@ void TuhuApplication::Init() {
     m_totalDelta = 0;
 
     // NOTE: we can fix the shadows by setting trans to (0,0,0).
-    Vector3f trans = Vector3f(-130,9.0,-130);
+    Vector3f trans = Vector3f(-2,9.0,-2);
 
     m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
     m_smoke->Init();
@@ -161,6 +161,8 @@ void TuhuApplication::Init() {
 
     bool guiMode = (m_gui != 0);
 
+    m_line = Line::Load(Vector3f(0), -1000.0f * Vector3f(m_lightDirection), Vector3f(1,0,0) );
+
     if(ResourceManager::GetInstance().PathExists(dir) && false) {
 
 	m_heightMap = new HeightMap(
@@ -183,11 +185,11 @@ void TuhuApplication::Init() {
 
 	LoadObj("obj/sunball.eob",
 
-			   Vector3f(21.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60) );
+			   Vector3f(10,0,20)+ trans );
 
 	LoadObj("obj/plane.eob", Vector3f(0,-2.5,0)+ trans);
 
-	IGeometryObject* tree = LoadObj("obj/tree.eob", Vector3f(10,-2.5,10) + trans);
+	IGeometryObject* tree = LoadObj("obj/tree.eob", Vector3f(10,9.5,10) + trans);
 
 	LoadObj("obj/wall.eob", Vector3f(-5,-2.5,-5)  + trans);
 
@@ -452,8 +454,6 @@ void TuhuApplication::RenderId() {
 
 void TuhuApplication::RenderScene() {
 
-
-
     m_gpuProfiler->Begin(GTS_Sky);
 //    m_skydome->Draw(m_curCamera);
     m_gpuProfiler->End(GTS_Sky);
@@ -489,6 +489,8 @@ void TuhuApplication::RenderScene() {
 
     m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
+    m_line->Render(m_curCamera->GetVp());
+
     m_gpuProfiler->End(GTS_Objects);
 
 
@@ -519,6 +521,7 @@ void TuhuApplication::Render() {
 	RenderId();
 
     RenderScene();
+
 
 
     if(m_gui) {
