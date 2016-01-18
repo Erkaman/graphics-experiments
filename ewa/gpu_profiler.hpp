@@ -7,6 +7,7 @@ enum GpuTimeStamp
     GTS_Objects,
     GTS_Terrain,
     GTS_Sky,
+    GTS_Shadows,
     GTS_Max
 };
 

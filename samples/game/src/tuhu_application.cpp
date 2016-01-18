@@ -1,3 +1,4 @@
+
 #include "tuhu_application.hpp"
 
 #include "ewa/camera.hpp"
@@ -376,37 +377,28 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
 void TuhuApplication::RenderShadowMap() {
 
+    m_depthFbo->Bind();
+    {
+	::SetViewport(0,0,SHADOW_MAP_SIZE,SHADOW_MAP_SIZE);
 
-  m_depthFbo->Bind();
-  {
-  ::SetViewport(0,0,SHADOW_MAP_SIZE,SHADOW_MAP_SIZE);
+	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	m_lightViewMatrix = Matrix4f::CreateLookAt(
+	    -Vector3f(m_lightDirection),
+	    Vector3f(0.0f, 0.0f, 0.0f),
+	    Vector3f(0.0, 1.0, 0.0)
+	    );
 
-  m_lightViewMatrix = Matrix4f::CreateLookAt(
-  -Vector3f(m_lightDirection),
-  Vector3f(0.0f, 0.0f, 0.0f),
-  Vector3f(0.0, 1.0, 0.0)
-  );
+	m_lightProjectionMatrix =  //MakeLightProj();
+	    Matrix4f::CreateOrthographic(-50, 50, -19, 25, -40, 30);
 
-  m_lightProjectionMatrix =  //MakeLightProj();
-  Matrix4f::CreateOrthographic(-30, 30, -12, 12, -20, 30);
+	Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
 
-  Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
 
-  GeometryObject::RenderShadowMapAll(vp);
+	GeometryObject::RenderShadowMapAll(vp);
 
-  /*
-  m_sphere->RenderShadowMap(vp);
-
-  m_tree->RenderShadowMap(vp);
-
-  m_wall->RenderShadowMap(vp);
-  m_wall2->RenderShadowMap(vp);
-  */
-
-  }
-  m_depthFbo->Unbind();
+    }
+    m_depthFbo->Unbind();
 
 }
 
@@ -501,13 +493,13 @@ void TuhuApplication::RenderScene() {
 
 void TuhuApplication::Render() {
 
-
     if(m_gui) {
 	m_gui->NewFrame(m_guiVerticalScale);
     }
 
+    m_gpuProfiler->Begin(GTS_Terrain);
     RenderShadowMap();
-
+    m_gpuProfiler->End(GTS_Terrain);
 
     float SCALE = m_guiVerticalScale;
 
@@ -542,8 +534,9 @@ void TuhuApplication::Render() {
 
     m_gpuProfiler->WaitForDataAndUpdate();
 
-    char buffer[100];
 
+    char buffer[100];
+/*
     sprintf(buffer,
 	    "Objects: %0.2f ms,"
 	    "Sky: %0.2f ms,"
@@ -553,9 +546,9 @@ void TuhuApplication::Render() {
 	    m_gpuProfiler->DtAvg(GTS_Sky),
 	    m_gpuProfiler->DtAvg(GTS_Terrain)
 	);
+*/
 
-
-    m_profileStr = string(buffer);
+    m_profileStr = string("");
 
 
     m_gpuProfiler->EndFrame();
@@ -731,6 +724,17 @@ void TuhuApplication::Update(const float delta) {
 
 }
 
+string Format(char* fmt, float val) {
+
+    char buffer[30];
+
+    sprintf(buffer,
+	    fmt,
+	    val);
+
+    return string(buffer);
+}
+
 void TuhuApplication::RenderText()  {
 
     string cull = std::to_string(nonCulledObjects) + "\\" + std::to_string(totalObjects);
@@ -739,7 +743,18 @@ void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 750,120, tos(m_curCamera->GetPosition())  );
 
-    m_font->DrawString(*m_fontShader, 750,220, m_profileStr  );
+    m_font->DrawString(*m_fontShader, 750,220,
+		       Format("Objects: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Objects) ) );
+
+    m_font->DrawString(*m_fontShader, 750,270,
+		       Format("Sky: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Sky) ) );
+
+    m_font->DrawString(*m_fontShader, 750,320,
+		       Format("Terrain: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Terrain) ) );
+
+    m_font->DrawString(*m_fontShader, 750,370,
+		       Format("Shadows: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Shadows) ) );
+
 }
 
 IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position,
