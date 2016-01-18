@@ -46,7 +46,7 @@ private:
 
     bool m_selected;
 
-    bool m_culled;
+    bool m_inViewFrustum;
 
     Matrix4f GetModelMatrix(const Matrix4f& scaling = Matrix4f::CreateIdentity() )const;
 

@@ -384,31 +384,32 @@ void TuhuApplication::RenderShadowMap() {
 
 	Vector3f carPos = m_car->GetPosition();
 
-	/*
+
 	m_lightViewMatrix = Matrix4f::CreateLookAt(
 	    carPos - 3 * Vector3f(m_lightDirection),
 	    carPos,
 	    Vector3f(0.0, 1.0, 0.0)
 	    );
-	*/
 
+/*
 	m_lightViewMatrix = Matrix4f::CreateLookAt(
        	    -Vector3f(m_lightDirection),
 	    Vector3f(0.0f, 0.0f, 0.0f),
 	    Vector3f(0.0, 1.0, 0.0)
 	    );
+*/
 
 	Config& config = Config::GetInstance();
 
 	m_lightProjectionMatrix =  //MakeLightProj();
-	    Matrix4f::CreateOrthographic(-50,50, -19, 25, -40, 30);
+	    Matrix4f::CreateOrthographic(-100,100, -60, 60, -40, 50);
 
 	Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
 
 	GeometryObject::RenderShadowMapAll(vp);
 
     }
-    m_depthFbo->Unbind();
+     m_depthFbo->Unbind();
 
 }
 
@@ -474,7 +475,6 @@ void TuhuApplication::RenderScene() {
 
     //   m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
-
     m_gpuProfiler->Begin(GTS_Objects);
     {
 
@@ -508,6 +508,8 @@ void TuhuApplication::Render() {
     RenderShadowMap();
     m_gpuProfiler->End(GTS_Shadows);
 
+
+
     float SCALE = m_guiVerticalScale;
 
     // set the viewport to the size of the window.
@@ -540,7 +542,6 @@ void TuhuApplication::Render() {
     }
 
     m_gpuProfiler->WaitForDataAndUpdate();
-
 
 
     m_gpuProfiler->EndFrame();
@@ -931,7 +932,6 @@ void TuhuApplication::CursorSizeChanged() {
 void TuhuApplication::Duplicate() {
     if(m_selected) {
 
-
 	IGeometryObject* dupObj = m_selected->Duplicate(currentObjId++);
 
 	// select duplicated object:
@@ -939,12 +939,9 @@ void TuhuApplication::Duplicate() {
 	dupObj->SetSelected(true);
 	m_selected = dupObj;
 
-
-
 	m_geoObjs[dupObj->GetId()] = dupObj;
     }
 }
-
 
 void TuhuApplication::Delete() {
     LOG_I("delete");
@@ -959,8 +956,6 @@ void TuhuApplication::Delete() {
 	GeometryObject::Delete(it->second );
 	m_geoObjs.erase(it);
 
-
 	m_selected = NULL;
     }
-
 }

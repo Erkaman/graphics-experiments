@@ -313,7 +313,7 @@ bool GeometryObject::Init(
     m_id = id;
     m_filename = filename;
 
-    m_culled = false;
+    m_inViewFrustum = true;
     SetSelected(false);
 
     SetPosition(position);
@@ -377,7 +377,7 @@ void GeometryObject::RenderShadowMapAll(const Matrix4f& lightVp) {
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
-	    if(geoObj->m_culled) {
+	    if(!geoObj->m_inViewFrustum) {
 		continue; // if culled, do nothing.
 	    }
 
@@ -441,7 +441,7 @@ void GeometryObject::RenderIdAll(
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
-	    if(geoObj->m_culled) {
+	    if(!geoObj->m_inViewFrustum) {
 		continue; // if culled, do nothing.
 	    }
 
@@ -521,7 +521,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 	    ++total;
 
-	    if(geoObj->m_culled) {
+	    if(!geoObj->m_inViewFrustum) {
 		continue; // if culled, do nothing.
 	    }
 
@@ -795,8 +795,7 @@ void GeometryObject::SetSelected(bool selected) {
 }
 
 void GeometryObject::Update(const ViewFrustum& viewFrustum) {
-
-    m_culled = !viewFrustum.IsAABBInFrustum(GetModelSpaceAABB());
+    m_inViewFrustum = viewFrustum.IsAABBInFrustum(GetModelSpaceAABB());
 }
 
 IGeometryObject* GeometryObject::Duplicate(unsigned int id) {
