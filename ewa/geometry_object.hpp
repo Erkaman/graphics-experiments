@@ -46,7 +46,8 @@ private:
 
     bool m_selected;
 
-    bool m_inViewFrustum;
+    bool m_inCameraFrustum;
+    bool m_inLightFrustum;
 
     Matrix4f GetModelMatrix(const Matrix4f& scaling = Matrix4f::CreateIdentity() )const;
 
@@ -80,7 +81,7 @@ public:
 
     static void RenderShadowMapAll(const Matrix4f& lightVp); // vp = view projection matrix.
 
-    virtual void Update(const ViewFrustum& viewFrustum);
+    virtual void Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum);
 
     /*
     virtual void RenderId(

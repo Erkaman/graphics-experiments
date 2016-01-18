@@ -112,6 +112,7 @@ void TuhuApplication::Init() {
     m_physicsWorld = new PhysicsWorld();
 
     m_cameraFrustum = new ViewFrustum();
+    m_lightFrustum = new ViewFrustum();
 
     m_totalDelta = 0;
 
@@ -532,10 +533,10 @@ void TuhuApplication::Update(const float delta) {
     if(m_gui)
 	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
 
-
     UpdateMatrices();
 
     m_cameraFrustum->Update( m_curCamera->GetVp() );
+    m_lightFrustum->Update( m_lightVp );
 
     m_physicsWorld->Update(delta);
 
@@ -543,7 +544,7 @@ void TuhuApplication::Update(const float delta) {
 //    for(IGeometryObject* geoObj: m_geoObjs) {
 	IGeometryObject* geoObj = it.second;
 
-	geoObj->Update(*m_cameraFrustum);
+	geoObj->Update(*m_cameraFrustum, *m_lightFrustum);
     }
 
     m_totalDelta += delta;

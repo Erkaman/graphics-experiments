@@ -29,7 +29,7 @@ public:
 	const DepthFBO& shadowMap);
     */
 
-    virtual void Update(const ViewFrustum& viewFrustum);
+    virtual void Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum);
 
     Vector3f GetForwardVector()const;
 

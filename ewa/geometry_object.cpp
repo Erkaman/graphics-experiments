@@ -313,7 +313,8 @@ bool GeometryObject::Init(
     m_id = id;
     m_filename = filename;
 
-    m_inViewFrustum = true;
+    m_inCameraFrustum = true;
+    m_inLightFrustum = true;
     SetSelected(false);
 
     SetPosition(position);
@@ -377,7 +378,7 @@ void GeometryObject::RenderShadowMapAll(const Matrix4f& lightVp) {
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
-	    if(!geoObj->m_inViewFrustum) {
+	    if(!geoObj->m_inLightFrustum) {
 		continue; // if culled, do nothing.
 	    }
 
@@ -441,7 +442,7 @@ void GeometryObject::RenderIdAll(
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
-	    if(!geoObj->m_inViewFrustum) {
+	    if(!geoObj->m_inCameraFrustum) {
 		continue; // if culled, do nothing.
 	    }
 
@@ -521,7 +522,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 	    ++total;
 
-	    if(!geoObj->m_inViewFrustum) {
+	    if(!geoObj->m_inCameraFrustum) {
 		continue; // if culled, do nothing.
 	    }
 
@@ -794,8 +795,11 @@ void GeometryObject::SetSelected(bool selected) {
     m_selected = selected;
 }
 
-void GeometryObject::Update(const ViewFrustum& viewFrustum) {
-    m_inViewFrustum = viewFrustum.IsAABBInFrustum(GetModelSpaceAABB());
+void GeometryObject::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum) {
+    m_inCameraFrustum = cameraFrustum.IsAABBInFrustum(GetModelSpaceAABB());
+
+    m_inLightFrustum = lightFrustum.IsAABBInFrustum(GetModelSpaceAABB());
+
 }
 
 IGeometryObject* GeometryObject::Duplicate(unsigned int id) {
