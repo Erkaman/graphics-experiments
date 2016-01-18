@@ -69,12 +69,13 @@ private:
     Vector4f m_lightDirection;
 
     // used in shadow mapping for rendering all object from the perspective of the light source.
-    Matrix4f m_lightProjectionMatrix;
-    Matrix4f m_lightViewMatrix;
+    /* Matrix4f m_lightProjectionMatrix;
+    Matrix4f m_lightViewMatrix;*/
+    Matrix4f m_lightVp;
 
     float m_totalDelta;
 
-    ViewFrustum* m_viewFrustum;
+    ViewFrustum* m_cameraFrustum;
 
     PhysicsWorld* m_physicsWorld;
 
@@ -94,6 +95,8 @@ private:
     void ParseObjs(const std::string& filename);
 
     GpuProfiler* m_gpuProfiler;
+
+    void UpdateMatrices();
 
 public:
 

@@ -111,7 +111,7 @@ void TuhuApplication::Init() {
 
     m_physicsWorld = new PhysicsWorld();
 
-    m_viewFrustum = new ViewFrustum();
+    m_cameraFrustum = new ViewFrustum();
 
     m_totalDelta = 0;
 
@@ -382,31 +382,8 @@ void TuhuApplication::RenderShadowMap() {
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	Vector3f carPos = m_car->GetPosition();
 
-
-	m_lightViewMatrix = Matrix4f::CreateLookAt(
-	    carPos - 3 * Vector3f(m_lightDirection),
-	    carPos,
-	    Vector3f(0.0, 1.0, 0.0)
-	    );
-
-/*
-	m_lightViewMatrix = Matrix4f::CreateLookAt(
-       	    -Vector3f(m_lightDirection),
-	    Vector3f(0.0f, 0.0f, 0.0f),
-	    Vector3f(0.0, 1.0, 0.0)
-	    );
-*/
-
-	Config& config = Config::GetInstance();
-
-	m_lightProjectionMatrix =  //MakeLightProj();
-	    Matrix4f::CreateOrthographic(-100,100, -60, 60, -40, 50);
-
-	Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
-
-	GeometryObject::RenderShadowMapAll(vp);
+	GeometryObject::RenderShadowMapAll(m_lightVp);
 
     }
      m_depthFbo->Unbind();
@@ -485,7 +462,7 @@ void TuhuApplication::RenderScene() {
 	    0.0f, 0.0f, 0.0f, 1.0f
 	    );
 
-	Matrix4f lightVp =  biasMatrix*   m_lightProjectionMatrix * m_lightViewMatrix;
+	Matrix4f lightVp =  biasMatrix*   m_lightVp;
 
 	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
 
@@ -556,8 +533,9 @@ void TuhuApplication::Update(const float delta) {
 	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
 
 
+    UpdateMatrices();
 
-    m_viewFrustum->Update( m_curCamera->GetVp() );
+    m_cameraFrustum->Update( m_curCamera->GetVp() );
 
     m_physicsWorld->Update(delta);
 
@@ -565,8 +543,7 @@ void TuhuApplication::Update(const float delta) {
 //    for(IGeometryObject* geoObj: m_geoObjs) {
 	IGeometryObject* geoObj = it.second;
 
-	geoObj->Update(*m_viewFrustum);
-
+	geoObj->Update(*m_cameraFrustum);
     }
 
     m_totalDelta += delta;
@@ -717,12 +694,12 @@ void TuhuApplication::Update(const float delta) {
 
 }
 
-string Format(char* fmt, float val) {
+string Format(const string& fmt, float val) {
 
     char buffer[30];
 
     sprintf(buffer,
-	    fmt,
+	    fmt.c_str(),
 	    val);
 
     return string(buffer);
@@ -958,4 +935,32 @@ void TuhuApplication::Delete() {
 
 	m_selected = NULL;
     }
+}
+
+
+void TuhuApplication::UpdateMatrices() {
+
+
+	Vector3f carPos = m_car->GetPosition();
+
+	Matrix4f lightViewMatrix = Matrix4f::CreateLookAt(
+	    carPos - 3 * Vector3f(m_lightDirection),
+	    carPos,
+	    Vector3f(0.0, 1.0, 0.0)
+	    );
+
+/*
+	m_lightViewMatrix = Matrix4f::CreateLookAt(
+       	    -Vector3f(m_lightDirection),
+	    Vector3f(0.0f, 0.0f, 0.0f),
+	    Vector3f(0.0, 1.0, 0.0)
+	    );
+*/
+
+	Config& config = Config::GetInstance();
+
+	Matrix4f lightProjectionMatrix =  //MakeLightProj();
+	    Matrix4f::CreateOrthographic(-100,100, -60, 60, -40, 50);
+
+	m_lightVp = lightProjectionMatrix * lightViewMatrix;
 }
