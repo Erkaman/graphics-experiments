@@ -460,8 +460,6 @@ Matrix4f Matrix4f::CreateOrthographic( const float left, const float right, cons
 	 0.0f                            , 2.0f / (top - bottom)            , 0.0f                 ,-(top + bottom) / (top - bottom),
 	 0.0f                            , 0.0f                             , -2.0f / (far - near)  , -(far +near) / (far - near) ,
 	 0.0f                            , 0.0f                             , 0.0f                 , 1.0f);
-
-
 }
 
 Matrix4f Matrix4f::CreateRotate(const float angle, const Vector3f& axis) {

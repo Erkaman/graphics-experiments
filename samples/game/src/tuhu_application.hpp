@@ -95,8 +95,6 @@ private:
 
     GpuProfiler* m_gpuProfiler;
 
-    std::string m_profileStr;
-
 public:
 
     TuhuApplication(int argc, char *argv[]);

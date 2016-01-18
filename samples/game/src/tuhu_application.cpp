@@ -92,7 +92,6 @@ TuhuApplication::~TuhuApplication() {
 void TuhuApplication::Init() {
 
     m_gpuProfiler = new GpuProfiler();
-    m_profileStr = "";
 
     currentObjId = 0;
 
@@ -383,17 +382,28 @@ void TuhuApplication::RenderShadowMap() {
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	Vector3f carPos = m_car->GetPosition();
+
+	/*
 	m_lightViewMatrix = Matrix4f::CreateLookAt(
-	    -Vector3f(m_lightDirection),
+	    carPos - 3 * Vector3f(m_lightDirection),
+	    carPos,
+	    Vector3f(0.0, 1.0, 0.0)
+	    );
+	*/
+
+	m_lightViewMatrix = Matrix4f::CreateLookAt(
+       	    -Vector3f(m_lightDirection),
 	    Vector3f(0.0f, 0.0f, 0.0f),
 	    Vector3f(0.0, 1.0, 0.0)
 	    );
 
+	Config& config = Config::GetInstance();
+
 	m_lightProjectionMatrix =  //MakeLightProj();
-	    Matrix4f::CreateOrthographic(-50, 50, -19, 25, -40, 30);
+	    Matrix4f::CreateOrthographic(-50,50, -19, 25, -40, 30);
 
 	Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
-
 
 	GeometryObject::RenderShadowMapAll(vp);
 
@@ -475,7 +485,7 @@ void TuhuApplication::RenderScene() {
 	    0.0f, 0.0f, 0.0f, 1.0f
 	    );
 
-	Matrix4f lightVp =  biasMatrix *  m_lightProjectionMatrix * m_lightViewMatrix;
+	Matrix4f lightVp =  biasMatrix*   m_lightProjectionMatrix * m_lightViewMatrix;
 
 	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
 
@@ -486,9 +496,6 @@ void TuhuApplication::RenderScene() {
     m_line->Render(m_curCamera->GetVp());
 
     m_gpuProfiler->End(GTS_Objects);
-
-
-
 }
 
 void TuhuApplication::Render() {
@@ -497,9 +504,9 @@ void TuhuApplication::Render() {
 	m_gui->NewFrame(m_guiVerticalScale);
     }
 
-    m_gpuProfiler->Begin(GTS_Terrain);
+    m_gpuProfiler->Begin(GTS_Shadows);
     RenderShadowMap();
-    m_gpuProfiler->End(GTS_Terrain);
+    m_gpuProfiler->End(GTS_Shadows);
 
     float SCALE = m_guiVerticalScale;
 
@@ -534,21 +541,6 @@ void TuhuApplication::Render() {
 
     m_gpuProfiler->WaitForDataAndUpdate();
 
-
-    char buffer[100];
-/*
-    sprintf(buffer,
-	    "Objects: %0.2f ms,"
-	    "Sky: %0.2f ms,"
-	    "Terrain: %0.2f ms"
-	    ,
-	    m_gpuProfiler->DtAvg(GTS_Objects),
-	    m_gpuProfiler->DtAvg(GTS_Sky),
-	    m_gpuProfiler->DtAvg(GTS_Terrain)
-	);
-*/
-
-    m_profileStr = string("");
 
 
     m_gpuProfiler->EndFrame();
