@@ -360,9 +360,9 @@ GeometryObject::~GeometryObject() {
     // should instead do this in GeoObjManager.
 }
 
-void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
-/*
-    auto& batches = GeoObjManager::GetInstance().GetBatches();
+void GeometryObject::RenderShadowMapAll(const Matrix4f& lightVp) {
+
+    auto& batches = GeoObjManager::GetInstance().m_batches;
 
     ShaderProgram* outputDepthShader = GeoObjManager::GetInstance().m_outputDepthShader;
 
@@ -400,7 +400,7 @@ void GeometryObject::RenderShadowMap(const Matrix4f& lightVp) {
     }
 
     outputDepthShader->Unbind();
-*/
+
 
 
 

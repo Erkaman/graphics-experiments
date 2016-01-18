@@ -191,16 +191,16 @@ void TuhuApplication::Init() {
 
 	IGeometryObject* tree = LoadObj("obj/tree.eob", Vector3f(10,9.5,10) + trans);
 
-	LoadObj("obj/wall.eob", Vector3f(-5,-2.5,-5)  + trans);
+	LoadObj("obj/wall.eob", Vector3f(-5,0.5,-5)  + trans);
 
-	LoadObj("obj/wall.eob", Vector3f(20,-6.5,-5) + trans);
+	LoadObj("obj/wall.eob", Vector3f(20,0.0,-5) + trans);
 
 	m_selected = tree;
 	m_selected->SetSelected(true);
-
+/*
 	LoadObj("obj/wall.eob",
 				 Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
-	    );
+	    );*/
     }
 
     if(m_gui) {
@@ -376,7 +376,7 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
 void TuhuApplication::RenderShadowMap() {
 
-/*
+
   m_depthFbo->Bind();
   {
   ::SetViewport(0,0,SHADOW_MAP_SIZE,SHADOW_MAP_SIZE);
@@ -389,23 +389,25 @@ void TuhuApplication::RenderShadowMap() {
   Vector3f(0.0, 1.0, 0.0)
   );
 
-
   m_lightProjectionMatrix =  //MakeLightProj();
   Matrix4f::CreateOrthographic(-30, 30, -12, 12, -20, 30);
 
   Matrix4f vp = m_lightProjectionMatrix * m_lightViewMatrix;
 
+  GeometryObject::RenderShadowMapAll(vp);
+
+  /*
   m_sphere->RenderShadowMap(vp);
 
   m_tree->RenderShadowMap(vp);
 
   m_wall->RenderShadowMap(vp);
   m_wall2->RenderShadowMap(vp);
-
+  */
 
   }
   m_depthFbo->Unbind();
-*/
+
 }
 
 void TuhuApplication::RenderId() {
@@ -455,7 +457,7 @@ void TuhuApplication::RenderId() {
 void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Sky);
-//    m_skydome->Draw(m_curCamera);
+    m_skydome->Draw(m_curCamera);
     m_gpuProfiler->End(GTS_Sky);
 
     m_gpuProfiler->Begin(GTS_Terrain);
@@ -504,7 +506,8 @@ void TuhuApplication::Render() {
 	m_gui->NewFrame(m_guiVerticalScale);
     }
 
-//    RenderShadowMap();
+    RenderShadowMap();
+
 
     float SCALE = m_guiVerticalScale;
 
@@ -536,8 +539,6 @@ void TuhuApplication::Render() {
 
 	m_gui->Render(windowWidth, windowHeight);
     }
-
-
 
     m_gpuProfiler->WaitForDataAndUpdate();
 
