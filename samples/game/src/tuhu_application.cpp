@@ -449,12 +449,21 @@ void TuhuApplication::RenderId() {
 
 void TuhuApplication::RenderScene() {
 
+    Matrix4f biasMatrix(
+	0.5f, 0.0f, 0.0f, 0.5f,
+	0.0f, 0.5f, 0.0f, 0.5f,
+	0.0f, 0.0f, 0.5f, 0.5f,
+	0.0f, 0.0f, 0.0f, 1.0f
+	);
+
+    Matrix4f lightVp =  biasMatrix*   m_lightVp;
+
     m_gpuProfiler->Begin(GTS_Sky);
     m_skydome->Draw(m_curCamera);
     m_gpuProfiler->End(GTS_Sky);
 
     m_gpuProfiler->Begin(GTS_Terrain);
-    m_heightMap->Render(m_curCamera, m_lightDirection);
+    m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
     m_gpuProfiler->End(GTS_Terrain);
 
 //    m_grass->Draw(m_curCamera, m_lightDirection);
@@ -468,14 +477,7 @@ void TuhuApplication::RenderScene() {
     m_gpuProfiler->Begin(GTS_Objects);
     {
 
-	Matrix4f biasMatrix(
-	    0.5f, 0.0f, 0.0f, 0.5f,
-	    0.0f, 0.5f, 0.0f, 0.5f,
-	    0.0f, 0.0f, 0.5f, 0.5f,
-	    0.0f, 0.0f, 0.0f, 1.0f
-	    );
 
-	Matrix4f lightVp =  biasMatrix*   m_lightVp;
 
 	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
 

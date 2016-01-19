@@ -53,6 +53,8 @@ class Config;
 class ICamera;
 class PhysicsWorld;
 class ValueNoise;
+class DepthFBO;
+class Matrix4f;
 
 
 
@@ -217,7 +219,8 @@ private:
     void LoadHeightmap(const std::string& heightMapFilename);
     void LoadSplatMap(const std::string& splatMapFilename);
 
-    void RenderHeightMap(const ICamera* camera, const Vector4f& lightPosition);
+    void RenderHeightMap(
+	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
     void RenderCursor(const ICamera* camera);
 
 
@@ -242,7 +245,7 @@ public:
 
     ~HeightMap();
 
-    void Render(const ICamera* camera, const Vector4f& lightPosition);
+    void Render(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
     void RenderShadowMap(const ICamera* camera);
 
     // render, but instead of outputting colors for every triangle, we output the id of the frontmost triangles.

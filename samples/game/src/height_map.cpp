@@ -252,10 +252,11 @@ void HeightMap::RenderShadowMap(const ICamera* camera) {
 
 }
 
-void HeightMap::RenderHeightMap(const ICamera* camera, const Vector4f& lightPosition) {
+void HeightMap::RenderHeightMap(
+    const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
     m_shader->Bind();
 
-    m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition, Matrix4f::CreateIdentity());
+    m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition, lightVp);
 
     m_shader->SetUniform("grass", 0);
     Texture::SetActiveTextureUnit(0);
@@ -330,9 +331,10 @@ void HeightMap::RenderCursor(const ICamera* camera) {
 }
 
 
-void HeightMap::Render(const ICamera* camera, const Vector4f& lightPosition) {
+void HeightMap::Render(
+    const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
 
-    RenderHeightMap(camera, lightPosition);
+    RenderHeightMap(camera, lightPosition, lightVp, shadowMap);
 
     if(m_config->IsGui()) {
 	RenderCursor(camera);
