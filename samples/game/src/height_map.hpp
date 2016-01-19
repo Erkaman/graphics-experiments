@@ -142,7 +142,7 @@ public:
 struct Cell {
     Vector2f position; // specifies vertex x and z!
     //   float id;
-    Vector2f texCoord;
+//    Vector2f texCoord;
 };
 
 struct SplatColor{

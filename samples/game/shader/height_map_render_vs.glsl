@@ -1,5 +1,4 @@
 layout (location = 0) in  vec2 positionIn;
-layout (location = 1) in vec2 texCoordIn;
 
 #include "height_map_lib.glsl"
 
@@ -37,7 +36,7 @@ void main()
 
     viewSpacePosition = (modelViewMatrix * vec4(pos, 1.0)).xyz;
 
-    texCoord = texCoordIn;
+    texCoord = positionIn;
 
     position = pos;
 
