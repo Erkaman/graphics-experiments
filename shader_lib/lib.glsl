@@ -2,7 +2,6 @@
 vec3 material_specular_color = vec3(1.0);
 float material_shininess = 25.0;
 
-
 vec3 scene_ambient_light = vec3(0.6);
 vec3 scene_light = vec3(0.8);
 

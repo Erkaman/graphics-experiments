@@ -88,9 +88,9 @@ void rayTrace(
 
 
 
-in vec3 viewSpacePixelPositionOut;
+in vec3 viewSpacePositionOut;
 
-in vec3 normalOut;
+in vec3 viewSpaceNormalOut;
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
 in vec3 tangentOut;
 in vec3 bitangentOut;
@@ -133,8 +133,7 @@ void main(void) {
     vec4 ambientMat = vec4(vec3(0.3), 1.0);
     vec4 diffMat = vec4(vec3(0.5), 1.0);
 
-    vec3 p = viewSpacePixelPositionOut; // pixel position in eye space
-
+    vec3 p = viewSpacePositionOut; // pixel position in eye space
 
     // view vector: vector from point TO camera. eye space.
     vec3 v = -normalize(p); // works, since p is in eye space.
@@ -146,7 +145,7 @@ void main(void) {
 
     // view vector in tangent space
     vec3 s = normalize(vec3(dot(-v,tangentOut.xyz),
-		       dot(-v,bitangentOut.xyz),dot(normalOut,v)));
+		       dot(-v,bitangentOut.xyz),dot(viewSpaceNormalOut,v)));
 
     // ray direction.
     vec2 ds = (s.xy*depth)/ ( s.z   );
@@ -176,7 +175,7 @@ void main(void) {
     vec3 n = sample(normalMap,texcoordOut).xyz;
     vec4 diffColor=sample(diffMap,texcoordOut);
 #else // no normal or height map
-    vec3 n = normalize(vec4(normalOut,0.0)).xyz;
+    vec3 n = normalize(vec4(viewSpaceNormalOut,0.0)).xyz;
     vec4 diffColor=sample(diffMap,texcoordOut);
 #endif
 
@@ -191,7 +190,7 @@ void main(void) {
 
      // expand normal to eye space(from tangent space)
     n=normalize(n.x*tangentOut.xyz+
-		    n.y*bitangentOut.xyz+n.z*normalOut);
+		    n.y*bitangentOut.xyz+n.z*viewSpaceNormalOut);
 
 #else
 

@@ -103,7 +103,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     /*
       load the shader
     */
-    m_shader = ShaderProgram::Load("shader/height_map");
+    m_shader = ShaderProgram::Load("shader/height_map_render");
 
     if(guiMode) {
 	m_noise = new ValueNoise(2);

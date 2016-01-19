@@ -12,9 +12,9 @@ uniform mat4 normalMatrix;
 uniform vec3 eyePos;
 uniform mat4 lightMvp;
 
-out vec3 viewSpacePixelPositionOut;
+out vec3 viewSpacePositionOut;
 
-out vec3 normalOut;
+out vec3 viewSpaceNormalOut;
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
 out vec3 tangentOut;
 out vec3 bitangentOut;
@@ -32,11 +32,11 @@ out vec4 shadowCoordOut;
 void main()
 {
     // vertex position
-    viewSpacePixelPositionOut = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
+    viewSpacePositionOut = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
     shadowCoordOut = (lightMvp * vec4(positionIn,1));
 
-    normalOut = normalize(  (normalMatrix * vec4(normalIn, 0.0)).xyz );
+    viewSpaceNormalOut = normalize(  (normalMatrix * vec4(normalIn, 0.0)).xyz );
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
     tangentOut = normalize(  (normalMatrix * vec4(tangentIn, 0.0)).xyz );
     bitangentOut = normalize(     (normalMatrix * vec4(cross(normalIn, tangentIn), 0.0)).xyz    );
