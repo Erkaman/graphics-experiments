@@ -2,16 +2,7 @@ vec4 sample(sampler2D tex, vec2 uv) {
     return texture(tex, vec2(uv.x, 1.0-uv.y) );
 }
 
-/*
-  l: light vector
-  n: normal
-
-  and do make sure both are in the same space!
- */
-float calcDiff(vec3 l, vec3 n) {
-    return clamp(dot(l,n),0,1);
-}
-
+#include "shader/lighting_lib.glsl"
 
 #ifdef HEIGHT_MAPPING
 void rayTrace(
@@ -139,16 +130,14 @@ void main(void) {
     // since it is directional light, minus.
     vec3 lightpos = -viewSpaceLightDirection;
 
-    vec4 ambient = vec4(vec3(0.3), 1.0);
-    vec4 diffuse = vec4(vec3(0.5), 1.0);
+    vec4 ambientMat = vec4(vec3(0.3), 1.0);
+    vec4 diffMat = vec4(vec3(0.5), 1.0);
 
     vec3 p = viewSpacePixelPositionOut; // pixel position in eye space
-    vec3 v = normalize(p); // view vector in eye space
 
-    /*
-      Shadow Mapping
-     */
 
+    // view vector: vector from point TO camera. eye space.
+    vec3 v = -normalize(p); // works, since p is in eye space.
 
 #ifdef HEIGHT_MAPPING
 
@@ -156,8 +145,8 @@ void main(void) {
     float tile = 1.0;
 
     // view vector in tangent space
-    vec3 s = normalize(vec3(dot(v,tangentOut.xyz),
-		       dot(v,bitangentOut.xyz),dot(normalOut,-v)));
+    vec3 s = normalize(vec3(dot(-v,tangentOut.xyz),
+		       dot(-v,bitangentOut.xyz),dot(normalOut,v)));
 
     // ray direction.
     vec2 ds = (s.xy*depth)/ ( s.z   );
@@ -172,12 +161,9 @@ void main(void) {
 
 	     rayTexcoord, rayDepth);
 
-
-// get normal and color at intersection point
-//    vec2 uv=dp+ds*d;
     vec2 uv = rayTexcoord;
-    vec4 finalNormal = normalize(sample(normalMap,uv));
-    vec4 finalDiffuse=sample(diffMap, uv );
+    vec3 n = normalize(sample(normalMap,uv)).xyz;
+    vec4 diffColor=sample(diffMap, uv );
 
     /*
       Depth correct.
@@ -187,16 +173,11 @@ void main(void) {
     gl_FragDepth=((planes_x*p.z+planes_y)/-p.z);
 
 #elif defined NORMAL_MAPPING
-
-    vec4 finalNormal = sample(normalMap,texcoordOut);
-    vec4 finalDiffuse=sample(diffMap,texcoordOut);
-
+    vec3 n = sample(normalMap,texcoordOut).xyz;
+    vec4 diffColor=sample(diffMap,texcoordOut);
 #else // no normal or height map
-
-    vec4 finalNormal = normalize(vec4(normalOut,0.0));
-    vec4 finalDiffuse=sample(diffMap,texcoordOut);
-
-
+    vec3 n = normalize(vec4(normalOut,0.0)).xyz;
+    vec4 diffColor=sample(diffMap,texcoordOut);
 #endif
 
     // if point light:
@@ -206,24 +187,21 @@ void main(void) {
 
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
 
-    finalNormal.xyz=finalNormal.xyz*2.0-1.0;
+    n=n*2.0-1.0;
 
      // expand normal to eye space(from tangent space)
-    finalNormal.xyz=normalize(finalNormal.x*tangentOut.xyz+
-		    finalNormal.y*bitangentOut.xyz+finalNormal.z*normalOut);
+    n=normalize(n.x*tangentOut.xyz+
+		    n.y*bitangentOut.xyz+n.z*normalOut);
 
 #else
 
-    finalNormal.xyz = normalize(finalNormal.xyz);
+    n = normalize(n);
 
 #endif
 
     // compute diffuse and specular terms
-    float diff=  calcDiff(l,finalNormal.xyz);
-
-    // -l, because the light vector goes from the light TO the point!
-    float spec=
-	clamp(dot(normalize(l-v),finalNormal.xyz),0,1);
+    float diff=  calcDiff(l,n);
+    float spec= calcSpec(l,n,v);
 
 #if defined HEIGHT_MAPPING
     // shadows. DOES NOT WORK YET.
@@ -275,16 +253,17 @@ void main(void) {
      }
     */
 
-
 //    visibility = texture( shadowMap, vec3(shadowCoordOut.xy, ( (shadowCoordOut.z-bias) / shadowCoordOut.w) )  );
 
-    vec4 finalcolor=ambient*finalDiffuse; // ambient
-
-    finalcolor.xyz+=(finalDiffuse.xyz*diffuse.xyz*diff * visibility+
-			 specColor*pow(spec,specShiny) * visibility );
-    finalcolor.w=1.0;
-
-    fragmentColor= finalcolor;
+    fragmentColor = calcLighting(
+	ambientMat.xyz,
+	diffMat.xyz,
+	specShiny,
+	diffColor.xyz,
+	specColor.xyz,
+	diff,
+	spec,
+	visibility);
 
     //  fragmentColor = vec4( vec3(cosTheta), 1.0  );
 }
