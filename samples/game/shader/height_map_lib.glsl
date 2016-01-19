@@ -23,13 +23,13 @@ vec3 getNormal(sampler2D hm, vec2 texCoord, float resolution)
 }
 
 vec3 computePos(
-    vec3 pos,
+    vec2 pos,
     sampler2D heightMap,
     float xzScale,
     vec3 offset,
     float yScale) {
     return offset + vec3(
 	pos.x * xzScale,
-	f(heightMap,pos.xz)*yScale,
-	pos.z * xzScale);
+	f(heightMap,pos.xy)*yScale,
+	pos.y * xzScale);
 }

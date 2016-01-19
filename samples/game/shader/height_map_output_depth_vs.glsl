@@ -1,4 +1,4 @@
-layout (location = 0) in  vec3 positionIn;
+layout (location = 0) in  vec2 positionIn;
 
 #include "height_map_lib.glsl"
 

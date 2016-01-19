@@ -1,4 +1,4 @@
-layout (location = 0) in  vec3 positionIn;
+layout (location = 0) in  vec2 positionIn;
 layout (location = 1) in vec2 texCoordIn;
 
 #include "height_map_lib.glsl"
@@ -29,7 +29,7 @@ void main()
 
     gl_Position = mvp * vec4(pos,1);
 
-    vec3 norm = getNormal(heightMap,positionIn.xz, resolution);
+    vec3 norm = getNormal(heightMap,positionIn.xy, resolution);
 
     viewSpaceNormal = normalize((normalMatrix * vec4(normalize(
 							 norm

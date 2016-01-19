@@ -603,9 +603,8 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
   Vector2f is enough.
 	 */
 	c.position =
-	    Vector3f(
+	    Vector2f(
 		x,
-		0,
 		z
 		);
 
@@ -621,7 +620,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     }
 
     m_vertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{3,2} // pos, tex
+	vector<GLuint>{2,2} // pos, tex
 	);
 
     m_vertexBuffer->Bind();

@@ -138,10 +138,9 @@ public:
 
 };
 
-
 // the data associated with every triangle in the heightmap mesh.
 struct Cell {
-    Vector3f position;
+    Vector2f position; // specifies vertex x and z!
     //   float id;
     Vector2f texCoord;
 };
