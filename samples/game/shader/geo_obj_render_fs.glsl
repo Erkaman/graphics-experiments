@@ -109,8 +109,6 @@ uniform float zNear;
 uniform float zFar;
 
 
-
-//uniform sampler2D shadowMap;
 uniform sampler2DShadow shadowMap;
 
 
@@ -224,35 +222,7 @@ void main(void) {
 
 #endif
 
-    float cosTheta = diff;
-    float bias = 0.001*tan(acos(cosTheta))+0.001;
-
-
-//    float bias = 0.001*tan(acos(cosTheta));
-
-/*    if ( texture( shadowMap, shadowCoordOut.xy ).x  < ( (shadowCoordOut.z / shadowCoordOut.w)-bias )  ){
-	visibility = 0.0;
-    }
-*/
-
-    float visibility = 1.0;
-
-    /*
-     for (int i=0;i<4;i++){
-
-	 visibility -=
-	     0.2 * (1.0-texture( shadowMap, vec3(shadowCoordOut.xy+poissonDisk[i]/700.0, ( (shadowCoordOut.z-bias) / shadowCoordOut.w) )  ));
-     }*/
-
-    visibility -= 0.5* (1.0- texture(shadowMap, vec3(shadowCoordOut.xy, ( (shadowCoordOut.z-bias) / shadowCoordOut.w )  )));
-
-    /*
-     if ( texture( shadowMap, shadowCoordOut.xy ).z  <  shadowCoordOut.z-bias){
-	 visibility = 0.5;
-     }
-    */
-
-//    visibility = texture( shadowMap, vec3(shadowCoordOut.xy, ( (shadowCoordOut.z-bias) / shadowCoordOut.w) )  );
+    float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 
     fragmentColor = calcLighting(
 	ambientMat.xyz,

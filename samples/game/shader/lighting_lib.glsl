@@ -46,3 +46,22 @@ vec4 calcLighting(
 
     return vec4(finalcolor,1.0);
 }
+
+// calc shadows.
+float calcVisibility(sampler2DShadow shadowMap, float diff, vec4 shadowCoord ) {
+    float cosTheta = diff;
+    float bias = 0.001*tan(acos(cosTheta))+0.001;
+
+    float visibility = 1.0;
+
+    /*
+     for (int i=0;i<4;i++){
+
+	 visibility -=
+	     0.2 * (1.0-texture( shadowMap, vec3(shadowCoordOut.xy+poissonDisk[i]/700.0, ( (shadowCoordOut.z-bias) / shadowCoordOut.w) )  ));
+     }*/
+
+    visibility -= 0.5* (1.0- texture(shadowMap, vec3(shadowCoord.xy, ( (shadowCoord.z-bias) / shadowCoord.w )  )));
+
+    return visibility;
+}
