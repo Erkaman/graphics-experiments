@@ -1,4 +1,4 @@
-layout (location = 0) in  vec3 positionIn;
+layout (location = 0) in  vec2 positionIn;
 layout (location = 2) in vec2 texCoordIn;
 
 #include "height_map_lib.glsl"
@@ -12,7 +12,7 @@ uniform vec3 offset;
 uniform float yScale;
 uniform float resolution;
 
-uniform vec3 cursorPos;
+uniform vec2 cursorPos;
 uniform vec3 cameraPos;
 
 out float isRender;
@@ -71,7 +71,7 @@ void main()
 
 
     vec3 pos = computePos(
-	positionIn + vec3(cursorPos.x / resolution, 0, cursorPos.z / resolution),
+	positionIn + vec2(cursorPos.x / resolution, cursorPos.y / resolution),
 	heightMap,  xzScale, offset, yScale);
 
     gl_Position = mvp * vec4(pos,1);

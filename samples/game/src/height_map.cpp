@@ -154,7 +154,7 @@ HeightMap::~HeightMap() {
 
 void HeightMap::CreateCursor() {
 
-    vector<Vector3f> points;
+    vector<Vector2f> points;
 
     const float rad = m_cursorSize;
 
@@ -166,11 +166,10 @@ void HeightMap::CreateCursor() {
 	    int idist = dist;
 
 	    if( idist == m_cursorSize || idist == 0) {
-		points.push_back(Vector3f((float)ix / (float)m_resolution, 0, (float)iz / (float)m_resolution));
+		points.push_back(Vector2f((float)ix / (float)m_resolution, (float)iz / (float)m_resolution));
 	    }
 	}
     }
-
 
     m_cursorVertexBuffer->Bind();
     m_cursorVertexBuffer->SetBufferData(points);
@@ -292,7 +291,7 @@ void HeightMap::RenderCursor(const ICamera* camera) {
 
 
     m_cursorShader->SetUniform("cursorPos",
-			       Vector3f((float)m_cursorPosition.x, 0.0f, (float)m_cursorPosition.y) );
+			       Vector2f((float)m_cursorPosition.x, (float)m_cursorPosition.y) );
 
     m_cursorShader->SetUniform("cameraPos",
 			       camera->GetPosition() );
@@ -628,7 +627,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     m_vertexBuffer->Unbind();
 
     m_cursorVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{3}, // pos
+	vector<GLuint>{2}, // pos
 	GL_DYNAMIC_DRAW
 	);
 
