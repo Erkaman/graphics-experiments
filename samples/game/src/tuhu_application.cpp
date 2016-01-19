@@ -55,7 +55,7 @@ using namespace std;
 int nonCulledObjects = 0;
 int totalObjects = 0;
 
-constexpr int SHADOW_MAP_SIZE = 1024;
+constexpr int SHADOW_MAP_SIZE = 1024*2;
 
 const string HEIGHT_MAP_FILENAME = "heightmap.bin";
 const string SPLAT_MAP_FILENAME = "splatmap.bin";
@@ -127,13 +127,13 @@ void TuhuApplication::Init() {
 
 
     const Vector3f pos =
-	Vector3f(51.479908f, 40.918278f, 70.826126f);
+	Vector3f(51, 41, 71);
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(-0.613098f, -0.523130f, -0.591984f)
+	Vector3f(-0.50f, -0.50f, -0.50f)
 	);
 
     m_snow = new SnowEffect(pos);
@@ -164,7 +164,7 @@ void TuhuApplication::Init() {
 
     m_line = Line::Load(Vector3f(0), -1000.0f * Vector3f(m_lightDirection), Vector3f(1,0,0) );
 
-    if(ResourceManager::GetInstance().PathExists(dir) && false) {
+    if(ResourceManager::GetInstance().PathExists(dir)/* && false*/) {
 
 	m_heightMap = new HeightMap(
 	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,
@@ -257,10 +257,13 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
     Matrix4f invProj = m_curCamera->GetVp().Inverse();
 
-    // left bottom near
-    const Vector3f lbf = Vector3f((invProj * Vector4f(-1,-1,-1,1.0f)));
+    const float zNear =  -1.0f;
+    const float zFar  = 1.0f;
 
-
+    // left bottom far
+    Vector4f temp = Vector4f(-1,-1,zFar,1.0f);
+    LOG_I("temp: %f", temp.w );
+    const Vector3f lbf = Vector3f((invProj * temp));
 
 /*
   LOG_I("sanity: %s",
@@ -273,34 +276,43 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 //    	Vector3f(17.328205, 15.360136, 14.091190);
 
 
-    // left top near
-    const Vector3f ltf = Vector3f((invProj * Vector4f(-1,+1,-1,1.0f)));
-
-    // right bottom near
-    const Vector3f rbf = Vector3f((invProj * Vector4f(+1,-1,-1,1.0f)));
-
-    // right top near
-    const Vector3f rtf = Vector3f((invProj * Vector4f(+1,+1,-1,1.0f)));
-
-    // left bottom far
-    const Vector3f lbn = Vector3f((invProj * Vector4f(-1,-1,+1,1.0f)));
-
-
-
-
     // left top far
-    const Vector3f ltn = Vector3f((invProj * Vector4f(-1,+1,+1,1.0f)));
+    const Vector3f ltf = Vector3f((invProj * Vector4f(-1,+1,zFar,1.0f)));
+
+    // right bottom far
+    const Vector3f rbf = Vector3f((invProj * Vector4f(+1,-1,zFar,1.0f)));
+
+    // right top far
+    const Vector3f rtf = Vector3f((invProj * Vector4f(+1,+1,zFar,1.0f)));
+
+    // left bottom near
+    temp = Vector4f(-1,-1,zNear,1.0f);
+    LOG_I("temp: %f", temp.w );
+    const Vector3f lbn = Vector3f((invProj * temp));
+
+    // left top near
+    const Vector3f ltn = Vector3f((invProj * Vector4f(-1.0f,+1.0f,zNear,1.0f)));
 
 
     // right bottom far
-    const Vector3f rbn = Vector3f((invProj * Vector4f(+1,-1,+1,1.0f)));
+    const Vector3f rbn = Vector3f((invProj * Vector4f(+1,-1,zNear,1.0f)));
 
     // right top far
-    const Vector3f rtn = Vector3f((invProj * Vector4f(+1,+1,+1,1.0f)));
+    const Vector3f rtn = Vector3f((invProj * Vector4f(+1,+1,zNear,1.0f)));
+
+    LOG_I("camerspos: %s",  string(m_curCamera->GetPosition() ).c_str() );
 
 
-    // LOG_I("lbf: %s",  string(lbf).c_str() );
-    //  LOG_I("lbn: %s",  string(lbn).c_str() );
+
+    LOG_I("lbf: %s",  string(lbf).c_str() );
+
+    LOG_I("ltf: %s",  string(ltf).c_str() );
+    LOG_I("rbf: %s",  string(rbf).c_str() );
+    LOG_I("rtf: %s",  string(rtf).c_str() );
+    LOG_I("lbn: %s",  string(lbn).c_str() );
+    LOG_I("ltn: %s",  string(ltn).c_str() );
+    LOG_I("rbn: %s",  string(rbn).c_str() );
+    LOG_I("rtn: %s",  string(rtn).c_str() );
 
     Vector3f corners[8] =  {lbn , ltn , rbn , rtn ,
 			    lbf , ltf , rbf , rtf };
@@ -323,7 +335,7 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
     Matrix4f viewMatrix =
 	Matrix4f::CreateLookAt(
-	    centroid + ( Vector3f(m_lightDirection) * (config.GetZFar() + nearClipOffset )   ),
+	    centroid - ( Vector3f(m_lightDirection) * (config.GetZFar() + nearClipOffset )   ),
 	    centroid,
 	    Vector3f(0,1,0));
 
@@ -359,19 +371,19 @@ Matrix4f TuhuApplication::MakeLightProj()const {
     }
 
 /*
-  LOG_I("min x %f",  mins.x ); // -12
-  LOG_I("max x %f",  maxes.x  ); // 12
+  LOG_I("min x %f",  mins.x );
+  LOG_I("max x %f",  maxes.x  );
 
-  LOG_I("min y %f",  mins.y ); // -23
-  LOG_I("max y %f",  maxes.y  ); // 23
+  LOG_I("min y %f",  mins.y );
+  LOG_I("max y %f",  maxes.y  );
 
-  LOG_I("-mimin z %f", -mins.z   ); // 2
-  LOG_I("mymaxz %f",  maxes.z ); // -23
-
-//    exit(1);*/
+  LOG_I("%f",  maxes.z  );
+  LOG_I("%f",  -mins.z );
+*/
+//    exit(1);
 
     // TODO: the problem probably lies in that we should flip maxz and minz or something.
-    return Matrix4f::CreateOrthographic(mins.x, maxes.x, mins.y, maxes.y, maxes.z, -mins.z );
+    return viewMatrix * Matrix4f::CreateOrthographic(mins.x, maxes.x, mins.y, maxes.y, maxes.z, -mins.z );
 }
 
 
@@ -753,7 +765,7 @@ void TuhuApplication::StartPhysics()  {
 	geoObj->AddToPhysicsWorld(m_physicsWorld);
     }
 
-    m_heightMap->AddToPhysicsWorld(m_physicsWorld);
+//    m_heightMap->AddToPhysicsWorld(m_physicsWorld);
 
 }
 
@@ -964,4 +976,13 @@ void TuhuApplication::UpdateMatrices() {
 	    Matrix4f::CreateOrthographic(-100,100, -60, 60, -40, 50);
 
 	m_lightVp = lightProjectionMatrix * lightViewMatrix;
+//	LOG_I("version1 %s", string(m_lightVp).c_str() );
+
+//	LOG_I("version2 %s", string( MakeLightProj()  ).c_str() );
+
+//	exit(1);
+
+//	m_lightVp = MakeLightProj();
+//	exit(1);
+
 }
