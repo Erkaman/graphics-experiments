@@ -1,5 +1,4 @@
 layout (location = 0) in  vec3 positionIn;
-layout (location = 1) in  float idIn;
 layout (location = 2) in vec2 texCoordIn;
 
 #include "height_map_lib.glsl"

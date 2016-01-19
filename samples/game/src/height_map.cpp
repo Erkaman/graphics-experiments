@@ -68,15 +68,13 @@ static Texture* LoadTexture(const string& filename) {
     return texture;
 }
 
-
-
 void HeightMap::Init(const std::string& heightMapFilename, const std::string& splatMapFilename,
 		     bool guiMode ) {
 
     m_isWireframe = false;
     m_shader = NULL;
     m_depthShader = NULL;
-    m_idShader = NULL;
+//    m_idShader = NULL;
     m_cursorShader = NULL;
     m_grassTexture = NULL;
     m_dirtTexture = NULL;
@@ -110,7 +108,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
 
     if(guiMode) {
 	m_noise = new ValueNoise(2);
-	m_idShader = ShaderProgram::Load("shader/height_map_output_id");
+//	m_idShader = ShaderProgram::Load("shader/height_map_output_id");
 	m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
 
 
@@ -334,7 +332,7 @@ void HeightMap::RenderShadowMap(const Matrix4f& lightVp) {
 
     m_depthShader->Unbind();
 }
-
+/*
 void HeightMap::RenderId(const ICamera* camera) {
 
     m_idShader->Bind();
@@ -345,7 +343,7 @@ void HeightMap::RenderId(const ICamera* camera) {
 
     m_idShader->Unbind();
 }
-
+*/
 void HeightMap::SetWireframe(const bool wireframe) {
     m_isWireframe = wireframe;
 }
@@ -591,7 +589,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     unsigned int xpos = 0;
     unsigned int zpos = 0;
 
-    int id = 0;
+    //   int id = 0;
 
     for(size_t i = 0; i < width*depth; ++i) {
 
@@ -611,7 +609,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 		z
 		);
 
-	c.id = (float)id++;
+//	c.id = (float)id++;
 
 	c.texCoord = Vector2f(x,z);
 
@@ -623,7 +621,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     }
 
     m_vertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{3,1,2} // pos, id, tex
+	vector<GLuint>{3,2} // pos, tex
 	);
 
     m_vertexBuffer->Bind();

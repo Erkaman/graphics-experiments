@@ -142,7 +142,7 @@ public:
 // the data associated with every triangle in the heightmap mesh.
 struct Cell {
     Vector3f position;
-    float id;
+    //   float id;
     Vector2f texCoord;
 };
 
@@ -171,7 +171,7 @@ private:
 
     ShaderProgram* m_shader;
     ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
-    ShaderProgram* m_idShader; //outputs only the id. Used for triangle picking in the height map.
+//    ShaderProgram* m_idShader; //outputs only the id. Used for triangle picking in the height map.
     ShaderProgram* m_cursorShader;
 
     Texture* m_grassTexture;
@@ -248,7 +248,7 @@ public:
     void Render(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
 
     // render, but instead of outputting colors for every triangle, we output the id of the frontmost triangles.
-    void RenderId(const ICamera* camera);
+//    void RenderId(const ICamera* camera);
 
     void RenderShadowMap(const Matrix4f& lightVp);
 

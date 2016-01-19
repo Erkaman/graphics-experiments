@@ -398,8 +398,6 @@ void TuhuApplication::RenderShadowMap() {
 	GeometryObject::RenderShadowMapAll(m_lightVp);
 
 	m_heightMap->RenderShadowMap(m_lightVp);
-
-
     }
      m_depthFbo->Unbind();
 
