@@ -106,6 +106,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
       load the shader
     */
     m_shader = ShaderProgram::Load("shader/height_map_render");
+    m_depthShader = ShaderProgram::Load("shader/height_map_output_depth");
 
     if(guiMode) {
 	m_noise = new ValueNoise(2);
@@ -192,9 +193,6 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
     Texture::SetActiveTextureUnit(3);
     m_heightMap->Bind();
 
-    shader->SetUniform("splatMap", 4);
-    Texture::SetActiveTextureUnit(4);
-    m_splatMap->Bind();
 
 
 
@@ -208,10 +206,7 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
 
 void HeightMap::RenderUnsetup() {
     m_heightMap->Unbind();
-    m_splatMap->Unbind();
 }
-
-
 
 void HeightMap::Render(ShaderProgram* shader) {
 
@@ -238,27 +233,17 @@ void HeightMap::Render(ShaderProgram* shader) {
 
 }
 
-void HeightMap::RenderShadowMap(const ICamera* camera) {
-
-    // TODO: implement shadow mapping for height map.
-/*
-  m_depthShader->Bind();
-
-  const Matrix4f mvp = camera->GetMvp(Matrix4f::CreateTranslation(0,0,0));
-  m_depthShader->SetUniform("mvp", mvp  );
-
-  Render();
-
-  m_depthShader->Unbind();
-*/
-
-}
-
 void HeightMap::RenderHeightMap(
     const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
     m_shader->Bind();
 
     m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition, lightVp);
+
+
+    m_shader->SetUniform("splatMap", 4);
+    Texture::SetActiveTextureUnit(4);
+    m_splatMap->Bind();
+
 
     m_shader->SetUniform("grass", 0);
     Texture::SetActiveTextureUnit(0);
@@ -272,18 +257,9 @@ void HeightMap::RenderHeightMap(
     Texture::SetActiveTextureUnit(2);
     m_rockTexture->Bind();
 
-
-
     m_shader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
     Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
     shadowMap.GetRenderTargetTexture().Bind();
-
-
-/*
-  m_shader->SetUniform("snow", 2);
-  Texture::SetActiveTextureUnit(2);
-  m_snowTexture->Bind();
-*/
 
     // set textures and stuff.
 
@@ -298,6 +274,8 @@ void HeightMap::RenderHeightMap(
     m_grassTexture->Unbind();
     m_dirtTexture->Unbind();
     m_rockTexture->Unbind();
+
+    m_splatMap->Unbind();
 
     shadowMap.GetRenderTargetTexture().Unbind();
 
@@ -331,14 +309,9 @@ void HeightMap::RenderCursor(const ICamera* camera) {
     m_cursorVertexBuffer->DrawVertices(GL_POINTS, m_numCursorPoints);
     m_cursorVertexBuffer->DisableVertexAttribInterleaved();
 
-
     RenderUnsetup();
 
     m_cursorShader->Unbind();
-
-
-
-
 }
 
 
@@ -352,6 +325,16 @@ void HeightMap::Render(
     }
 }
 
+void HeightMap::RenderShadowMap(const Matrix4f& lightVp) {
+    m_depthShader->Bind();
+
+    m_depthShader->SetUniform("mvp", lightVp); // model matrix is identity, so we do not need to multiply by model.
+
+    Render(m_depthShader);
+
+    m_depthShader->Unbind();
+}
+
 void HeightMap::RenderId(const ICamera* camera) {
 
     m_idShader->Bind();
@@ -362,9 +345,6 @@ void HeightMap::RenderId(const ICamera* camera) {
 
     m_idShader->Unbind();
 }
-
-
-
 
 void HeightMap::SetWireframe(const bool wireframe) {
     m_isWireframe = wireframe;

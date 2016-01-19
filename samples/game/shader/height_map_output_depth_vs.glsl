@@ -1,6 +1,4 @@
 layout (location = 0) in  vec3 positionIn;
-layout (location = 1) in  float idIn;
-layout (location = 2) in vec2 texCoordIn;
 
 #include "height_map_lib.glsl"
 
@@ -12,14 +10,9 @@ uniform float xzScale;
 uniform vec3 offset;
 uniform float yScale;
 
-out float id;
-
 void main()
 {
     vec3 pos = computePos(positionIn, heightMap,  xzScale, offset, yScale);
 
     gl_Position = mvp * vec4(pos,1);
-
-
-    id = idIn;
 }

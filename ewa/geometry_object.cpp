@@ -384,10 +384,8 @@ void GeometryObject::RenderShadowMapAll(const Matrix4f& lightVp) {
 
 	    Matrix4f modelMatrix = geoObj->GetModelMatrix( );
 
-
 	    const Matrix4f mvp = lightVp * modelMatrix;
 	    outputDepthShader->SetUniform("mvp", mvp  );
-
 
 	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
 

@@ -1,6 +1,6 @@
 // TODO:we can remove the y component as an easy optimization!
 // TODO: since we have such high resolution, we might as well stretch the map some, to save triangles.
-
+// TODO: also, get rid of id from the mesh! we do not need it!
 
 
 
@@ -246,10 +246,11 @@ public:
     ~HeightMap();
 
     void Render(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
-    void RenderShadowMap(const ICamera* camera);
 
     // render, but instead of outputting colors for every triangle, we output the id of the frontmost triangles.
     void RenderId(const ICamera* camera);
+
+    void RenderShadowMap(const Matrix4f& lightVp);
 
     void SetWireframe(const bool wireframe);
 

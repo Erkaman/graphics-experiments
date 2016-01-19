@@ -1,6 +1,6 @@
 out vec3 fragmentColor;
 
-flat in float id;
+in float id;
 
 void main()
 {

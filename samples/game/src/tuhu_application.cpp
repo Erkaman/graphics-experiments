@@ -395,8 +395,10 @@ void TuhuApplication::RenderShadowMap() {
 
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 	GeometryObject::RenderShadowMapAll(m_lightVp);
+
+	m_heightMap->RenderShadowMap(m_lightVp);
+
 
     }
      m_depthFbo->Unbind();
@@ -972,7 +974,6 @@ void TuhuApplication::UpdateMatrices() {
 
 	Matrix4f lightProjectionMatrix =  //MakeLightProj();
 	    Matrix4f::CreateOrthographic(-150,150, -100, 100, -40, 100);
-//	    Matrix4f::CreateOrthographic(-200,200, -200, 200, -100, 100);
 
 	m_lightVp = lightProjectionMatrix * lightViewMatrix;
 //	LOG_I("version1 %s", string(m_lightVp).c_str() );
