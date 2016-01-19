@@ -1,10 +1,17 @@
-
-
-
-
 vec4 sample(sampler2D tex, vec2 uv) {
     return texture(tex, vec2(uv.x, 1.0-uv.y) );
 }
+
+/*
+  l: light vector
+  n: normal
+
+  and do make sure both are in the same space!
+ */
+float calcDiff(vec3 l, vec3 n) {
+    return clamp(dot(l,n),0,1);
+}
+
 
 #ifdef HEIGHT_MAPPING
 void rayTrace(
@@ -172,12 +179,6 @@ void main(void) {
     vec4 finalNormal = normalize(sample(normalMap,uv));
     vec4 finalDiffuse=sample(diffMap, uv );
 
-
-    // compute light direction
-//    p += v*rayDepth*s.z;
-//    vec3 l=normalize(p-lightpos.xyz);
-    // NOTE: use the above when point light.
-    vec3 l= -lightpos.xyz;
     /*
       Depth correct.
     */
@@ -190,19 +191,18 @@ void main(void) {
     vec4 finalNormal = sample(normalMap,texcoordOut);
     vec4 finalDiffuse=sample(diffMap,texcoordOut);
 
-    // vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
-    vec3 l=-lightpos.xyz;
 #else // no normal or height map
 
     vec4 finalNormal = normalize(vec4(normalOut,0.0));
     vec4 finalDiffuse=sample(diffMap,texcoordOut);
 
-    // lightpos in view space
-    // p in view space.
-//    vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
-    vec3 l= -lightpos.xyz; // view vector in eye space.
 
 #endif
+
+    // if point light:
+//    vec3 l=normalize(p-lightpos.xyz); // view vector in eye space.
+
+    vec3 l= lightpos.xyz; // light vector in eye space.
 
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
 
@@ -219,11 +219,11 @@ void main(void) {
 #endif
 
     // compute diffuse and specular terms
-    float diff=clamp(dot(-l,finalNormal.xyz),0,1);
+    float diff=  calcDiff(l,finalNormal.xyz);
 
     // -l, because the light vector goes from the light TO the point!
     float spec=
-	clamp(dot(normalize(-l-v),finalNormal.xyz),0,1);
+	clamp(dot(normalize(l-v),finalNormal.xyz),0,1);
 
 #if defined HEIGHT_MAPPING
     // shadows. DOES NOT WORK YET.
@@ -287,5 +287,4 @@ void main(void) {
     fragmentColor= finalcolor;
 
     //  fragmentColor = vec4( vec3(cosTheta), 1.0  );
-
 }

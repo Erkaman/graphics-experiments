@@ -164,7 +164,7 @@ void TuhuApplication::Init() {
 
     m_line = Line::Load(Vector3f(0), -1000.0f * Vector3f(m_lightDirection), Vector3f(1,0,0) );
 
-    if(ResourceManager::GetInstance().PathExists(dir)/* && false*/) {
+    if(ResourceManager::GetInstance().PathExists(dir) /*&& false*/) {
 
 	m_heightMap = new HeightMap(
 	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,

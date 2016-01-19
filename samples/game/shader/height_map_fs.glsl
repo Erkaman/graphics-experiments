@@ -76,8 +76,6 @@ void main()
 	splat.g * texture(dirt, scaledTexcoord).xyz +
 	splat.b * texture(rock, scaledTexcoord).xyz;
 
-
-
     vec3 shading = phongVertex(
 	diffuse
 	/*sampleDiffuseTexture()*/, viewSpaceNormal,
