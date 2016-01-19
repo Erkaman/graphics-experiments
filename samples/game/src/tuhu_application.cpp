@@ -476,11 +476,7 @@ void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Objects);
     {
-
-
-
 	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
-
     }
 
     m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
@@ -975,7 +971,8 @@ void TuhuApplication::UpdateMatrices() {
 	Config& config = Config::GetInstance();
 
 	Matrix4f lightProjectionMatrix =  //MakeLightProj();
-	    Matrix4f::CreateOrthographic(-100,100, -60, 60, -40, 50);
+	    Matrix4f::CreateOrthographic(-150,150, -100, 100, -40, 100);
+//	    Matrix4f::CreateOrthographic(-200,200, -200, 200, -100, 100);
 
 	m_lightVp = lightProjectionMatrix * lightViewMatrix;
 //	LOG_I("version1 %s", string(m_lightVp).c_str() );

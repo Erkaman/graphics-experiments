@@ -7,6 +7,7 @@ layout (location = 2) in vec2 texCoordIn;
 uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
 uniform mat4 normalMatrix;
+uniform mat4 lightMvp;
 
 uniform sampler2D heightMap;
 
@@ -20,6 +21,8 @@ out vec3 viewSpacePosition;
 out vec2 texCoord;
 
 out vec3 position;
+
+out vec4 shadowCoordOut;
 
 void main()
 {
@@ -38,4 +41,6 @@ void main()
     texCoord = texCoordIn;
 
     position = pos;
+
+    shadowCoordOut = (lightMvp * vec4(pos,1));
 }

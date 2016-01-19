@@ -20,6 +20,8 @@
 #include "ewa/random.hpp"
 #include "ewa/config.hpp"
 #include "ewa/gl/texture_loader.hpp"
+#include "gl/depth_fbo.hpp"
+
 
 #include "math/vector2f.hpp"
 #include "math/vector3f.hpp"
@@ -270,6 +272,13 @@ void HeightMap::RenderHeightMap(
     Texture::SetActiveTextureUnit(2);
     m_rockTexture->Bind();
 
+
+
+    m_shader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
+    Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
+    shadowMap.GetRenderTargetTexture().Bind();
+
+
 /*
   m_shader->SetUniform("snow", 2);
   Texture::SetActiveTextureUnit(2);
@@ -289,6 +298,8 @@ void HeightMap::RenderHeightMap(
     m_grassTexture->Unbind();
     m_dirtTexture->Unbind();
     m_rockTexture->Unbind();
+
+    shadowMap.GetRenderTargetTexture().Unbind();
 
     m_shader->Unbind();
 }

@@ -12,13 +12,16 @@ in vec2 texCoord;
 
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
+in vec4 shadowCoordOut;
 
 uniform sampler2D grass;
 uniform sampler2D dirt;
 uniform sampler2D rock;
 
-uniform sampler2D splatMap;
+uniform sampler2DShadow shadowMap;
 
+
+uniform sampler2D splatMap;
 
 in vec3 norm;
 
@@ -57,7 +60,7 @@ void main()
     vec3 specColor = vec3(0);
     float diff=  calcDiff(l,n);
     float spec= calcSpec(l,n,v);
-    float visibility = 1;
+    float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 
     fragmentColor = calcLighting(
 	ambientMat.xyz,

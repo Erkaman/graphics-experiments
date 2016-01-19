@@ -1,4 +1,4 @@
-numObjs 8
+numObjs 9
 beginObj
 filename obj/rock_floor.eob
 translation -2.000000 9.000000 38.000000
@@ -44,6 +44,12 @@ endObj
 beginObj
 filename obj/wall.eob
 translation 18.000000 9.000000 -7.000000
+rotation 0.000000 0.000000 0.000000 1.000000 
+scale 1.000000
+endObj
+beginObj
+filename obj/wall.eob
+translation -27.280460 9.000000 -55.668751
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
