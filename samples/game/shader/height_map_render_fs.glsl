@@ -44,6 +44,7 @@ void main()
 	splat.r * texture(grass, scaledTexcoord).xyz +
 	splat.g * texture(dirt, scaledTexcoord).xyz +
 	splat.b * texture(rock, scaledTexcoord).xyz;
+    //diffColor = vec3(1);
 
     /*
     vec3 shading = phongVertex(
@@ -60,7 +61,7 @@ void main()
     vec3 specColor = vec3(0);
     float diff=  calcDiff(l,n);
     float spec= calcSpec(l,n,v);
-    float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
+    float visibility = 1.0; //calcVisibility(shadowMap, diff, shadowCoordOut);
 
     fragmentColor = calcLighting(
 	ambientMat.xyz,

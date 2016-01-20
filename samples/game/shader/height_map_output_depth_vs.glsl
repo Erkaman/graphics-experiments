@@ -10,10 +10,13 @@ uniform float xzScale;
 uniform vec3 offset;
 uniform float yScale;
 
+uniform vec2 chunkPos;
+uniform float chunks; // num chunks.
+
 void main()
 {
     vec3 pos =
-	computePos(positionIn, heightMap,  xzScale, offset, yScale);
+	computePos(positionIn, chunkPos, chunks,heightMap,  xzScale, offset, yScale);
 
     gl_Position = mvp * vec4(pos,1);
 }

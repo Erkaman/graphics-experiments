@@ -200,6 +200,7 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
     shader->SetUniform("offset", m_offset);
     shader->SetUniform("resolution", (float)m_resolution);
     shader->SetUniform("textureScale", (float)m_textureScale);
+    shader->SetUniform("chunks", (float)m_chunks );
 
 }
 
@@ -216,6 +217,18 @@ void HeightMap::Render(ShaderProgram* shader) {
     m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
 
     m_indexBuffer->Bind();
+
+    /*
+    for(int x = 0; x < m_chunks; ++x) {
+	for(int z = 0; z < m_chunks; ++z) {
+
+	    shader->SetUniform("chunkPos", Vector2f(x,z) );
+
+	    // DRAW.
+	    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+	}
+    }
+    */
 
     // DRAW.
     m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
@@ -586,7 +599,6 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     // how many verties wide a chunk is.
     int chunkVertices = m_chunkSize+1;
 
-
     MultArray<Cell> *m_chunk = new MultArray<Cell>(chunkVertices,chunkVertices);
     MultArray<Cell> &chunk = *m_chunk;
 
@@ -599,8 +611,14 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 
 	Cell& c = chunk(xpos, zpos);
 
-	float x = (float)xpos / (float)chunkVertices;
-	float z = (float)zpos / (float)chunkVertices;
+	float x = (float)(xpos) / (float)chunkVertices;
+	float z = (float)(zpos) / (float)chunkVertices;
+
+	if(xpos / chunkVertices == 1) {
+
+	    LOG_I("lal %d, %d", xpos ,chunkVertices );
+
+	}
 
 	/*
 	  This is very wasteful! We y is always 0, so we do not need a Vector3f
@@ -613,7 +631,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 		);
 
 	++xpos;
-	if(xpos != 0 && ( xpos % (chunkVertices) == 0)) {
+	if(xpos != 0 && ( (xpos) % (chunkVertices) == 0)) {
 	    xpos = 0;
 	    ++zpos;
 	}
@@ -654,6 +672,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 	}
 	baseIndex += 1;
     }
+    LOG_I("tris: %d",m_numTriangles );
 
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_INT);
 
