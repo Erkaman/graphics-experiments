@@ -463,7 +463,10 @@ void TuhuApplication::RenderScene() {
     m_gpuProfiler->End(GTS_Sky);
 
     m_gpuProfiler->Begin(GTS_Terrain);
-    m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+
+        m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+
+
     m_gpuProfiler->End(GTS_Terrain);
 
 //    m_grass->Draw(m_curCamera, m_lightDirection);
@@ -762,7 +765,6 @@ void TuhuApplication::StartPhysics()  {
 
 	geoObj->AddToPhysicsWorld(m_physicsWorld);
     }
-
 //    m_heightMap->AddToPhysicsWorld(m_physicsWorld);
 
 }

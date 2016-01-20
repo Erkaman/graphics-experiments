@@ -1,32 +1,5 @@
-// TODO:we can remove the y component as an easy optimization!
-// TODO: since we have such high resolution, we might as well stretch the map some, to save triangles.
-// TODO: also, get rid of id from the mesh! we do not need it!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// shadows: 1.3
+// terrain: 7.0
 
 
 #pragma once
@@ -55,8 +28,6 @@ class PhysicsWorld;
 class ValueNoise;
 class DepthFBO;
 class Matrix4f;
-
-
 
 template<typename T>
 class PBO {
@@ -180,7 +151,7 @@ private:
     Texture2D* m_heightMap;
     Texture2D* m_splatMap;
 
-    MultArray<Cell> *m_map;
+
     MultArray<unsigned short>* m_heightData;
     MultArray<SplatColor>* m_splatData;
 
@@ -196,6 +167,9 @@ private:
     float m_xzScale;
     float m_yScale;
     int m_resolution;
+    int m_chunks; // how many chunks to subdivide the mesh into, on one axis.
+    int m_chunkSize; // how many quads per chunk width.
+
     float m_textureScale;
     int HEIGHT_MAP_SIZE;
     int SPLAT_MAP_SIZE;

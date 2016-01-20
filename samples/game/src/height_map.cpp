@@ -88,6 +88,9 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     m_yScale = 30.0f;
     m_resolution = 512;
     m_textureScale = 0.07f;
+    m_chunks = 7;
+    m_chunkSize = (m_resolution-1) / m_chunks;
+    LOG_I("chunk: %d", m_chunkSize);
     HEIGHT_MAP_SIZE = m_resolution * m_resolution * sizeof(unsigned short);
     SPLAT_MAP_SIZE = m_resolution * m_resolution * sizeof(SplatColor);
 
@@ -148,8 +151,7 @@ HeightMap::~HeightMap() {
     MY_DELETE(m_indexBuffer);
     MY_DELETE(m_vertexBuffer);
     MY_DELETE(m_grassTexture);
-    MY_DELETE(m_map)
-	}
+}
 
 
 void HeightMap::CreateCursor() {
@@ -578,24 +580,27 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     }
 
     /*
-      Create the heightmap mesh:
+      Create a chunk mesh:
     */
 
+    // how many verties wide a chunk is.
+    int chunkVertices = m_chunkSize+1;
 
-    m_map = new MultArray<Cell>(width, depth);
-    MultArray<Cell> &map = *m_map;
+
+    MultArray<Cell> *m_chunk = new MultArray<Cell>(chunkVertices,chunkVertices);
+    MultArray<Cell> &chunk = *m_chunk;
 
     unsigned int xpos = 0;
     unsigned int zpos = 0;
 
     //   int id = 0;
 
-    for(size_t i = 0; i < width*depth; ++i) {
+    for(size_t i = 0; i < chunkVertices*chunkVertices; ++i) {
 
-	Cell& c = map(xpos, zpos);
+	Cell& c = chunk(xpos, zpos);
 
-	float x = (float)xpos / (float)width;
-	float z = (float)zpos / (float)depth;
+	float x = (float)xpos / (float)chunkVertices;
+	float z = (float)zpos / (float)chunkVertices;
 
 	/*
 	  This is very wasteful! We y is always 0, so we do not need a Vector3f
@@ -608,7 +613,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 		);
 
 	++xpos;
-	if(xpos != 0 && ( xpos % (width) == 0)) {
+	if(xpos != 0 && ( xpos % (chunkVertices) == 0)) {
 	    xpos = 0;
 	    ++zpos;
 	}
@@ -619,7 +624,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 	);
 
     m_vertexBuffer->Bind();
-    m_vertexBuffer->SetBufferData(map);
+    m_vertexBuffer->SetBufferData(chunk);
     m_vertexBuffer->Unbind();
 
     m_cursorVertexBuffer = VBO::CreateInterleaved(
@@ -632,16 +637,16 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 
     m_numTriangles = 0;
 
-    for(size_t x = 0; x < (width-1); ++x) {
-	for(size_t z = 0; z < (depth-1); ++z) {
+    for(size_t x = 0; x < (m_chunkSize); ++x) {
+	for(size_t z = 0; z < (m_chunkSize); ++z) {
 
-	    indices.push_back(baseIndex+width);
+	    indices.push_back(baseIndex+chunkVertices );
 	    indices.push_back(baseIndex+1);
 	    indices.push_back(baseIndex+0);
 
-	    indices.push_back(baseIndex+width+1);
+	    indices.push_back(baseIndex+chunkVertices+1);
 	    indices.push_back(baseIndex+1);
-	    indices.push_back(baseIndex+width);
+	    indices.push_back(baseIndex+chunkVertices);
 
 	    m_numTriangles+=2;
 
@@ -655,11 +660,6 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     m_indexBuffer->Bind();
     m_indexBuffer->SetBufferData(indices);
     m_indexBuffer->Unbind();
-
-
-
-
-
 }
 
 float HeightMap::GetHeightAt(float, float)const {

@@ -84,7 +84,7 @@ void GpuProfiler::WaitForDataAndUpdate ()
 	}
 
 	++m_frameCountAvg;
-	if (Time() > m_tBeginAvg + 0.2f)
+	if (Time() > m_tBeginAvg + 0.35f)
 	{
 	    //   LOG_I("avg");
 		for (GpuTimeStamp gts = GTS_Objects; gts < GTS_Max; gts = GpuTimeStamp(gts + 1))
