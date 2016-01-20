@@ -24,15 +24,11 @@ vec3 getNormal(sampler2D hm, vec2 texCoord, float resolution)
 
 vec3 computePos(
     vec2 pos,
-    vec2 chunkPos,
-    float chunks,
     sampler2D heightMap,
     float xzScale,
     vec3 offset,
     float yScale) {
 
-    // move the chunk.
-//    pos.xy = (pos + chunkPos) / chunks;
 
     return offset + vec3(
 	pos.x * xzScale,

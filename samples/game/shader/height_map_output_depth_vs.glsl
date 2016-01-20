@@ -15,8 +15,12 @@ uniform float chunks; // num chunks.
 
 void main()
 {
-    vec3 pos =
-	computePos(positionIn, chunkPos, chunks,heightMap,  xzScale, offset, yScale);
+    vec2 localPos = positionIn;
 
-    gl_Position = mvp * vec4(pos,1);
+    vec2 globalPos = (positionIn + chunkPos) / chunks;
+
+    vec3 scaledPos =
+	computePos(globalPos,heightMap,  xzScale, offset, yScale);
+
+    gl_Position = mvp * vec4(scaledPos,1);
 }

@@ -28,21 +28,26 @@ out vec4 shadowCoordOut;
 
 void main()
 {
-    vec3 pos = computePos(positionIn, chunkPos, chunks, heightMap,  xzScale, offset, yScale);
+    // pos local in the chunk.
+    vec2 localPos = positionIn;
 
-    gl_Position = mvp * vec4(pos,1);
+    vec2 globalPos = (positionIn + chunkPos) / chunks;
 
-    vec3 norm = getNormal(heightMap,positionIn.xy, resolution);
+    vec3 scaledPos = computePos(globalPos, heightMap,  xzScale, offset, yScale);
+
+    gl_Position = mvp * vec4(scaledPos,1);
+
+    vec3 norm = getNormal(heightMap,globalPos.xy, resolution);
 
     viewSpaceNormal = normalize((normalMatrix * vec4(normalize(
 							 norm
 							 ),0.0)).xyz);
 
-    viewSpacePosition = (modelViewMatrix * vec4(pos, 1.0)).xyz;
+    viewSpacePosition = (modelViewMatrix * vec4(scaledPos, 1.0)).xyz;
 
-    texCoord = positionIn;
+    texCoord = globalPos;
 
-    position = pos;
+    position = scaledPos;
 
-    shadowCoordOut = (lightMvp * vec4(pos,1));
+    shadowCoordOut = (lightMvp * vec4(scaledPos,1));
 }

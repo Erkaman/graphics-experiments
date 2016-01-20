@@ -218,9 +218,10 @@ void HeightMap::Render(ShaderProgram* shader) {
 
     m_indexBuffer->Bind();
 
-    /*
+
     for(int x = 0; x < m_chunks; ++x) {
 	for(int z = 0; z < m_chunks; ++z) {
+
 
 	    shader->SetUniform("chunkPos", Vector2f(x,z) );
 
@@ -228,10 +229,9 @@ void HeightMap::Render(ShaderProgram* shader) {
 	    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
 	}
     }
-    */
 
     // DRAW.
-    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+    // m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
 
     // unsetup vertex buffer.
 
@@ -599,26 +599,20 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     // how many verties wide a chunk is.
     int chunkVertices = m_chunkSize+1;
 
-    MultArray<Cell> *m_chunk = new MultArray<Cell>(chunkVertices,chunkVertices);
+    MultArray<Cell> *m_chunk = new MultArray<Cell>(chunkVertices+1,chunkVertices+1);
     MultArray<Cell> &chunk = *m_chunk;
 
     unsigned int xpos = 0;
     unsigned int zpos = 0;
 
-    //   int id = 0;
-
-    for(size_t i = 0; i < chunkVertices*chunkVertices; ++i) {
+    for(size_t i = 0; i < (chunkVertices+1)*(chunkVertices+1); ++i) {
 
 	Cell& c = chunk(xpos, zpos);
 
+	// x,z will vary in range [0,1]
 	float x = (float)(xpos) / (float)chunkVertices;
 	float z = (float)(zpos) / (float)chunkVertices;
 
-	if(xpos / chunkVertices == 1) {
-
-	    LOG_I("lal %d, %d", xpos ,chunkVertices );
-
-	}
 
 	/*
 	  This is very wasteful! We y is always 0, so we do not need a Vector3f
@@ -631,7 +625,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 		);
 
 	++xpos;
-	if(xpos != 0 && ( (xpos) % (chunkVertices) == 0)) {
+	if(xpos != 0 && ( (xpos) % (chunkVertices+1) == 0)) {
 	    xpos = 0;
 	    ++zpos;
 	}
@@ -655,16 +649,16 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 
     m_numTriangles = 0;
 
-    for(size_t x = 0; x < (m_chunkSize); ++x) {
-	for(size_t z = 0; z < (m_chunkSize); ++z) {
+    for(size_t x = 0; x < (m_chunkSize+1); ++x) {
+	for(size_t z = 0; z < (m_chunkSize+1); ++z) {
 
-	    indices.push_back(baseIndex+chunkVertices );
+	    indices.push_back(baseIndex+chunkVertices +1);
 	    indices.push_back(baseIndex+1);
 	    indices.push_back(baseIndex+0);
 
-	    indices.push_back(baseIndex+chunkVertices+1);
+	    indices.push_back(baseIndex+chunkVertices+1+1);
 	    indices.push_back(baseIndex+1);
-	    indices.push_back(baseIndex+chunkVertices);
+	    indices.push_back(baseIndex+chunkVertices+1);
 
 	    m_numTriangles+=2;
 
