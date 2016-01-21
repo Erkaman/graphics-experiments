@@ -223,6 +223,9 @@ string ParseShader(const std::string& shaderSource, const std::string& path) {
 
     parsedShader +=  "#version 330\n";
 
+    if(HighQuality)
+	parsedShader +=  "#define HIGH_QUALITY\n";
+
     // File::GetFileContents(
     vector<string> shaderLines = StringUtil::SplitString(shaderSource, "\n");
 

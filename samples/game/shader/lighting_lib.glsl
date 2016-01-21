@@ -61,14 +61,20 @@ float calcVisibility(sampler2DShadow shadowMap, float diff, vec4 shadowCoord ) {
 
     float visibility = 1.0;
 
-    /*
+
+
+#if defined HIGH_QUALITY
+
      for (int i=0;i<4;i++){
 
 	 visibility -=
 	     0.2 * (1.0-texture( shadowMap, vec3(shadowCoord.xy+poissonDisk[i]/700.0, ( (shadowCoord.z-bias) / shadowCoord.w) )  ));
-	     }*/
+     }
+
+#else
 
     visibility -= 1.0* (1.0- texture(shadowMap, vec3(shadowCoord.xy, ( (shadowCoord.z-bias) / shadowCoord.w )  )));
+#endif
 
     return visibility;
 }

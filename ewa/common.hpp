@@ -33,3 +33,9 @@ typedef unsigned long long uint64;
 #define MY_DELETEA(p)     if ( (p) ) { delete [] (p); p = NULL; }
 
 constexpr float WORLD_SCALE = 1.0f;
+
+#if defined(__APPLE__) || defined(_WIN32)
+constexpr bool HighQuality = false;
+#else
+constexpr bool HighQuality = true;
+#endif
