@@ -765,7 +765,7 @@ void TuhuApplication::StartPhysics()  {
 
 	geoObj->AddToPhysicsWorld(m_physicsWorld);
     }
-//    m_heightMap->AddToPhysicsWorld(m_physicsWorld);
+    //m_heightMap->AddToPhysicsWorld(m_physicsWorld);
 
 }
 

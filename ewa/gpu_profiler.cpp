@@ -1,6 +1,7 @@
 #include "gpu_profiler.hpp"
 
 #include <chrono>
+#include <ctime>
 
 #include "log.hpp"
 
