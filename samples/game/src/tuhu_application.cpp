@@ -55,7 +55,7 @@ using namespace std;
 int nonCulledObjects = 0;
 int totalObjects = 0;
 
-constexpr int SHADOW_MAP_SIZE = 1024*2;
+constexpr int SHADOW_MAP_SIZE = 1024*2  ;
 
 const string HEIGHT_MAP_FILENAME = "heightmap.bin";
 const string SPLAT_MAP_FILENAME = "splatmap.bin";

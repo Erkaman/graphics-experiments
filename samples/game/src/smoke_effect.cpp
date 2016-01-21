@@ -28,7 +28,7 @@ SmokeEffect::SmokeEffect(const Vector3f& position) {
     SetEndColor(Color(C,C,C,0.0));
 
 
-    Texture* texture = Texture2D::Load("img/smoke2.PNG" );
+    Texture* texture = Texture2D::Load("img/smoke2.png" );
     if(!texture) {
 	PrintErrorExit();
     }
