@@ -205,7 +205,7 @@ private:
     void RenderCursor(const ICamera* camera);
 
 
-    void Render(ShaderProgram* shader);
+    void Render(ShaderProgram* shader, bool shadows);
 
     void RenderSetup(ShaderProgram* shader);
     void RenderUnsetup();

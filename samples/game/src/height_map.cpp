@@ -214,7 +214,7 @@ void HeightMap::RenderUnsetup() {
     m_heightMap->Unbind();
 }
 
-void HeightMap::Render(ShaderProgram* shader) {
+void HeightMap::Render(ShaderProgram* shader, bool shadows) {
 
     RenderSetup(shader);
 
@@ -225,18 +225,33 @@ void HeightMap::Render(ShaderProgram* shader) {
     m_indexBuffer->Bind();
 
     MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
+    MultArray<bool>& inLightFrustum = *m_inLightFrustum;;
 
     for(int x = 0; x < m_chunks; ++x) {
 	for(int z = 0; z < m_chunks; ++z) {
 
-	    if(inCameraFrustum(x,z)) {
+	    if(shadows) {
+
+		if(!inLightFrustum(x,z)) {
+		    // not in frustum, dont draw.
+		    continue;
+		}
+
+	    } else {
+
+		if(!inCameraFrustum(x,z)) {
+		    // not in frustum, dont draw.
+		    continue;
+		}
+
+	    }
+
 
 
 		shader->SetUniform("chunkPos", Vector2f(x,z) );
 
 		// DRAW.
 		m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
-	    }
 	}
     }
 
@@ -288,7 +303,7 @@ void HeightMap::RenderHeightMap(
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-    Render(m_shader);
+    Render(m_shader,false);
 
     if(m_isWireframe)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
@@ -347,8 +362,8 @@ void HeightMap::Render(
     }
 
 
-/*
 
+/*
     MultArray<AABB>& aabbs = *m_aabbs;
     MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
 
@@ -370,8 +385,8 @@ void HeightMap::Render(
 	    }
 	}
     }
-
 */
+
 }
 
 void HeightMap::RenderShadowMap(const Matrix4f& lightVp) {
@@ -379,7 +394,7 @@ void HeightMap::RenderShadowMap(const Matrix4f& lightVp) {
 
     m_depthShader->SetUniform("mvp", lightVp); // model matrix is identity, so we do not need to multiply by model.
 
-    Render(m_depthShader);
+    Render(m_depthShader,true);
 
     m_depthShader->Unbind();
 }

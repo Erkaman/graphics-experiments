@@ -321,7 +321,7 @@ Matrix4f TuhuApplication::MakeLightProj()const {
     Config& config = Config::GetInstance();
 
 
-    const float nearClipOffset = 50.0f;
+    const float nearClipOffset = 70.0f;
 
 
     Matrix4f viewMatrix =
@@ -329,7 +329,6 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 	    centroid - ( Vector3f(m_lightDirection) * (config.GetZFar() + nearClipOffset )   ),
 	    centroid,
 	    Vector3f(0,1,0));
-
 
     // the frustum corners in lightspace.
     Vector3f cornersLS[8];
@@ -368,13 +367,20 @@ Matrix4f TuhuApplication::MakeLightProj()const {
   LOG_I("min y %f",  mins.y );
   LOG_I("max y %f",  maxes.y  );
 
-  LOG_I("%f",  maxes.z  );
+  LOG_I("%f", -maxes.z - nearClipOffset  );
   LOG_I("%f",  -mins.z );
-*/
-//    exit(1);
 
+  exit(1);
+*/
     // TODO: the problem probably lies in that we should flip maxz and minz or something.
-    return Matrix4f::CreateOrthographic(mins.x, maxes.x, mins.y, maxes.y, maxes.z, -mins.z ) * viewMatrix;
+    return Matrix4f::CreateOrthographic(mins.x, maxes.x,
+
+					mins.y,
+					maxes.y,
+
+					-maxes.z - nearClipOffset,
+
+					-mins.z ) * viewMatrix;
 }
 
 void TuhuApplication::RenderShadowMap() {
@@ -967,17 +973,19 @@ void TuhuApplication::UpdateMatrices() {
 	Config& config = Config::GetInstance();
 
 	Matrix4f lightProjectionMatrix =  //MakeLightProj();
-	    Matrix4f::CreateOrthographic(-150,150, -100, 100, -40, 100);
-//	    Matrix4f::CreateOrthographic(-1000,1000, -1000, 1000, -40, 1000);
+//	    Matrix4f::CreateOrthographic(-150,150, -100, 100, -40, 100);
+//	    Matrix4f::CreateOrthographic(-350,350, -200, 200, -200, 500);
 
 	m_lightVp = lightProjectionMatrix * lightViewMatrix;
 //	LOG_I("version1 %s", string(m_lightVp).c_str() );
 
-//	LOG_I("version2 %s", string( MakeLightProj()  ).c_str() );
 
 //	exit(1);
 
 	m_lightVp = MakeLightProj();
+
+//	LOG_I("version2 %s", string( m_lightVp  ).c_str() );
+
 //	exit(1);
 
 }
