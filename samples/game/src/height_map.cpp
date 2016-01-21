@@ -347,8 +347,8 @@ void HeightMap::Render(
     }
 
 
-
 /*
+
     MultArray<AABB>& aabbs = *m_aabbs;
     MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
 
@@ -370,8 +370,8 @@ void HeightMap::Render(
 	    }
 	}
     }
-*/
 
+*/
 }
 
 void HeightMap::RenderShadowMap(const Matrix4f& lightVp) {

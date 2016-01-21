@@ -286,9 +286,7 @@ Matrix4f TuhuApplication::MakeLightProj()const {
     const Vector3f rtf = Vector3f((invProj * Vector4f(+1,+1,zFar,1.0f)));
 
     // left bottom near
-    temp = Vector4f(-1,-1,zNear,1.0f);
-    LOG_I("temp: %f", temp.w );
-    const Vector3f lbn = Vector3f((invProj * temp));
+    const Vector3f lbn = Vector3f((invProj * Vector4f(-1,-1,zNear,1.0f)));
 
     // left top near
     const Vector3f ltn = Vector3f((invProj * Vector4f(-1.0f,+1.0f,zNear,1.0f)));
@@ -301,8 +299,6 @@ Matrix4f TuhuApplication::MakeLightProj()const {
     const Vector3f rtn = Vector3f((invProj * Vector4f(+1,+1,zNear,1.0f)));
 
     LOG_I("camerspos: %s",  string(m_curCamera->GetPosition() ).c_str() );
-
-
 
     LOG_I("lbf: %s",  string(lbf).c_str() );
 
@@ -977,6 +973,7 @@ void TuhuApplication::UpdateMatrices() {
 
 	Matrix4f lightProjectionMatrix =  //MakeLightProj();
 	    Matrix4f::CreateOrthographic(-150,150, -100, 100, -40, 100);
+//	    Matrix4f::CreateOrthographic(-1000,1000, -1000, 1000, -40, 1000);
 
 	m_lightVp = lightProjectionMatrix * lightViewMatrix;
 //	LOG_I("version1 %s", string(m_lightVp).c_str() );
@@ -985,7 +982,7 @@ void TuhuApplication::UpdateMatrices() {
 
 //	exit(1);
 
-//	m_lightVp = MakeLightProj();
+//	MakeLightProj();
 //	exit(1);
 
 }

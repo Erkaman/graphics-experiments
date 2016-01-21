@@ -61,7 +61,7 @@ void main()
     vec3 specColor = vec3(0);
     float diff=  calcDiff(l,n);
     float spec= calcSpec(l,n,v);
-    float visibility = 1.0; //calcVisibility(shadowMap, diff, shadowCoordOut);
+    float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 
     fragmentColor = calcLighting(
 	ambientMat.xyz,
