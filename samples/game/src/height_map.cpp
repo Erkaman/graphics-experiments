@@ -21,7 +21,7 @@
 #include "ewa/config.hpp"
 #include "ewa/gl/texture_loader.hpp"
 #include "gl/depth_fbo.hpp"
-
+#include "ewa/cube.hpp"
 
 #include "math/vector2f.hpp"
 #include "math/vector3f.hpp"
@@ -32,6 +32,8 @@
 #include "gui_enum.hpp"
 #include "ewa/physics_world.hpp"
 #include "ewa/value_noise.hpp"
+#include "ewa/view_frustum.hpp"
+
 
 #include <vector>
 
@@ -70,6 +72,8 @@ static Texture* LoadTexture(const string& filename) {
 
 void HeightMap::Init(const std::string& heightMapFilename, const std::string& splatMapFilename,
 		     bool guiMode ) {
+
+    m_aabbWireframe = Cube::Load();
 
     m_isWireframe = false;
     m_shader = NULL;
@@ -126,6 +130,8 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
 	m_splatMapPbo = new PBO<SplatColor>(m_splatMap, m_splatData, SPLAT_MAP_SIZE);
 
     }
+
+    CreateAABBs();
 
 }
 
@@ -218,15 +224,19 @@ void HeightMap::Render(ShaderProgram* shader) {
 
     m_indexBuffer->Bind();
 
+    MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
 
     for(int x = 0; x < m_chunks; ++x) {
 	for(int z = 0; z < m_chunks; ++z) {
 
+	    if(inCameraFrustum(x,z)) {
 
-	    shader->SetUniform("chunkPos", Vector2f(x,z) );
 
-	    // DRAW.
-	    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+		shader->SetUniform("chunkPos", Vector2f(x,z) );
+
+		// DRAW.
+		m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+	    }
 	}
     }
 
@@ -335,6 +345,33 @@ void HeightMap::Render(
     if(m_config->IsGui()) {
 	RenderCursor(camera);
     }
+
+
+
+/*
+    MultArray<AABB>& aabbs = *m_aabbs;
+    MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
+
+    for(int x = 0; x < m_chunks; ++x) {
+	for(int z = 0; z < m_chunks; ++z) {
+
+	    if(inCameraFrustum(x,z)) {
+
+		AABB aabb = aabbs(x,z);
+
+		Vector3f center = (aabb.min + aabb.max) * 0.5f;
+		Vector3f radius = aabb.max - center;
+
+		m_aabbWireframe->SetModelMatrix(
+		    Matrix4f::CreateTranslation(center) *
+		    Matrix4f::CreateScale(radius));
+
+		m_aabbWireframe->Render(camera->GetVp());
+	    }
+	}
+    }
+*/
+
 }
 
 void HeightMap::RenderShadowMap(const Matrix4f& lightVp) {
@@ -1175,7 +1212,7 @@ void HeightMap::DrawTexture(const float delta, int drawTextureType) {
 }
 
 
-void HeightMap::Update(const float delta, ICamera* camera,
+void HeightMap::UpdateGui(const float delta, ICamera* camera,
 		       const float framebufferWidth,
 		       const float framebufferHeight) {
 
@@ -1189,6 +1226,8 @@ void HeightMap::Update(const float delta, ICamera* camera,
 
     if(m_splatMapPbo)
 	m_splatMapPbo->Update();
+
+
 }
 
 void HeightMap::SaveHeightMap(const std::string& filename) {
@@ -1366,3 +1405,47 @@ bool HeightMap::InBounds(int x, int z) {
 }
 
 //fix this;
+
+Vector3f HeightMap::GetChunkCornerPos(int chunkX, int chunkZ, float y) {
+
+    Vector2f globalPos(chunkX / (float)m_chunks, chunkZ / (float)m_chunks);
+
+    return m_offset + Vector3f(globalPos.x * m_xzScale, y,globalPos.y * m_xzScale);
+}
+
+void HeightMap::CreateAABBs() {
+
+    m_inCameraFrustum = new MultArray<bool>(m_chunks, m_chunks, true);
+    m_inLightFrustum = new MultArray<bool>(m_chunks, m_chunks, true);
+
+    m_aabbs = new MultArray<AABB>(m_chunks, m_chunks);
+    MultArray<AABB>& aabbs = *m_aabbs;
+
+    for(int x = 0; x < m_chunks; ++x) {
+	for(int z = 0; z < m_chunks; ++z) {
+
+	    AABB aabb(
+		GetChunkCornerPos(x,z, -m_yScale),
+		GetChunkCornerPos(x+1, z+1, +m_yScale)
+		);
+	    aabbs(x,z) = aabb;
+	}
+    }
+}
+
+void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum) {
+
+    MultArray<AABB>& aabbs = *m_aabbs;
+    MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
+    MultArray<bool>& inLightFrustum = *m_inLightFrustum;
+
+    for(int x = 0; x < m_chunks; ++x) {
+	for(int z = 0; z < m_chunks; ++z) {
+
+	    AABB aabb = aabbs(x,z);
+
+	    inCameraFrustum(x,z) = cameraFrustum.IsAABBInFrustum(aabb);
+	    inLightFrustum(x,z) = lightFrustum.IsAABBInFrustum(aabb);
+	}
+    }
+}

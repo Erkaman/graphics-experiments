@@ -795,7 +795,6 @@ void GeometryObject::SetSelected(bool selected) {
 
 void GeometryObject::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum) {
     m_inCameraFrustum = cameraFrustum.IsAABBInFrustum(GetModelSpaceAABB());
-
     m_inLightFrustum = lightFrustum.IsAABBInFrustum(GetModelSpaceAABB());
 
 }

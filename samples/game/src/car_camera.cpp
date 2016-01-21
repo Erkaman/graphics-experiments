@@ -27,7 +27,9 @@ void CarCamera::UpdateViewMatrix() {
 
     Vector3f carPos = GetPosition();
 
-    Vector3f cameraPos = carPos + backward * 30.0 + Vector3f(0,20,0);
+    Vector3f cameraPos = carPos +
+	backward * 40.0 +  // how far behind the car to position the camera.
+	Vector3f(0,20,0); // camera height.
 
     m_viewMatrix =
 	Matrix4f::CreateLookAt(

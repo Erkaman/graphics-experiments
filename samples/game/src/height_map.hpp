@@ -1,6 +1,3 @@
-// shadows: 1.3
-// terrain: 7.0
-
 
 #pragma once
 
@@ -10,6 +7,7 @@
 #include "math/vector2f.hpp"
 
 #include "ewa/mult_array.hpp"
+#include "ewa/aabb.hpp"
 #include "math/vector2i.hpp"
 
 #include "ewa/gl/gl_common.hpp"
@@ -28,6 +26,8 @@ class PhysicsWorld;
 class ValueNoise;
 class DepthFBO;
 class Matrix4f;
+class ViewFrustum;
+class Cube;
 
 template<typename T>
 class PBO {
@@ -154,6 +154,13 @@ private:
 
     MultArray<unsigned short>* m_heightData;
     MultArray<SplatColor>* m_splatData;
+    MultArray<AABB>* m_aabbs;// the AABBs of the chunks.
+    Cube* m_aabbWireframe;
+
+    // information of whether the chunks are in the camera:
+    MultArray<bool>* m_inCameraFrustum;
+    MultArray<bool>* m_inLightFrustum;
+
 
     // used to store temp data in SmoothTerrain()
     MultArray<unsigned short>* m_tempData;
@@ -188,6 +195,7 @@ private:
     void CreateHeightmap(const std::string& heightMapFilename, bool guiMode);
     void CreateCursor();
     void CreateSplatMap(const std::string& splatMapFilename, bool guiMode);
+    void CreateAABBs();
 
     void LoadHeightmap(const std::string& heightMapFilename);
     void LoadSplatMap(const std::string& splatMapFilename);
@@ -210,6 +218,8 @@ private:
 
     bool InBounds(int x, int z);
 
+    Vector3f GetChunkCornerPos(int chunkX, int chunkZ, float y);
+
 public:
 
     HeightMap(const std::string& heightMapFilename, const std::string& splatMapFilename, bool guiMode );
@@ -229,9 +239,13 @@ public:
 
     float GetHeightAt(float x, float z)const;
 
-    void Update(const float delta, ICamera* camera,
+    // need to be updated every frame if there is a gui.
+    void UpdateGui(const float delta, ICamera* camera,
 		const float framebufferWidth,
-		const float framebufferHeight);
+		const float framebufferHeight
+	);
+
+    void Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum);
 
     void ModifyTerrain(const float delta, const float strength);
     void DistortTerrain(const float delta, const float strength, float noiseScale);

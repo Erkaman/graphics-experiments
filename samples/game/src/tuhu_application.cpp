@@ -208,8 +208,8 @@ void TuhuApplication::Init() {
 	m_heightMap->SetCursorSize(m_gui->GetCursorSize());
 
 	// do a first update, in order to setup the PBOs
-	m_heightMap->Update(0, NULL, 0,0);
-	m_heightMap->Update(0, NULL, 0,0);
+	m_heightMap->UpdateGui(0, NULL, 0,0);
+	m_heightMap->UpdateGui(0, NULL, 0,0);
 
     }
 
@@ -557,8 +557,12 @@ void TuhuApplication::Update(const float delta) {
 //    for(IGeometryObject* geoObj: m_geoObjs) {
 	IGeometryObject* geoObj = it.second;
 
-	geoObj->Update(*m_cameraFrustum, *m_lightFrustum);
+	geoObj->Update(*m_cameraFrustum, *m_lightFrustum );
     }
+
+
+    m_heightMap->Update(*m_cameraFrustum, *m_lightFrustum );
+
 
     m_totalDelta += delta;
 
@@ -704,8 +708,7 @@ void TuhuApplication::Update(const float delta) {
 	m_curCamera->Update(0);
     }
 
-    m_heightMap->Update(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
-
+    m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
 }
 
 string Format(const string& fmt, float val) {
