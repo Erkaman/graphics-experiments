@@ -32,7 +32,7 @@ float Determinant(
   It is assumed that the intersection between them always exist.
   We do not handle any other cases.
  */
-Vector3f Intersect(float* p1, float* p2, float* p3) {
+Vector3f Intersect(const float* p1, const float* p2, const float* p3) {
 
     // We use Cramer's rule to find the intersection.
 
@@ -209,4 +209,46 @@ bool ViewFrustum::IsAABBInFrustum(const AABB& aabb )const {
 	radius.x,radius.y,radius.z
 	);
 
+}
+
+
+Vector3f ViewFrustum::IntersectPlanes(int p1, int p2, int p3)const {
+    return Intersect(
+	m_frustum[p1],
+	m_frustum[p2],
+	m_frustum[p3]
+	);
+}
+
+
+Vector3f ViewFrustum::lbf()const {
+    return IntersectPlanes(LEFT,BOTTOM,FAR);
+}
+
+Vector3f ViewFrustum::ltf()const {
+    return IntersectPlanes(LEFT,TOP,FAR);
+}
+
+Vector3f ViewFrustum::rbf()const {
+    return IntersectPlanes(RIGHT,BOTTOM,FAR);
+}
+
+Vector3f ViewFrustum::rtf()const {
+    return IntersectPlanes(RIGHT,TOP,FAR);
+}
+
+Vector3f ViewFrustum::lbn()const {
+    return IntersectPlanes(LEFT,BOTTOM,NEAR);
+}
+
+Vector3f ViewFrustum::ltn()const {
+    return IntersectPlanes(LEFT,TOP,NEAR);
+}
+
+Vector3f ViewFrustum::rbn()const {
+    return IntersectPlanes(RIGHT,BOTTOM,NEAR);
+}
+
+Vector3f ViewFrustum::rtn()const {
+    return IntersectPlanes(RIGHT,TOP,NEAR);
 }

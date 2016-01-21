@@ -262,8 +262,8 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
     // left bottom far
     Vector4f temp = Vector4f(-1,-1,zFar,1.0f);
-    LOG_I("temp: %f", temp.w );
-    const Vector3f lbf = Vector3f((invProj * temp));
+    // LOG_I("temp: %f", temp.w );
+    const Vector3f lbf = m_cameraFrustum->lbf();
 
 /*
   LOG_I("sanity: %s",
@@ -277,29 +277,27 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
 
     // left top far
-    const Vector3f ltf = Vector3f((invProj * Vector4f(-1,+1,zFar,1.0f)));
+    const Vector3f ltf = m_cameraFrustum->ltf();
 
     // right bottom far
-    const Vector3f rbf = Vector3f((invProj * Vector4f(+1,-1,zFar,1.0f)));
+    const Vector3f rbf = m_cameraFrustum->rbf();
 
     // right top far
-    const Vector3f rtf = Vector3f((invProj * Vector4f(+1,+1,zFar,1.0f)));
+    const Vector3f rtf = m_cameraFrustum->rtf();
 
     // left bottom near
-    const Vector3f lbn = Vector3f((invProj * Vector4f(-1,-1,zNear,1.0f)));
+    const Vector3f lbn = m_cameraFrustum->lbn();
 
     // left top near
-    const Vector3f ltn = Vector3f((invProj * Vector4f(-1.0f,+1.0f,zNear,1.0f)));
+    const Vector3f ltn = m_cameraFrustum->ltn();
 
 
     // right bottom far
-    const Vector3f rbn = Vector3f((invProj * Vector4f(+1,-1,zNear,1.0f)));
+    const Vector3f rbn = m_cameraFrustum->rbn();
 
     // right top far
-    const Vector3f rtn = Vector3f((invProj * Vector4f(+1,+1,zNear,1.0f)));
-
-    LOG_I("camerspos: %s",  string(m_curCamera->GetPosition() ).c_str() );
-
+    const Vector3f rtn = m_cameraFrustum->rtn();
+/*
     LOG_I("lbf: %s",  string(lbf).c_str() );
 
     LOG_I("ltf: %s",  string(ltf).c_str() );
@@ -309,7 +307,7 @@ Matrix4f TuhuApplication::MakeLightProj()const {
     LOG_I("ltn: %s",  string(ltn).c_str() );
     LOG_I("rbn: %s",  string(rbn).c_str() );
     LOG_I("rtn: %s",  string(rtn).c_str() );
-
+*/
     Vector3f corners[8] =  {lbn , ltn , rbn , rtn ,
 			    lbf , ltf , rbf , rtf };
 
@@ -318,9 +316,6 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 	centroid += corners[i];
     }
     centroid = centroid * (1.0f/8.0f);
-
-    //  LOG_I("centroid %s", string(centroid).c_str() );
-
 
 
     Config& config = Config::GetInstance();
@@ -379,9 +374,8 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 //    exit(1);
 
     // TODO: the problem probably lies in that we should flip maxz and minz or something.
-    return viewMatrix * Matrix4f::CreateOrthographic(mins.x, maxes.x, mins.y, maxes.y, maxes.z, -mins.z );
+    return Matrix4f::CreateOrthographic(mins.x, maxes.x, mins.y, maxes.y, maxes.z, -mins.z ) * viewMatrix;
 }
-
 
 void TuhuApplication::RenderShadowMap() {
 
@@ -542,9 +536,10 @@ void TuhuApplication::Update(const float delta) {
     if(m_gui)
 	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
 
+    m_cameraFrustum->Update( m_curCamera->GetVp() );
+
     UpdateMatrices();
 
-    m_cameraFrustum->Update( m_curCamera->GetVp() );
     m_lightFrustum->Update( m_lightVp );
 
     m_physicsWorld->Update(delta);
@@ -982,7 +977,7 @@ void TuhuApplication::UpdateMatrices() {
 
 //	exit(1);
 
-//	MakeLightProj();
+	m_lightVp = MakeLightProj();
 //	exit(1);
 
 }

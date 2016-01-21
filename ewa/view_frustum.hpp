@@ -1,5 +1,7 @@
 #pragma once
 
+#include "math/vector3f.hpp"
+
 class Matrix4f;
 class AABB;
 
@@ -7,6 +9,8 @@ class ViewFrustum {
 private:
     // stores the six planes used to represent the view frustrum.
     float m_frustum[6][4];
+
+    Vector3f IntersectPlanes(int p1, int p2, int p3)const;
 
 public:
 
@@ -19,4 +23,15 @@ public:
     bool IsCuboidInFrustum(
 	const float x, const float y, const float z,
 	const float xSize, const float ySize, const float zSize )const;
+
+
+    Vector3f lbf()const;
+    Vector3f ltf()const;
+    Vector3f rbf()const;
+    Vector3f rtf()const;
+
+    Vector3f lbn()const;
+    Vector3f ltn()const;
+    Vector3f rbn()const;
+    Vector3f rtn()const;
 };
