@@ -551,7 +551,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 	ImGui::Text(mode.c_str() );
 
-#if !defined(_WIN32)
+#if defined(__APPLE__)
 	if (ImGui::Button("Add Model")) {
 
 	    nfdchar_t *outPath = NULL;
