@@ -809,7 +809,7 @@ void TuhuApplication::StartPhysics()  {
     for(auto& it : m_geoObjs) {
 	IGeometryObject* geoObj = it.second;
 
-//	if(geoObj == m_car)
+	if(geoObj == m_car || geoObj->GetFilename() == string("obj/plane.eob"))
 	    geoObj->AddToPhysicsWorld(m_physicsWorld);
     }
     m_heightMap->AddToPhysicsWorld(m_physicsWorld);
