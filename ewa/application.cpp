@@ -170,6 +170,9 @@ void Application::SetupOpenGL() {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
 
+    glfwWindowHint(GLFW_DEPTH_BITS, 8);
+
+
     m_window = glfwCreateWindow (m_width, m_height, "Tuhu", NULL, NULL);
     if (!m_window) {
 	fprintf (stderr, "ERROR: could not open window with GLFW3\n");

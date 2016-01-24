@@ -28,6 +28,7 @@ class Gui;
 class PickingFBO;
 class GpuProfiler;
 class Line;
+class Cube;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
@@ -82,12 +83,14 @@ private:
 
     unsigned int currentObjId;
 
+    Cube* m_aabbWireframe;
+
     std::map<unsigned int,IGeometryObject*> m_geoObjs;
 
     IGeometryObject* LoadObj(const std::string& path, const Vector3f& position,
 			     const btQuaternion& rotation = btQuaternion::getIdentity(), float scale = 1.0f);
 
-    Matrix4f MakeLightProj()const;
+    Matrix4f MakeLightProj(int frameBufferWidth, int frameBufferHeight)const;
 
 
     void StartPhysics();

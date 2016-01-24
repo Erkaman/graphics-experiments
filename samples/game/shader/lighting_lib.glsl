@@ -57,7 +57,7 @@ vec2 poissonDisk[4] = vec2[](
 // calc shadows.
 float calcVisibility(sampler2DShadow shadowMap, float diff, vec4 shadowCoord ) {
     float cosTheta = diff;
-    float bias = 0.0007; //*tan(acos(cosTheta))+0.0005;
+    float bias = 0.001; //*tan(acos(cosTheta))+0.0005;
 
     float visibility = 1.0;
 

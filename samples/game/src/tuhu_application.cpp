@@ -94,6 +94,8 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
+    m_aabbWireframe = Cube::Load();
+
     m_gpuProfiler = new GpuProfiler();
 
     currentObjId = 0;
@@ -248,7 +250,7 @@ void TuhuApplication::Init() {
 }
 
 
-Matrix4f TuhuApplication::MakeLightProj()const {
+Matrix4f TuhuApplication::MakeLightProj(int frameBufferWidth, int frameBufferHeight)const {
 
     // TODO: does not yet fully work.
     //http://www.gamedev.net/topic/505893-orthographic-projection-for-shadow-mapping/
@@ -323,7 +325,6 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
     Config& config = Config::GetInstance();
 
-
     const float nearClipOffset = 70.0f;
 
 
@@ -372,9 +373,50 @@ Matrix4f TuhuApplication::MakeLightProj()const {
 
   LOG_I("%f", -maxes.z - nearClipOffset  );
   LOG_I("%f",  -mins.z );
-
-  exit(1);
 */
+
+
+/*    mins.x = mins.y = -300;
+    maxes.x = maxes.y = 300;
+/*
+    float fWorldUnitsPerTexel = (float)(maxes.x - mins.x)/(float)(SHADOW_MAP_SIZE);
+
+    //  LOG_I("before min.x:%f",  mins.x);
+
+
+    mins.x /= fWorldUnitsPerTexel;
+    mins.x = floor(mins.x);
+    mins.x *= fWorldUnitsPerTexel;
+
+    //LOG_I("after min.x:%f",  mins.x);
+
+
+    maxes.x /= fWorldUnitsPerTexel;
+    maxes.x = floor(maxes.x);
+    maxes.x *= fWorldUnitsPerTexel;
+
+
+    fWorldUnitsPerTexel = (float)(maxes.y - mins.y)/(float)(SHADOW_MAP_SIZE);
+
+    mins.y /= fWorldUnitsPerTexel;
+    mins.y = floor(mins.y);
+    mins.y *= fWorldUnitsPerTexel;
+
+    maxes.y /= fWorldUnitsPerTexel;
+    maxes.y = floor(maxes.y);
+    maxes.y *= fWorldUnitsPerTexel;
+*/
+    /*
+      How to fix flickering:
+      http://www.gamedev.net/topic/591684-xna-40---shimmering-shadow-maps/
+      https://msdn.microsoft.com/en-us/library/ee416324(v=vs.85).aspx
+      http://www.gamedev.net/topic/645795-shimmering-shadow-edges/
+
+      http://www.gamedev.net/topic/669082-snap-cameraprojection-to-pixel-increments/
+      https://github.com/ehsan/ogre/blob/master/OgreMain/src/OgreShadowCameraSetup.cpp
+     */
+
+
     // TODO: the problem probably lies in that we should flip maxz and minz or something.
     return Matrix4f::CreateOrthographic(mins.x, maxes.x,
 
@@ -516,6 +558,7 @@ void TuhuApplication::Render() {
 
     RenderScene();
 
+//    m_aabbWireframe->Render(m_curCamera->GetVp());
 
 
     if(m_gui) {
@@ -709,6 +752,8 @@ void TuhuApplication::Update(const float delta) {
     }
 
     m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
+
+
 }
 
 string Format(const string& fmt, float val) {
@@ -768,7 +813,7 @@ void TuhuApplication::StartPhysics()  {
 
 	geoObj->AddToPhysicsWorld(m_physicsWorld);
     }
-    //m_heightMap->AddToPhysicsWorld(m_physicsWorld);
+//    m_heightMap->AddToPhysicsWorld(m_physicsWorld);
 
 }
 
@@ -959,8 +1004,12 @@ void TuhuApplication::UpdateMatrices() {
 
 	Vector3f carPos = m_car->GetPosition();
 
+	Vector3f carSide = Vector3f::Cross(m_car->GetForwardVector(), Vector3f(0,1,0));
+
+	Vector3f cameraPos = carPos + Vector3f(m_lightDirection);
+
 	Matrix4f lightViewMatrix = Matrix4f::CreateLookAt(
-	    carPos - 3 * Vector3f(m_lightDirection),
+	    cameraPos,
 	    carPos,
 	    Vector3f(0.0, 1.0, 0.0)
 	    );
@@ -975,17 +1024,54 @@ void TuhuApplication::UpdateMatrices() {
 
 	Config& config = Config::GetInstance();
 
+	/*
+	float left =-100;
+	float right =160;
+	float bottom =-60;
+	float top =60;
+	float near =-300;
+	float far =30;
+*/
+
+	float left =-340;
+	float right = 345;
+	float bottom = -249;
+	float top = 150;
+	float near = -300;
+	float far = 500;
+
 	Matrix4f lightProjectionMatrix =  //MakeLightProj();
-//	    Matrix4f::CreateOrthographic(-150,150, -100, 100, -40, 100);
+
+	    Matrix4f::CreateOrthographic(
+		left,right, // left, right
+		bottom, top, // bottom, top
+		near, // near(front of car)
+		far); // far(behind car)
 //	    Matrix4f::CreateOrthographic(-350,350, -200, 200, -200, 500);
 
 	m_lightVp = lightProjectionMatrix * lightViewMatrix;
 //	LOG_I("version1 %s", string(m_lightVp).c_str() );
 
 
-//	exit(1);
+	Vector3f min = Vector3f(left, bottom, near) + cameraPos;
+	Vector3f max = Vector3f(right, top, far) + cameraPos;
 
-	m_lightVp = MakeLightProj();
+	Vector3f center = (min + max) * 0.5f;
+
+	Vector3f radius = max - center;
+
+	m_aabbWireframe->SetModelMatrix(
+//	    lightViewMatrix *
+
+	    Matrix4f::CreateTranslation(center ) *
+
+	    Matrix4f::CreateScale(radius )
+	   );
+
+
+
+//	exit(1);
+	m_lightVp = MakeLightProj(GetFramebufferWidth(), GetFramebufferHeight() );
 
 //	LOG_I("version2 %s", string( m_lightVp  ).c_str() );
 
