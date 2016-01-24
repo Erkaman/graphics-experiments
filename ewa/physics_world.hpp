@@ -11,6 +11,8 @@ class btActionInterface;
 
 struct btVehicleRaycaster;
 
+class AABB;
+
 class PhysicsWorld {
 
 private:
@@ -26,10 +28,10 @@ private:
 
 public:
 
-    PhysicsWorld();
+    PhysicsWorld(const AABB& worldBox);
     ~PhysicsWorld();
 
-    void AddRigidBody(btRigidBody* rigidBody);
+    void AddRigidBody(btRigidBody* rigidBody, short group, short mask);
     void AddVehicle(btActionInterface* vehicle);
 
     btVehicleRaycaster* NewVehicleRaycaster();

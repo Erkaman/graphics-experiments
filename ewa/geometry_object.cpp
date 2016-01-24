@@ -308,7 +308,14 @@ bool GeometryObject::Init(
     const Vector3f& position,
     const btQuaternion& rotation,
     float scale,
-    unsigned int id) {
+    unsigned int id,
+
+    short physicsGroup,
+    short physicsMask    ) {
+
+    m_physicsGroup = physicsGroup;
+    m_physicsMask = physicsMask;
+
 
     m_id = id;
     m_filename = filename;
@@ -755,7 +762,7 @@ void GeometryObject::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
     }
 
-    physicsWorld->AddRigidBody(m_rigidBody);
+    physicsWorld->AddRigidBody(m_rigidBody, m_physicsGroup, m_physicsMask);
 }
 
 Matrix4f GeometryObject::GetModelMatrix(const Matrix4f& scaling)const {
@@ -802,7 +809,7 @@ void GeometryObject::Update(const ViewFrustum& cameraFrustum, const ViewFrustum&
 IGeometryObject* GeometryObject::Duplicate(unsigned int id) {
     GeometryObject* newObj = new GeometryObject();
 
-    newObj->Init(m_filename, m_position, m_rotation, m_scale, id);
+    newObj->Init(m_filename, m_position, m_rotation, m_scale, id, m_physicsGroup, m_physicsMask);
 
     return newObj;
 }

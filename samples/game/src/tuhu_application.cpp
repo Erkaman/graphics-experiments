@@ -47,6 +47,7 @@
 #include "gui_mouse_state.hpp"
 
 #include "gpu_profiler.hpp"
+#include "physics_mask.hpp"
 
 
 using namespace std;
@@ -113,7 +114,6 @@ void TuhuApplication::Init() {
     }
 
 
-    m_physicsWorld = new PhysicsWorld();
 
     m_cameraFrustum = new ViewFrustum();
     m_lightFrustum = new ViewFrustum();
@@ -188,10 +188,6 @@ void TuhuApplication::Init() {
 
 	LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40)+ trans );
 
-	LoadObj("obj/sunball.eob",
-
-			   Vector3f(10,0,20)+ trans );
-
 	LoadObj("obj/plane.eob", Vector3f(0,-2.5,0)+ trans);
 
 	IGeometryObject* tree = LoadObj("obj/tree.eob", Vector3f(10,9.5,10) + trans);
@@ -216,6 +212,9 @@ void TuhuApplication::Init() {
 	m_heightMap->UpdateGui(0, NULL, 0,0);
 
     }
+
+    m_physicsWorld = new PhysicsWorld(m_heightMap->GetAABB() );
+
 
 
     m_depthFbo = new DepthFBO();
@@ -795,7 +794,7 @@ IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3
     GeometryObject* obj = new GeometryObject();
 
     LOG_I("add id: %d", currentObjId);
-    bool result = obj->Init(path, position,rotation, scale, currentObjId++);
+    bool result = obj->Init(path, position,rotation, scale, currentObjId++, COL_STATIC, staticCollidesWith);
 
     if(!result)
 	PrintErrorExit();
@@ -810,9 +809,10 @@ void TuhuApplication::StartPhysics()  {
     for(auto& it : m_geoObjs) {
 	IGeometryObject* geoObj = it.second;
 
-	geoObj->AddToPhysicsWorld(m_physicsWorld);
+//	if(geoObj == m_car)
+	    geoObj->AddToPhysicsWorld(m_physicsWorld);
     }
-//    m_heightMap->AddToPhysicsWorld(m_physicsWorld);
+    m_heightMap->AddToPhysicsWorld(m_physicsWorld);
 
 }
 
@@ -1066,8 +1066,6 @@ void TuhuApplication::UpdateMatrices() {
 
 	    Matrix4f::CreateScale(radius )
 	   );
-
-
 
 //	exit(1);
 	m_lightVp = MakeLightProj(GetFramebufferWidth(), GetFramebufferHeight() );

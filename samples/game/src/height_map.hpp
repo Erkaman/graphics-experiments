@@ -261,4 +261,6 @@ public:
     void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
 
     void SetCursorSize(int cursorSize);
+
+    AABB GetAABB()const;
 };

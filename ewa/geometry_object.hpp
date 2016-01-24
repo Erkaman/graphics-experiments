@@ -49,6 +49,9 @@ private:
     bool m_inCameraFrustum;
     bool m_inLightFrustum;
 
+    short m_physicsGroup;
+    short m_physicsMask;
+
     Matrix4f GetModelMatrix(const Matrix4f& scaling = Matrix4f::CreateIdentity() )const;
 
     AABB GetModelSpaceAABB()const;
@@ -64,7 +67,11 @@ public:
     const Vector3f& position,
     const btQuaternion& rotation,
     float scale,
-    unsigned int id);
+    unsigned int id,
+
+    short physicsGroup,
+    short physicsMask
+	);
 
     virtual IGeometryObject* Duplicate(unsigned int id);
 

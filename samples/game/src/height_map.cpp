@@ -35,6 +35,8 @@
 #include "ewa/view_frustum.hpp"
 
 
+#include "physics_mask.hpp"
+
 #include <vector>
 
 #include "lodepng.h"
@@ -1408,7 +1410,7 @@ void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
     body->setCollisionFlags(btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
-    physicsWorld->AddRigidBody(body);
+    physicsWorld->AddRigidBody(body,  COL_STATIC, staticCollidesWith);
 
 }
 
@@ -1463,4 +1465,19 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 	    inLightFrustum(x,z) = lightFrustum.IsAABBInFrustum(aabb);
 	}
     }
+}
+
+
+
+AABB HeightMap::GetAABB()const {
+    AABB aabb;
+
+    aabb.max = m_offset + Vector3f(
+	1.0f * m_xzScale,
+	1.0f*m_yScale,
+	1.0f * m_xzScale);
+
+    aabb.min = aabb.max * -1.0f;
+
+    return aabb;
 }

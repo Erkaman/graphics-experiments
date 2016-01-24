@@ -1,223 +1,217 @@
-numObjs 37
+numObjs 36
 beginObj
 filename obj/rock_floor.eob
 translation -2.000000 9.000000 38.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj
 beginObj
 filename obj/flat_wood_floor.eob
 translation 8.000000 9.000000 38.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj
 beginObj
 filename obj/wood_floor.eob
 translation -12.000000 9.000000 38.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
-beginObj
-filename obj/sunball.eob
-translation 26.900406 7.670375 49.864014
-rotation -0.500963 0.654659 0.292377 -0.484740 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj
 beginObj
 filename obj/wall.eob
 translation -7.000000 9.500000 -7.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj
 beginObj
 filename obj/wall.eob
 translation 18.000000 9.000000 -7.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj
 beginObj
 filename obj/wall.eob
 translation -27.280460 9.000000 -55.668751
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -22.401171 17.817577 15.315625
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation 1.882423 17.817577 15.315625
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.773594
 endObj
 beginObj
 filename obj/rock4.eob
 translation -77.121094 17.623438 0.000000
-rotation 0.096645 0.059036 -0.226433 0.967421 
+rotation 0.096645 0.059036 -0.226433 0.967421
 scale 1.000000
 endObj
 beginObj
 filename obj/rock4.eob
 translation -72.132423 17.623438 0.000000
-rotation 0.096645 0.059036 -0.226433 0.967421 
+rotation 0.096645 0.059036 -0.226433 0.967421
 scale 1.000000
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -86.713669 45.867577 15.315625
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -112.972656 38.444141 15.315625
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -146.978912 19.388281 15.315625
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -174.836334 6.432024 28.747654
-rotation 0.000000 0.698571 0.000000 0.715541 
+rotation 0.000000 0.698571 0.000000 0.715541
 scale 0.698353
 endObj
 beginObj
 filename obj/rock4.eob
 translation -87.804688 8.837108 74.372269
-rotation 0.096645 0.059036 -0.226433 0.967421 
+rotation 0.096645 0.059036 -0.226433 0.967421
 scale 3.428751
 endObj
 beginObj
 filename obj/rock4.eob
 translation -45.668747 0.506248 74.372269
-rotation 0.178708 0.438821 -0.169338 0.864190 
+rotation 0.178708 0.438821 -0.169338 0.864190
 scale 5.450643
 endObj
 beginObj
 filename obj/rock4.eob
 translation -33.531639 3.449609 91.750008
-rotation 0.605714 0.464201 -0.576649 0.291726 
+rotation 0.605714 0.464201 -0.576649 0.291726
 scale 5.450643
 endObj
 beginObj
 filename obj/rock4.eob
 translation -16.151949 3.449609 104.617195
-rotation 0.242421 0.051133 0.262581 0.932561 
+rotation 0.242421 0.051133 0.262581 0.932561
 scale 5.450643
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation 11.475003 16.075390 102.933990
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -6.123824 16.075390 159.029297
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -6.123824 16.075390 186.547668
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation 23.964848 16.075390 186.547668
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation 42.910942 16.075390 149.209381
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -27.881245 16.075390 186.547668
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -52.133980 16.075390 186.547668
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -73.344917 16.075390 186.547668
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -91.261719 16.075390 186.547668
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj
 beginObj
 filename obj/plane.eob
 translation -2.000000 6.500000 -2.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj
 beginObj
 filename obj/plane.eob
 translation -2.000000 6.500000 -2.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -24.848045 16.184372 0.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -24.848045 16.184372 -25.348827
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.397812
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation 6.541016 16.184372 -43.248825
-rotation 0.000000 0.873099 0.000000 0.487543 
+rotation 0.000000 0.873099 0.000000 0.487543
 scale 1.397812
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -110.354294 16.075390 213.271103
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -6.123824 16.075390 159.029297
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -139.922256 16.075390 213.271103
-rotation -0.064378 0.062946 0.202210 0.975195 
+rotation -0.064378 0.062946 0.202210 0.975195
 scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
 translation -38.384773 16.075390 149.209381
-rotation 0.064949 -0.514792 0.202027 0.830636 
+rotation 0.064949 -0.514792 0.202027 0.830636
 scale 1.773594
 endObj

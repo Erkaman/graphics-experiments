@@ -7,6 +7,8 @@
 #include "ewa/bt_util.hpp"
 #include "ewa/common.hpp"
 
+#include "physics_mask.hpp"
+
 
 #include <btBulletDynamicsCommon.h>
 
@@ -33,7 +35,11 @@ bool Car::Init(const Vector3f& position) {
 				    position, // translation
 				    btQuaternion::getIdentity(), // rotation
 				    1.0f, // scale
-				    CAR_ID);
+				    CAR_ID,
+
+				    COL_CAR,
+				    carCollidesWith
+	);
 
     return ret;
 }
@@ -126,7 +132,6 @@ void Car::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     m_raycastVehicle->setCoordinateSystem(0, 1, 2);
 
     physicsWorld->AddVehicle(m_raycastVehicle);
-
 
     const btVector3 wheelDirection(0, -1.0f, 0); // This is the direction of the raycast.
     const btVector3 wheelAxle(-1.0f, 0, 0); // This is spinning direction (using right hand rule).
