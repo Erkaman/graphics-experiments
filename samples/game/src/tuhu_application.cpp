@@ -113,8 +113,6 @@ void TuhuApplication::Init() {
 	LOG_I("No GUI created");
     }
 
-
-
     m_cameraFrustum = new ViewFrustum();
     m_lightFrustum = new ViewFrustum();
 

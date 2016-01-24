@@ -1,4 +1,0 @@
-StaticMesh/rock2:
-  physics:
-  - shape: Box
-    half-extents: [1.6221,1.80836,4.25087]

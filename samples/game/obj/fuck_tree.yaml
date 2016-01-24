@@ -1,4 +1,0 @@
-StaticMesh/fuck_tree:
-  physics:
-  - shape: Cylinder
-    half-extents: [1,3.33295,1]
