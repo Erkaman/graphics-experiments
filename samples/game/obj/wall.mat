@@ -1,4 +1,4 @@
 new_mat Material.001
-diff_map wall_d.png
+diff_map plane_d.png
 shininess 1.000000
 spec_color 0.000000 0.000000 0.000000
