@@ -1,0 +1,5 @@
+StaticMesh/tree3_done:
+  physics:
+  - shape: Cylinder
+    half-extents: [1.00927,6.1028,1]
+    origin: [-1.41077,-5.8618,-0.63193]
