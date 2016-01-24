@@ -536,7 +536,7 @@ void TuhuApplication::Render() {
     }
 
     m_gpuProfiler->Begin(GTS_Shadows);
-    RenderShadowMap();
+	RenderShadowMap();
     m_gpuProfiler->End(GTS_Shadows);
 
 

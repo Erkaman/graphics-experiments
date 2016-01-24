@@ -1,4 +1,4 @@
-numObjs 10
+numObjs 21
 beginObj
 filename obj/rock_floor.eob
 translation -2.000000 9.000000 38.000000
@@ -57,5 +57,71 @@ beginObj
 filename obj/tree3_done.eob
 translation 1.882423 17.817577 15.315625
 rotation 0.000000 0.000000 0.000000 1.000000 
+scale 1.773594
+endObj
+beginObj
+filename obj/rock4.eob
+translation -77.121094 17.623438 0.000000
+rotation 0.096645 0.059036 -0.226433 0.967421 
+scale 1.000000
+endObj
+beginObj
+filename obj/rock4.eob
+translation -72.132423 17.623438 0.000000
+rotation 0.096645 0.059036 -0.226433 0.967421 
+scale 1.000000
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -86.713669 45.867577 15.315625
+rotation 0.000000 0.000000 0.000000 1.000000 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -112.972656 38.444141 15.315625
+rotation 0.000000 0.000000 0.000000 1.000000 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -146.978912 19.388281 15.315625
+rotation 0.000000 0.000000 0.000000 1.000000 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -174.836334 6.432024 28.747654
+rotation 0.000000 0.698571 0.000000 0.715541 
+scale 0.698353
+endObj
+beginObj
+filename obj/rock4.eob
+translation -87.804688 8.837108 74.372269
+rotation 0.096645 0.059036 -0.226433 0.967421 
+scale 3.428751
+endObj
+beginObj
+filename obj/rock4.eob
+translation -45.668747 0.506248 74.372269
+rotation 0.178708 0.438821 -0.169338 0.864190 
+scale 5.450643
+endObj
+beginObj
+filename obj/rock4.eob
+translation -33.531639 3.449609 91.750008
+rotation 0.605714 0.464201 -0.576649 0.291726 
+scale 5.450643
+endObj
+beginObj
+filename obj/rock4.eob
+translation -16.151949 3.449609 104.617195
+rotation 0.242421 0.051133 0.262581 0.932561 
+scale 5.450643
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 11.475003 16.075390 102.933990
+rotation 0.064949 -0.514792 0.202027 0.830636 
 scale 1.773594
 endObj
