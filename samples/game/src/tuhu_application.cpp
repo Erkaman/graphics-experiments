@@ -708,6 +708,8 @@ void TuhuApplication::Update(const float delta) {
 		    m_selected->SetSelected(false);
 		}
 
+		LOG_I("selected obj: %d", id);
+
 		m_selected = m_geoObjs[id];
 		m_selected->SetSelected(true);
 
@@ -793,7 +795,7 @@ IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3
 
     GeometryObject* obj = new GeometryObject();
 
-    LOG_I("add id: %d", currentObjId);
+//    LOG_I("add id: %d", currentObjId);
     bool result = obj->Init(path, position,rotation, scale, currentObjId++, COL_STATIC, staticCollidesWith);
 
     if(!result)
@@ -970,6 +972,10 @@ void TuhuApplication::Duplicate() {
     if(m_selected) {
 
 	IGeometryObject* dupObj = m_selected->Duplicate(currentObjId++);
+
+
+	LOG_I("duplate %d, creating %d", m_selected->GetId(), dupObj->GetId() );
+
 
 	// select duplicated object:
 	m_selected->SetSelected(false);

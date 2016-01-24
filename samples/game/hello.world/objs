@@ -1,4 +1,4 @@
-numObjs 46
+numObjs 80
 beginObj
 filename obj/rock_floor.eob
 translation -2.000000 9.000000 38.000000
@@ -211,12 +211,6 @@ scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
-translation 104.599609 53.907814 149.209381
-rotation 0.064949 -0.514792 0.202027 0.830636 
-scale 5.158735
-endObj
-beginObj
-filename obj/tree3_done.eob
 translation 59.080467 16.075390 186.547668
 rotation 0.064949 -0.514792 0.202027 0.830636 
 scale 1.773594
@@ -273,5 +267,215 @@ beginObj
 filename obj/tree3_done.eob
 translation 212.474228 17.258984 -191.992203
 rotation -0.117154 0.749641 0.010022 0.651317 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 181.926544 17.505072 -172.355484
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 197.749588 17.505072 -172.355484
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 197.749588 17.505072 -144.842590
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 177.131622 17.505072 -144.842590
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 154.343353 13.254290 -212.674622
+rotation -0.204750 0.976984 -0.055774 -0.021670 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 72.898819 40.355858 -172.355484
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 47.064434 40.355858 -172.355484
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -29.676167 45.381248 -163.031662
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -75.472260 17.985153 -163.031662
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -87.492577 17.985153 -163.031662
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -37.932415 45.381248 -163.031662
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -169.287125 19.339064 -172.355484
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -229.391022 15.078907 -172.355484
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -229.391022 15.078907 -138.334000
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -229.391022 15.078907 -107.434387
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -229.391022 15.078907 -76.238289
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -191.173462 15.078907 -76.238289
+rotation 0.309903 0.042897 -0.924007 0.219846 
+scale -1.249138
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -205.456268 15.078907 -76.238289
+rotation 0.309903 0.042897 -0.924007 0.219846 
+scale -1.249138
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -205.456268 15.078907 -56.557426
+rotation 0.309903 0.042897 -0.924007 0.219846 
+scale -3.582390
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -204.596115 19.469532 -2.780869
+rotation 0.309903 0.042897 -0.924007 0.219846 
+scale -1.926657
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -215.295731 19.469532 31.519913
+rotation 0.309903 0.042897 -0.924007 0.219846 
+scale -1.926657
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 208.779663 21.277729 -100.649620
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 180.185913 32.349602 -100.649620
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 180.185913 26.156633 -58.240242
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 180.185913 20.124601 -21.316414
+rotation -0.157325 0.544771 0.142415 0.811290 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 153.576141 22.611326 14.025383
+rotation -0.211267 0.966335 -0.019991 0.145479 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 134.868713 31.014061 14.025383
+rotation -0.211267 0.966335 -0.019991 0.145479 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 157.818329 29.095701 52.260151
+rotation -0.211267 0.966335 -0.019991 0.145479 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 197.067551 29.976168 118.710930
+rotation -0.211267 0.966335 -0.019991 0.145479 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -71.860168 26.457811 124.149612
+rotation 0.064949 -0.514792 0.202027 0.830636 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -92.947670 31.371876 124.149612
+rotation 0.064949 -0.514792 0.202027 0.830636 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -125.837914 33.469143 65.226959
+rotation 0.064949 -0.514792 0.202027 0.830636 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -104.675797 26.320314 65.226959
+rotation 0.064949 -0.514792 0.202027 0.830636 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -125.837914 16.472265 128.806259
+rotation 0.064949 -0.514792 0.202027 0.830636 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation -125.837914 16.472265 154.205475
+rotation 0.064949 -0.514792 0.202027 0.830636 
 scale 1.773594
 endObj
