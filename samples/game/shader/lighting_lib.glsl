@@ -47,7 +47,31 @@ vec4 calcLighting(
     return vec4(finalcolor,1.0);
 }
 
+float rand(vec4 seed) {
+    float dot_product = dot(seed, vec4(12.9898,78.233,45.164,94.673));
+    return fract(sin(dot_product) * 43758.5453);
+}
+
 vec2 poissonDisk[4] = vec2[](
+/*
+vec2(-0.640363, 0.639219),
+vec2(-0.438874, 0.305672),
+vec2(-0.283887, 0.773152),
+vec2(-0.943998, 0.093681),
+vec2(-0.0211312, 0.0981202),
+vec2(0.336444, 0.911633),
+vec2(0.244629, 0.519954),
+vec2(0.637154, 0.537039),
+vec2(0.445192, -0.173428),
+vec2(-0.381318, -0.139341),
+vec2(0.460371, 0.193586),
+vec2(-0.766582, -0.283754),
+vec2(0.932469, 0.0815573),
+vec2(0.634411, -0.5472),
+vec2(0.157984, -0.731492),
+vec2(-0.386095, -0.581438)
+*/
+
    vec2( -0.94201624, -0.39906216 ),
    vec2( 0.94558609, -0.76890725 ),
    vec2( -0.094184101, -0.92938870 ),
@@ -63,11 +87,14 @@ float calcVisibility(sampler2DShadow shadowMap, float diff, vec4 shadowCoord ) {
 
 #if defined HIGH_QUALITY
 
-
     for (int i=0;i<4;i++){
 
+	int index = i;
+
+	vec2 sample = reflect(poissonDisk[index], normalize(gl_FragCoord.xy) );
+
 	 visibility -=
-	     0.2 * (1.0-texture( shadowMap, vec3(shadowCoord.xy+poissonDisk[i]/700.0, ( (shadowCoord.z-bias) / shadowCoord.w) )  ));
+	     0.25 * (1.0-texture( shadowMap, vec3(shadowCoord.xy+sample/3000.0, ( (shadowCoord.z-bias) / shadowCoord.w) )  ));
      }
 
 #else
@@ -77,3 +104,4 @@ float calcVisibility(sampler2DShadow shadowMap, float diff, vec4 shadowCoord ) {
 
     return visibility;
 }
+

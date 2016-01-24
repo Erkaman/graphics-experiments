@@ -106,6 +106,7 @@ std::vector<std::string> SplitShaderSource(const std::string& str)
 string FormatCompilerErrorOutput(const GLuint shader, const string& shaderStr)  {
     string result = "";
 
+#ifdef __APPLE__
     vector<string> errors =  StringUtil::SplitString(GetShaderLogInfo(shader), "\n");
 
     vector<string> shaderLines = SplitShaderSource(shaderStr);
@@ -129,6 +130,10 @@ string FormatCompilerErrorOutput(const GLuint shader, const string& shaderStr)  
 
 	// the affected line.
     }
+#else
+    result = GetShaderLogInfo(shader);
+
+#endif
 
     return result;
 
