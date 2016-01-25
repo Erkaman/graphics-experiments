@@ -1,6 +1,7 @@
 #pragma once
 
 class ShaderProgram;
+class Gbuffer;
 
 class SsaoPass{
 
@@ -12,6 +13,6 @@ public:
 
     SsaoPass();
 
-    void Render();
+    void Render(Gbuffer* gbuffer);
 
 };

@@ -1,33 +1,33 @@
-#include "picking_fbo.hpp"
+#include "gbuffer.hpp"
 
 #include "gl/texture.hpp"
 #include "gl/render_buffer.hpp"
 
 #include "log.hpp"
 
-void PickingFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
+void Gbuffer::RecreateBuffers(const GLsizei width, const GLsizei height)  {
     Bind();
     {
 	// first we create a render target, and attach it the FBO.
-	m_renderTargetTexture = new Texture(
+	m_colorTexture = new Texture(
 	    GL_TEXTURE_2D,
 	    width,
 	    height,
-	    GL_RGB32F, // internal format
-	    GL_RGB, // format
-	    GL_FLOAT); // type
+	    GL_RGBA8, // internal format
+	    GL_RGBA,  // format
+	    GL_UNSIGNED_BYTE); // type
 
 	Texture::SetActiveTextureUnit(m_targetTextureUnit);
-	m_renderTargetTexture->Bind();
+	m_colorTexture->Bind();
 	{
-	    m_renderTargetTexture->SetMagMinFilters(GL_NEAREST);
-	    m_renderTargetTexture->SetTextureClamping();
+	    m_colorTexture->SetMagMinFilters(GL_NEAREST);
+	    m_colorTexture->SetTextureClamping();
 
 	    // attach the target texture to the FBO.
-	    Attach(GL_COLOR_ATTACHMENT0, *m_renderTargetTexture);
+	    Attach(GL_COLOR_ATTACHMENT0, *m_colorTexture);
 	}
 
-	m_renderTargetTexture->Unbind();
+	m_colorTexture->Unbind();
 
 	// next we create a depth buffer, and attach it to the FBO.
 
@@ -53,23 +53,11 @@ void PickingFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
     Unbind();
 }
 
-PickingFBO::PickingFBO() {
+Gbuffer::Gbuffer() {
 
 }
 
-PixelInfo PickingFBO::ReadPixel(unsigned int x, unsigned int y) {
-    BindForReading();
-    GL_C(glReadBuffer(GL_COLOR_ATTACHMENT0));
 
-//    LOG_I("read pixel: %d, %d", x, y);
-
-     PixelInfo pixel;
-    glReadPixels(x, y, 1, 1, GL_RGB, GL_FLOAT, &pixel);
-
-
-    GL_C(glReadBuffer(GL_NONE));
-    UnbindForReading();
-
-    return pixel;
-
+Texture* Gbuffer::GetColorTexture() {
+    return m_colorTexture;
 }

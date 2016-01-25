@@ -10,7 +10,6 @@ public:
         float unused2;
 };
 
-
 class PickingFBO : public FBO{
 
 public:

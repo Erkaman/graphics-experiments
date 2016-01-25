@@ -26,6 +26,7 @@ class Car;
 class CarCamera;
 class Gui;
 class PickingFBO;
+class Gbuffer;
 class GpuProfiler;
 class Line;
 class Cube;
@@ -66,6 +67,7 @@ private:
 
     DepthFBO* m_depthFbo;
     PickingFBO* m_pickingFbo;
+    Gbuffer* m_gbuffer;
 
 
     Vector4f m_lightDirection;

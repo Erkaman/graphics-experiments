@@ -49,6 +49,7 @@
 
 #include "gpu_profiler.hpp"
 #include "physics_mask.hpp"
+#include "gbuffer.hpp"
 
 
 using namespace std;
@@ -233,6 +234,13 @@ void TuhuApplication::Init() {
 	// TODO: should not this be the size of the framebuffer?
 	m_pickingFbo->Init(PICKING_FBO_TEXTURE_UNIT, GetFramebufferWidth(),GetFramebufferHeight() );
     }
+
+
+    m_gbuffer = new Gbuffer();
+
+    // TODO: should not this be the size of the framebuffer?
+    m_gbuffer->Init(0, GetFramebufferWidth(),GetFramebufferHeight() );
+
     /*
       OpenAL::Initp();
 
@@ -547,13 +555,19 @@ void TuhuApplication::Render() {
     int windowHeight;
 
     SetViewport();
-
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if(m_pickingFbo)
 	RenderId();
 
+    m_gbuffer->BindForWriting();
+
+    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     RenderScene();
+
+    m_gbuffer->UnbindForWriting();
+
 
 //    m_aabbWireframe->Render(m_curCamera->GetVp());
 
@@ -570,7 +584,10 @@ void TuhuApplication::Render() {
 	m_gui->Render(windowWidth, windowHeight);
     }
 
-//    m_ssaoPass->Render();
+
+    m_gpuProfiler->Begin(GTS_SSAO);
+    m_ssaoPass->Render(m_gbuffer);
+    m_gpuProfiler->End(GTS_SSAO);
 
 
     m_gpuProfiler->WaitForDataAndUpdate();
@@ -787,6 +804,9 @@ void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 750,370,
 		       Format("Shadows: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Shadows) ) );
+
+    m_font->DrawString(*m_fontShader, 750,430,
+		       Format("SSAO: %0.2f ms", m_gpuProfiler->DtAvg(GTS_SSAO) ) );
 
 }
 
