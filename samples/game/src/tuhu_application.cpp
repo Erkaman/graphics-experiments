@@ -25,6 +25,7 @@
 #include "smoke_effect.hpp"
 #include "snow_effect.hpp"
 #include "fire_effect.hpp"
+#include "ssao_pass.hpp"
 
 #include "ewa/line.hpp"
 #include "ewa/points.hpp"
@@ -97,6 +98,8 @@ void TuhuApplication::Init() {
     m_aabbWireframe = Cube::Load();
 
     m_gpuProfiler = new GpuProfiler();
+
+    m_ssaoPass = new SsaoPass();
 
     currentObjId = 0;
 
@@ -533,10 +536,8 @@ void TuhuApplication::Render() {
     }
 
     m_gpuProfiler->Begin(GTS_Shadows);
-	RenderShadowMap();
+    RenderShadowMap();
     m_gpuProfiler->End(GTS_Shadows);
-
-
 
     float SCALE = m_guiVerticalScale;
 
@@ -556,7 +557,6 @@ void TuhuApplication::Render() {
 
 //    m_aabbWireframe->Render(m_curCamera->GetVp());
 
-
     if(m_gui) {
 
 	int fb_width, fb_height;
@@ -569,6 +569,9 @@ void TuhuApplication::Render() {
 
 	m_gui->Render(windowWidth, windowHeight);
     }
+
+//    m_ssaoPass->Render();
+
 
     m_gpuProfiler->WaitForDataAndUpdate();
 

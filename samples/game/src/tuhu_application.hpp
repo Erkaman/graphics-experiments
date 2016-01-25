@@ -29,6 +29,7 @@ class PickingFBO;
 class GpuProfiler;
 class Line;
 class Cube;
+class SsaoPass;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
@@ -99,6 +100,8 @@ private:
     void ParseObjs(const std::string& filename);
 
     GpuProfiler* m_gpuProfiler;
+
+    SsaoPass* m_ssaoPass;
 
     void UpdateMatrices();
 
