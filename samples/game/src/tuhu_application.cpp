@@ -100,7 +100,7 @@ void TuhuApplication::Init() {
 
     m_gpuProfiler = new GpuProfiler();
 
-    m_ssaoPass = new SsaoPass();
+    m_ssaoPass = new SsaoPass(GetFramebufferWidth(),GetFramebufferHeight());
 
     currentObjId = 0;
 
@@ -261,6 +261,8 @@ Matrix4f TuhuApplication::MakeLightProj(int frameBufferWidth, int frameBufferHei
 
     // TODO: does not yet fully work.
     //http://www.gamedev.net/topic/505893-orthographic-projection-for-shadow-mapping/
+    // ALSO, note that the size of the frame buffer is a square, but the frame buffer is not!
+    // this may have to be taken into account.
 
 
     /*
@@ -512,14 +514,11 @@ void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Terrain);
 
-        m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
-
+    m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
 
     m_gpuProfiler->End(GTS_Terrain);
 
 //    m_grass->Draw(m_curCamera, m_lightDirection);
-
-
 
     //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
 
@@ -560,13 +559,13 @@ void TuhuApplication::Render() {
     if(m_pickingFbo)
 	RenderId();
 
-    m_gbuffer->BindForWriting();
+//    m_gbuffer->BindForWriting();
 
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     RenderScene();
 
-    m_gbuffer->UnbindForWriting();
+//    m_gbuffer->UnbindForWriting();
 
 
 //    m_aabbWireframe->Render(m_curCamera->GetVp());
@@ -586,7 +585,7 @@ void TuhuApplication::Render() {
 
 
     m_gpuProfiler->Begin(GTS_SSAO);
-    m_ssaoPass->Render(m_gbuffer);
+//    m_ssaoPass->Render(m_gbuffer);
     m_gpuProfiler->End(GTS_SSAO);
 
 

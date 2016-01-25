@@ -2,6 +2,7 @@
 
 #include <string>
 #include <stdio.h>
+#include <vector>
 
 #include "common.hpp"
 
@@ -74,4 +75,7 @@ public:
       If given a path "a/b/c", create the directory "a/b/c".
      */
     static void CreatePath(const std::string& path);
+
+    // get all the files in a directory.
+    static std::vector<std::string> EnumerateDirectory(const std::string& path);
 };

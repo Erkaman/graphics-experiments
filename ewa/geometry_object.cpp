@@ -89,6 +89,29 @@ private:
 	m_outputDepthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
 
 	m_aabbWireframe = Cube::Load();
+
+
+	/*
+	  Find all PNG files in the obj/ directory, and then load them all into a texture array.
+	 */
+
+        vector<string> files = File::EnumerateDirectory("obj");
+        vector<string> pngFiles = File::EnumerateDirectory("obj");
+
+	for(const string& file: files) {
+
+	    if(file.size() > 4) { // must be long enough to fit a ".png extension.
+
+		if(file.substr(file.size()-3).c_str() == "png") {
+		    pngFiles.push_back(file);
+		}
+
+	    }
+	}
+
+
+
+
     }
 
 public:

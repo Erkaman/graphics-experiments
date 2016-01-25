@@ -12,6 +12,9 @@
 #else // UNIX
 
 #include <sys/stat.h>
+
+#include <dirent.h>
+
 #endif
 
 using namespace std;
@@ -280,4 +283,27 @@ void File::ReadLine(char* buffer, int bufferSize) {
 	//LOG_I("feof: %d", feof(m_fp));
 
     fgets(buffer, bufferSize, m_fp);
+}
+
+
+std::vector<std::string> File::EnumerateDirectory(const std::string& path) {
+
+    DIR* d;
+    struct dirent *dir;
+
+    d = opendir(path.c_str());
+
+    vector<string> files;
+
+    if (d)
+    {
+	while ((dir = readdir(d)) != NULL)
+	{
+	    files.push_back(string(dir->d_name) );
+	}
+
+	closedir(d);
+    }
+
+    return files;
 }
