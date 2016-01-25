@@ -29,21 +29,6 @@ using std::string;
 using std::vector;
 using std::map;
 
-static Texture* LoadTexture(const string& filename) {
-    Texture* texture = Texture2D::Load(filename);
-    if(!texture)
-	return NULL;
-
-    texture->Bind();
-    texture->SetTextureRepeat();
-    texture->GenerateMipmap();
-    texture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-    texture->SetMagFilter(GL_LINEAR);
-    texture->Unbind();
-
-    return texture;
-}
-
 struct Chunk {
     VBO* m_vertexBuffer;
     VBO* m_indexBuffer;
