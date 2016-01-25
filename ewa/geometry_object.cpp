@@ -6,6 +6,7 @@
 #include "ewa/gl/vbo.hpp"
 #include "ewa/gl/shader_program.hpp"
 #include "ewa/gl/texture2d.hpp"
+#include "ewa/gl/array_texture.hpp"
 
 #include "ewa/bt_util.hpp"
 
@@ -96,21 +97,33 @@ private:
 	 */
 
         vector<string> files = File::EnumerateDirectory("obj");
-        vector<string> pngFiles = File::EnumerateDirectory("obj");
+        vector<string> pngFiles;
 
 	for(const string& file: files) {
 
 	    if(file.size() > 4) { // must be long enough to fit a ".png extension.
 
-		if(file.substr(file.size()-3).c_str() == "png") {
-		    pngFiles.push_back(file);
-		}
+		if(file.substr(file.size()-3).c_str() == string("png") ) {
 
+		    string fullpathFile = File::AppendPaths("obj", file);
+
+		    pngFiles.push_back(fullpathFile);
+		}
 	    }
 	}
 
+	m_arrayTexture = ArrayTexture::Load(pngFiles);
 
+	m_arrayTexture->Bind();
+	m_arrayTexture->SetTextureRepeat();
+	m_arrayTexture->GenerateMipmap();
+	m_arrayTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+	m_arrayTexture->SetMagFilter(GL_LINEAR);
+	m_arrayTexture->Unbind();
 
+	if(!m_arrayTexture) {
+	    PrintErrorExit();
+	}
 
     }
 
@@ -126,6 +139,7 @@ public:
 
     ShaderProgram* m_outputDepthShader;
 
+    ArrayTexture* m_arrayTexture;
 
 
 
