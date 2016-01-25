@@ -23,5 +23,5 @@ public:
 
     static ArrayTexture* Load(const std::vector<std::string>& textureFiles);
 
-    GLint GetTexture(const std::string& textureFile);
+    float GetTexture(const std::string& textureFile);
 };

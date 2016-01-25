@@ -71,9 +71,9 @@ public:
 
 
     // the material.
-    Texture* m_texture;
-    Texture* m_normalMap;
-    Texture* m_specularMap;
+    float m_texture;
+    float m_normalMap;
+    float m_specularMap;
 
 };
 
@@ -120,6 +120,7 @@ private:
 	m_arrayTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
 	m_arrayTexture->SetMagFilter(GL_LINEAR);
 	m_arrayTexture->Unbind();
+
 
 	if(!m_arrayTexture) {
 	    PrintErrorExit();
@@ -175,7 +176,6 @@ public:
 	    return NULL;
 	}
 
-
 	/*
 	  Load the textures of the object.
 	 */
@@ -184,31 +184,27 @@ public:
 
 	geoObjBatch->m_hasHeightMap = false;
 
-	geoObjBatch->m_texture = NULL;
-	geoObjBatch->m_normalMap = NULL;
-	geoObjBatch->m_specularMap = NULL;
+	geoObjBatch->m_texture = -1;
+	geoObjBatch->m_normalMap = -1;
+	geoObjBatch->m_specularMap = -1;
 
 	for(size_t i = 0; i < data->m_chunks.size(); ++i) {
 	    Material* mat = data->m_chunks[i]->m_material;
 
 	    if(mat->m_textureFilename != ""){ // empty textures should remain empty.
 
-		geoObjBatch->m_texture = LoadTexture(File::AppendPaths(basePath, mat->m_textureFilename));
+		geoObjBatch->m_texture =
+		    m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_textureFilename));
 
-		if(!geoObjBatch->m_texture) {
-		    // loading texture failed.
-		    return NULL;
-		}
 
 	    }
 
 	    if(mat->m_normalMapFilename != ""){ // empty textures should remain empty->
 
 
-		geoObjBatch->m_normalMap = LoadTexture(File::AppendPaths(basePath, mat->m_normalMapFilename));
-		if(!geoObjBatch->m_normalMap) {
-		    return NULL;
-		}
+		geoObjBatch->m_normalMap =
+		    m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_normalMapFilename));
+
 
 		geoObjBatch->m_hasHeightMap = mat->m_hasHeightMap;
 	    }
@@ -217,11 +213,8 @@ public:
 
 
 
-		geoObjBatch->m_specularMap = LoadTexture(File::AppendPaths(basePath, mat->m_specularMapFilename));
-
-		if(!geoObjBatch->m_specularMap) {
-		    return NULL;
-		}
+		geoObjBatch->m_specularMap =
+		    m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_specularMapFilename));
 
 
 	    }
@@ -521,13 +514,27 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
     GeometryObject* selectedObj = NULL;
     const GeoObjBatch* selectedBatch = NULL;
 
+
+
+
     // render all batches, one after one.
     for(auto& itBatch : batches) {
 
+
+
+
 	const GeoObjBatch* batch = itBatch.second;
+
+
 
 	// bind shader of the batch.
 	batch->m_defaultShader->Bind();
+
+
+	batch->m_defaultShader->SetUniform("textureArray", 0);
+	Texture::SetActiveTextureUnit(0);
+	GeoObjManager::GetInstance().m_arrayTexture->Bind();
+
 
 	batch->m_defaultShader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
 	Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
@@ -541,22 +548,18 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    batch->m_defaultShader->SetUniform("zFar", config.GetZFar());
 	}
 
-	if(batch->m_texture != NULL) {
-	    batch->m_defaultShader->SetUniform("diffMap", 0);
-	    Texture::SetActiveTextureUnit(0);
-	    batch->m_texture->Bind();
+	if(batch->m_texture != -1) {
+
+	    //  LOG_I("batch text: %d", batch->m_texture );
+	    batch->m_defaultShader->SetUniform("diffMap", batch->m_texture  );
 	}
 
-	if(batch->m_normalMap != NULL) {
-	    batch->m_defaultShader->SetUniform("normalMap", 1);
-	    Texture::SetActiveTextureUnit(1);
-	    batch->m_normalMap->Bind();
+	if(batch->m_normalMap != -1) {
+	    batch->m_defaultShader->SetUniform("normalMap", batch->m_normalMap  );
 	}
 
-	if(batch->m_specularMap != NULL) {
-	    batch->m_defaultShader->SetUniform("specMap", 2);
-	    Texture::SetActiveTextureUnit(2);
-	    batch->m_specularMap->Bind();
+	if(batch->m_specularMap != -1) {
+	    batch->m_defaultShader->SetUniform("specMap", batch->m_specularMap  );
 	}
 
 	// render the objects of the batch, one after one.
@@ -596,7 +599,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 		Chunk* chunk = batch->m_chunks[i];
 
-		if(batch->m_specularMap == NULL) {
+		if(batch->m_specularMap == -1) {
 		    // if no spec map, the chunk has the same specular color all over the texture.
 		    batch->m_defaultShader->SetUniform("specColor", chunk->m_specularColor);
 		}
@@ -613,21 +616,15 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 	}
 
-	if(batch->m_texture != NULL) {
-	    batch->m_texture->Unbind();
-	}
-
-	if(batch->m_normalMap != NULL) {
-	    batch->m_normalMap->Unbind();
-	}
-
-	if(batch->m_specularMap != NULL) {
-	    batch->m_specularMap->Unbind();
-	}
 
 	shadowMap.GetRenderTargetTexture().Unbind();
 	batch->m_defaultShader->Unbind();
+
+	GeoObjManager::GetInstance().m_arrayTexture->Unbind();
+
     }
+
+
 
     if(selectedObj != NULL) {
 	// also render outline for selected object.

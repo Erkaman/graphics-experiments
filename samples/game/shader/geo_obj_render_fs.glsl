@@ -6,7 +6,8 @@ vec4 sample(sampler2D tex, vec2 uv) {
 
 #ifdef HEIGHT_MAPPING
 void rayTrace(
-    sampler2D reliefmap,
+    sampler2DArray textureArray,
+    float reliefmap,
     vec2 dp, // ray origin in tangent space
     vec2 ds, // ray direction in tangent space.
 
@@ -35,7 +36,7 @@ void rayTrace(
     // linear search for first point within object.
     for ( int i=0; i< linear_search_steps-1;i++){
 	depth+=size;
-	float height=sample(reliefmap,dp+ds*depth).w;
+	float height=texture(textureArray,vec3(dp+ds*depth,reliefmap) ).w;
 	if (best_depth>0.996) // if no depth found yet
 	    if (depth >= height) {
 		best_depth=depth; // store best depth
@@ -51,8 +52,8 @@ void rayTrace(
 
     // heights for linear interpolation
 
-    float nextH	= sample(reliefmap,dp+ds*depth).w - depth; //heightFromTexture - curLayerHeight;
-	float prevH	= sample(reliefmap, prevTCoords).w // texture(u_heightTexture, prevTCoords).r
+    float nextH	= texture(textureArray, vec3(dp+ds*depth, reliefmap)  ).w - depth; //heightFromTexture - curLayerHeight;
+    float prevH	= texture(textureArray, vec3(prevTCoords,reliefmap) ).w // texture(u_heightTexture, prevTCoords).r
 	    - depth + size;                         // - curLayerHeight + layerHeight;
 
    // proportions for linear interpolation
@@ -102,14 +103,15 @@ in mat4 modelViewMatrixOut;
 in vec3 eyePosOut;
 in vec4 shadowCoordOut;
 
-uniform sampler2D normalMap;
-uniform sampler2D diffMap;
+uniform float normalMap;
+uniform float diffMap;
+uniform sampler2DShadow shadowMap;
 
 uniform float zNear;
 uniform float zFar;
 
+uniform sampler2DArray textureArray;
 
-uniform sampler2DShadow shadowMap;
 
 
 out vec4 geoData[3];
@@ -149,14 +151,14 @@ void main(void) {
 
     float rayDepth;
     vec2 rayTexcoord;
-    rayTrace(normalMap,dp,ds,
+    rayTrace(textureArray, normalMap,dp,ds,
 	     eyePosOut,
 
 	     rayTexcoord, rayDepth);
 
     vec2 uv = rayTexcoord;
-    vec3 n = normalize(sample(normalMap,uv)).xyz;
-    vec4 diffColor=sample(diffMap, uv );
+    vec3 n = normalize(texture(textureArray,vec3(uv,normalMap) )).xyz; // lol1
+    vec4 diffColor=texture(textureArray, vec3(uv,diffMap) );
 
     /*
       Depth correct.
@@ -166,11 +168,12 @@ void main(void) {
     gl_FragDepth=((planes_x*p.z+planes_y)/-p.z);
 
 #elif defined NORMAL_MAPPING
-    vec3 n = sample(normalMap,texcoordOut).xyz;
-    vec4 diffColor=sample(diffMap,texcoordOut);
+
+    vec3 n = texture(textureArray,vec3(texcoordOut,normalMap) ).xyz; // lol2
+    vec4 diffColor=texture(textureArray, vec3(texcoordOut,diffMap));
 #else // no normal or height map
-    vec3 n = normalize(vec4(viewSpaceNormalOut,0.0)).xyz;
-    vec4 diffColor=sample(diffMap,texcoordOut);
+    vec3 n = normalize(vec4(viewSpaceNormalOut,0.0)).xyz; // lol3
+    vec4 diffColor=sample(textureArray,vec3(texcoordOut,diffMap) );
 #endif
 
     // if point light:
@@ -229,6 +232,10 @@ void main(void) {
 	diff,
 	spec,
 	visibility);
+
+    geoData[0] = vec4(vec3(n), 1.0);
+
+
     geoData[1] = vec4(viewSpaceNormalOut, 0);
     geoData[2] = vec4(viewSpacePositionOut, 0);
 

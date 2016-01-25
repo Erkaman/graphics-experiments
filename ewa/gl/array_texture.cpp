@@ -67,11 +67,8 @@ ArrayTexture::ArrayTexture(const vector<TextureInfo*>& tis, const vector<string>
 			  nullptr
 		 ));
 
-
 	// upload the 2D images into the 3D texture.
 	for(int iLayer = 0; iLayer < tis.size(); ++iLayer) {
-
-
 
 	    GL_C(glTexSubImage3D(m_target,
 				 0,
@@ -84,8 +81,9 @@ ArrayTexture::ArrayTexture(const vector<TextureInfo*>& tis, const vector<string>
 				 &tis[iLayer]->imageData[0]
 		     ));
 
-
 	    textureMap[textureFiles[iLayer]] = iLayer;
+
+	    LOG_I("bla: %s = %d", textureFiles[iLayer].c_str(), iLayer );
 
 	}
 
@@ -94,26 +92,6 @@ ArrayTexture::ArrayTexture(const vector<TextureInfo*>& tis, const vector<string>
 
 
     }
-
-
-
-
-/*
-  m_level = 0;
-  m_format = format;
-  m_type = type;
-
-  m_width = width;
-  m_height = height;
-
-  Bind();
-  {
-  GL_C(glTexImage2D(m_target, m_level,
-  internalFormat, // internal format.
-  m_width, m_height, 0, m_format, m_type, data));
-  }
-  Unbind();
-*/
 }
 
 
@@ -123,6 +101,6 @@ GLint ArrayTexture::GetMaxArrayTextureLayers() {
     return res;
 }
 
-GLint ArrayTexture::GetTexture(const std::string& textureFile) {
-    return textureMap[textureFile];
+float ArrayTexture::GetTexture(const std::string& textureFile) {
+    return (float)textureMap[textureFile];
 }
