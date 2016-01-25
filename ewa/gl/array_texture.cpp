@@ -101,6 +101,6 @@ GLint ArrayTexture::GetMaxArrayTextureLayers() {
     return res;
 }
 
-float ArrayTexture::GetTexture(const std::string& textureFile) {
-    return (float)textureMap[textureFile];
+GLint ArrayTexture::GetTexture(const std::string& textureFile) {
+    return textureMap[textureFile];
 }

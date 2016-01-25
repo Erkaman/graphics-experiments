@@ -173,7 +173,7 @@ void main(void) {
     vec4 diffColor=texture(textureArray, vec3(texcoordOut,diffMap));
 #else // no normal or height map
     vec3 n = normalize(vec4(viewSpaceNormalOut,0.0)).xyz; // lol3
-    vec4 diffColor=sample(textureArray,vec3(texcoordOut,diffMap) );
+    vec4 diffColor=texture(textureArray,vec3(texcoordOut,diffMap) );
 #endif
 
     // if point light:
@@ -233,7 +233,7 @@ void main(void) {
 	spec,
 	visibility);
 
-    geoData[0] = vec4(vec3(n), 1.0);
+//    geoData[0] = vec4(, 1.0);
 
 
     geoData[1] = vec4(viewSpaceNormalOut, 0);

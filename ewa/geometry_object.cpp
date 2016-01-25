@@ -71,9 +71,9 @@ public:
 
 
     // the material.
-    float m_texture;
-    float m_normalMap;
-    float m_specularMap;
+    GLint m_texture;
+    GLint m_normalMap;
+    GLint m_specularMap;
 
 };
 
@@ -229,13 +229,13 @@ public:
 
 	vector<string> defines;
 
-	if(geoObjBatch->m_specularMap) {
+	if(geoObjBatch->m_specularMap != -1) {
 	    defines.push_back("SPEC_MAPPING");
 	}
 
 	if(geoObjBatch->m_hasHeightMap) {
 	    defines.push_back("HEIGHT_MAPPING");
-	} else if(geoObjBatch->m_normalMap) { // only a normal map, no height map.
+	} else if(geoObjBatch->m_normalMap != -1) { // only a normal map, no height map.
 	    defines.push_back("NORMAL_MAPPING");
 	}
 
@@ -551,15 +551,15 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	if(batch->m_texture != -1) {
 
 	    //  LOG_I("batch text: %d", batch->m_texture );
-	    batch->m_defaultShader->SetUniform("diffMap", batch->m_texture  );
+	    batch->m_defaultShader->SetUniform("diffMap", (float)batch->m_texture  );
 	}
 
 	if(batch->m_normalMap != -1) {
-	    batch->m_defaultShader->SetUniform("normalMap", batch->m_normalMap  );
+	    batch->m_defaultShader->SetUniform("normalMap", (float)batch->m_normalMap  );
 	}
 
 	if(batch->m_specularMap != -1) {
-	    batch->m_defaultShader->SetUniform("specMap", batch->m_specularMap  );
+	    batch->m_defaultShader->SetUniform("specMap", (float)batch->m_specularMap  );
 	}
 
 	// render the objects of the batch, one after one.
