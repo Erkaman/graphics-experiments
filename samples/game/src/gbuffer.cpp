@@ -8,7 +8,8 @@
 void Gbuffer::RecreateBuffers(const GLsizei width, const GLsizei height)  {
     Bind();
     {
-	// first we create a render target, and attach it the FBO.
+	// Color Texture
+
 	m_colorTexture = new Texture(
 	    GL_TEXTURE_2D,
 	    width,
@@ -17,7 +18,7 @@ void Gbuffer::RecreateBuffers(const GLsizei width, const GLsizei height)  {
 	    GL_RGBA,  // format
 	    GL_UNSIGNED_BYTE); // type
 
-	Texture::SetActiveTextureUnit(m_targetTextureUnit);
+	Texture::SetActiveTextureUnit(COLOR_TEXTURE_UNIT);
 	m_colorTexture->Bind();
 	{
 	    m_colorTexture->SetMagMinFilters(GL_NEAREST);
@@ -26,25 +27,75 @@ void Gbuffer::RecreateBuffers(const GLsizei width, const GLsizei height)  {
 	    // attach the target texture to the FBO.
 	    Attach(GL_COLOR_ATTACHMENT0, *m_colorTexture);
 	}
-
 	m_colorTexture->Unbind();
 
-	// next we create a depth buffer, and attach it to the FBO.
+	// Normal Texture:
 
-	m_depthBuffer = new RenderBuffer();
-	m_depthBuffer->Bind();
+	m_normalTexture = new Texture(
+	    GL_TEXTURE_2D,
+	    width,
+	    height,
+	    GL_RGBA16F, // internal format
+	    GL_RGBA,  // format
+	    GL_FLOAT); // type
+
+	Texture::SetActiveTextureUnit(NORMAL_TEXTURE_UNIT);
+	m_normalTexture->Bind();
 	{
-	    m_depthBuffer->RenderbufferStorage(GL_DEPTH_COMPONENT, width, height);
+	    m_normalTexture->SetMagMinFilters(GL_NEAREST);
+	    m_normalTexture->SetTextureClamping();
 
-	    // attach the depth buffer to the FBO.
-	    GL_C(glFramebufferRenderbuffer(m_target, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,m_depthBuffer->GetHandle()));
+	    // attach the target texture to the FBO.
+	    Attach(GL_COLOR_ATTACHMENT1, *m_normalTexture);
 	}
-	m_depthBuffer->Unbind();
+	m_normalTexture->Unbind();
+
+	// Position:
+
+	m_positionTexture = new Texture(
+	    GL_TEXTURE_2D,
+	    width,
+	    height,
+	    GL_RGBA32F, // internal format
+	    GL_RGBA,  // format
+	    GL_FLOAT); // type
+
+	Texture::SetActiveTextureUnit(POSITION_TEXTURE_UNIT);
+	m_positionTexture->Bind();
+	{
+	    m_positionTexture->SetMagMinFilters(GL_NEAREST);
+	    m_positionTexture->SetTextureClamping();
+
+	    // attach the target texture to the FBO.
+	    Attach(GL_COLOR_ATTACHMENT2, *m_positionTexture);
+	}
+	m_positionTexture->Unbind();
 
 
-	/*GL_C(glReadBuffer(GL_NONE));
-	GL_C(glDrawBuffer(GL_COLOR_ATTACHMENT0));
-	*/
+	// first we create a render target, and attach it the FBO.
+	m_depthTexture = new Texture(
+	    GL_TEXTURE_2D,
+	    width,
+	    height,
+	    GL_DEPTH_COMPONENT32, // internal format
+	    GL_DEPTH_COMPONENT,  // format
+	    GL_UNSIGNED_INT); // type
+
+	Texture::SetActiveTextureUnit(DEPTH_TEXTURE_UNIT);
+	m_depthTexture->Bind();
+	{
+	    m_depthTexture->SetMagMinFilters(GL_NEAREST);
+	    m_depthTexture->SetTextureClamping();
+
+	    // attach the target texture to the FBO.
+	    Attach(GL_DEPTH_ATTACHMENT, *m_depthTexture);
+	}
+	m_depthTexture->Unbind();
+
+//	GL_C(glReadBuffer(GL_NONE));
+	GLenum tgts[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	GL_C(glDrawBuffers(3, tgts));
+
 
 	CheckFramebufferStatus();
 
@@ -60,4 +111,16 @@ Gbuffer::Gbuffer() {
 
 Texture* Gbuffer::GetColorTexture() {
     return m_colorTexture;
+}
+
+Texture* Gbuffer::GetDepthTexture() {
+    return m_depthTexture;
+}
+
+Texture* Gbuffer::GetNormalTexture() {
+    return m_normalTexture;
+}
+
+Texture* Gbuffer::GetPositionTexture() {
+    return m_positionTexture;
 }

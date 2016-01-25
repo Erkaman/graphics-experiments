@@ -2,7 +2,7 @@
 
 in vec3 position;
 
-out vec4 fragmentColor;
+out vec4 geoData[3];
 
 uniform vec3 viewSpaceLightDirection;
 uniform float resolution;
@@ -63,7 +63,7 @@ void main()
     float spec= calcSpec(l,n,v);
     float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 
-    fragmentColor = calcLighting(
+    geoData[0] = calcLighting(
 	ambientMat.xyz,
 	diffMat.xyz,
 	specShiny,
@@ -72,4 +72,7 @@ void main()
 	diff,
 	spec,
 	visibility);
+
+    geoData[1] = vec4(viewSpaceNormal,0);
+    geoData[2] = vec4(viewSpacePosition, 0);
 }

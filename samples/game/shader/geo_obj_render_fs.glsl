@@ -112,7 +112,8 @@ uniform float zFar;
 uniform sampler2DShadow shadowMap;
 
 
-out vec4 fragmentColor;
+out vec4 geoData[3];
+
 
 uniform vec3 specColor;
 uniform float specShiny;
@@ -219,7 +220,7 @@ void main(void) {
 
     float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 
-    fragmentColor = calcLighting(
+    geoData[0] = calcLighting(
 	ambientMat.xyz,
 	diffMat.xyz,
 	specShiny,
@@ -228,6 +229,9 @@ void main(void) {
 	diff,
 	spec,
 	visibility);
+    geoData[1] = vec4(viewSpaceNormalOut, 0);
+    geoData[2] = vec4(viewSpacePositionOut, 0);
+
 
     //  fragmentColor = vec4( vec3(cosTheta), 1.0  );
 }

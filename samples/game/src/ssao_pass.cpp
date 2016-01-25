@@ -12,15 +12,30 @@ SsaoPass::SsaoPass() {
 void SsaoPass::Render(Gbuffer* gbuffer) {
     m_shader->Bind();
 
-    Texture* colorTexture = gbuffer->GetColorTexture();
-    m_shader->SetUniform("colorTexture", 0);
-    Texture::SetActiveTextureUnit(0);
-    colorTexture->Bind();
+
+    m_shader->SetUniform("colorTexture", COLOR_TEXTURE_UNIT);
+    Texture::SetActiveTextureUnit(COLOR_TEXTURE_UNIT);
+    gbuffer->GetColorTexture()->Bind();
+
+    m_shader->SetUniform("depthTexture", DEPTH_TEXTURE_UNIT);
+    Texture::SetActiveTextureUnit(DEPTH_TEXTURE_UNIT);
+    gbuffer->GetDepthTexture()->Bind();
+
+    m_shader->SetUniform("normalTexture", NORMAL_TEXTURE_UNIT);
+    Texture::SetActiveTextureUnit(NORMAL_TEXTURE_UNIT);
+    gbuffer->GetNormalTexture()->Bind();
+
+
+    m_shader->SetUniform("positionTexture", POSITION_TEXTURE_UNIT);
+    Texture::SetActiveTextureUnit(POSITION_TEXTURE_UNIT);
+    gbuffer->GetPositionTexture()->Bind();
+
 
     GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
 
-    colorTexture->Unbind();
-
+    gbuffer->GetColorTexture()->Unbind();
+    gbuffer->GetDepthTexture()->Unbind();
+    gbuffer->GetPositionTexture()->Unbind();
 
     m_shader->Unbind();
 }
