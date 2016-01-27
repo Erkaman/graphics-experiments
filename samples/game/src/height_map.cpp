@@ -13,6 +13,7 @@
 #include "gl/shader_program.hpp"
 #include "gl/texture2d.hpp"
 
+#include "math/math_common.hpp"
 #include "math/matrix4f.hpp"
 #include "icamera.hpp"
 #include "file.hpp"
@@ -119,13 +120,14 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
 	m_noise = new ValueNoise(2);
 //	m_idShader = ShaderProgram::Load("shader/height_map_output_id");
 	m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
-
-
     }
 
     CreateHeightmap(heightMapFilename, guiMode);
 
     CreateSplatMap(splatMapFilename, guiMode);
+
+    ComputeAo();
+
 
     if(guiMode) {
 	m_heightMapPbo = new PBO<unsigned short>(m_heightMap, m_heightData, HEIGHT_MAP_SIZE);
@@ -134,6 +136,104 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
     }
 
     CreateAABBs();
+
+    if(!guiMode){
+	// if not in GUI, we do not need this array beyond this point.
+	MY_DELETE(m_heightData);
+    }
+
+
+}
+
+
+void HeightMap::ComputeAo(){
+
+    m_aoData = new MultArray<float>(m_resolution, m_resolution, 0.0f);
+    MultArray<float>& aoData = *m_aoData;
+    MultArray<unsigned short>& heightData = *m_heightData;
+
+    for(size_t x = 0; x < m_resolution; ++x) {
+
+	for(size_t z = 0; z < m_resolution; ++z) {
+
+	    /*if(x == 250 && z == 400 )*/ {
+
+		float ao = 0.0f;
+
+		Vector3f originPos = ComputeHeightMapPos(x,z);
+		Vector3f originNormal = ComputeHeightMapNormal(x,z);
+
+		for(int i=1; i<63; i++){
+		    /*	float s = float(i)/32.0;
+			float a = sqrt(s*512.0);
+			float b = sqrt(s);
+			float x = sin(a)*b;
+			float y = cos(a)*b;*/
+
+		    float s = i / 32.0f;
+		    float a = sqrt(s*300.0f);
+
+		    float b = sqrt(s * 200.0f);
+
+		    float spiralX = sin(a)*b;
+		    float spiralZ = cos(a)*b;
+
+		    int ix = int(x + spiralX);
+		    int iz = int(z + spiralZ);
+
+		    ix = Clamp(ix, 0, m_resolution-1);
+		    iz = Clamp(iz, 0, m_resolution-1);
+
+
+		    //  aoData(ix, iz) = 0.5f;
+
+		    Vector3f samplePos = ComputeHeightMapPos(ix,iz);
+
+		    Vector3f sampleDir = (samplePos - originPos).Normalize();
+
+		    float lambert = Clamp(Vector3f::Dot(originNormal, sampleDir), 0.0f, 1.0f);
+
+		    float distFactor = 1.7/sqrt((samplePos - originPos).Length());
+		    ao += distFactor*lambert;
+
+		}
+
+		aoData(x,z) = ao/32.0;
+
+
+
+	    }
+
+//	    LOG_I("%d, %d", x, y);
+
+	    //     = (heightData(x,y) -MID_HEIGHT)  / (float)MID_HEIGHT;
+
+
+
+//
+
+//INFO: /Users/eric/tuhu/samples/game/src/height_map.cpp:162:ComputeAo:1.000000, 32768
+/*
+  if(heightData(x,y) !=32768)
+
+  LOG_I("%f, %d",aoData(x,y), heightData(x,y) );*/
+
+	}
+    }
+
+    m_aoMap = new Texture2D(aoData.GetData(), m_resolution, m_resolution,
+
+			       GL_R16F, // internal format
+				GL_RED, // format
+			       GL_FLOAT);
+
+    m_aoMap->Bind();
+    m_aoMap->SetTextureClamping();
+    m_aoMap->GenerateMipmap();
+    m_aoMap->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    m_aoMap->SetMagFilter(GL_LINEAR);
+    m_aoMap->Unbind();
+
 
 }
 
@@ -283,6 +383,11 @@ void HeightMap::RenderHeightMap(
     Texture::SetActiveTextureUnit(4);
     m_splatMap->Bind();
 
+    m_shader->SetUniform("aoMap", 5);
+    Texture::SetActiveTextureUnit(5);
+    m_aoMap->Bind();
+
+
 
     m_shader->SetUniform("grass", 0);
     Texture::SetActiveTextureUnit(0);
@@ -315,6 +420,7 @@ void HeightMap::RenderHeightMap(
     m_rockTexture->Unbind();
 
     m_splatMap->Unbind();
+    m_aoMap->Unbind();
 
     shadowMap.GetRenderTargetTexture().Unbind();
 
@@ -507,6 +613,8 @@ void HeightMap::LoadHeightmap(const std::string& heightMapFilename) {
 
 	for(int i = 0; i < m_resolution; ++i) {
 
+
+
 	    heightData(i,j) = *data;
 
 	    ++data;
@@ -641,10 +749,6 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     m_heightMap->SetMagFilter(GL_LINEAR);
     m_heightMap->Unbind();
 
-    if(!guiMode){
-	// if not in GUI, we do not need this array beyond this point.
-	MY_DELETE(m_heightData);
-    }
 
     /*
       Create a chunk mesh:
@@ -1480,4 +1584,49 @@ AABB HeightMap::GetAABB()const {
     aabb.min = aabb.max * -1.0f;
 
     return aabb;
+}
+
+Vector3f HeightMap::ComputeHeightMapPos(int x, int z) {
+
+    // clamp:
+    if(x < 0)
+	x = 0;
+    if(x >= m_resolution)
+	x = m_resolution-1;
+
+    if(z < 0)
+	z = 0;
+    if(z >= m_resolution)
+	z = m_resolution-1;
+
+    return  Vector3f(
+	((float)x / m_resolution) * m_xzScale,
+	ComputeHeightMapHeight(x,z)*m_yScale,
+         ((float)z / m_resolution) * m_xzScale );
+}
+
+float HeightMap::ComputeHeightMapHeight(int x, int z) {
+
+    x = Clamp(x, 0, m_resolution-1);
+
+    z = Clamp(z, 0, m_resolution-1);
+
+    MultArray<unsigned short>& heightData = *m_heightData;
+    return (float)(heightData(x,z)-MID_HEIGHT) / MID_HEIGHT;
+}
+
+
+Vector3f HeightMap::ComputeHeightMapNormal(int x, int z) {
+    int eps = 1;
+
+    //eps on x axis.
+    Vector3f va =
+	Vector3f(2*eps, ComputeHeightMapHeight(x+eps, z) - ComputeHeightMapHeight(x-eps,z), 0 );
+
+    Vector3f vb = Vector3f(0, ComputeHeightMapHeight(x,z+eps) - ComputeHeightMapHeight(x,z-eps), 2*eps );
+
+    // http://stackoverflow.com/questions/5281261/generating-a-normal-map-from-a-height-map
+    Vector3f n = (Vector3f::Cross(vb.Normalize(), va.Normalize() )).Normalize();
+
+    return n;
 }

@@ -104,4 +104,3 @@ float calcVisibility(sampler2DShadow shadowMap, float diff, vec4 shadowCoord ) {
 
     return visibility;
 }
-

@@ -26,6 +26,8 @@ out vec3 position;
 
 out vec4 shadowCoordOut;
 
+out vec3 outn;
+
 void main()
 {
     // pos local in the chunk.
@@ -50,4 +52,6 @@ void main()
     position = scaledPos;
 
     shadowCoordOut = (lightMvp * vec4(scaledPos,1));
+
+    outn = norm;
 }

@@ -22,13 +22,14 @@ uniform sampler2DShadow shadowMap;
 
 
 uniform sampler2D splatMap;
+uniform sampler2D aoMap;
 
-in vec3 norm;
+in vec3 outn;
 
 void main()
 {
 
-    vec3 scene_ambient_light = vec3(0.6);
+    vec3 scene_ambient_light = vec3(0.6) * (1.0 -texture(aoMap, texCoord).r);
     vec3 scene_light = vec3(0.8);
 
 
@@ -55,7 +56,7 @@ void main()
     fragmentColor = vec4(shading, 1.0);
     */
 
-    vec3 ambientMat = vec3(0.6);
+    vec3 ambientMat = vec3(0.6)* (1.0 -texture(aoMap, texCoord).r);
     vec3 diffMat = vec3(0.8);
     float specShiny = 0;
     vec3 specColor = vec3(0);
@@ -63,7 +64,8 @@ void main()
     float spec= calcSpec(l,n,v);
     float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 
-    geoData[0] = calcLighting(
+    geoData[0] =vec4(vec3(1.0-texture(aoMap, texCoord).r), 1.0);
+	  calcLighting(
 	ambientMat.xyz,
 	diffMat.xyz,
 	specShiny,

@@ -7,6 +7,8 @@
 
 #include "ewa/gl/texture2d.hpp"
 
+#include "ewa/camera.hpp"
+
 
 SsaoPass::SsaoPass(int framebufferWidth, int framebufferHeight) {
     m_screenSize = Vector2f(framebufferWidth, framebufferHeight);
@@ -20,7 +22,7 @@ SsaoPass::SsaoPass(int framebufferWidth, int framebufferHeight) {
     m_randomTexture->Unbind();
 }
 
-void SsaoPass::Render(Gbuffer* gbuffer) {
+void SsaoPass::Render(Gbuffer* gbuffer, const ICamera* camera) {
     m_shader->Bind();
 
 
@@ -47,10 +49,16 @@ void SsaoPass::Render(Gbuffer* gbuffer) {
 
     m_shader->SetUniform("screenSize", m_screenSize);
 
-    m_shader->SetUniform("intensity", 50.0f);
-    m_shader->SetUniform("bias", 0.8f);
-    m_shader->SetUniform("scale", 0.1f);
-    m_shader->SetUniform("sampleRad", 3.0f);
+    m_shader->SetUniform("intensity", 30.0f);
+    m_shader->SetUniform("bias", 0.9f);
+    m_shader->SetUniform("scale", 0.05f);
+    m_shader->SetUniform("sampleRad", 0.4f);
+
+    Matrix4f invProj = camera->GetProjectionMatrix();
+    invProj.Inverse();
+
+    m_shader->SetUniform("invProj", invProj);
+
 
 
 /*

@@ -14,9 +14,32 @@ uniform float scale;
 uniform float bias;
 uniform float intensity;
 uniform float sampleRad;
+uniform mat4 invProj;
 
 vec3 getPosition(in vec2 uv)
 {
+/*    float far = 500.0f;
+    float near = 1.1f;
+
+
+     // Get the depth value for this pixel
+    float z = texture(colorTexture, texCoord).r;
+
+    z = (2.0 * near) / (far + near - z * (far - near));
+
+
+    // Get x/w and y/w from the viewport position
+    float x = texCoord.x * 2 - 1;
+    float y = (texCoord.y) * 2 - 1;
+    vec4 vProjectedPos = vec4(x, y, z, 1.0f);
+    // Transform by the inverse projection matrix
+    vec4 vPositionVS = invProj * vProjectedPos;
+    // Divide by w to get the view-space position
+
+    return (vPositionVS.xyz / vPositionVS.w).xyz;
+
+*/
+
     return texture(positionTexture,uv).xyz;
 }
 
@@ -73,8 +96,6 @@ void main() {
 			  vec2(0.993884, 0.110432),
 			  vec2(0.6, 0.8),
 			  vec2(0.919145, 0.393919)
-
-
 	);
 
     vec3 p = getPosition(uv);
@@ -88,9 +109,8 @@ void main() {
      */
     float rad = sampleRad/p.z;
 
-
 //**SSAO Calculation**//
-    int iterations = 1;
+    int iterations = 4;
     for (int j = 0; j < iterations; ++j)
     {
 	vec2 coord1 = reflect(vec[j],rand)*rad;
@@ -106,13 +126,47 @@ void main() {
     }
     ao/=float(iterations*4.0);
 
-    fragmentColor = vec4(texture(colorTexture, texCoord).xyz *(1.0-ao),1.0);
+     fragmentColor = vec4(texture(colorTexture, texCoord).xyz *(1.0-ao),1.0);
+    //fragmentColor = vec4(vec3(1.0-ao),1.0);
+
+//      fragmentColor = vec4(texture(positionTexture,uv).xyz, 1.0);
+
+     // Get the depth value for this pixel
+    float z = texture(colorTexture, texCoord).r;
+
+    float far = 500.0f;
+    float near = 1.1f;
+
+    z = (2.0 * near) / (far + near - z * (far - near));
+
+    // Get x/w and y/w from the viewport position
+    float x = texCoord.x * 2 - 1;
+    float y = (texCoord.y) * 2 - 1;
+    vec4 vProjectedPos = vec4(x, y, z, 1.0f);
+    // Transform by the inverse projection matrix
+    vec4 vPositionVS = invProj * vProjectedPos;
+    // Divide by w to get the view-space position
+
+    //   fragmentColor = vec4(vPositionVS.xyz / vPositionVS.w, 1.0);
 
 /*
 
-    vec4 color = texture(colorTexture, texCoord);
     vec4 color = texture(randomTexture, screenSize * texCoord / vec2(64) );
 
     fragmentColor = vec4( color.xyz,1);
 */
+
+/*
+      float z = texture(depthTexture, texCoord).r;
+
+      float ndcDepth  =
+	  (2.0 * z - 1.1 - 500.0f) /
+	  (500.0f - 1.1);
+*/
+
+//    vec4 color = texture(colorTexture, texCoord);
+
+//      ndcDepth = ndcDepth / gl_FragCoord.w;
+
+//      fragmentColor = vec4( vec3(ndcDepth*0.5 + 0.5 ) ,1);
 }

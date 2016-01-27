@@ -32,7 +32,7 @@ float deltaScroll;
 #include <GLFW/glfw3native.h>
 #endif
 
-constexpr int MIN_CURSOR_SIZE = 10;
+constexpr int MIN_CURSOR_SIZE = 3;
 constexpr int MAX_CURSOR_SIZE = 90;
 constexpr int DEFAULT_RADIUS = 35;
 

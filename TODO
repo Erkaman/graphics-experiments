@@ -1,8 +1,7 @@
-shadow TODO:
-* poisson
-* moving camera
-* instanced rendering?
-* swimming texture.
+ao TODO:
+ao for trees:
+http://www-sop.inria.fr/reves/Basilic/2006/HPAD06/HPAD06.pdf
+
 
 heightmap reference:
 https://www.youtube.com/watch?v=j4CE7G4TOyI
@@ -18,7 +17,33 @@ http://ivanleben.blogspot.se/2008/03/water-reflections-with-opengl.html
 http://khayyam.kaplinski.com/2011/09/reflective-water-with-glsl-part-i.html
 
 * deferred shading.
+http://www.codinglabs.net/tutorial_opengl_deferred_rendering_shadow_mapping.aspx
+http://stackoverflow.com/questions/27461958/shadow-mapping-with-a-deferred-rendering
+
+http://users.csc.calpoly.edu/~zwood/teaching/csc572/final11/rschmitt/
+
 * SSAO
+http://www.iquilezles.org/www/articles/ssao/ssao.htm
+http://www.iquilezles.org/www/articles/multiresaocc/multiresaocc.htm
+file:///Users/eric/Dropbox/reports/DATx02-14-20.pdf
+http://www.cise.ufl.edu/~cchi/SSAO.pdf
+http://amd-dev.wpengine.netdna-cdn.com/wordpress/media/2013/01/Chapter05-Filion-StarCraftII.pdf
+http://saplin.blogspot.se/2012/01/bilateral-image-filter-edge-preserving.html
+http://www.gamedev.net/topic/631378-bilateral-gaussian-blur/
+http://stackoverflow.com/questions/6538310/anyone-know-where-i-can-find-a-glsl-implementation-of-a-bilateral-filter-blur
+https://en.wikipedia.org/wiki/Bilateral_filter
+http://john-chapman-graphics.blogspot.se/2013/01/ssao-tutorial.html
+https://mtnphil.wordpress.com/2013/06/26/know-your-ssao-artifacts/
+
+* reconstructing depth:
+https://mynameismjp.wordpress.com/2009/03/10/reconstructing-position-from-depth/
+https://mynameismjp.wordpress.com/2010/09/05/position-from-depth-3/
+https://mynameismjp.wordpress.com/2010/09/05/position-from-depth-3/
+http://www.mvps.org/directx/articles/linear_z/linearz.htm
+http://www.gamedev.net/topic/526330-linear-depth-buffer-question/
+http://stackoverflow.com/questions/22295120/deferred-rendering-with-opengl-experiencing-heavy-pixelization-near-lit-boundar
+http://users.csc.calpoly.edu/~zwood/teaching/csc572/final11/rschmitt/
+
 * particle system.
 
 https://www.youtube.com/watch?v=JEiKX_xXTVQ

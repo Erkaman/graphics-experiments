@@ -6,6 +6,7 @@ class ShaderProgram;
 class Gbuffer;
 class RandomTexture;
 class Texture;
+class ICamera;
 
 class SsaoPass{
 
@@ -19,6 +20,6 @@ public:
 
     SsaoPass(int framebufferWidth, int framebufferHeight);
 
-    void Render(Gbuffer* gbuffer);
+    void Render(Gbuffer* gbuffer, const ICamera* camera);
 
 };

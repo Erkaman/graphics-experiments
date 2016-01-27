@@ -150,10 +150,13 @@ private:
 
     Texture2D* m_heightMap;
     Texture2D* m_splatMap;
+    Texture2D* m_aoMap;
 
 
     MultArray<unsigned short>* m_heightData;
     MultArray<SplatColor>* m_splatData;
+    MultArray<float>* m_aoData;
+
     MultArray<AABB>* m_aabbs;// the AABBs of the chunks.
     Cube* m_aabbWireframe;
 
@@ -263,4 +266,11 @@ public:
     void SetCursorSize(int cursorSize);
 
     AABB GetAABB()const;
+
+    void ComputeAo();
+
+    Vector3f ComputeHeightMapPos(int x, int z);
+    float ComputeHeightMapHeight(int x, int z);
+    Vector3f ComputeHeightMapNormal(int x, int z);
+
 };

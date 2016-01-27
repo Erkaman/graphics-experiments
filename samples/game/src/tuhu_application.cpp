@@ -264,6 +264,9 @@ Matrix4f TuhuApplication::MakeLightProj(int frameBufferWidth, int frameBufferHei
     // ALSO, note that the size of the frame buffer is a square, but the frame buffer is not!
     // this may have to be taken into account.
 
+    // Also see "Practical Shadow Mapping"
+    // for linear z-values.
+
 
     /*
       First we compute the world space location of all 8 corners of the view frustum.
@@ -559,16 +562,14 @@ void TuhuApplication::Render() {
     if(m_pickingFbo)
 	RenderId();
 
-//    m_gbuffer->BindForWriting();
+    //   m_gbuffer->BindForWriting();
 
-    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     RenderScene();
 
-//    m_gbuffer->UnbindForWriting();
+    //     m_gbuffer->UnbindForWriting();
 
-
-//    m_aabbWireframe->Render(m_curCamera->GetVp());
+	// m_aabbWireframe->Render(m_curCamera->GetVp());
 
     if(m_gui) {
 
@@ -583,11 +584,9 @@ void TuhuApplication::Render() {
 	m_gui->Render(windowWidth, windowHeight);
     }
 
-
     m_gpuProfiler->Begin(GTS_SSAO);
-//    m_ssaoPass->Render(m_gbuffer);
+    //  m_ssaoPass->Render(m_gbuffer, m_curCamera);
     m_gpuProfiler->End(GTS_SSAO);
-
 
     m_gpuProfiler->WaitForDataAndUpdate();
 
