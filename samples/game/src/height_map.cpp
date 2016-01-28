@@ -1,6 +1,5 @@
-//todo: tweak the noise tool some.
-
-
+//todo: add button that rebakes the ao map.
+//todo: if the ao map does not exist, we create it at startup. te
 
 #include "height_map.hpp"
 
@@ -73,8 +72,11 @@ static Texture* LoadTexture(const string& filename) {
     return texture;
 }
 
-void HeightMap::Init(const std::string& heightMapFilename, const std::string& splatMapFilename,
-		     bool guiMode ) {
+void HeightMap::Init(
+    const std::string& heightMapFilename,
+    const std::string& splatMapFilename,
+    const std::string& aoMapFilename,
+    bool guiMode ) {
 
     m_aabbWireframe = Cube::Load();
 
@@ -126,8 +128,7 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
 
     CreateSplatMap(splatMapFilename, guiMode);
 
-    ComputeAo();
-
+    CreateAoMap(aoMapFilename, guiMode);
 
     if(guiMode) {
 	m_heightMapPbo = new PBO<unsigned short>(m_heightMap, m_heightData, HEIGHT_MAP_SIZE);
@@ -141,91 +142,86 @@ void HeightMap::Init(const std::string& heightMapFilename, const std::string& sp
 	// if not in GUI, we do not need this array beyond this point.
 	MY_DELETE(m_heightData);
     }
-
-
 }
 
+void HeightMap::CreateAoMap(const std::string& aoMapFilename, bool guiMode){
 
-void HeightMap::ComputeAo(){
-
-    m_aoData = new MultArray<float>(m_resolution, m_resolution, 0.0f);
+    m_aoData = new MultArray<float>(m_resolution, m_resolution, 1.0f);
     MultArray<float>& aoData = *m_aoData;
-    MultArray<unsigned short>& heightData = *m_heightData;
 
+
+    if(aoMapFilename != "") {
+
+	size_t unused;
+	float* data = (float *)File::ReadArray(aoMapFilename, unused);
+
+	for(int j = 0; j < m_resolution; ++j) {
+
+	    for(int i = 0; i < m_resolution; ++i) {
+
+		aoData(i,j) = *data;
+
+		++data;
+	    }
+	}
+
+
+    }
+
+/*
     for(size_t x = 0; x < m_resolution; ++x) {
 
 	for(size_t z = 0; z < m_resolution; ++z) {
 
-	    /*if(x == 250 && z == 400 )*/ {
+	    float ao = 0.0f;
 
-		float ao = 0.0f;
+	    Vector3f originPos = ComputeHeightMapPos(x,z);
+	    Vector3f originNormal = ComputeHeightMapNormal(x,z);
 
-		Vector3f originPos = ComputeHeightMapPos(x,z);
-		Vector3f originNormal = ComputeHeightMapNormal(x,z);
+	    for(int i=1; i<63; i++){
 
-		for(int i=1; i<63; i++){
-		    /*	float s = float(i)/32.0;
-			float a = sqrt(s*512.0);
-			float b = sqrt(s);
-			float x = sin(a)*b;
-			float y = cos(a)*b;*/
+		float s = i / 32.0f;
+		float a = sqrt(s*300.0f);
 
-		    float s = i / 32.0f;
-		    float a = sqrt(s*300.0f);
+		float b = sqrt(s * 200.0f);
 
-		    float b = sqrt(s * 200.0f);
+		float spiralX = sin(a)*b;
+		float spiralZ = cos(a)*b;
 
-		    float spiralX = sin(a)*b;
-		    float spiralZ = cos(a)*b;
+		int ix = int(x + spiralX);
+		int iz = int(z + spiralZ);
 
-		    int ix = int(x + spiralX);
-		    int iz = int(z + spiralZ);
-
-		    ix = Clamp(ix, 0, m_resolution-1);
-		    iz = Clamp(iz, 0, m_resolution-1);
+		ix = Clamp(ix, 0, m_resolution-1);
+		iz = Clamp(iz, 0, m_resolution-1);
 
 
-		    //  aoData(ix, iz) = 0.5f;
+		//  aoData(ix, iz) = 0.5f;
 
-		    Vector3f samplePos = ComputeHeightMapPos(ix,iz);
+		Vector3f samplePos = ComputeHeightMapPos(ix,iz);
 
-		    Vector3f sampleDir = (samplePos - originPos).Normalize();
+		Vector3f sampleDir = (samplePos - originPos).Normalize();
 
-		    float lambert = Clamp(Vector3f::Dot(originNormal, sampleDir), 0.0f, 1.0f);
+		float lambert = Clamp(Vector3f::Dot(originNormal, sampleDir), 0.0f, 1.0f);
 
-		    float distFactor = 1.7/sqrt((samplePos - originPos).Length());
-		    ao += distFactor*lambert;
-
-		}
-
-		aoData(x,z) = ao/32.0;
-
-
+		float distFactor = 1.7/sqrt((samplePos - originPos).Length());
+		ao += distFactor*lambert;
 
 	    }
 
-//	    LOG_I("%d, %d", x, y);
-
-	    //     = (heightData(x,y) -MID_HEIGHT)  / (float)MID_HEIGHT;
+	    aoData(x,z) = ao/32.0;
 
 
-
-//
-
-//INFO: /Users/eric/tuhu/samples/game/src/height_map.cpp:162:ComputeAo:1.000000, 32768
-/*
-  if(heightData(x,y) !=32768)
-
-  LOG_I("%f, %d",aoData(x,y), heightData(x,y) );*/
 
 	}
+
     }
+*/
 
     m_aoMap = new Texture2D(aoData.GetData(), m_resolution, m_resolution,
 
-			       GL_R16F, // internal format
-				GL_RED, // format
-			       GL_FLOAT);
+			    GL_R16F, // internal format
+			    GL_RED, // format
+			    GL_FLOAT);
 
     m_aoMap->Bind();
     m_aoMap->SetTextureClamping();
@@ -234,6 +230,10 @@ void HeightMap::ComputeAo(){
     m_aoMap->SetMagFilter(GL_LINEAR);
     m_aoMap->Unbind();
 
+    if(!guiMode){
+	// if not in GUI, we do not need this array beyond this point.
+	MY_DELETE(m_aoData);
+    }
 
 }
 
@@ -244,12 +244,13 @@ void HeightMap::SetCursorSize(int cursorSize) {
 }
 
 HeightMap::HeightMap( bool guiMode) {
-    Init("", "", guiMode);
+    Init("", "", "", guiMode);
 }
 
-HeightMap::HeightMap(const std::string& heightMapFilename, const std::string& splatMapFilename, bool guiMode ){
+HeightMap::HeightMap(const std::string& heightMapFilename, const std::string& splatMapFilename,
+		         const std::string& aoMapFilename,bool guiMode ){
 
-    Init(heightMapFilename, splatMapFilename, guiMode);
+    Init(heightMapFilename, splatMapFilename, aoMapFilename, guiMode);
 
 }
 
@@ -1355,11 +1356,9 @@ void HeightMap::SaveHeightMap(const std::string& filename) {
 
     unsigned short* data = m_heightMap->GetPixels<unsigned short>(m_resolution * m_resolution, GL_RED, GL_UNSIGNED_SHORT);
 
-    LOG_I("height data: %d", data[3]  );
-
     File::WriteArray(filename, data, m_resolution * m_resolution*2);
 
-    m_heightMap->Write16ToFile("height.png");
+//    m_heightMap->Write16ToFile("height.png");
 }
 
 void HeightMap::SaveSplatMap(const std::string& filename) {
@@ -1369,6 +1368,14 @@ void HeightMap::SaveSplatMap(const std::string& filename) {
     File::WriteArray(filename, splatData.GetData(), m_resolution * m_resolution*4);
 }
 
+void HeightMap::SaveAoMap(const std::string& filename) {
+
+    MultArray<float>& aoData = *m_aoData;
+
+    File::WriteArray(filename, aoData.GetData(),
+		     m_resolution * m_resolution*4 // every float is 4 bytes.
+	);
+}
 
 void HeightMap::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
@@ -1629,4 +1636,60 @@ Vector3f HeightMap::ComputeHeightMapNormal(int x, int z) {
     Vector3f n = (Vector3f::Cross(vb.Normalize(), va.Normalize() )).Normalize();
 
     return n;
+}
+
+
+void HeightMap::BakeAo(int samples, int waveLength, int amplitude, float distAttenuation) {
+
+    MultArray<unsigned short>& heightData = *m_heightData;
+    MultArray<float>& aoData = *m_aoData;
+
+    for(size_t x = 0; x < m_resolution; ++x) {
+
+	for(size_t z = 0; z < m_resolution; ++z) {
+
+	    float ao = 0.0f;
+
+	    Vector3f originPos = ComputeHeightMapPos(x,z);
+	    Vector3f originNormal = ComputeHeightMapNormal(x,z);
+
+	    for(int i=1; i<=samples; i++){
+
+		float s = i / (float)samples;
+		float a = sqrt(s* (float)waveLength );
+
+		float b = sqrt(s * (float)amplitude );
+
+		float spiralX = sin(a)*b;
+		float spiralZ = cos(a)*b;
+
+		int ix = int(x + spiralX);
+		int iz = int(z + spiralZ);
+
+		ix = Clamp(ix, 0, m_resolution-1);
+		iz = Clamp(iz, 0, m_resolution-1);
+
+
+		//  aoData(ix, iz) = 0.5f;
+
+		Vector3f samplePos = ComputeHeightMapPos(ix,iz);
+
+		Vector3f sampleDir = (samplePos - originPos).Normalize();
+
+		float lambert = Clamp(Vector3f::Dot(originNormal, sampleDir), 0.0f, 1.0f);
+
+		float distFactor = distAttenuation/sqrt((samplePos - originPos).Length());
+		ao += distFactor*lambert;
+
+	    }
+
+	    aoData(x,z) = ao/(float)samples;
+	}
+
+    }
+
+    m_aoMap->Bind();
+    m_aoMap->UpdateTexture(aoData.GetData() );
+    m_aoMap->Unbind();
+
 }

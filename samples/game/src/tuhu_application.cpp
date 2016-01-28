@@ -64,6 +64,8 @@ constexpr int SHADOW_MAP_SIZE =
 
 const string HEIGHT_MAP_FILENAME = "heightmap.bin";
 const string SPLAT_MAP_FILENAME = "splatmap.bin";
+const string AO_MAP_FILENAME = "aomap.bin";
+
 const string OBJS_FILENAME = "objs";
 
 void ToClipboard(const std::string& str) {
@@ -174,7 +176,10 @@ void TuhuApplication::Init() {
 
 	m_heightMap = new HeightMap(
 	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,
-	    File::AppendPaths(dir, SPLAT_MAP_FILENAME ), guiMode);
+	    File::AppendPaths(dir, SPLAT_MAP_FILENAME ),
+	    File::AppendPaths(dir, AO_MAP_FILENAME ),
+
+	    guiMode);
 
 	ParseObjs(File::AppendPaths(dir, OBJS_FILENAME ));
 
@@ -839,10 +844,13 @@ void TuhuApplication::StartPhysics()  {
 
 void TuhuApplication::Cleanup() {
 
+    string dir = Config::GetInstance().GetWorldFilename();
+
+
+
     if(m_gui) {
 	// if we were in the world editor, we need to serialize the world.
 
-	string dir = Config::GetInstance().GetWorldFilename();
 
 	// we save the entire world in a directory. Make sure the directory exists:
 	File::CreatePath(dir);
@@ -852,6 +860,9 @@ void TuhuApplication::Cleanup() {
 
 	// save splatmap:
 	m_heightMap->SaveSplatMap(File::AppendPaths(dir, SPLAT_MAP_FILENAME ) );
+
+	m_heightMap->SaveAoMap(File::AppendPaths(dir, AO_MAP_FILENAME ) );
+
 
 	File* outFile = File::Load(
 	    File::AppendPaths(dir, OBJS_FILENAME ),
@@ -1099,4 +1110,8 @@ void TuhuApplication::UpdateMatrices() {
 
 //	exit(1);
 
+}
+
+void TuhuApplication::BakeAo(int samples, int waveLength, int amplitude, float distAttenuation) {
+    m_heightMap->BakeAo(samples, waveLength, amplitude, distAttenuation);
 }

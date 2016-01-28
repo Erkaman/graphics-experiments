@@ -45,6 +45,21 @@ constexpr int MAX_SMOOTH_RADIUS = 4;
 constexpr int DEFAULT_SMOOTH_RADIUS = 1;
 
 
+constexpr int MIN_AO_SAMPLES = 4;
+constexpr int MAX_AO_SAMPLES = 70;
+constexpr int DEFAULT_AO_SAMPLES = 32;
+
+
+constexpr float MIN_AO_DIST_ATTENUATION = 0.1;
+constexpr float MAX_AO_DIST_ATTENUATION = 5;
+constexpr float DEFAULT_AO_DIST_ATTENUATION = 1.7;
+
+constexpr int MIN_AO_WAVE_LENGTH = 50;
+constexpr int MAX_AO_WAVE_LENGTH = 600;
+constexpr int DEFAULT_AO_WAVE_LENGTH = 300;
+
+
+
 // Data
 static GLFWwindow*  g_Window = NULL;
 static double       g_Time = 0.0f;
@@ -446,6 +461,11 @@ Gui::Gui(GLFWwindow* window) {
     m_noiseScale = DEFAULT_NOISE_SCALE;
     m_smoothRadius = DEFAULT_SMOOTH_RADIUS;
 
+    m_aoSamples = DEFAULT_AO_SAMPLES;
+    m_aoWaveLength = DEFAULT_AO_WAVE_LENGTH;
+    m_aoAmplitude = 200;
+    m_aoDistAttenuation = DEFAULT_AO_DIST_ATTENUATION;
+
     m_terrainMode = ModifyElevationMode;
 
     // init gui:
@@ -518,6 +538,31 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 	ImGui::SliderFloat("Noise Scale", &m_noiseScale, MIN_NOISE_SCALE, MAX_NOISE_SCALE);
 	ImGui::SliderInt("Smooth Radius", &m_smoothRadius, MIN_SMOOTH_RADIUS, MAX_SMOOTH_RADIUS);
+
+
+
+
+
+
+	if (ImGui::Button("Bake AO")) {
+
+	    for(GuiListener* listener : m_listeners) {
+
+		listener->BakeAo(
+		    m_aoSamples,
+		    m_aoWaveLength,
+		    m_aoAmplitude,
+		    m_aoDistAttenuation
+
+		    );
+	    }
+	}
+	ImGui::SliderInt("AO samples", &m_aoSamples, MIN_AO_SAMPLES, MAX_AO_SAMPLES);
+	ImGui::SliderFloat("AO dist attenuation", &m_aoDistAttenuation, MIN_AO_DIST_ATTENUATION, MAX_AO_DIST_ATTENUATION );
+
+
+	ImGui::SliderInt("AO wave length", &m_aoWaveLength, MIN_AO_WAVE_LENGTH, MAX_AO_WAVE_LENGTH );
+
 
 
     } else if(m_guiMode == DrawTextureMode) {

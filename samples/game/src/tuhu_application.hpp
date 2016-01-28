@@ -136,4 +136,6 @@ public:
     virtual void Duplicate();
     virtual void Delete();
 
+    virtual void BakeAo(int samples, int waveLength, int amplitude, float distAttenuation);
+
 };

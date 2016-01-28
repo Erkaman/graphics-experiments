@@ -44,8 +44,6 @@ Texture2D::Texture2D(GLvoid* data, GLsizei width, GLsizei height, GLint internal
 }
 
 void Texture2D::UpdateTexture(GLvoid* data) {
-
-
     GL_C(glTexSubImage2D(
 	     m_target,
 	     m_level,

@@ -11,6 +11,9 @@ public:
 
     virtual void ModelAdded(const std::string& filename)=0;
 
+    virtual void BakeAo(int samples, int waveLength, int amplitude, float distAttenuation)=0;
+
+
     virtual void CursorSizeChanged()=0;
 
     virtual void Duplicate()=0;

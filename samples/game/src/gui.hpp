@@ -29,6 +29,12 @@ private:
     float m_noiseScale;
     int m_smoothRadius;
 
+    int m_aoSamples;
+    int m_aoWaveLength;
+    int m_aoAmplitude;
+    float m_aoDistAttenuation;
+
+
     void RadiusSlider();
 
 public:

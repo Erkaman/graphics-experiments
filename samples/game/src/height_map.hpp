@@ -217,7 +217,11 @@ private:
 		      const float framebufferWidth,
 		      const float framebufferHeight);
 
-    void Init(const std::string& heightMapFilename, const std::string& splatMapFilename, bool guiMode );
+    void Init(
+	const std::string& heightMapFilename,
+	const std::string& splatMapFilename,
+	const std::string& aoMapFilename,
+	bool guiMode );
 
     bool InBounds(int x, int z);
 
@@ -225,7 +229,11 @@ private:
 
 public:
 
-    HeightMap(const std::string& heightMapFilename, const std::string& splatMapFilename, bool guiMode );
+    HeightMap(
+	const std::string& heightMapFilename,
+	const std::string& splatMapFilename,
+	const std::string& aoMapFilename,
+	bool guiMode );
     HeightMap(bool guiMode );
 
 
@@ -260,6 +268,7 @@ public:
 
     void SaveHeightMap(const std::string& filename);
     void SaveSplatMap(const std::string& filename);
+    void SaveAoMap(const std::string& filename);
 
     void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
 
@@ -267,7 +276,8 @@ public:
 
     AABB GetAABB()const;
 
-    void ComputeAo();
+    void CreateAoMap(const std::string& aoMapFilename, bool guiMode);
+    void BakeAo(int samples=32, int waveLength=300, int amplitude=200, float distAttenuation = 1.7);
 
     Vector3f ComputeHeightMapPos(int x, int z);
     float ComputeHeightMapHeight(int x, int z);
