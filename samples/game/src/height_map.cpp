@@ -1698,3 +1698,139 @@ void HeightMap::BakeAo(int samples, int waveLength, int amplitude, float distAtt
     m_aoMap->Unbind();
 
 }
+
+
+
+
+
+
+
+
+void HeightMap::ErodeTerrain() {
+
+    MultArray<unsigned short>& heightData = *m_heightData;
+
+    int cx = m_cursorPosition.x;
+    int cz = m_cursorPosition.y;
+
+    float rad = m_cursorSize;
+
+    constexpr int T = 1000;
+
+    for(int i = 0; i < 100; ++i) {
+
+	for(int ix = -rad; ix <= +rad; ++ix) {
+
+	    for(int iz = -rad; iz <= +rad; ++iz) {
+
+		int ax = cx+ix;
+		int az = cz+iz;
+
+		if(!InBounds(ax,az)) {
+		    continue; // out of range.
+		}
+
+		// distance from center of hill.
+		float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
+
+		// if within the radius of the hill(this ensures that the hill is round)
+		if(dist <= rad) {
+
+		    // find dmax and dtotal
+		    double dmax = 0;
+		    double dtotal = 0;
+		    double dis[9];
+
+		    //	LOG_I("ax, az = %d, %d",  ax, az );
+
+		    int i = 0;
+		    for(int nx = -1; nx <= 1; ++nx) {
+			for(int nz = -1; nz <= 1; ++nz) {
+			    /*
+			    if(nx == 0 && nz == 0)
+				continue;
+
+			    */
+			    //	LOG_I("%d, %d",  heightData(ax,az), heightData(ax+nx,az+nz) );
+
+
+			    dis[i] =
+				heightData(ax,az) - heightData(ax+nx,az+nz);
+
+			    //	LOG_I("dif: %d",  dis[i] );
+
+			    if(dis[i] > T) {
+				dtotal += dis[i];
+
+				if(dmax < dis[i]) {
+				    dmax = dis[i];
+				}
+
+			    }
+
+
+			    ++i;
+			}
+		    }
+
+		    i = 0;
+		    bool flag = false;
+		    for(int nx = -1; nx <= 1; ++nx) {
+			for(int nz = -1; nz <= 1; ++nz) {
+
+			    if(dis[i] > T) {
+				//   LOG_I("dis: %d", dis[i]);
+				flag = true;
+
+				heightData(ax+nx,az+nz) =
+				    heightData(ax+nx,az+nz) + (unsigned short)(0.3 * (dmax - T) * (  dis[i] / dtotal ));
+
+			    }
+
+			    ++i;
+
+			}
+		    }
+
+//		    heightData(ax+0,az+0) -= dmax - T;
+
+		    /*if(flag)
+
+		      exit(1);
+		    */
+
+
+
+		    /*
+		      unsigned short INC =strength * (float)(MAX_HEIGHT-MID_HEIGHT);
+
+		      unsigned short h = heightData(ax,az);
+
+		      unsigned short newH;
+
+
+		      if(h == MID_HEIGHT) {
+		      newH = MID_HEIGHT;
+		      } else if(abs(h - MID_HEIGHT) < INC ) {
+		      newH = MID_HEIGHT;
+		      } else if(h < MID_HEIGHT) {
+		      newH = h + INC;
+		      } else { // h > MID_HEIGHT
+		      newH = h - INC;
+		      }
+
+		      heightData(ax,az) = newH;
+		    */
+
+
+		}
+
+
+	    } // end for
+	} // end for
+
+    }
+
+
+    m_heightMapPbo->RequestUpdate();
+}

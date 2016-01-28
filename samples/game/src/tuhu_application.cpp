@@ -77,7 +77,7 @@ void ToClipboard(const std::string& str) {
 TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv),
 m_curCamera(NULL), m_heightMap(NULL), m_skydome(NULL), m_gui(NULL), m_lightDirection (
 
-    Vector3f(-0.705072f, -0.458142f, -0.705072f).Normalize(),
+    Vector3f(-0.705072f, -0.958142f, -0.705072f).Normalize(),
 //    -0.705072f, -0.0758142f, -0.705072f ,
 
     0.0f), m_pickingFbo(NULL)   { }
@@ -686,11 +686,21 @@ void TuhuApplication::Update(const float delta) {
 		} else if(m_gui->GetTerrainMode() == SmoothMode) {
 
 		    m_heightMap->SmoothTerrain(delta, m_gui->GetSmoothRadius() );
+/*
+		    if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 ))
+			m_heightMap->ErodeTerrain();
+*/
 		} else {
 		    // flat.
 		    m_heightMap->LevelTerrain(delta , m_gui->GetStrength());
+
 		}
 	    }
+/*
+	    if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 )) {
+		m_heightMap->ErodeTerrain();
+	    }
+*/
 
 	    if(ms.IsPressed(GLFW_MOUSE_BUTTON_2 )) {
 

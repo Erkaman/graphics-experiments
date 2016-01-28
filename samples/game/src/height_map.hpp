@@ -263,6 +263,7 @@ public:
     void DistortTerrain(const float delta, const float strength, float noiseScale);
     void SmoothTerrain(const float delta, const int smoothRadius);
     void LevelTerrain(const float delta, const float strength);
+    void ErodeTerrain();
 
     void DrawTexture(const float delta, int drawTextureType);
 
