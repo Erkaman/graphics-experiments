@@ -204,7 +204,8 @@ private:
     void LoadSplatMap(const std::string& splatMapFilename);
 
     void RenderHeightMap(
-	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
+	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
+	const bool aoOnly);
     void RenderCursor(const ICamera* camera);
 
 
@@ -239,7 +240,7 @@ public:
 
     ~HeightMap();
 
-    void Render(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
+    void Render(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap, const bool aoOnly);
 
     // render, but instead of outputting colors for every triangle, we output the id of the frontmost triangles.
 //    void RenderId(const ICamera* camera);

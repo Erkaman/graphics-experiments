@@ -34,6 +34,7 @@ private:
     int m_aoAmplitude;
     float m_aoDistAttenuation;
 
+    bool m_aoOnly;
 
     void RadiusSlider();
 
@@ -67,5 +68,9 @@ public:
 
     float GetNoiseScale()const;
     int GetSmoothRadius()const;
+
+
+    bool isAoOnly()const;
+
 
 };

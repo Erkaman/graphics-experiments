@@ -374,10 +374,13 @@ void HeightMap::Render(ShaderProgram* shader, bool shadows) {
 }
 
 void HeightMap::RenderHeightMap(
-    const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
+    const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
+    bool aoOnly) {
     m_shader->Bind();
 
     m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition, lightVp);
+
+    m_shader->SetUniform("aoOnly", aoOnly ? 1.0f : 0.0f);
 
 
     m_shader->SetUniform("splatMap", 4);
@@ -462,9 +465,11 @@ void HeightMap::RenderCursor(const ICamera* camera) {
 
 
 void HeightMap::Render(
-    const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
+    const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
+    const bool aoOnly) {
 
-    RenderHeightMap(camera, lightPosition, lightVp, shadowMap);
+
+    RenderHeightMap(camera, lightPosition, lightVp, shadowMap, aoOnly);
 
     if(m_config->IsGui()) {
 	RenderCursor(camera);

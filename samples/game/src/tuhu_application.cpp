@@ -77,7 +77,7 @@ void ToClipboard(const std::string& str) {
 TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv),
 m_curCamera(NULL), m_heightMap(NULL), m_skydome(NULL), m_gui(NULL), m_lightDirection (
 
-    -0.705072f, -0.458142f, -0.705072f,
+    Vector3f(-0.705072f, -0.458142f, -0.705072f).Normalize(),
 //    -0.705072f, -0.0758142f, -0.705072f ,
 
     0.0f), m_pickingFbo(NULL)   { }
@@ -522,7 +522,10 @@ void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Terrain);
 
-    m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+
+    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
+
+    m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, aoOnly);
 
     m_gpuProfiler->End(GTS_Terrain);
 

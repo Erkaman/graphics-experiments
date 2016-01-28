@@ -468,6 +468,8 @@ Gui::Gui(GLFWwindow* window) {
 
     m_terrainMode = ModifyElevationMode;
 
+    m_aoOnly = false;
+
     // init gui:
     if(ImGui_ImplGlfwGL3_Init(window, true)) {
 	LOG_I("IMGUI initialization succeeded");
@@ -538,6 +540,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 	ImGui::SliderFloat("Noise Scale", &m_noiseScale, MIN_NOISE_SCALE, MAX_NOISE_SCALE);
 	ImGui::SliderInt("Smooth Radius", &m_smoothRadius, MIN_SMOOTH_RADIUS, MAX_SMOOTH_RADIUS);
+	ImGui::Checkbox("AO Only", &m_aoOnly);
 
 
 
@@ -866,4 +869,10 @@ float Gui::GetNoiseScale()const {
 
 int Gui::GetSmoothRadius()const {
     return m_smoothRadius;
+}
+
+
+
+bool Gui::isAoOnly()const {
+    return m_aoOnly;
 }

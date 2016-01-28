@@ -7,6 +7,7 @@ out vec4 geoData[3];
 uniform vec3 viewSpaceLightDirection;
 uniform float resolution;
 uniform float textureScale;
+uniform float aoOnly;
 
 in vec2 texCoord;
 
@@ -25,6 +26,8 @@ uniform sampler2D splatMap;
 uniform sampler2D aoMap;
 
 in vec3 outn;
+
+
 
 void main()
 {
@@ -64,8 +67,8 @@ void main()
     float spec= calcSpec(l,n,v);
     float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 
-    geoData[0] =vec4(vec3(1.0-texture(aoMap, texCoord).r), 1.0);
-	  calcLighting(
+    geoData[0] =vec4(vec3(1.0-texture(aoMap, texCoord).r), 1.0) * aoOnly +
+	(1.0 - aoOnly)*calcLighting(
 	ambientMat.xyz,
 	diffMat.xyz,
 	specShiny,
