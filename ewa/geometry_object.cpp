@@ -1,3 +1,25 @@
+// http://math.stackexchange.com/questions/943383/determine-circle-of-intersection-of-plane-and-sphere
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include "geometry_object.hpp"
 
 #include "math/vector3f.hpp"
@@ -227,12 +249,13 @@ public:
 	geoObjBatch->m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 
 
-
-
 	/*
 	  Next, we create VBOs from the vertex data in the chunks.
 	 */
 	for(size_t i = 0; i < data->m_chunks.size(); ++i) {
+
+
+
 	    GeometryObjectData::Chunk* baseChunk = data->m_chunks[i];
 
 	    Chunk* newChunk = new Chunk;
@@ -364,10 +387,7 @@ bool GeometryObject::Init(
 
     m_data = data;
 
-
-
     return true;
-
 }
 
 GeometryObject::~GeometryObject() {
@@ -421,9 +441,6 @@ void GeometryObject::RenderShadowMapAll(const Matrix4f& lightVp) {
     }
 
     outputDepthShader->Unbind();
-
-
-
 
 /*
   m_depthShader->Bind();
@@ -583,6 +600,17 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
 
 		Chunk* chunk = batch->m_chunks[i];
+/*
+		if(batch->m_chunks.size() ==2 && i == 0)
+		    continue;
+*/
+
+
+/*
+		if(i == 1) {
+		    LOG_I("num :%d, ", chunk->m_numTriangles);
+		}*/
+
 
 		if(batch->m_specularMap == -1) {
 		    // if no spec map, the chunk has the same specular color all over the texture.
@@ -590,6 +618,9 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		}
 
 		batch->m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
+
+
+		::SetCullFace(false);
 
 		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 	    }

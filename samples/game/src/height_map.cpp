@@ -31,7 +31,7 @@
 
 #include "gui_enum.hpp"
 #include "ewa/physics_world.hpp"
-#include "ewa/value_noise.hpp"
+#include "value_noise.hpp"
 #include "ewa/view_frustum.hpp"
 
 
@@ -960,7 +960,7 @@ void HeightMap::DistortTerrain(const float delta, const float strength, float no
 
 		    // y is some value  [-1,1]
 		    float y = m_noise->Turbulence(
-			7,
+			12,
 			noiseScale* Vector2f(cx+ix,cz+iz),
 			2.0f,
 			0.5f);

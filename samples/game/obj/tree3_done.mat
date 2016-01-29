@@ -2,3 +2,7 @@ new_mat Material
 diff_map tree3_done_d.png
 shininess 1.000000
 spec_color 0.000000 0.000000 0.000000
+new_mat Material.002
+diff_map tree3_done_d_leaf.png
+shininess 1.000000
+spec_color 0.000000 0.000000 0.000000
