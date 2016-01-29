@@ -33,6 +33,58 @@ float deg2rad(const float deg)
 
 constexpr float kEpsilon = 1e-8;
 
+int fact(int n) {
+    if(n <= 1)
+	return 1;
+
+    return n * fact(n-1);
+}
+
+float pow(float b, int e) {
+    if(e == 0)
+	return 1.0;
+
+    return b * pow(b,e-1);
+}
+
+Vector3f bezTri(int n, float s, float t, Vector3f* cols) {
+
+//    s * cols[0] + t * cols[1] + (1 - s - t) * cols[2];
+
+    Vector3f result(0,0,0);
+
+    int a = 0;
+    for(int l = 0; l <= n; ++l) {
+
+	for(int j = 0; j <= n; ++j) {
+
+	    for(int i = 0; i <= n; ++i) {
+
+		if(i+j+l == n) {
+
+		    int nijl = fact(n) / (fact(i) * fact(j) * fact(l)  );
+
+
+		    result = result +
+			(float)nijl *
+			pow(s, i) *
+			pow(t, j) *
+			pow(1-s-t, l) * cols[a];
+
+		    a++;
+
+		    //	       printf("i,j,l: %d,%d,%d\n", i,j,l);
+		}
+	    }
+
+	}
+    }
+
+    //    exit(1);
+    return result;
+}
+
+
 
 bool rayTriangleIntersect(
     const Vector3f &orig, const Vector3f &dir,
@@ -110,15 +162,20 @@ int main (int, char *[]) {
     const uint32_t height = 480;
 
 //    Vector3f cols[3] = {{0.6, 0.4, 0.1}, {0.1, 0.5, 0.3}, {0.1, 0.3, 0.7}};
-//    Vector3f cols[3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
+    Vector3f cols1[3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
 
 
 
-    Vector3f cols[6] = {
-	    {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0},
-	    {0.5, 0.5, 0.0}, {0.5, 0.0, 0.5}, {0.0, 0.5, 0.5}
+    Vector3f cols2[6] = {
+	{1.0, 0.0, 0.0},   {0.5, 0.5, 0.0},
 
+	{0.0, 1.0, 0.0},      {0.5, 0.0, 0.5},
+
+	 {0.0, 0.5, 0.5}, {0.0, 0.0, 1.0}
 	};
+
+
+    //  bezTri(2,0,0);
 
     unsigned char *framebuffer = new unsigned char[width * height * 4];
     unsigned char *pix = framebuffer;
@@ -147,12 +204,11 @@ int main (int, char *[]) {
 		float t = v;
 
                 col =
+		    bezTri(1, s, t, cols1);
 
-		    //s * cols[0] + t * cols[1] + (1 - s - t) * cols[2];
+//		    s * cols[0] + t * cols[1] + (1 - s - t) * cols[2];
 
-
-		      s*s * cols[0] + t*t * cols[1] + (1 - s - t)* (1 - s - t) * cols[2] +
-		    2*s*t * cols[3] + 2*s*(1-s-t) * cols[4] + 2*t* (1 - s - t) * cols[5];
+//		      s*s * cols[0] + t*t * cols[1] + (1 - s - t)* (1 - s - t) * cols[2] + 2*s*t * cols[3] + 2*s*(1-s-t) * cols[4] + 2*t* (1 - s - t) * cols[5];
 
 
 
