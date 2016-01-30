@@ -965,7 +965,6 @@ void HeightMap::DistortTerrain(const float delta, const float strength, float no
 			2.0f,
 			0.5f);
 
-
 		    if(dist > fade_rad) {
 			float x2 = (dist - fade_rad  ) /  (rad-fade_rad);
 			y *= x2;

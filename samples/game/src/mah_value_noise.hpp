@@ -1,15 +1,18 @@
 #pragma once
 
+#include "ewa/random.hpp"
+
 class Vector2f;
 
 class ValueNoise {
 private:
 
-    int m_perm[512];
-    float m_rand[512];
+    int m_perm[256];
+    float m_rand[256];
 
     float GetRand(int i)const;
     int GetPerm(int i)const;
+
 
 public:
 
