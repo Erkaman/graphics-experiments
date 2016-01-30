@@ -2,24 +2,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #include "geometry_object.hpp"
 
 #include "math/vector3f.hpp"
@@ -452,6 +434,9 @@ void GeometryObject::RenderShadowMapAll(const Matrix4f& lightVp) {
 
 	const GeoObjBatch* batch = itBatch.second;
 
+	batch->m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
+
+
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
@@ -468,13 +453,17 @@ void GeometryObject::RenderShadowMapAll(const Matrix4f& lightVp) {
 
 		Chunk* chunk = batch->m_chunks[i];
 
-		VBO::DrawIndices(
 
 
-		    *batch->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+		chunk->m_indexBuffer->Bind();
+		chunk->m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk->m_numTriangles)*3);
+		chunk->m_indexBuffer->Unbind();
+
 	    }
-
 	}
+
+	batch->m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
+
 
     }
 
@@ -514,6 +503,9 @@ void GeometryObject::RenderIdAll(
 
 	const GeoObjBatch* batch = itBatch.second;
 
+	batch->m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
+
+
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
@@ -531,11 +523,16 @@ void GeometryObject::RenderIdAll(
 
 		Chunk* chunk = batch->m_chunks[i];
 
+		chunk->m_indexBuffer->Bind();
+		chunk->m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk->m_numTriangles)*3);
+		chunk->m_indexBuffer->Unbind();
 
-		VBO::DrawIndices(*batch->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 	    }
 
 	}
+
+	batch->m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
+
 
     }
 
@@ -570,6 +567,9 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	// bind shader of the batch.
 	batch->m_defaultShader->Bind();
 
+	batch->m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
+
+
 
 	batch->m_defaultShader->SetUniform("textureArray", 0);
 	Texture::SetActiveTextureUnit(0);
@@ -590,6 +590,8 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 */
 
 
+
+
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
@@ -598,6 +600,8 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    if(!geoObj->m_inCameraFrustum) {
 		continue; // if culled, do nothing.
 	    }
+
+
 
 	    ++nonCulled;
 
@@ -660,8 +664,9 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		    batch->m_defaultShader->SetUniform("specMap", (float)chunk->m_specularMap  );
 		}
 
-
-		VBO::DrawIndices(*batch->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+		chunk->m_indexBuffer->Bind();
+		chunk->m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk->m_numTriangles)*3);
+		chunk->m_indexBuffer->Unbind();
 	    }
 
 	    if(geoObj->IsSelected() ) {
@@ -670,6 +675,9 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    }
 
 	}
+
+	batch->m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
+
 
 
 	shadowMap.GetRenderTargetTexture().Unbind();
@@ -711,8 +719,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
     /*
       Render the AABBs of all objects
     */
-
-
 
     // render all batches, one after one.
     for(auto& itBatch : batches) {

@@ -9,4 +9,5 @@ notes
 particle/
 samples/game/height.png
 
- samples/tri/src/Eigen/
+samples/tri/src/Eigen/
+samples/tri/*.png
