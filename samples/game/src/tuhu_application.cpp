@@ -161,7 +161,7 @@ void TuhuApplication::Init() {
     m_car = new Car();
     bool result = m_car->Init(Vector3f(0,-1.5,0)+trans);
 
-    if(!result) {
+      if(!result) {
 	LOG_I("could not load car");
 	PrintErrorExit();
     }
@@ -445,7 +445,7 @@ void TuhuApplication::RenderShadowMap() {
 
 	GeometryObject::RenderShadowMapAll(m_lightVp);
 
-//	m_heightMap->RenderShadowMap(m_lightVp);
+	m_heightMap->RenderShadowMap(m_lightVp);
     }
      m_depthFbo->Unbind();
 

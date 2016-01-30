@@ -14,22 +14,18 @@
 #include <map>
 #include <assert.h>
 
-
 using std::vector;
 using std::string;
 using std::stof;
 using std::map;
 
 struct Chunk {
-    vector<float> m_vertices;
-//    vector<GLushort> m_indices;
-
-    vector<pair< vector<GLushort>, Material*> >
-
+    vector<GLushort> m_indices;
     GLuint m_numTriangles;
 
     Material* m_material;
 };
+
 
 
 /*
@@ -41,6 +37,9 @@ map<string, GLushort> indexTable;
 vector<Vector3f> points;
 vector<Vector2f> texCoords;
 vector<Vector3f> normals;
+
+vector<float> globalVertices;
+
 
 Chunk* currentChunk;
 map<string, Chunk*>  chunks;
@@ -209,6 +208,14 @@ int main (int argc, char * argv[]) {
     // all indices are specified as GLushorts.
     data.m_indexType = GL_UNSIGNED_SHORT;
 
+    data.m_vertices = &globalVertices[0];
+    data.m_verticesSize = globalVertices.size() * sizeof(float);
+
+    /*
+	newChunk->m_vertices = &baseChunk->m_vertices[0];
+	newChunk->m_verticesSize = baseChunk->m_vertices.size() * sizeof(float);
+    */
+
     map<string, Chunk*>::iterator it;
     for ( it = chunks.begin(); it != chunks.end(); it++ ) {
 	Chunk* baseChunk = it->second;
@@ -219,8 +226,6 @@ int main (int argc, char * argv[]) {
 
 	newChunk->m_numTriangles = baseChunk->m_numTriangles;
 
-	newChunk->m_vertices = &baseChunk->m_vertices[0];
-	newChunk->m_verticesSize = baseChunk->m_vertices.size() * sizeof(float);
 
 	newChunk->m_indices = &baseChunk->m_indices[0];
 	newChunk->m_indicesSize = baseChunk->m_indices.size() * sizeof(GLushort);
@@ -332,14 +337,14 @@ int ParseFEntry(const string& entry) {
 
     normal = normals[ stoi(tokens[2])-1 ];
 
-    point.Add(currentChunk->m_vertices);
-    texCoord.Add(currentChunk->m_vertices);
-    normal.Add(currentChunk->m_vertices);
+    point.Add(globalVertices);
+    texCoord.Add(globalVertices);
+    normal.Add(globalVertices);
 
     if(generateTangents) {
 	// add an empty tangent for now. we will compute it later.
 	Vector3f tangent(0);
-	tangent.Add(currentChunk->m_vertices);
+	tangent.Add(globalVertices);
     }
 
     const size_t GLushortMax = (GLushort)-1;
@@ -380,7 +385,7 @@ void GenerateTangents() {
 	Chunk* chunk = it->second;
 
 	// create references for easy access.
-	Vertex* vertices = (Vertex*)&chunk->m_vertices[0];
+	Vertex* vertices = (Vertex*)&globalVertices[0];
 	vector<GLushort >& indices =  chunk->m_indices;
 
 	for(size_t i = 0; i < (indices.size() / 3); ++i) {
@@ -404,7 +409,7 @@ void GenerateTangents() {
 	    vertices[indices[i*3+2]].m_tangent += currentTangent;
 	}
 
-	for(size_t i = 0; i < (chunk->m_vertices.size() / (sizeof(Vertex)/sizeof(float))  ); i+=1) {
+	for(size_t i = 0; i < (globalVertices.size() / (sizeof(Vertex)/sizeof(float))  ); i+=1) {
 	    vertices[i].m_tangent = Vector3f::Normalize(vertices[i].m_tangent);
 	}
 

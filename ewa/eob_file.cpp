@@ -160,6 +160,13 @@ bool EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
     // next we write vertex attrib sizes.
     WriteArray(f, (void*)&data.m_vertexAttribsSizes[0], sizeof(GLuint) * data.m_vertexAttribsSizes.size() );
 
+
+    // write global vertex data. This data is used across all chunks.
+    // the vertices in the chunks are specified as indices to this global vertex data.
+    f->Write32u(VETX);
+    WriteArray(f, data.m_vertices, data.m_verticesSize );
+
+
     // next write chunk count.
 
     f->Write32u(data.m_chunks.size());
@@ -182,9 +189,6 @@ bool EobFile::Write(const GeometryObjectData& data, const std::string& outfile) 
 
 	WriteString(f, chunk->m_material->m_materialName);
 
-	// write chunk vertex and index data.
-	f->Write32u(VETX);
-	WriteArray(f, chunk->m_vertices, chunk->m_verticesSize );
 	f->Write32u(INDX);
 	WriteArray(f, chunk->m_indices, chunk->m_indicesSize );
     }
@@ -528,9 +532,26 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
     GLuint* vertexAttribsSizes = new GLuint[length / sizeof(GLuint)];
     f->ReadArray(vertexAttribsSizes, length);
     data->m_vertexAttribsSizes = std::vector<GLuint>(&vertexAttribsSizes[0]+0, &vertexAttribsSizes[0]+length / sizeof(GLuint));
+
+    LOG_I("vas: %d, %d", vertexAttribsSizes[0], vertexAttribsSizes[1]);
+
     delete []vertexAttribsSizes;
 
+    uint32 vertexMagic = f->Read32u();
+    if(vertexMagic != VETX) {
+	    SetError("%s is not a EOB file: global vertex data section has an invalid vertex magic number %d", infile.c_str(), vertexMagic);
+	    return NULL;
+    }
+
+    uint32 temp = 0;
+    data->m_vertices= ReadArray(f, temp);
+    data->m_verticesSize = temp;
+
+
     uint32 numChunks = f->Read32u();
+
+    LOG_I("numchnks: %d", numChunks);
+
     for(uint32 i = 0; i < numChunks; ++i) {
 
 	GeometryObjectData::Chunk* chunk = new GeometryObjectData::Chunk();
@@ -563,15 +584,9 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
 	    chunk->m_material = mat;
 	}
 
-	uint32 vertexMagic = f->Read32u();
-	if(vertexMagic != VETX) {
-	    SetError("%s is not a EOB file: chunk number %d has an invalid vertex magic number %d", infile.c_str(), i, vertexMagic);
-	    return NULL;
-	}
 
-	uint32 temp = 0;
-	chunk->m_vertices= ReadArray(f, temp);
-	chunk->m_verticesSize = temp;
+
+
 
 	uint32 indexMagic = f->Read32u();
 	if(indexMagic != INDX) {

@@ -41,7 +41,7 @@ bool Car::Init(const Vector3f& position) {
 				    carCollidesWith
 	);
 
-    return ret;
+	return ret;
 }
 
 Car::Car(): m_raycastVehicle(NULL) {

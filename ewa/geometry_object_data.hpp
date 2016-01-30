@@ -74,9 +74,10 @@ struct CollisionShape {
 
 struct GeometryObjectData {
 
+    GLsizeiptr m_verticesSize;
+    GLvoid* m_vertices;
+
     struct Chunk{
-	GLsizeiptr m_verticesSize;
-	GLvoid* m_vertices;
 
 	GLsizeiptr m_indicesSize;
 	GLvoid* m_indices;

@@ -52,35 +52,42 @@ using std::vector;
 using std::map;
 
 struct Chunk {
-    VBO* m_vertexBuffer;
     VBO* m_indexBuffer;
     GLuint m_numTriangles;
 
     float m_shininess;
     Vector3f m_specularColor;
+
+    // the material.
+    GLint m_texture;
+    GLint m_normalMap;
+    GLint m_specularMap;
+
+    bool m_hasHeightMap;
 };
 
 // contains the info needed to render a batch of GeoObjs
 struct GeoObjBatch{
 public:
 
+    VBO* m_vertexBuffer;
+
     std::vector<Chunk*> m_chunks;
+
 
     GeometryObjectData* m_data;
 
     ShaderProgram* m_defaultShader;
     ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
 
-    bool m_hasHeightMap;
 
     // the geoObjs that needs the info of this struct to be rendered.
     vector<GeometryObject*> m_geoObjs;
 
+    GeoObjBatch() {
+	m_defaultShader = NULL;
+    }
 
-    // the material.
-    GLint m_texture;
-    GLint m_normalMap;
-    GLint m_specularMap;
 
 };
 
@@ -183,24 +190,46 @@ public:
 	    return NULL;
 	}
 
+
+	    geoObjBatch->m_vertexBuffer = VBO::CreateInterleaved(
+		data->m_vertexAttribsSizes);
+
+	    geoObjBatch->m_vertexBuffer->Bind();
+	    geoObjBatch->m_vertexBuffer->SetBufferData(data->m_verticesSize, data->m_vertices);
+	    geoObjBatch->m_vertexBuffer->Unbind();
+
+
+
 	/*
-	  Load the textures of the object.
+	  Next, we create VBOs from the vertex data in the chunks.
 	 */
-
-	string basePath = File::GetFilePath(filename);
-
-	geoObjBatch->m_hasHeightMap = false;
-
-	geoObjBatch->m_texture = -1;
-	geoObjBatch->m_normalMap = -1;
-	geoObjBatch->m_specularMap = -1;
-
 	for(size_t i = 0; i < data->m_chunks.size(); ++i) {
+
+	    GeometryObjectData::Chunk* baseChunk = data->m_chunks[i];
+	    Chunk* newChunk = new Chunk;
+
+
+
+	    /*
+	      Load the textures of the object.
+	    */
+
+	    string basePath = File::GetFilePath(filename);
+
+	    newChunk->m_hasHeightMap = false;
+
+	    newChunk->m_texture = -1;
+	    newChunk->m_normalMap = -1;
+	    newChunk->m_specularMap = -1;
+
+
+
+
 	    Material* mat = data->m_chunks[i]->m_material;
 
 	    if(mat->m_textureFilename != ""){ // empty textures should remain empty.
 
-		geoObjBatch->m_texture =
+		newChunk->m_texture =
 		    m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_textureFilename));
 
 
@@ -209,68 +238,36 @@ public:
 	    if(mat->m_normalMapFilename != ""){ // empty textures should remain empty->
 
 
-		geoObjBatch->m_normalMap =
+		newChunk->m_normalMap =
 		    m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_normalMapFilename));
 
 
-		geoObjBatch->m_hasHeightMap = mat->m_hasHeightMap;
+		newChunk->m_hasHeightMap = mat->m_hasHeightMap;
 	    }
 
 	    if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
 
 
 
-		geoObjBatch->m_specularMap =
+		newChunk->m_specularMap =
 		    m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_specularMapFilename));
 
 
 	    }
-	}
-
-	string shaderName = "shader/geo_obj_render";
-
-	/*
-	  Next, we create a shader that supports all the texture types.
-	 */
-
-
-	vector<string> defines;
-
-	if(geoObjBatch->m_specularMap != -1) {
-	    defines.push_back("SPEC_MAPPING");
-	}
-
-	if(geoObjBatch->m_hasHeightMap) {
-	    defines.push_back("HEIGHT_MAPPING");
-	} else if(geoObjBatch->m_normalMap != -1) { // only a normal map, no height map.
-	    defines.push_back("NORMAL_MAPPING");
-	}
-
-	geoObjBatch->m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
-
-
-	/*
-	  Next, we create VBOs from the vertex data in the chunks.
-	 */
-	for(size_t i = 0; i < data->m_chunks.size(); ++i) {
 
 
 
-	    GeometryObjectData::Chunk* baseChunk = data->m_chunks[i];
 
-	    Chunk* newChunk = new Chunk;
 
-	    newChunk->m_vertexBuffer = VBO::CreateInterleaved(
-		data->m_vertexAttribsSizes);
+
+
 
 	    newChunk->m_indexBuffer = VBO::CreateIndex(data->m_indexType);
 
 
 	    newChunk->m_numTriangles = baseChunk->m_numTriangles;
 
-	    newChunk->m_vertexBuffer->Bind();
-	    newChunk->m_vertexBuffer->SetBufferData(baseChunk->m_verticesSize, baseChunk->m_vertices);
-	    newChunk->m_vertexBuffer->Unbind();
+
 
 	    newChunk->m_indexBuffer->Bind();
 	    newChunk->m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
@@ -279,6 +276,44 @@ public:
 
 	    newChunk->m_shininess = baseChunk->m_material->m_shininess;
 	    newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
+
+
+
+
+
+	    if(geoObjBatch->m_defaultShader == NULL) {
+
+
+		string shaderName = "shader/geo_obj_render";
+
+		/*
+		  Next, we create a shader that supports all the texture types.
+		*/
+
+
+		vector<string> defines;
+
+		if(newChunk->m_specularMap != -1) {
+		    defines.push_back("SPEC_MAPPING");
+		}
+
+		if(newChunk->m_hasHeightMap) {
+		    defines.push_back("HEIGHT_MAPPING");
+		} else if(newChunk->m_normalMap != -1) { // only a normal map, no height map.
+		    defines.push_back("NORMAL_MAPPING");
+		}
+
+		geoObjBatch->m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+
+
+	    }
+
+
+
+
+
+
+
 
 	    geoObjBatch->m_chunks.push_back(newChunk);
 	}
@@ -433,7 +468,10 @@ void GeometryObject::RenderShadowMapAll(const Matrix4f& lightVp) {
 
 		Chunk* chunk = batch->m_chunks[i];
 
-		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+		VBO::DrawIndices(
+
+
+		    *batch->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 	    }
 
 	}
@@ -494,7 +532,7 @@ void GeometryObject::RenderIdAll(
 		Chunk* chunk = batch->m_chunks[i];
 
 
-		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+		VBO::DrawIndices(*batch->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 	    }
 
 	}
@@ -542,27 +580,15 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
 	shadowMap.GetRenderTargetTexture().Bind();
 
-
+/*
 	if(batch->m_hasHeightMap) {
 	    Config& config = Config::GetInstance();
 
 	    batch->m_defaultShader->SetUniform("zNear", config.GetZNear());
 	    batch->m_defaultShader->SetUniform("zFar", config.GetZFar());
 	}
+*/
 
-	if(batch->m_texture != -1) {
-
-	    //  LOG_I("batch text: %d", batch->m_texture );
-	    batch->m_defaultShader->SetUniform("diffMap", (float)batch->m_texture  );
-	}
-
-	if(batch->m_normalMap != -1) {
-	    batch->m_defaultShader->SetUniform("normalMap", (float)batch->m_normalMap  );
-	}
-
-	if(batch->m_specularMap != -1) {
-	    batch->m_defaultShader->SetUniform("specMap", (float)batch->m_specularMap  );
-	}
 
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
@@ -612,7 +638,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		}*/
 
 
-		if(batch->m_specularMap == -1) {
+		if(chunk->m_specularMap == -1) {
 		    // if no spec map, the chunk has the same specular color all over the texture.
 		    batch->m_defaultShader->SetUniform("specColor", chunk->m_specularColor);
 		}
@@ -620,7 +646,22 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		batch->m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
 
 
-		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+
+
+		if(chunk->m_texture != -1) {
+		    batch->m_defaultShader->SetUniform("diffMap", (float)chunk->m_texture  );
+		}
+
+		if(chunk->m_normalMap != -1) {
+		    batch->m_defaultShader->SetUniform("normalMap", (float)chunk->m_normalMap  );
+		}
+
+		if(chunk->m_specularMap != -1) {
+		    batch->m_defaultShader->SetUniform("specMap", (float)chunk->m_specularMap  );
+		}
+
+
+		VBO::DrawIndices(*batch->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 	    }
 
 	    if(geoObj->IsSelected() ) {
@@ -659,7 +700,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	for(size_t i = 0; i < selectedBatch->m_chunks.size(); ++i) {
 	    Chunk* chunk = selectedBatch->m_chunks[i];
 
-	    VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
+	    VBO::DrawIndices(*selectedBatch->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 	}
 
 	outlineShader->Unbind();
