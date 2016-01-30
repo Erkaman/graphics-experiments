@@ -1,5 +1,0 @@
-StaticMesh/tree:
-  physics:
-  - shape: Cylinder
-    origin: [-0.265702,-12.6649,-0.566768]
-    half-extents: [0.19485,6,0.19485]

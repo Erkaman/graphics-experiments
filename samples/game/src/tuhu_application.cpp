@@ -189,22 +189,12 @@ void TuhuApplication::Init() {
 
 	m_heightMap = new HeightMap(guiMode);
 
-	LoadObj("obj/rock_floor.eob", Vector3f(0,0,40) + trans);
-
-	LoadObj("obj/flat_wood_floor.eob", Vector3f(10,0,40)+ trans );
-
 	LoadObj("obj/wood_floor.eob", Vector3f(-10,0,40)+ trans );
 
 	LoadObj("obj/plane.eob", Vector3f(0,-2.5,0)+ trans);
 
-	IGeometryObject* tree = LoadObj("obj/tree.eob", Vector3f(10,9.5,10) + trans);
+	m_selected = NULL;
 
-	LoadObj("obj/wall.eob", Vector3f(-5,0.5,-5)  + trans);
-
-	LoadObj("obj/wall.eob", Vector3f(20,0.0,-5) + trans);
-
-	m_selected = tree;
-	m_selected->SetSelected(true);
 /*
 	LoadObj("obj/wall.eob",
 				 Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
@@ -455,7 +445,7 @@ void TuhuApplication::RenderShadowMap() {
 
 	GeometryObject::RenderShadowMapAll(m_lightVp);
 
-	m_heightMap->RenderShadowMap(m_lightVp);
+//	m_heightMap->RenderShadowMap(m_lightVp);
     }
      m_depthFbo->Unbind();
 

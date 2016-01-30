@@ -1,3 +1,9 @@
+/*
+TODO: anti alias traingle
+TODO: draw control points
+TODO: draw bezier triangle.
+*/
+
 #include "ewa/log.hpp"
 
 #include "ewa/math/math_common.hpp"
@@ -118,7 +124,7 @@ typedef MultArray<float> SamplesGrid;
 // where the Vector2f is the barycentric coordinates of the sample.
 typedef vector<pair<Vector2f, float> > SamplesList;
 
-float NOISE_SCALE =0.008;
+float NOISE_SCALE =0.004;
 
 
     float TRI_SCALE= 1.0f;;
@@ -136,20 +142,21 @@ Vector3f v1( 1.0f * TRI_SCALE, -1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 Vector3f v2( 0.0f,  1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 
 constexpr int DEGREE = 11;
+// high quality: 11
+// mid quality: 5
+
 constexpr int NUM_CONTROL_POINTS = ((DEGREE+1)*(DEGREE+2)) / 2;
 
+constexpr uint32_t width = 640 * 2;
+constexpr uint32_t height = 480 * 2;
 
-constexpr uint32_t width = 640;
-constexpr uint32_t height = 480;
-
-constexpr int GRID_X = 30;
-constexpr int GRID_Y = 30;
+constexpr int GRID_X = 80;
+constexpr int GRID_Y = 80;
 
 constexpr int GRID_CELL_X_SIZE = width / GRID_X;
 constexpr int GRID_CELL_Y_SIZE = height / GRID_Y;
 
-
-int SAMPLES = 200;
+int SAMPLES = 1100;
 
 float fov = 51.52;
 
@@ -244,7 +251,14 @@ Vector3f* FitControlPoints() {
 
 //   cout << "Here is the matrix A:\n" << A << endl;
     //  cout << "Here is the vector b:\n" << b << endl;
-   Eigen::VectorXf x = A.colPivHouseholderQr().solve(b);
+   Eigen::VectorXf x =
+//       A.colPivHouseholderQr().solve(b);
+       A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
+
+
+//       A.fullPivHouseholderQr().solve(b);
+//       A.llt().solve(b);
+
    //cout << "The solution is:\n" << x << endl;
 
    Vector3f* cps = new Vector3f[NUM_CONTROL_POINTS];
@@ -362,12 +376,12 @@ Vector3f bezTri(int n, float s, float t, Vector3f* cols) {
 
     //    exit(1);
 
-    if(result.x < 0 || result.y < 0 || result.z < 0) {
+/*    if(result.x < 0 || result.y < 0 || result.z < 0) {
 
 
 	LOG_I("wat 9: %s",  string(result).c_str() );
 	exit(1);
-    }
+	}*/
 
 
     return result;
@@ -450,7 +464,7 @@ int main (int, char *[]) {
     GatherSamples();
 
     LOG_I("fitting control points");
-    Vector3f* cps = FitControlPoints();
+     Vector3f* cps = FitControlPoints();
 
     LOG_I("rendering");
     for (uint32_t j = 0; j < height; ++j) {
@@ -471,14 +485,12 @@ int main (int, char *[]) {
 
 //                col = bezTri(2, s, t, cols2);
 
-                col = bezTri(DEGREE, s, t, cps);
+		col = bezTri(DEGREE, s, t, cps);
 
 
 
-/*
-		float sample = SampleNoise(Vector2i(i,j));
-		col =Vector3f(sample);
-*/
+//		float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
+
 
 //		    s * cols[0] + t * cols[1] + (1 - s - t) * cols[2];
 
@@ -494,10 +506,7 @@ int main (int, char *[]) {
 
 		alpha = 255;
 
-		/*
-		if(samples(i,j) > 0.001) {
-		    col = Vector3f(1,1,0);
-		    }*/
+//		if(samples(i,j) > 0) { col = Vector3f(1,1,0); }
 
 
             } else {

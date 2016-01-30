@@ -1,43 +1,7 @@
-numObjs 7
-beginObj
-filename obj/rock_floor.eob
-translation -2.000000 9.000000 38.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
-beginObj
-filename obj/flat_wood_floor.eob
-translation 8.000000 9.000000 38.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
+numObjs 1
 beginObj
 filename obj/wood_floor.eob
 translation -12.000000 9.000000 38.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
-beginObj
-filename obj/plane.eob
-translation -2.000000 6.500000 -2.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
-beginObj
-filename obj/tree.eob
-translation 8.000000 18.500000 8.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
-beginObj
-filename obj/wall.eob
-translation -7.000000 9.500000 -7.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
-beginObj
-filename obj/wall.eob
-translation 18.000000 9.000000 -7.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
+rotation 0.000000 0.000000 0.000000 1.000000
 scale 1.000000
 endObj

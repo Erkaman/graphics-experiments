@@ -22,7 +22,9 @@ using std::map;
 
 struct Chunk {
     vector<float> m_vertices;
-    vector<GLushort> m_indices;
+//    vector<GLushort> m_indices;
+
+    vector<pair< vector<GLushort>, Material*> >
 
     GLuint m_numTriangles;
 

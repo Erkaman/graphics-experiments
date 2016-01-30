@@ -1,4 +1,0 @@
-StaticMesh/ao:
-  physics:
-  - shape: Box
-    half-extents: [1,1,1]

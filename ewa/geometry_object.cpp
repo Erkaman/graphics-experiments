@@ -620,8 +620,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		batch->m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
 
 
-		::SetCullFace(false);
-
 		VBO::DrawIndices(*chunk->m_vertexBuffer, *chunk->m_indexBuffer, GL_TRIANGLES, (chunk->m_numTriangles)*3);
 	    }
 

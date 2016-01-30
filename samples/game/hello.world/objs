@@ -1,37 +1,7 @@
-numObjs 80
-beginObj
-filename obj/rock_floor.eob
-translation -2.000000 9.000000 38.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
-beginObj
-filename obj/flat_wood_floor.eob
-translation 8.000000 9.000000 38.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
+numObjs 71
 beginObj
 filename obj/wood_floor.eob
 translation -12.000000 9.000000 38.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
-beginObj
-filename obj/wall.eob
-translation -7.000000 9.500000 -7.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
-beginObj
-filename obj/wall.eob
-translation 18.000000 9.000000 -7.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
-beginObj
-filename obj/wall.eob
-translation -27.280460 9.000000 -55.668751
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj
@@ -68,12 +38,6 @@ endObj
 beginObj
 filename obj/tree3_done.eob
 translation -112.972656 38.444141 15.315625
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.773594
-endObj
-beginObj
-filename obj/tree3_done.eob
-translation -146.978912 19.388281 15.315625
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.773594
 endObj
@@ -379,12 +343,6 @@ scale -3.582390
 endObj
 beginObj
 filename obj/tree3_done.eob
-translation -204.596115 19.469532 -2.780869
-rotation 0.309903 0.042897 -0.924007 0.219846 
-scale -1.926657
-endObj
-beginObj
-filename obj/tree3_done.eob
 translation -215.295731 19.469532 31.519913
 rotation 0.309903 0.042897 -0.924007 0.219846 
 scale -1.926657
@@ -457,12 +415,6 @@ scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
-translation -104.675797 26.320314 65.226959
-rotation 0.064949 -0.514792 0.202027 0.830636 
-scale 1.773594
-endObj
-beginObj
-filename obj/tree3_done.eob
 translation -125.837914 16.472265 128.806259
 rotation 0.064949 -0.514792 0.202027 0.830636 
 scale 1.773594
@@ -472,10 +424,4 @@ filename obj/tree3_done.eob
 translation -125.837914 16.472265 154.205475
 rotation 0.064949 -0.514792 0.202027 0.830636 
 scale 1.773594
-endObj
-beginObj
-filename obj/ao.eob
-translation -35.003910 10.411717 43.837105
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 2.043516
 endObj
