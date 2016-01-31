@@ -20,7 +20,7 @@ TODO: draw bezier triangle.
 
 #include "util.hpp"
 
-//#define DO_EIGEN
+#define DO_EIGEN
 
 #ifdef DO_EIGEN
 #include "Eigen/Dense"
@@ -38,8 +38,8 @@ using std::pair;
 // check if float is integer.
 bool isInt(float f, float eps) {
     return
-	(f - floorf(f)) < eps ||
-	(ceilf(f) - f) < eps;
+	((f - floorf(f)) < eps ||
+	 (ceilf(f) - f) < eps);
 }
 
 int fact(int n) {
@@ -137,7 +137,7 @@ typedef vector<pair<Vector2f, float> > SamplesList;
 float NOISE_SCALE =0.004;
 
 
-    float TRI_SCALE= 1.0f;;
+    float TRI_SCALE= 1.0f;
 
 float SampleNoise(Vector2i p) {
     return pn.noise(p.x*NOISE_SCALE,p.y*NOISE_SCALE,0);
@@ -151,7 +151,7 @@ Vector3f v0(-1.0f * TRI_SCALE, -1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 Vector3f v1( 1.0f * TRI_SCALE, -1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 Vector3f v2( 0.0f,  1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 
-constexpr int DEGREE = 11;
+constexpr int DEGREE = 3;
 // high quality: 11
 // mid quality: 5
 
@@ -311,9 +311,10 @@ void GatherSamples() {
             float t, u, v;
 
 	if (!rayTriangleIntersect(i,j,t, u, v))
+	    continue; // reject
 
-    continue; // reject
-
+	if(u < 0 || v <0 ||  (1 - u -v) < 0 )
+	    continue; // reject
 
 	float s = u;
 	t = v;
@@ -419,40 +420,35 @@ int main (int, char *[]) {
 
             if (rayTriangleIntersect(i,j,t, u, v)) {
 
-//                col = u * cols[0] + v * cols[1] + (1 - u - v) * cols[2];
-
 		float s = u;
 		float t = v;
 
-//                col = bezTri(2, s, t, cols2);
-
-		//col = bezTri(DEGREE, s, t, cps);
-
-
-
-		float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
-
-
-//		    s * cols[0] + t * cols[1] + (1 - s - t) * cols[2];
-
-//		      s*s * cols[0] + t*t * cols[1] + (1 - s - t)* (1 - s - t) * cols[2] + 2*s*t * cols[3] + 2*s*(1-s-t) * cols[4] + 2*t* (1 - s - t) * cols[5];
-
-
-
-//                col = Vector3f(u, v, 1 - u - v);
-
-
-
-                //*pix = Vector3f(u, v, 1 - u - v);
-
 		alpha = 255;
 
-		// draw samples
-//		if(samples(i,j) > 0) { col = Vector3f(1,1,0); }
+		if(u > 0 && v > 0 && (1 - u -v) > 0 ) {
+
+		    // draw colored triangle
+//		    col = bezTri(2, s, t, cols2);
+
+		    // draw approximated noise.
+//		    col = bezTri(DEGREE, s, t, cps);
 
 
+		    // draw noise.
+		    float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
 
-		float EPS_GRID = 0.01;
+
+		    // draw samples
+		    if(samples(i,j) > 0) { col = Vector3f(1,1,0); }
+
+		} else {
+		    // outside triangle, don't draw.
+		    alpha = 0;
+		}
+
+/*
+
+		float EPS_GRID = 0.02;
 
 		// draw bezier triangle grid.
 		if(
@@ -461,7 +457,14 @@ int main (int, char *[]) {
 		    isInt((1-u-v)  * DEGREE, EPS_GRID)
 
 		    ) {
-		    col = Vector3f(1,1,0);
+
+		    float EPS = 0.01;
+
+		    if(u > -EPS && v > -EPS && (1-u-v) > -EPS ) {
+			alpha = 255;
+			col = Vector3f(0.6,0.65,0);
+		    }
+
 		}
 
 		float EPS_CP = 0.1;
@@ -473,8 +476,15 @@ int main (int, char *[]) {
 		    isInt((1-u-v)  * DEGREE, EPS_CP)
 
 		    ) {
-		    col = Vector3f(1,0,0);
+
+		    float EPS = 0.01;
+		    if(u > -EPS && v > -EPS && (1-u-v) > -EPS ) {
+			alpha = 255;
+			col = Vector3f(1,0,0);
+		    }
+
 		}
+		*/
 
 
             } else {

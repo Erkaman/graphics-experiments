@@ -44,19 +44,21 @@ bool rayTriangleIntersect(
     Vector3f edge0 = v1 - v0;
     Vector3f vp0 = P - v0;
     C = Vector3f::Cross(edge0,vp0);
-    if (Vector3f::Dot(N, C) < 0) return false; // P is on the right side
+//    if (Vector3f::Dot(N, C) < 0) return false; // P is on the right side
 
     // edge 1
     Vector3f edge1 = v2 - v1;
     Vector3f vp1 = P - v1;
     C = Vector3f::Cross(edge1,vp1);
-    if ((u = Vector3f::Dot(N,C)) < 0)  return false; // P is on the right side
+//    if ((u = Vector3f::Dot(N,C)) < 0)  return false; // P is on the right side
+    u = Vector3f::Dot(N,C);
 
     // edge 2
     Vector3f edge2 = v0 - v2;
     Vector3f vp2 = P - v2;
     C = Vector3f::Cross(edge2,vp2);
-    if ((v = Vector3f::Dot(N,C)) < 0) return false; // P is on the right side;
+//    if ((v = Vector3f::Dot(N,C)) < 0) return false; // P is on the right side;
+    v = Vector3f::Dot(N,C);
 
     u /= denom;
     v /= denom;
