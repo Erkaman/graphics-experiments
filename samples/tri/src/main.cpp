@@ -20,14 +20,13 @@ TODO: draw bezier triangle.
 
 #include "util.hpp"
 
-//#define DO_EIGEN
+#define DO_EIGEN
 
 #ifdef DO_EIGEN
 #include "Eigen/Dense"
 #endif
 
 #include <iostream>
-
 
 using std::vector;
 using std::string;
@@ -216,10 +215,12 @@ Vector3f* FitControlPoints() {
 	    float s = sample.first.x;
 	    float t = sample.first.y;
 
+	    /*
 	    if(sample.second < 0 || s < 0 || t < 0) {
 		LOG_I("wat1");
 		exit(1);
 	    }
+	    */
 
 	    result +=
 		B(DEGREE,i,j,l, s,t) * sample.second;
@@ -312,7 +313,9 @@ void GatherSamples() {
 	if (!rayTriangleIntersect(i,j,t, u, v))
 	    continue; // reject
 
-	if(u < 0 || v <0 ||  (1 - u -v) < 0 )
+	float EPS = 0.00181 * DEGREE;
+
+	if(u < -EPS || v < -EPS ||  (1 - u -v) < -EPS )
 	    continue; // reject
 
 	float s = u;
@@ -430,11 +433,11 @@ int main (int, char *[]) {
 //		    col = bezTri(2, s, t, cols2);
 
 		    // draw approximated noise.
-//		    col = bezTri(DEGREE, s, t, cps);
+		    col = bezTri(DEGREE, s, t, cps);
 
 
 		    // draw noise.
-		    float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
+		    //    float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
 
 
 		    // draw samples
@@ -446,7 +449,7 @@ int main (int, char *[]) {
 		}
 
 
-
+/*
 		float EPS_GRID = DEGREE * 0.00181;
 
 		// draw bezier triangle grid.
@@ -483,6 +486,7 @@ int main (int, char *[]) {
 		    }
 
 		}
+*/
 
             } else {
 		col = Vector3f(0,0,0);
