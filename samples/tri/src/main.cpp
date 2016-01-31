@@ -20,7 +20,11 @@ TODO: draw bezier triangle.
 
 #include "util.hpp"
 
+//#define DO_EIGEN
+
+#ifdef DO_EIGEN
 #include "Eigen/Dense"
+#endif
 
 #include <iostream>
 
@@ -31,6 +35,12 @@ using std::cout;
 using std::endl;
 using std::pair;
 
+// check if float is integer.
+bool isInt(float f, float eps) {
+    return
+	(f - floorf(f)) < eps ||
+	(ceilf(f) - f) < eps;
+}
 
 int fact(int n) {
     if(n <= 1)
@@ -170,6 +180,21 @@ Vector3f orig(0);
 SamplesList samplesList;
 SamplesGrid samples(width, height,0.0f);
 
+bool rayTriangleIntersect(
+    uint32_t i, uint32_t j,
+
+    float &t, float &u, float &v) {
+
+    float x = (2 * (i + 0.5) / (float)width - 1) * imageAspectRatio * scale;
+    float y = (1 - 2 * (j + 0.5) / (float)height) * scale;
+    Vector3f dir(x, y, -1);
+    //cameraToWorld.multDirMatrix(Vector3f(x, y, -1), dir);
+    dir.Normalize();
+
+    return rayTriangleIntersect(orig, dir, v0, v1, v2, t, u, v);
+}
+
+#ifdef DO_EIGEN
 Vector3f* FitControlPoints() {
     // are to solve the equation
     // Ax = b
@@ -271,19 +296,7 @@ Vector3f* FitControlPoints() {
    return cps;
 }
 
-bool rayTriangleIntersect(
-    uint32_t i, uint32_t j,
 
-    float &t, float &u, float &v) {
-
-    float x = (2 * (i + 0.5) / (float)width - 1) * imageAspectRatio * scale;
-    float y = (1 - 2 * (j + 0.5) / (float)height) * scale;
-    Vector3f dir(x, y, -1);
-    //cameraToWorld.multDirMatrix(Vector3f(x, y, -1), dir);
-    dir.Normalize();
-
-    return rayTriangleIntersect(orig, dir, v0, v1, v2, t, u, v);
-}
 
 void GatherSamples() {
         int acceptedSamples = 0;
@@ -324,6 +337,7 @@ void GatherSamples() {
     }
 
 }
+#endif
 
 
 Vector3f bezTri(int n, float s, float t, Vector3f* cols) {
@@ -351,39 +365,6 @@ Vector3f bezTri(int n, float s, float t, Vector3f* cols) {
 
     }
 
-/*
-    for(int l = 0; l <= n; ++l) {
-
-	for(int j = 0; j <= n; ++j) {
-
-	    for(int i = 0; i <= n; ++i) {
-
-		if(i+j+l == n) {
-
-
-
-		    result = result +
-			B(n, i,j,l,s,t) * cols[a];
-
-		    a++;
-
-		    //	       printf("i,j,l: %d,%d,%d\n", i,j,l);
-		}
-	    }
-
-	}
-	}*/
-
-    //    exit(1);
-
-/*    if(result.x < 0 || result.y < 0 || result.z < 0) {
-
-
-	LOG_I("wat 9: %s",  string(result).c_str() );
-	exit(1);
-	}*/
-
-
     return result;
 }
 
@@ -391,49 +372,6 @@ Vector3f bezTri(int n, float s, float t, Vector3f* cols) {
 
 
 int main (int, char *[]) {
-
-/*
-
-    Eigen::MatrixXf A(6,6);
-    Eigen::VectorXf b(6);
-
-   A(0,0) = 1;
-   A(0,1) = 2;
-   A(0,2) = 3;
-
-   A(1,0) = 4;
-   A(1,1) = 5;
-   A(1,2) = 6;
-
-   A(2,0) = 7;
-   A(2,1) = 8;
-   A(2,2) = 10;
-
-    A <<
-	29,2,2,29,2,22,
-	2,29,25,2,2,22,
-	2,22,2,2,27,2,
-	25,2,2,2,2,2,
-	2,28,2,27,2,29,
-	2,2,2,2,2,2;
-
-
-    b <<
-	2,
-	2,
-	2,
-	2,
-	2,
-	2;
-
-   cout << "Here is the matrix A:\n" << A << endl;
-   cout << "Here is the vector b:\n" << b << endl;
-   Eigen::VectorXf x = A.colPivHouseholderQr().solve(b);
-   cout << "The solution is:\n" << x << endl;
-
-
-   exit(1);
-*/
     srand(time(NULL));
 
 
@@ -460,13 +398,16 @@ int main (int, char *[]) {
     unsigned char *framebuffer = new unsigned char[width * height * 4];
     unsigned char *pix = framebuffer;
 
+#ifdef DO_EIGEN
     LOG_I("gather samples");
-    GatherSamples();
+      GatherSamples();
 
     LOG_I("fitting control points");
      Vector3f* cps = FitControlPoints();
+#endif
 
     LOG_I("rendering");
+
     for (uint32_t j = 0; j < height; ++j) {
         for (uint32_t i = 0; i < width; ++i) {
             // compute primary ray
@@ -485,11 +426,11 @@ int main (int, char *[]) {
 
 //                col = bezTri(2, s, t, cols2);
 
-		col = bezTri(DEGREE, s, t, cps);
+		//col = bezTri(DEGREE, s, t, cps);
 
 
 
-//		float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
+		float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
 
 
 //		    s * cols[0] + t * cols[1] + (1 - s - t) * cols[2];
@@ -506,7 +447,34 @@ int main (int, char *[]) {
 
 		alpha = 255;
 
+		// draw samples
 //		if(samples(i,j) > 0) { col = Vector3f(1,1,0); }
+
+
+
+		float EPS_GRID = 0.01;
+
+		// draw bezier triangle grid.
+		if(
+		    isInt(u * DEGREE, EPS_GRID) ||
+		    isInt(v * DEGREE, EPS_GRID) ||
+		    isInt((1-u-v)  * DEGREE, EPS_GRID)
+
+		    ) {
+		    col = Vector3f(1,1,0);
+		}
+
+		float EPS_CP = 0.1;
+
+		// draw control points:
+		if(
+		    isInt(u * DEGREE, EPS_CP) &&
+		    isInt(v * DEGREE, EPS_CP) &&
+		    isInt((1-u-v)  * DEGREE, EPS_CP)
+
+		    ) {
+		    col = Vector3f(1,0,0);
+		}
 
 
             } else {
