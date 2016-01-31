@@ -205,8 +205,6 @@ public:
 	    newChunk->m_specularMap = -1;
 
 
-
-
 	    Material* mat = data->m_chunks[i]->m_material;
 
 	    if(mat->m_textureFilename != ""){ // empty textures should remain empty.
@@ -239,11 +237,6 @@ public:
 
 
 
-
-
-
-
-
 	    newChunk->m_indexBuffer = VBO::CreateIndex(data->m_indexType);
 
 
@@ -261,32 +254,39 @@ public:
 
 
 
-
-
 	    if(geoObjBatch->m_defaultShader == NULL) {
 
+		if(filename == "obj/tree3_done.eob") {
 
-		string shaderName = "shader/geo_obj_render";
+		    vector<string> defines;
 
-		/*
-		  Next, we create a shader that supports all the texture types.
-		*/
+		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
+			string("shader/geo_obj_render") + string("_vs.glsl"), string("shader/tree") + "_fs.glsl", defines);
+
+		} else {
+
+		    string shaderName = "shader/geo_obj_render";
+
+		    /*
+		      Next, we create a shader that supports all the texture types.
+		    */
 
 
-		vector<string> defines;
+		    vector<string> defines;
 
-		if(newChunk->m_specularMap != -1) {
-		    defines.push_back("SPEC_MAPPING");
+		    if(newChunk->m_specularMap != -1) {
+			defines.push_back("SPEC_MAPPING");
+		    }
+
+		    if(newChunk->m_hasHeightMap) {
+			defines.push_back("HEIGHT_MAPPING");
+		    } else if(newChunk->m_normalMap != -1) { // only a normal map, no height map.
+			defines.push_back("NORMAL_MAPPING");
+		    }
+
+		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+
 		}
-
-		if(newChunk->m_hasHeightMap) {
-		    defines.push_back("HEIGHT_MAPPING");
-		} else if(newChunk->m_normalMap != -1) { // only a normal map, no height map.
-		    defines.push_back("NORMAL_MAPPING");
-		}
-
-		geoObjBatch->m_defaultShader = ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
-
 
 	    }
 
@@ -298,8 +298,7 @@ public:
 
 
 	    geoObjBatch->m_chunks.push_back(newChunk);
-	}
-	return data;
+	}	return data;
     }
 
 };

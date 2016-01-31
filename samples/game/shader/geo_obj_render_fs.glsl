@@ -123,6 +123,9 @@ uniform float specShiny;
 
 
 void main(void) {
+
+    vec4 diffColor=texture(textureArray,vec3(texcoordOut,diffMap) );
+
     // since it is directional light, minus.
     vec3 lightpos = -viewSpaceLightDirection;
 
@@ -158,7 +161,6 @@ void main(void) {
 
     vec2 uv = rayTexcoord;
     vec3 n = normalize(texture(textureArray,vec3(uv,normalMap) )).xyz; // lol1
-    vec4 diffColor=texture(textureArray, vec3(uv,diffMap) );
 
     /*
       Depth correct.
@@ -170,10 +172,9 @@ void main(void) {
 #elif defined NORMAL_MAPPING
 
     vec3 n = texture(textureArray,vec3(texcoordOut,normalMap) ).xyz; // lol2
-    vec4 diffColor=texture(textureArray, vec3(texcoordOut,diffMap));
 #else // no normal or height map
     vec3 n = normalize(vec4(viewSpaceNormalOut,0.0)).xyz; // lol3
-    vec4 diffColor=texture(textureArray,vec3(texcoordOut,diffMap) );
+
 #endif
 
     // if point light:

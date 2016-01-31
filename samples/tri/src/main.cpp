@@ -133,7 +133,7 @@ typedef MultArray<float> SamplesGrid;
 // where the Vector2f is the barycentric coordinates of the sample.
 typedef vector<pair<Vector2f, float> > SamplesList;
 
-float NOISE_SCALE =0.004;
+float NOISE_SCALE =0.002;
 
 float TRI_SCALE= 1.0f;
 
@@ -149,7 +149,7 @@ Vector3f v0(-1.0f * TRI_SCALE, -1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 Vector3f v1( 1.0f * TRI_SCALE, -1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 Vector3f v2( 0.0f,  1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 
-constexpr int DEGREE =11;
+constexpr int DEGREE =4;
 // high quality: 11
 // mid quality: 5
 
@@ -437,7 +437,7 @@ int main (int, char *[]) {
 
 
 		    // draw noise.
-		    //    float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
+		    //	    float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
 
 
 		    // draw samples
