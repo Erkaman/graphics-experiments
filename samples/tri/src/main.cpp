@@ -20,7 +20,7 @@ TODO: draw bezier triangle.
 
 #include "util.hpp"
 
-#define DO_EIGEN
+//#define DO_EIGEN
 
 #ifdef DO_EIGEN
 #include "Eigen/Dense"
@@ -136,8 +136,7 @@ typedef vector<pair<Vector2f, float> > SamplesList;
 
 float NOISE_SCALE =0.004;
 
-
-    float TRI_SCALE= 1.0f;
+float TRI_SCALE= 1.0f;
 
 float SampleNoise(Vector2i p) {
     return pn.noise(p.x*NOISE_SCALE,p.y*NOISE_SCALE,0);
@@ -151,7 +150,7 @@ Vector3f v0(-1.0f * TRI_SCALE, -1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 Vector3f v1( 1.0f * TRI_SCALE, -1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 Vector3f v2( 0.0f,  1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 
-constexpr int DEGREE = 3;
+constexpr int DEGREE =11;
 // high quality: 11
 // mid quality: 5
 
@@ -439,16 +438,16 @@ int main (int, char *[]) {
 
 
 		    // draw samples
-		    if(samples(i,j) > 0) { col = Vector3f(1,1,0); }
+		    //    if(samples(i,j) > 0) { col = Vector3f(1,1,0); }
 
 		} else {
 		    // outside triangle, don't draw.
 		    alpha = 0;
 		}
 
-/*
 
-		float EPS_GRID = 0.02;
+
+		float EPS_GRID = DEGREE * 0.00181;
 
 		// draw bezier triangle grid.
 		if(
@@ -458,7 +457,7 @@ int main (int, char *[]) {
 
 		    ) {
 
-		    float EPS = 0.01;
+		    float EPS = .00060 * DEGREE;
 
 		    if(u > -EPS && v > -EPS && (1-u-v) > -EPS ) {
 			alpha = 255;
@@ -467,7 +466,7 @@ int main (int, char *[]) {
 
 		}
 
-		float EPS_CP = 0.1;
+		float EPS_CP = DEGREE * 0.009;
 
 		// draw control points:
 		if(
@@ -477,15 +476,13 @@ int main (int, char *[]) {
 
 		    ) {
 
-		    float EPS = 0.01;
+		    float EPS = DEGREE * 0.005f ; //0.01;
 		    if(u > -EPS && v > -EPS && (1-u-v) > -EPS ) {
 			alpha = 255;
 			col = Vector3f(1,0,0);
 		    }
 
 		}
-		*/
-
 
             } else {
 		col = Vector3f(0,0,0);
