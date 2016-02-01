@@ -28,6 +28,26 @@ CubeMapTexture* CubeMapTexture::Load(
     return cubeMap;
 }
 
+
+CubeMapTexture* CubeMapTexture::Load(int size) {
+
+    CubeMapTexture* cubeMap = new CubeMapTexture();
+
+    Texture::SetActiveTextureUnit(0);
+    cubeMap->Bind();
+
+    for(int i = 0; i < 6; ++i) {
+
+	glTexImage2D(
+	    GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA8 , size,size, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		     nullptr);
+
+    }
+    cubeMap->GenerateMipmap();
+    cubeMap->Unbind();
+
+}
+
 bool CubeMapTexture::LoadCubemapFace (const std::string face, int cubeMapTarget) {
 
     TextureInfo* ti = TextureLoader::Load(face);

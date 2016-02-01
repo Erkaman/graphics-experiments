@@ -20,7 +20,7 @@ TODO: draw bezier triangle.
 
 #include "util.hpp"
 
-#define DO_EIGEN
+//#define DO_EIGEN
 
 #ifdef DO_EIGEN
 #include "Eigen/Dense"
@@ -387,6 +387,7 @@ int main (int, char *[]) {
 	{0.0, 1.0, 0.0},
 	{0.0, 0.0, 1.0}};
 
+    /*
     Vector3f cols2[6] = {
 	{1.0, 0.0, 0.0},   {0.5, 0.5, 0.0},
 
@@ -394,6 +395,19 @@ int main (int, char *[]) {
 
 	 {0.0, 0.5, 0.5}, {0.0, 0.0, 1.0}
 	};
+    */
+
+    Vector3f cols2[6] = {
+	{1.0, 0.0, 0.0},
+	{0.0, 0.0, 0.0}, // bottom side
+
+	{0.0, 1.0, 0.0},
+	{1, 1,1}, // left side
+
+	{1.0,0.0,1.0}, // right side
+	{0.0, 0.0, 1.0}
+	};
+
 
 
     //  bezTri(2,0,0);
@@ -430,7 +444,7 @@ int main (int, char *[]) {
 		if(u > 0 && v > 0 && (1 - u -v) > 0 ) {
 
 		    // draw colored triangle
-		    col = bezTri(1, s, t, cols1);
+		    col = bezTri(2, s, t, cols2);
 
 		    // draw approximated noise.
 //		    col = bezTri(DEGREE, s, t, cps);

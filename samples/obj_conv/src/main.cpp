@@ -275,7 +275,6 @@ map<string, Material*> ParseMtllib(const string& filename) {
 
 	    currentMaterial->m_materialName = tokens[1];
 
-
 	} else if(firstToken == "map_kd") {
 	    assert(tokens.size() == 2);
 
@@ -293,6 +292,11 @@ map<string, Material*> ParseMtllib(const string& filename) {
 
 	    currentMaterial->m_specularMapFilename = tokens[1];
 	}
+
+	// parse kd.
+	// parse ks, where every component is the same.
+	// ke, emittance
+	// ns, specular exponent.
     }
 
     return mtllib;

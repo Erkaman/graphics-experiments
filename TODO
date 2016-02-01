@@ -67,6 +67,10 @@ http://www.kevinboulanger.net/grass.html
 http://outerra.blogspot.se/2012/05/procedural-grass-rendering.html
 https://upvoid.com/devblog/2013/02/prototype-grass/
 
+* fix better terrain grid:
+http://graphics.cs.brown.edu/games/IsoHeightfield/mcguiresibley04iso.pdf
+
+
 tree
 torch.
 traffic sign.
