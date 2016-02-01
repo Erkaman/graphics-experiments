@@ -65,6 +65,13 @@ void WriteString(File* file, const std::string& str) {
     file->WriteArray(str.c_str(), str.size()+1);
 }
 
+void WriteVector(File* file, const std::string& str, const Vector3f& v) {
+    file->WriteLine(str + " "
+		 + std::to_string(v.x) + " "
+		 + std::to_string(v.y) + " "
+		 + std::to_string(v.z));
+}
+
 std::string ReadString(File* file) {
     uint32 size = file->Read32u();
     char* buffer = (char *)malloc(size * sizeof(char));
@@ -112,14 +119,12 @@ bool WriteMaterialFile(const GeometryObjectData& data, const std::string& outfil
 	if(mat->m_hasHeightMap)
 	    f->WriteLine("has_height_map");
 
-	f->WriteLine("shininess " + std::to_string(mat->m_shininess));
+	f->WriteLine("shininess " + std::to_string(mat->m_specularExponent));
 
-	Vector3f v = mat->m_specularColor;
+	WriteVector(f, "spec_color", mat->m_specularColor);
 
-	f->WriteLine("spec_color "
-		     + std::to_string(v.x) + " "
-		     + std::to_string(v.y) + " "
-		     + std::to_string(v.z));
+	WriteVector(f, "diff_color", mat->m_diffuseColor);
+
     }
 
     return true;
@@ -343,11 +348,19 @@ map<string, Material*>* ReadMaterialFile(
 
 	} else if(firstToken == "shininess") {
 	    assert(tokens.size() == 2);
-	    currentMaterial->m_shininess = StrToFloat(tokens[1]);
+	    currentMaterial->m_specularExponent = StrToFloat(tokens[1]);
 	}else if(firstToken == "spec_color") {
 	    assert(tokens.size() == 4);
 
 	    currentMaterial->m_specularColor =
+		Vector3f(
+		    StrToFloat(tokens[1]),
+		    StrToFloat(tokens[2]),
+		    StrToFloat(tokens[3]));
+	}else if(firstToken == "diff_color") {
+	    assert(tokens.size() == 4);
+
+	    currentMaterial->m_diffuseColor =
 		Vector3f(
 		    StrToFloat(tokens[1]),
 		    StrToFloat(tokens[2]),

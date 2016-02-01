@@ -39,6 +39,7 @@ struct Chunk {
 
     float m_shininess;
     Vector3f m_specularColor;
+    Vector3f m_diffuseColor;
 
     // the material.
     GLint m_texture;
@@ -220,6 +221,8 @@ public:
 		    m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_textureFilename));
 
 
+	    } else {
+		newChunk->m_texture = -1;
 	    }
 
 	    if(mat->m_normalMapFilename != ""){ // empty textures should remain empty->
@@ -255,11 +258,9 @@ public:
 	    newChunk->m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
 	    newChunk->m_indexBuffer->Unbind();
 
-
-	    newChunk->m_shininess = baseChunk->m_material->m_shininess;
+	    newChunk->m_shininess = baseChunk->m_material->m_specularExponent;
 	    newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
-
-
+	    newChunk->m_diffuseColor = baseChunk->m_material->m_diffuseColor;
 
 	    if(geoObjBatch->m_defaultShader == NULL) {
 
@@ -270,6 +271,13 @@ public:
 		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
 			string("shader/tree") + string("_vs.glsl"), string("shader/tree") + "_fs.glsl", defines);
 
+		} else if(filename == "obj/car_blend.eob") {
+
+		    vector<string> defines;
+
+		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
+			string("shader/car") + string("_vs.glsl"), string("shader/car") + "_fs.glsl", defines);
+
 		} else {
 
 		    string shaderName = "shader/geo_obj_render";
@@ -277,7 +285,6 @@ public:
 		    /*
 		      Next, we create a shader that supports all the texture types.
 		    */
-
 
 		    vector<string> defines;
 
@@ -296,13 +303,6 @@ public:
 		}
 
 	    }
-
-
-
-
-
-
-
 
 	    geoObjBatch->m_chunks.push_back(newChunk);
 	}	return data;
@@ -567,8 +567,6 @@ void GeometryObject::RenderAllEnv(
 
 	const GeoObjBatch* batch = itBatch.second;
 
-
-
 	// bind shader of the batch.
 	batch->m_defaultShader->Bind();
 
@@ -577,8 +575,6 @@ void GeometryObject::RenderAllEnv(
 	batch->m_defaultShader->SetUniform("textureArray", 0);
 	Texture::SetActiveTextureUnit(0);
 	GeoObjManager::GetInstance().m_arrayTexture->Bind();
-
-
 
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
@@ -623,7 +619,6 @@ void GeometryObject::RenderAllEnv(
 	GeoObjManager::GetInstance().m_arrayTexture->Unbind();
 
     }
-
 }
 
 
@@ -707,6 +702,8 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		selectedBatch = batch;
 	    }
 
+
+
 	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
 
 		Chunk* chunk = batch->m_chunks[i];
@@ -731,6 +728,8 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 		if(chunk->m_texture != -1) {
 		    batch->m_defaultShader->SetUniform("diffMap", (float)chunk->m_texture  );
+		}else {
+		    batch->m_defaultShader->SetUniform("diffColor", chunk->m_diffuseColor);
 		}
 
 		if(chunk->m_normalMap != -1) {

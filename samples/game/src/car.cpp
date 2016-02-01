@@ -32,7 +32,7 @@ const btVector3 BACK_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, -(
 
 bool Car::Init(const Vector3f& position) {
 
-    bool ret = GeometryObject::Init("obj/car.eob",
+    bool ret = GeometryObject::Init("obj/car_blend.eob",
 				    position, // translation
 				    btQuaternion::getIdentity(), // rotation
 				    1.0f, // scale

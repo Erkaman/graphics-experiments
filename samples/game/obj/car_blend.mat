@@ -1,0 +1,36 @@
+new_mat 16___Default
+shininess 9.803922
+spec_color 0.000000 0.000000 0.000000
+diff_color 0.588000 0.588000 0.588000
+new_mat Aluminium
+shininess 19.607843
+spec_color 0.800000 0.800000 0.800000
+diff_color 0.588200 0.588200 0.588200
+new_mat Black_1
+shininess 19.607843
+spec_color 0.296500 0.296500 0.296500
+diff_color 0.235300 0.235300 0.235300
+new_mat BodyCollor
+shininess 68.627449
+spec_color 0.200000 0.200000 0.200000
+diff_color 0.988200 0.866700 0.000000
+new_mat CromiumReflex
+shininess 49.019608
+spec_color 1.200000 1.200000 1.200000
+diff_color 0.176500 0.176500 0.176500
+new_mat OranjeGlass
+shininess 68.627449
+spec_color 1.500000 1.500000 1.500000
+diff_color 1.000000 0.619600 0.125500
+new_mat RedGlass
+shininess 68.627449
+spec_color 1.500000 1.500000 1.500000
+diff_color 0.717600 0.000000 0.000000
+new_mat WhiteGlass
+shininess 68.627449
+spec_color 1.500000 1.500000 1.500000
+diff_color 0.678400 0.717600 0.737300
+new_mat pneu
+shininess 19.607843
+spec_color 0.300000 0.300000 0.300000
+diff_color 0.235300 0.235300 0.235300

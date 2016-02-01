@@ -52,6 +52,11 @@ string basePath;
   Function declarations
  */
 
+static float StrToFloat(const string& str) {
+    string::size_type size;
+    return std::stof(str, &size) ;
+}
+
 // parse the material library of the .obj-file
 map<string, Material*> ParseMtllib(const string& filename);
 
@@ -152,7 +157,10 @@ int main (int argc, char * argv[]) {
 
 	}else if(firstToken == "vt") {
 
-	    assert(tokens.size() == 3 );
+	    assert(
+		tokens.size() == 3 ||
+		tokens.size() == 4 // if there is a third uv-coordinate, ignore it. we dont support it.
+		);
 
 	    Vector2f point = Vector2f(stof(tokens[1]),stof(tokens[2]) );
 	    texCoords.push_back(point);
@@ -291,12 +299,36 @@ map<string, Material*> ParseMtllib(const string& filename) {
 	    assert(tokens.size() == 2);
 
 	    currentMaterial->m_specularMapFilename = tokens[1];
-	}
+	}else if(firstToken == "kd") { // diffuse color
 
-	// parse kd.
-	// parse ks, where every component is the same.
-	// ke, emittance
-	// ns, specular exponent.
+	    assert(tokens.size() == 4);
+
+	    currentMaterial->m_diffuseColor =
+		Vector3f(
+		    StrToFloat(tokens[1]),
+		    StrToFloat(tokens[2]),
+		    StrToFloat(tokens[3]));
+
+	}else if(firstToken == "ks") { // specular color.
+
+	    assert(tokens.size() == 4);
+
+	    currentMaterial->m_specularColor =
+		Vector3f(
+		    StrToFloat(tokens[1]),
+		    StrToFloat(tokens[2]),
+		    StrToFloat(tokens[3]));
+
+	}else if(firstToken == "ns") { // specular exponent.
+	    assert(tokens.size() == 2);
+
+	    currentMaterial->m_specularExponent = StrToFloat(tokens[1]);
+
+
+
+	}/*else if(firstToken == "ke") { // emissiveColor
+
+}*/
     }
 
     return mtllib;
@@ -314,8 +346,12 @@ int ParseFEntry(const string& entry) {
 
     if(slashCount != 2 && slashCount != 1) {
 	// we will allow faces only on the form v/vt/vn and v/vt.
-	LOG_E("only indices on the form v/vt/vn or v/vt are allowed");
+
+	LOG_E("only indices on the form v/vt/vn or v/vt are allowed: %s", entry.c_str() );
+
+
     }
+
 
     if(slashCount == 1) {
 	LOG_E("no normals in the obj file. This is not handled by this program");

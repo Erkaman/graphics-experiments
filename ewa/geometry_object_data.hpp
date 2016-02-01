@@ -15,8 +15,9 @@ struct Material{
     std::string m_normalMapFilename;
     std::string m_specularMapFilename;
 
-    float m_shininess;
+    float m_specularExponent;
     Vector3f m_specularColor;
+    Vector3f m_diffuseColor;
     bool m_hasHeightMap;
 
     Material() {
@@ -24,12 +25,16 @@ struct Material{
 	this->m_normalMapFilename = "";
 	this->m_specularMapFilename = "";
 
-	this->m_shininess = 1; // default shininess.
+	this->m_specularExponent = 1; // default shininess.
 	this->m_hasHeightMap = false;
 
 	// default specular color is black
 	// (which means there is no specular lighting at all)
 	this->m_specularColor = Vector3f(0);
+	this->m_diffuseColor = Vector3f(1);
+	this->m_specularExponent = 1.0;
+
+
     }
 };
 
