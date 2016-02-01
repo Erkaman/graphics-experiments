@@ -261,7 +261,7 @@ public:
 		    vector<string> defines;
 
 		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
-			string("shader/geo_obj_render") + string("_vs.glsl"), string("shader/tree") + "_fs.glsl", defines);
+			string("shader/tree") + string("_vs.glsl"), string("shader/tree") + "_fs.glsl", defines);
 
 		} else {
 
@@ -568,8 +568,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 	batch->m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
 
-
-
 	batch->m_defaultShader->SetUniform("textureArray", 0);
 	Texture::SetActiveTextureUnit(0);
 	GeoObjManager::GetInstance().m_arrayTexture->Bind();
@@ -588,6 +586,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	}
 */
 
+//	SetCullFace(false);
 
 
 

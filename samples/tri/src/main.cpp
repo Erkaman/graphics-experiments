@@ -149,14 +149,14 @@ Vector3f v0(-1.0f * TRI_SCALE, -1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 Vector3f v1( 1.0f * TRI_SCALE, -1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 Vector3f v2( 0.0f,  1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
 
-constexpr int DEGREE =4;
+constexpr int DEGREE =2;
 // high quality: 11
 // mid quality: 5
 
 constexpr int NUM_CONTROL_POINTS = ((DEGREE+1)*(DEGREE+2)) / 2;
 
-constexpr uint32_t width = 640 * 2;
-constexpr uint32_t height = 480 * 2;
+constexpr uint32_t width = 250 * 2;
+constexpr uint32_t height = 250 * 2;
 
 constexpr int GRID_X = 80;
 constexpr int GRID_Y = 80;
@@ -430,10 +430,10 @@ int main (int, char *[]) {
 		if(u > 0 && v > 0 && (1 - u -v) > 0 ) {
 
 		    // draw colored triangle
-//		    col = bezTri(2, s, t, cols2);
+		    col = bezTri(1, s, t, cols1);
 
 		    // draw approximated noise.
-		    col = bezTri(DEGREE, s, t, cps);
+//		    col = bezTri(DEGREE, s, t, cps);
 
 
 		    // draw noise.
@@ -441,7 +441,7 @@ int main (int, char *[]) {
 
 
 		    // draw samples
-		    //    if(samples(i,j) > 0) { col = Vector3f(1,1,0); }
+//		    if(samples(i,j) > 0) { col = Vector3f(1,1,0); }
 
 		} else {
 		    // outside triangle, don't draw.
@@ -449,8 +449,8 @@ int main (int, char *[]) {
 		}
 
 
-/*
 		float EPS_GRID = DEGREE * 0.00181;
+
 
 		// draw bezier triangle grid.
 		if(
@@ -464,7 +464,9 @@ int main (int, char *[]) {
 
 		    if(u > -EPS && v > -EPS && (1-u-v) > -EPS ) {
 			alpha = 255;
-			col = Vector3f(0.6,0.65,0);
+//			col = Vector3f(0.6,0.65,0);
+			col = Vector3f(0,0,0);
+
 		    }
 
 		}
@@ -486,7 +488,7 @@ int main (int, char *[]) {
 		    }
 
 		}
-*/
+
 
             } else {
 		col = Vector3f(0,0,0);

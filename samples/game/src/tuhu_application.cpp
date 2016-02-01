@@ -14,6 +14,7 @@
 
 #include "ewa/gl/depth_fbo.hpp"
 #include "ewa/gl/texture.hpp"
+#include "ewa/gl/cube_map_texture.hpp"
 
 #include "ewa/audio/sound.hpp"
 #include "ewa/audio/wave_loader.hpp"
@@ -50,6 +51,9 @@
 #include "gpu_profiler.hpp"
 #include "physics_mask.hpp"
 #include "gbuffer.hpp"
+
+#include "skybox.hpp"
+
 
 
 using namespace std;
@@ -103,6 +107,20 @@ void TuhuApplication::Init() {
     m_gpuProfiler = new GpuProfiler();
 
     m_ssaoPass = new SsaoPass(GetFramebufferWidth(),GetFramebufferHeight());
+
+    m_skybox = new Skybox();
+
+    m_cubeMapTexture = CubeMapTexture::Load(
+	"img/bluecloud_ft.png",
+	"img/bluecloud_bk.png",
+	"img/bluecloud_lf.png",
+	"img/bluecloud_rt.png",
+	"img/bluecloud_up.png",
+	"img/bluecloud_dn.png"
+	);
+    if(m_cubeMapTexture == NULL) {
+	PrintErrorExit();
+    }
 
     currentObjId = 0;
 
@@ -506,9 +524,16 @@ void TuhuApplication::RenderScene() {
 
     Matrix4f lightVp =  biasMatrix*   m_lightVp;
 
+
+
+
     m_gpuProfiler->Begin(GTS_Sky);
-    m_skydome->Draw(m_curCamera);
+    //m_skydome->Draw(m_curCamera);
+    m_skybox->Draw(m_cubeMapTexture, m_curCamera);
+
     m_gpuProfiler->End(GTS_Sky);
+
+
 
     m_gpuProfiler->Begin(GTS_Terrain);
 
@@ -535,6 +560,7 @@ void TuhuApplication::RenderScene() {
     m_line->Render(m_curCamera->GetVp());
 
     m_gpuProfiler->End(GTS_Objects);
+
 }
 
 void TuhuApplication::Render() {
@@ -613,6 +639,8 @@ void TuhuApplication::Update(const float delta) {
 	IGeometryObject* geoObj = it.second;
 
 	geoObj->Update(*m_cameraFrustum, *m_lightFrustum );
+
+	//update cameras of env map. here
     }
 
 

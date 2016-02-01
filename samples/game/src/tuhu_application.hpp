@@ -31,6 +31,8 @@ class GpuProfiler;
 class Line;
 class Cube;
 class SsaoPass;
+class Skybox;
+class CubeMapTexture;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
@@ -87,6 +89,10 @@ private:
     unsigned int currentObjId;
 
     Cube* m_aabbWireframe;
+
+    Skybox* m_skybox;
+    CubeMapTexture* m_cubeMapTexture;
+
 
     std::map<unsigned int,IGeometryObject*> m_geoObjs;
 

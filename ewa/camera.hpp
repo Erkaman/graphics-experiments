@@ -14,8 +14,6 @@ private:
 
     void ComputeViewMatrix();
 
-    Matrix4f CreateProjectionMatrix(const float fov, const float aspectRatio, const float near, const float far)const;
-
 
 public:
 
@@ -33,6 +31,4 @@ public:
     void Walk(const float amount);
     void Stride(const float amount);
     void Fly(const float amount);
-
-
 };

@@ -38,8 +38,6 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
     ComputeViewMatrix();
 }
 
-
-
 void Camera::ComputeViewMatrix() {
 	m_viewMatrix =
 		Matrix4f::CreateLookAt(

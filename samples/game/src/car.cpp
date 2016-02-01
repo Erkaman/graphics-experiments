@@ -8,6 +8,7 @@
 #include "ewa/common.hpp"
 
 #include "physics_mask.hpp"
+#include "env_camera.hpp"
 
 
 #include <btBulletDynamicsCommon.h>
@@ -28,7 +29,6 @@ float	maxEngineForce = 1000.f;
 const btVector3 FRONT_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, (CAR_DIMENSIONS.z()/2 - 0.3f - WHEEL_RADIUS));
 const btVector3 BACK_WHEEL_DISTANCE(CAR_DIMENSIONS.x()/2 - 0.1f, MASS_OFFSET, -(CAR_DIMENSIONS.z()/2 - 0.1f - WHEEL_RADIUS));
 
-
 bool Car::Init(const Vector3f& position) {
 
     bool ret = GeometryObject::Init("obj/car.eob",
@@ -41,10 +41,22 @@ bool Car::Init(const Vector3f& position) {
 				    carCollidesWith
 	);
 
-	return ret;
+    for(int i  = 0; i < 6; ++i) {
+	m_envCameras[i] = new EnvCamera(m_envFaces[i], position );
+    }
+
+    return ret;
 }
 
-Car::Car(): m_raycastVehicle(NULL) {
+Car::Car(): m_raycastVehicle(NULL),
+	    m_envFaces{
+    GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+	} {
 }
 
 
@@ -54,6 +66,13 @@ Car::~Car() {
 void Car::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum) {
 
     GeometryObject::Update(cameraFrustum, lightFrustum);
+
+
+    for(int i  = 0; i < 6; ++i) {
+	m_envCameras[i]->Update(0);
+    }
+
+
 
     if(!m_raycastVehicle) {
 	// if not yet added to physicsworld, there is nothing we can do.
@@ -114,6 +133,8 @@ Vector3f Car::GetForwardVector()const {
 }
 
 void Car::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
+
+
 
     GeometryObject::AddToPhysicsWorld(physicsWorld);
     btRigidBody* rigidBody = GetRigidBody();
@@ -193,29 +214,3 @@ void Car::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     leftBackWheel.m_frictionSlip = BACK_WHEEL_FRICTION;
 
 }
-
-/*
-:m_suspensionStiffness(btScalar(5.88)),
-stiffness: N/m
-
-     m_suspensionCompression(btScalar(0.83)),
-measures in meters.
-
-     m_suspensionDamping(btScalar(0.88)),
-     N s / m
-
-     m_maxSuspensionTravelCm(btScalar(500.)),
-     cm
-
-     m_frictionSlip(btScalar(10.5)),
-
-
-     m_maxSuspensionForce(btScalar(6000.))
-*/
-
-
-/*m_maxSuspensionTravelCm could be preventing it from going further. Be sure to multiply by scale!
-
-
-m_frictionSlip, is friciton, and friciton is unitless i I think.
-*/

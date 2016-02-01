@@ -47,8 +47,6 @@ void ColorFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
     Unbind();
 }
 
-
-
 ColorFBO::ColorFBO() {
 
 }

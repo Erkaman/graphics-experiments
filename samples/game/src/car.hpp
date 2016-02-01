@@ -5,6 +5,7 @@
 class PhysicsWorld;
 struct btVehicleRaycaster;
 class btRaycastVehicle;
+class EnvCamera;
 
 
 class Car : public GeometryObject{
@@ -13,6 +14,9 @@ private:
 
     btVehicleRaycaster* m_vehicleRaycaster;
     btRaycastVehicle* m_raycastVehicle;
+
+    EnvCamera *m_envCameras[6];
+    GLenum m_envFaces[6];
 
 public:
     Car();
