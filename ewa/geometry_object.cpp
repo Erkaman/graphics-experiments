@@ -63,6 +63,8 @@ public:
     ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
 
 
+
+
     // the geoObjs that needs the info of this struct to be rendered.
     vector<GeometryObject*> m_geoObjs;
 
@@ -84,6 +86,9 @@ private:
 	m_outlineShader = ShaderProgram::Load("shader/geo_obj_draw_outline");
 
 	m_outputDepthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
+
+	// used for env mapping.
+	m_envShader = ShaderProgram::Load("shader/geo_obj_env_render");
 
 	m_aabbWireframe = Cube::Load();
 
@@ -135,6 +140,8 @@ public:
     ShaderProgram* m_outlineShader;
 
     ShaderProgram* m_outputDepthShader;
+
+    ShaderProgram* m_envShader;
 
     ArrayTexture* m_arrayTexture;
 
@@ -378,6 +385,10 @@ bool GeometryObject::Init(
     m_inLightFrustum = true;
     SetSelected(false);
 
+    for(int i = 0; i < 6; ++i) {
+	m_inEnvLightFrustums[i] = true;
+    }
+
     SetPosition(position);
     SetEditPosition( Vector3f(0.0f) );
 
@@ -539,6 +550,84 @@ void GeometryObject::RenderIdAll(
 
 }
 
+
+void GeometryObject::RenderAllEnv(
+    const ICamera* camera, const Vector4f& lightPosition, int i){
+
+
+    int total = 0;
+    int nonCulled = 0;
+
+
+    auto& batches = GeoObjManager::GetInstance().m_batches;
+
+
+    // render all batches, one after one.
+    for(auto& itBatch : batches) {
+
+	const GeoObjBatch* batch = itBatch.second;
+
+
+
+	// bind shader of the batch.
+	batch->m_defaultShader->Bind();
+
+	batch->m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
+
+	batch->m_defaultShader->SetUniform("textureArray", 0);
+	Texture::SetActiveTextureUnit(0);
+	GeoObjManager::GetInstance().m_arrayTexture->Bind();
+
+
+
+	// render the objects of the batch, one after one.
+	for(GeometryObject* geoObj : batch->m_geoObjs ) {
+
+	    ++total;
+
+	    if(!geoObj->m_inEnvLightFrustums[i]) { // not in frustum?
+		continue; // if culled, do nothing.
+	    }
+
+	    ++nonCulled;
+
+	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
+
+	    batch->m_defaultShader->SetPhongUniforms(
+		modelMatrix
+		, camera, lightPosition);
+
+	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
+
+		Chunk* chunk = batch->m_chunks[i];
+
+		if(chunk->m_specularMap == -1) {
+		    // if no spec map, the chunk has the same specular color all over the texture.
+		    batch->m_defaultShader->SetUniform("specColor", chunk->m_specularColor);
+		}
+
+		batch->m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
+
+		if(chunk->m_texture != -1) {
+		    batch->m_defaultShader->SetUniform("diffMap", (float)chunk->m_texture  );
+		}
+
+		chunk->m_indexBuffer->Bind();
+		chunk->m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk->m_numTriangles)*3);
+		chunk->m_indexBuffer->Unbind();
+	    }
+	}
+
+	batch->m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
+
+	GeoObjManager::GetInstance().m_arrayTexture->Unbind();
+
+    }
+
+}
+
+
+
 void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
 
     int total = 0;
@@ -555,9 +644,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
     // render all batches, one after one.
     for(auto& itBatch : batches) {
-
-
-
 
 	const GeoObjBatch* batch = itBatch.second;
 
@@ -585,10 +671,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    batch->m_defaultShader->SetUniform("zFar", config.GetZFar());
 	}
 */
-
-//	SetCullFace(false);
-
-
 
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
@@ -647,9 +729,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 		batch->m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
 
-
-
-
 		if(chunk->m_texture != -1) {
 		    batch->m_defaultShader->SetUniform("diffMap", (float)chunk->m_texture  );
 		}
@@ -675,8 +754,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	}
 
 	batch->m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
-
-
 
 	shadowMap.GetRenderTargetTexture().Unbind();
 	batch->m_defaultShader->Unbind();
@@ -893,9 +970,14 @@ void GeometryObject::SetSelected(bool selected) {
     m_selected = selected;
 }
 
-void GeometryObject::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum) {
-    m_inCameraFrustum = cameraFrustum.IsAABBInFrustum(GetModelSpaceAABB());
-    m_inLightFrustum = lightFrustum.IsAABBInFrustum(GetModelSpaceAABB());
+void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum,
+    ViewFrustum** envLightFrustums) {
+    m_inCameraFrustum = cameraFrustum->IsAABBInFrustum(GetModelSpaceAABB());
+    m_inLightFrustum = lightFrustum->IsAABBInFrustum(GetModelSpaceAABB());
+
+    for(int i = 0; i < 6; ++i) {
+	m_inEnvLightFrustums[i] = envLightFrustums[i]->IsAABBInFrustum(GetModelSpaceAABB());
+    }
 
 }
 

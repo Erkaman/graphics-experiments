@@ -3,6 +3,7 @@
 #include "ewa/geometry_object.hpp"
 #include "ewa/keyboard_state.hpp"
 #include "ewa/physics_world.hpp"
+#include "ewa/view_frustum.hpp"
 
 #include "ewa/bt_util.hpp"
 #include "ewa/common.hpp"
@@ -42,36 +43,30 @@ bool Car::Init(const Vector3f& position) {
 	);
 
     for(int i  = 0; i < 6; ++i) {
-	m_envCameras[i] = new EnvCamera(m_envFaces[i], position );
+	m_envCameras[i] = new EnvCamera(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, position );
+	m_lightFrustums[i] = new ViewFrustum();
     }
 
     return ret;
 }
 
-Car::Car(): m_raycastVehicle(NULL),
-	    m_envFaces{
-    GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-	GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-	GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
-	} {
+Car::Car(): m_raycastVehicle(NULL) {
 }
 
 
 Car::~Car() {
 }
 
-void Car::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum) {
+void Car::Update(
+    const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, ViewFrustum** envLightFrustums) {
 
-    GeometryObject::Update(cameraFrustum, lightFrustum);
-
+    GeometryObject::Update(cameraFrustum, lightFrustum, envLightFrustums);
 
     for(int i  = 0; i < 6; ++i) {
 	m_envCameras[i]->Update(0);
-    }
 
+	m_lightFrustums[i]->Update( m_envCameras[i]->GetVp() );
+    }
 
 
     if(!m_raycastVehicle) {
@@ -213,4 +208,8 @@ void Car::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
     leftBackWheel.m_rollInfluence = ROLL_INFLUENCE;
     leftBackWheel.m_frictionSlip = BACK_WHEEL_FRICTION;
 
+}
+
+ViewFrustum** Car::GetLightFrustums() {
+    return m_lightFrustums;
 }

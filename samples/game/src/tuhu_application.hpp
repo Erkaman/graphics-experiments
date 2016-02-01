@@ -84,6 +84,7 @@ private:
     ViewFrustum* m_cameraFrustum;
     ViewFrustum* m_lightFrustum;
 
+
     PhysicsWorld* m_physicsWorld;
 
     unsigned int currentObjId;

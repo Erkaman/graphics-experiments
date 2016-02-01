@@ -15,8 +15,20 @@ private:
     btVehicleRaycaster* m_vehicleRaycaster;
     btRaycastVehicle* m_raycastVehicle;
 
+    /*
+      the cameras are stored in the order:
+
+      GL_TEXTURE_CUBE_MAP_POSITIVE_X
+      GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+      GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+      GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+      GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+      GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+    */
     EnvCamera *m_envCameras[6];
-    GLenum m_envFaces[6];
+
+
+    ViewFrustum* m_lightFrustums[6];
 
 public:
     Car();
@@ -33,11 +45,14 @@ public:
 	const DepthFBO& shadowMap);
     */
 
-    virtual void Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum);
+    virtual void Update(
+	const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, ViewFrustum** envLightFrustums);
 
     Vector3f GetForwardVector()const;
 
     virtual void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
+
+    ViewFrustum** GetLightFrustums();
 
 };
 

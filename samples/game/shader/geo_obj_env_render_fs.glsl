@@ -15,58 +15,17 @@ in vec3 viewSpaceNormalOut;
 in vec2 texcoordOut;
 
 uniform vec3 viewSpaceLightDirection;
-in mat4 modelViewMatrixOut;
-in vec3 eyePosOut;
-in vec4 shadowCoordOut;
 
-uniform mat4 modelViewMatrix;
 
 uniform float normalMap;
 uniform float diffMap;
-uniform sampler2DShadow shadowMap;
-
-uniform float zNear;
-uniform float zFar;
 
 uniform sampler2DArray textureArray;
 
-
-
-out vec4 geoData[3];
-
+out vec4 geoData[1];
 
 uniform vec3 specColor;
 uniform float specShiny;
-
-float computeAo() {
-
-
-    // circle center
-    vec3 c = vec3(0,0,1.13129);
-    float R = 11.502;
-    vec3 n = normalOut;
-    vec3 p0 = positionOut;
-
-//    float d = distance(positionOut,c);
-
-
-
-    float ro = dot(n,c) - dot(n, p0);
-    float h = R - ro;
-
-    // off center distance
-    float d = distance(p0,  c + ro * n );
-
-    float vcap = (1.0/3.0) * 3.14 * h*h * (3*R - h);
-
-    float f = (h*h) / (h*h + d*d);
-
-    float a = 0.0006;
-    return exp(-1 * a * f * vcap);
-
-//    return vcap / (0.5 * 1.33333 * 3.14 * R*R*R );
-}
-
 
 void main(void) {
 
@@ -102,38 +61,13 @@ void main(void) {
     float diff=  calcDiff(l,n);
     float spec= calcSpec(l,n,v);
 
-    float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
-
-    float ao = computeAo();
-
     geoData[0] = calcLighting(
-	ambientMat.xyz * ao,
+	ambientMat.xyz,
 	diffMat.xyz,
 	specShiny,
 	diffColor.xyz,
 	specColor.xyz,
-//	diff,
-	1.0f,
+	diff,
 	spec,
-	/*visibility*/ 1.0f);
-
-//    geoData[0] = vec4(, 1.0);
-
-    /*
-    if(d < r ) {
-	geoData[0] = vec4( vec3(d / r),1);
-    } else {
-	geoData[0] = vec4(0,1,0,1);
-	}*/
-
-
-
-//   geoData[0] = vec4(vec3(ao),1);
-
-
-    geoData[1] = vec4(viewSpaceNormalOut, 0);
-    geoData[2] = vec4(viewSpacePositionOut, 0);
-
-
-    //  fragmentColor = vec4( vec3(cosTheta), 1.0  );
+	1.0f);
 }

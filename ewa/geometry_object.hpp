@@ -49,6 +49,8 @@ private:
     bool m_inCameraFrustum;
     bool m_inLightFrustum;
 
+    bool m_inEnvLightFrustums[6];
+
     short m_physicsGroup;
     short m_physicsMask;
 
@@ -81,6 +83,9 @@ public:
     static void RenderAll(
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
 
+    static void RenderAllEnv(
+	const ICamera* camera, const Vector4f& lightPosition, int i);
+
     static void RenderIdAll(
 	const ICamera* camera);
 
@@ -88,7 +93,7 @@ public:
 
     static void RenderShadowMapAll(const Matrix4f& lightVp); // vp = view projection matrix.
 
-    virtual void Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum);
+    virtual void Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, ViewFrustum** envLightFrustums);
 
     /*
     virtual void RenderId(

@@ -534,11 +534,20 @@ void TuhuApplication::RenderScene() {
     m_gpuProfiler->End(GTS_Sky);
 
 
-
     m_gpuProfiler->Begin(GTS_Terrain);
 
 
     bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
+
+    for(int i = 0; i < 6; ++i) {
+
+	// bind fbo
+
+	// GeometryObject::RenderAllEnv(lightFrustumCamera, lightPos, i)
+
+	// unbind fbo.
+    }
+
 
     m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, aoOnly);
 
@@ -638,7 +647,7 @@ void TuhuApplication::Update(const float delta) {
 //    for(IGeometryObject* geoObj: m_geoObjs) {
 	IGeometryObject* geoObj = it.second;
 
-	geoObj->Update(*m_cameraFrustum, *m_lightFrustum );
+	geoObj->Update(m_cameraFrustum, m_lightFrustum, m_car->GetLightFrustums() );
 
 	//update cameras of env map. here
     }

@@ -24,7 +24,8 @@ public:
 
     virtual IGeometryObject* Duplicate(unsigned int id)=0;
 
-    virtual void Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum)=0;
+    virtual void Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum,
+	ViewFrustum** envLightFrustums)=0;
 
 /*
     virtual void Render(

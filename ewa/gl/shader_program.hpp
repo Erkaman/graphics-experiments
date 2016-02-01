@@ -58,7 +58,10 @@ public:
     void SetUniform(const std::string& uniformName, const Vector3f& v);
     void SetUniform(const std::string& uniformName, const Vector2f& v);
 
-    void SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection, const Matrix4f& lightVp);
+
+    void SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection);
+    void SetPhongUniforms(
+	const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection, const Matrix4f& lightVp);
 
     void SetShaderUniforms(const Matrix4f& modelMatrix, const ICamera* camera);
     void SetMvpUniform(const Matrix4f& mvp);
