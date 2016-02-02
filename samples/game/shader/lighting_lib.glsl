@@ -102,3 +102,35 @@ float calcVisibility(sampler2DShadow shadowMap, float diff, vec4 shadowCoord ) {
 
     return visibility;
 }
+
+// compute tree AO.
+/*
+float computeAo() {
+
+
+    // circle center
+    vec3 c = vec3(0,0,1.13129);
+    float R = 11.502;
+    vec3 n = normalOut;
+    vec3 p0 = positionOut;
+
+//    float d = distance(positionOut,c);
+
+
+
+    float ro = dot(n,c) - dot(n, p0);
+    float h = R - ro;
+
+    // off center distance
+    float d = distance(p0,  c + ro * n );
+
+    float vcap = (1.0/3.0) * 3.14 * h*h * (3*R - h);
+
+    float f = (h*h) / (h*h + d*d);
+
+    float a = 0.0006;
+    return exp(-1 * a * f * vcap);
+
+//    return vcap / (0.5 * 1.33333 * 3.14 * R*R*R );
+}
+*/

@@ -87,6 +87,8 @@ void rayTrace(
 }
 #endif
 
+uniform samplerCube envMap;
+uniform mat4 inverseViewNormalMatrix;
 
 
 in vec3 viewSpacePositionOut;
@@ -123,6 +125,12 @@ uniform float specShiny;
 void main(void) {
 
     vec4 diffColor=texture(textureArray,vec3(texcoordOut,diffMap) );
+
+#ifdef ALPHA_MAPPING
+    if(diffColor.a < 0.05)
+	discard;
+#endif
+
 
     // since it is directional light, minus.
     vec3 lightpos = -viewSpaceLightDirection;
@@ -217,7 +225,12 @@ void main(void) {
 
 #endif
 
+
+#ifdef SHADOW_MAPPING
     float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
+#else
+    float visibility = 1.0;
+#endif
 
     geoData[0] = calcLighting(
 	ambientLight,
@@ -234,6 +247,18 @@ void main(void) {
 
     geoData[1] = vec4(viewSpaceNormalOut, 0);
     geoData[2] = vec4(viewSpacePositionOut, 0);
+
+#ifdef ENV_MAPPING
+    vec3 reflectionVector = (inverseViewNormalMatrix *
+			     vec4(
+				 reflect(-v, viewSpaceNormalOut), 0.0)).xyz;
+
+    vec3 envMapSample = texture(envMap, reflectionVector).rgb;
+
+
+    geoData[0] = vec4(envMapSample, 1.0);
+#endif
+
 
 
     //  fragmentColor = vec4( vec3(cosTheta), 1.0  );

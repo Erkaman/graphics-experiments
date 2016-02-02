@@ -533,15 +533,15 @@ void TuhuApplication::RenderScene() {
 
 
     m_gpuProfiler->Begin(GTS_Sky);
-   m_skydome->Draw(m_curCamera);
+//   m_skydome->Draw(m_curCamera);
 
-/*
+
     m_skybox->Draw(
 //	m_cubeMapTexture,
 	m_envFbo->GetEnvMap(),
 
 	m_curCamera);
-*/
+
     m_gpuProfiler->End(GTS_Sky);
 
     m_gpuProfiler->Begin(GTS_Terrain);

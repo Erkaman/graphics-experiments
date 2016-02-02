@@ -259,34 +259,49 @@ public:
 	    newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
 	    newChunk->m_diffuseColor = baseChunk->m_material->m_diffuseColor;
 
+		    string shaderName = "shader/geo_obj_render";
+
 	    if(geoObjBatch->m_defaultShader == NULL) {
 
 		if(filename == "obj/tree3_done.eob") {
 
 		    vector<string> defines;
 
-
-
+		    defines.push_back("ALPHA_MAPPING");
 
 		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
-			string("shader/tree") + string("_vs.glsl"), string("shader/tree") + "_fs.glsl", defines);
+			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 
 		} else if(filename == "obj/car_blend.eob") {
-
+/*
 		    vector<string> defines;
 
 		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
 			string("shader/car") + string("_vs.glsl"), string("shader/car") + "_fs.glsl", defines);
+*/
+
+		    vector<string> defines;
+
+		    defines.push_back("ALPHA_MAPPING");
+		    defines.push_back("ENV_MAPPING");
+
+		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
+			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 
 		} else {
 
-		    string shaderName = "shader/geo_obj_render";
+
+
+
 
 		    /*
 		      Next, we create a shader that supports all the texture types.
 		    */
 
 		    vector<string> defines;
+
+		    defines.push_back("SHADOW_MAPPING");
+
 
 		    if(newChunk->m_specularMap != -1) {
 			defines.push_back("SPEC_MAPPING");
