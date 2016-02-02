@@ -533,15 +533,15 @@ void TuhuApplication::RenderScene() {
 
 
     m_gpuProfiler->Begin(GTS_Sky);
-    //m_skydome->Draw(m_curCamera);
+   m_skydome->Draw(m_curCamera);
 
-
+/*
     m_skybox->Draw(
 //	m_cubeMapTexture,
 	m_envFbo->GetEnvMap(),
 
 	m_curCamera);
-
+*/
     m_gpuProfiler->End(GTS_Sky);
 
     m_gpuProfiler->Begin(GTS_Terrain);
@@ -604,16 +604,19 @@ void TuhuApplication::Render() {
 
 	    Clear(1.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	    m_skydome->Draw(m_curCamera);
+
+
 	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
 
 
 	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	    m_heightMap->RenderEnvMapSetup(aoOnly);
-
 	    m_heightMap->RenderEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
-
 	    m_heightMap->RenderEnvMapUnsetup();
+
+
 
 
 
