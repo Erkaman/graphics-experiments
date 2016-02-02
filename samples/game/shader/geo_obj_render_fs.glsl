@@ -107,6 +107,7 @@ in vec4 shadowCoordOut;
 
 uniform float normalMap;
 uniform float diffMap;
+uniform vec3 diffColor;
 uniform sampler2DShadow shadowMap;
 
 uniform float zNear;
@@ -124,7 +125,11 @@ uniform float specShiny;
 
 void main(void) {
 
+#ifdef DIFF_MAPPING
     vec4 diffColor=texture(textureArray,vec3(texcoordOut,diffMap) );
+#else
+    vec4 diffColor= vec4(diffColor, 1.0);
+#endif
 
 #ifdef ALPHA_MAPPING
     if(diffColor.a < 0.05)
@@ -247,6 +252,7 @@ void main(void) {
 
     geoData[1] = vec4(viewSpaceNormalOut, 0);
     geoData[2] = vec4(viewSpacePositionOut, 0);
+
 
 #ifdef ENV_MAPPING
     vec3 reflectionVector = (inverseViewNormalMatrix *

@@ -40,7 +40,7 @@ vec4 calcLighting(
 
     finalcolor.xyz+=(
 	diffColor*sceneLight*diff * visibility+
-	specColor*pow(spec,specShiny) * visibility );
+	specColor*pow(spec,specShiny) * visibility * sceneLight );
 
     return vec4(finalcolor,1.0);
 }

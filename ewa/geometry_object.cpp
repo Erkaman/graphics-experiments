@@ -279,6 +279,7 @@ public:
 		    vector<string> defines;
 
 		    defines.push_back("ALPHA_MAPPING");
+		    defines.push_back("DIFF_MAPPING");
 
 		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
 			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
@@ -312,6 +313,7 @@ public:
 		    vector<string> defines;
 
 		    defines.push_back("SHADOW_MAPPING");
+		    defines.push_back("DIFF_MAPPING");
 
 
 		    if(newChunk->m_specularMap != -1) {
@@ -744,7 +746,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		batch->m_defaultShader->SetUniform("inverseViewNormalMatrix",
 						   camera->GetViewMatrix().Transpose()  );
 	    }
-
 
 	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
 
