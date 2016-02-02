@@ -129,6 +129,9 @@ void Skybox::Draw(CubeMapTexture* m_cubeMap, const ICamera* camera) {
     m_shader->Bind();
 
     Texture::SetActiveTextureUnit(0);
+
+//    LOG_I("bla: %d, %d", m_cubeMap->GetHandle(), m_cubeMap->GetTarget() );
+
     m_cubeMap->Bind();
 
     SetDepthTest(false);

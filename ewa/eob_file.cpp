@@ -546,8 +546,6 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
     f->ReadArray(vertexAttribsSizes, length);
     data->m_vertexAttribsSizes = std::vector<GLuint>(&vertexAttribsSizes[0]+0, &vertexAttribsSizes[0]+length / sizeof(GLuint));
 
-    LOG_I("vas: %d, %d", vertexAttribsSizes[0], vertexAttribsSizes[1]);
-
     delete []vertexAttribsSizes;
 
     uint32 vertexMagic = f->Read32u();
@@ -562,8 +560,6 @@ GeometryObjectData* EobFile::Read(const std::string& infile) {
 
 
     uint32 numChunks = f->Read32u();
-
-    LOG_I("numchnks: %d", numChunks);
 
     for(uint32 i = 0; i < numChunks; ++i) {
 

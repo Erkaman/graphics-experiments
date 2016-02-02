@@ -1,42 +1,60 @@
 #include "env_fbo.hpp"
 
+#include "cube_map_texture.hpp"
+#include "render_buffer.hpp"
 
+#include "log.hpp"
 
-void ColorFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
-
+void EnvFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
+/*
     width /= 2 * 2;
     height /= 2 * 2;
 
-    Bind();
-    {
 
-	// first we create a render target, and attach it the FBO.
-	m_renderTargetTexture = new Texture(
-	    GL_TEXTURE_2D,
-	    width,
-	    height,
-	    GL_RGBA8, // internal format
-	    GL_RGBA, // format
-	    GL_UNSIGNED_BYTE); // type
+*/
+
+    LOG_I("create env fbo");
+
+    m_size = 512;
+
+/*
+	m_envMap = CubeMapTexture::Load(m_size);
 
 	Texture::SetActiveTextureUnit(m_targetTextureUnit);
-	m_renderTargetTexture->Bind();
+	m_envMap->Bind();
 	{
-	    m_renderTargetTexture->SetMagMinFilters(GL_LINEAR);
-	    m_renderTargetTexture->SetTextureClamping();
-
-	    // attach the target texture to the FBO.
-	    Attach(GL_COLOR_ATTACHMENT0, *m_renderTargetTexture);
-
+	    m_envMap->SetMagMinFilters(GL_LINEAR);
+	    m_envMap->SetTextureClamping();
 	}
-	m_renderTargetTexture->Unbind();
+	m_envMap->Unbind();
+*/
+
+    Bind();
+    {
+	m_envMap = CubeMapTexture::Load(m_size);
+
+	Texture::SetActiveTextureUnit(m_targetTextureUnit);
+	m_envMap->Bind();
+	{
+	    m_envMap->SetMagMinFilters(GL_LINEAR);
+	    m_envMap->SetTextureClamping();
+	}
+	m_envMap->Unbind();
+
+	// attach cubemap handle to all sides.
+	for(int i = 0; i < 6; ++i) {
+	    Attach(
+		GL_COLOR_ATTACHMENT0, m_envMap->GetHandle(),
+		GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
+		);
+	}
 
 	// next we create a depth buffer, and attach it to the FBO.
 
 	m_depthBuffer = new RenderBuffer();
 	m_depthBuffer->Bind();
 	{
-	    m_depthBuffer->RenderbufferStorage(GL_DEPTH_COMPONENT, width, height);
+	    m_depthBuffer->RenderbufferStorage(GL_DEPTH_COMPONENT, m_size, m_size);
 
 	    // attach the depth buffer to the FBO.
 	    glFramebufferRenderbuffer(m_target, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,m_depthBuffer->GetHandle());
@@ -48,4 +66,25 @@ void ColorFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
     }
     // switch to default frame buffer.
     Unbind();
+
+}
+
+size_t EnvFBO::GetSize() {
+    return m_size;
+}
+
+CubeMapTexture* EnvFBO::GetEnvMap() {
+    return m_envMap;
+}
+
+
+
+int EnvFBO::BindFace(int i) {
+
+    Attach(
+	GL_COLOR_ATTACHMENT0, m_envMap->GetHandle(),
+	GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
+
+    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, i, box2CubeMap, 0);
+
 }

@@ -2,6 +2,8 @@
 
 #include "texture_loader.hpp"
 
+#include "log.hpp"
+
 
 CubeMapTexture::CubeMapTexture():Texture(GL_TEXTURE_CUBE_MAP) {
 
@@ -36,15 +38,41 @@ CubeMapTexture* CubeMapTexture::Load(int size) {
     Texture::SetActiveTextureUnit(0);
     cubeMap->Bind();
 
+
+    struct RGBA {
+	GLubyte r;
+	GLubyte g;
+	GLubyte b;
+	GLubyte a;
+
+    };
+
+    RGBA green; green.r = 0;green.g = 255;green.b = 0;green.a = 255;
+    RGBA red; red.r = 255;red.g = 0;red.b = 0;red.a = 255;
+
+    std::vector<RGBA> testData(size * size * sizeof(RGBA), green );
+    std::vector<RGBA> xData(size * size * sizeof(RGBA), red);
+
     for(int i = 0; i < 6; ++i) {
+	std::vector<RGBA> d = i % 2 == 0 ? testData : xData;
 
 	glTexImage2D(
-	    GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA8 , size,size, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		     nullptr);
-
+	    GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_RGBA8 , size,size, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		     &d[0]);
     }
+
+	/*
+    GL_C(glFinish() );
+    GL_C(glFlush() );
+
+    }*/
+
+
+
     cubeMap->GenerateMipmap();
     cubeMap->Unbind();
+
+    return cubeMap;
 
 }
 

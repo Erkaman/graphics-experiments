@@ -552,8 +552,7 @@ void GeometryObject::RenderIdAll(
 
 
 void GeometryObject::RenderAllEnv(
-    const ICamera* camera, const Vector4f& lightPosition, int i){
-
+    ICamera* camera, const Vector4f& lightPosition, int i){
 
     int total = 0;
     int nonCulled = 0;
@@ -619,6 +618,14 @@ void GeometryObject::RenderAllEnv(
 	GeoObjManager::GetInstance().m_arrayTexture->Unbind();
 
     }
+
+    /*
+    if(nonCulled == 0) {
+	LOG_I("no one drawn");
+    } else {
+	LOG_I("drawn: %d", nonCulled);
+	}*/
+
 }
 
 
@@ -975,7 +982,20 @@ void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum*
     m_inLightFrustum = lightFrustum->IsAABBInFrustum(GetModelSpaceAABB());
 
     for(int i = 0; i < 6; ++i) {
-	m_inEnvLightFrustums[i] = envLightFrustums[i]->IsAABBInFrustum(GetModelSpaceAABB());
+
+	if(m_filename == "obj/car_blend.eob" ) {
+	    // car is never in environment map.
+	    m_inEnvLightFrustums[i] = false;
+	} else {
+	    m_inEnvLightFrustums[i] = envLightFrustums[i]->IsAABBInFrustum(GetModelSpaceAABB());
+	}
+
+
+/*	if(i == 2 && m_inEnvLightFrustums[i]) {
+//	    LOG_I("in cam");
+
+}*/
+
     }
 
 }

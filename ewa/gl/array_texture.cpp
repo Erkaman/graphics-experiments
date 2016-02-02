@@ -83,8 +83,6 @@ ArrayTexture::ArrayTexture(const vector<TextureInfo*>& tis, const vector<string>
 
 	    textureMap[textureFiles[iLayer]] = iLayer;
 
-	    LOG_I("bla: %s = %d", textureFiles[iLayer].c_str(), iLayer );
-
 	}
 
 

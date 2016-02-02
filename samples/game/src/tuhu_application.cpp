@@ -53,6 +53,8 @@
 #include "gbuffer.hpp"
 
 #include "skybox.hpp"
+#include "env_camera.hpp"
+#include "env_fbo.hpp"
 
 
 
@@ -106,9 +108,15 @@ void TuhuApplication::Init() {
 
     m_gpuProfiler = new GpuProfiler();
 
+
+
     m_ssaoPass = new SsaoPass(GetFramebufferWidth(),GetFramebufferHeight());
 
     m_skybox = new Skybox();
+
+    m_envFbo = new EnvFBO();
+    m_envFbo->Init(ENV_FBO_TEXTURE_UNIT, 512, 512);
+
 
     m_cubeMapTexture = CubeMapTexture::Load(
 	"img/bluecloud_ft.png",
@@ -200,8 +208,6 @@ void TuhuApplication::Init() {
 	    guiMode);
 
 	ParseObjs(File::AppendPaths(dir, OBJS_FILENAME ));
-
-	LOG_I("loaded heightmap");
 
     } else {
 
@@ -529,24 +535,23 @@ void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Sky);
     //m_skydome->Draw(m_curCamera);
-    m_skybox->Draw(m_cubeMapTexture, m_curCamera);
+
+
+    m_skybox->Draw(
+//	m_cubeMapTexture,
+	m_envFbo->GetEnvMap(),
+
+	m_curCamera);
 
     m_gpuProfiler->End(GTS_Sky);
-
 
     m_gpuProfiler->Begin(GTS_Terrain);
 
 
+
     bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 
-    for(int i = 0; i < 6; ++i) {
 
-	// bind fbo
-
-	// GeometryObject::RenderAllEnv(lightFrustumCamera, lightPos, i)
-
-	// unbind fbo.
-    }
 
 
     m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, aoOnly);
@@ -582,6 +587,50 @@ void TuhuApplication::Render() {
     RenderShadowMap();
     m_gpuProfiler->End(GTS_Shadows);
 
+
+
+
+    for(int i = 0; i < 6; ++i) {
+	// bind fbo
+	m_envFbo->Bind();
+	{
+
+	    m_envFbo->BindFace(i);
+
+	    size_t size = m_envFbo->GetSize();
+	    ::SetViewport(0,0,size,size);
+
+
+	    Clear(1.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+	    if(i == 3)
+		Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+
+//	    LOG_I("i: %d", i);
+
+//	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
+	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
+
+
+	}
+	m_envFbo->Unbind();
+
+	// unbind fbo.
+    }
+
+
+
+
+
+
+
+
+
+
+
     float SCALE = m_guiVerticalScale;
 
     // set the viewport to the size of the window.
@@ -596,7 +645,6 @@ void TuhuApplication::Render() {
 	RenderId();
 
     //   m_gbuffer->BindForWriting();
-
 
     RenderScene();
 

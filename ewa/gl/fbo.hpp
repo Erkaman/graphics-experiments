@@ -22,6 +22,7 @@ protected:
     Texture* m_renderTargetTexture;
 
     void Attach(const  GLenum attachment, const Texture& texture);
+    void Attach(const  GLenum attachment, GLuint textureHandle, GLenum textureTarget);
 
 
     static void CheckFramebufferStatus(const GLenum target);

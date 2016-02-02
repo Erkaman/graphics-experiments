@@ -43,7 +43,7 @@ bool Car::Init(const Vector3f& position) {
 	);
 
     for(int i  = 0; i < 6; ++i) {
-	m_envCameras[i] = new EnvCamera(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, position );
+	m_envCameras[i] = new EnvCamera(position, i );
 	m_lightFrustums[i] = new ViewFrustum();
     }
 
@@ -63,10 +63,11 @@ void Car::Update(
     GeometryObject::Update(cameraFrustum, lightFrustum, envLightFrustums);
 
     for(int i  = 0; i < 6; ++i) {
-	m_envCameras[i]->Update(0);
 
+	m_envCameras[i]->SetPosition(GetPosition() );
+	m_envCameras[i]->Update(0);
 	m_lightFrustums[i]->Update( m_envCameras[i]->GetVp() );
-    }
+     }
 
 
     if(!m_raycastVehicle) {
@@ -212,4 +213,9 @@ void Car::AddToPhysicsWorld(PhysicsWorld* physicsWorld) {
 
 ViewFrustum** Car::GetLightFrustums() {
     return m_lightFrustums;
+}
+
+
+EnvCamera** Car::GetEnvCameras() {
+    return m_envCameras;
 }

@@ -31,6 +31,16 @@ void FBO::Attach(const  GLenum attachment, const Texture& texture) {
     GL_C(glFramebufferTexture2D(m_target, attachment, texture.GetTarget(), texture.GetHandle(), 0));
 }
 
+void FBO::Attach(const  GLenum attachment, GLuint textureHandle, GLenum textureTarget) {
+    GL_C(glFramebufferTexture2D(m_target, attachment,
+
+
+				textureTarget,
+
+				textureHandle,
+				0));
+}
+
 void FBO::CheckFramebufferStatus()  {
     CheckFramebufferStatus(m_target);
 }

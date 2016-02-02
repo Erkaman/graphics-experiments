@@ -99,7 +99,6 @@ void HeightMap::Init(
     m_textureScale = 0.07f;
     m_chunks = 7;
     m_chunkSize = (m_resolution-1) / m_chunks;
-    LOG_I("chunk: %d", m_chunkSize);
     HEIGHT_MAP_SIZE = m_resolution * m_resolution * sizeof(unsigned short);
     SPLAT_MAP_SIZE = m_resolution * m_resolution * sizeof(SplatColor);
 
@@ -609,7 +608,6 @@ void HeightMap::LoadSplatMap(const std::string& splatMapFilename) {
 
 void HeightMap::LoadHeightmap(const std::string& heightMapFilename) {
 
-    LOG_I("load heightmap");
     size_t unused;
     unsigned short* data = (unsigned short *)File::ReadArray(heightMapFilename, unused);
 
@@ -830,7 +828,6 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 	}
 	baseIndex += 1;
     }
-    LOG_I("tris: %d",m_numTriangles );
 
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_INT);
 

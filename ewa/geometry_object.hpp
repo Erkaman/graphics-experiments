@@ -84,7 +84,7 @@ public:
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
 
     static void RenderAllEnv(
-	const ICamera* camera, const Vector4f& lightPosition, int i);
+	ICamera* camera, const Vector4f& lightPosition, int i);
 
     static void RenderIdAll(
 	const ICamera* camera);

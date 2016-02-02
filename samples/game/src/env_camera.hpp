@@ -10,13 +10,11 @@ private:
 
     Vector3f m_position;
 
-    Vector3f m_right;
-    Vector3f m_up;
-    Vector3f m_forward;
+    int m_i;
 
 public:
 
-    EnvCamera(GLenum target, const Vector3f& position);
+    EnvCamera(const Vector3f& position, int i);
 
     virtual void Update(const float delta);
     void SetPosition(const Vector3f& position);

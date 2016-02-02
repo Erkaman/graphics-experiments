@@ -133,7 +133,7 @@ typedef MultArray<float> SamplesGrid;
 // where the Vector2f is the barycentric coordinates of the sample.
 typedef vector<pair<Vector2f, float> > SamplesList;
 
-float NOISE_SCALE =0.002;
+float NOISE_SCALE =0.003;
 
 float TRI_SCALE= 1.0f;
 
@@ -444,14 +444,14 @@ int main (int, char *[]) {
 		if(u > 0 && v > 0 && (1 - u -v) > 0 ) {
 
 		    // draw colored triangle
-		    col = bezTri(2, s, t, cols2);
+		    //col = bezTri(2, s, t, cols2);
 
 		    // draw approximated noise.
 //		    col = bezTri(DEGREE, s, t, cps);
 
 
 		    // draw noise.
-		    //	    float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
+		    float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
 
 
 		    // draw samples
@@ -462,7 +462,7 @@ int main (int, char *[]) {
 		    alpha = 0;
 		}
 
-
+/*
 		float EPS_GRID = DEGREE * 0.00181;
 
 
@@ -502,6 +502,7 @@ int main (int, char *[]) {
 		    }
 
 		}
+*/
 
 
             } else {

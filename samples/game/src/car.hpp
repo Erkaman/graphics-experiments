@@ -53,6 +53,7 @@ public:
     virtual void AddToPhysicsWorld(PhysicsWorld* physicsWorld);
 
     ViewFrustum** GetLightFrustums();
+    EnvCamera** GetEnvCameras();
 
 };
 

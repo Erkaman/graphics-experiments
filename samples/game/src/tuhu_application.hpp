@@ -33,9 +33,11 @@ class Cube;
 class SsaoPass;
 class Skybox;
 class CubeMapTexture;
+class EnvFBO;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
+constexpr int ENV_FBO_TEXTURE_UNIT = 11;
 
 class TuhuApplication : public Application, public GuiListener{
 
@@ -60,6 +62,7 @@ private:
 
     IGeometryObject* m_selected;
 
+    EnvFBO* m_envFbo;
 
     Car* m_car;
 
