@@ -74,7 +74,6 @@ public:
 	m_defaultShader = NULL;
     }
 
-
 };
 
 class GeoObjManager {
@@ -147,8 +146,6 @@ public:
 
     ArrayTexture* m_arrayTexture;
 
-
-
     static GeoObjManager& GetInstance(){
 	static GeoObjManager instance;
 
@@ -184,7 +181,6 @@ public:
 
 	    geoObjBatch->m_vertexBuffer = VBO::CreateInterleaved(
 		data->m_vertexAttribsSizes);
-
 	    geoObjBatch->m_vertexBuffer->Bind();
 	    geoObjBatch->m_vertexBuffer->SetBufferData(data->m_verticesSize, data->m_vertices);
 	    geoObjBatch->m_vertexBuffer->Unbind();
@@ -758,12 +754,10 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		cubeMapTexture->Unbind();
 	    }
 
-
 	    if(geoObj->IsSelected() ) {
 		// dont render to stencil buffer for remaining objects.
 		GL_C(glStencilMask(0));
 	    }
-
 	}
 
 	batch->m_vertexBuffer->DisableVertexAttribInterleavedWithBind();

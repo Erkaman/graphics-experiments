@@ -32,9 +32,6 @@ void main(void) {
     vec4 diffColor=texture(textureArray,vec3(texcoordOut,diffMap) );
 
 
-    if(diffColor.a < 0.05)
-	discard;
-
     // since it is directional light, minus.
     vec3 lightpos = -viewSpaceLightDirection;
 

@@ -1127,7 +1127,6 @@ void TuhuApplication::Delete() {
     }
 }
 
-
 void TuhuApplication::UpdateMatrices() {
 
 

@@ -1,4 +1,4 @@
-numObjs 71
+numObjs 70
 beginObj
 filename obj/wood_floor.eob
 translation -12.000000 9.000000 38.000000
@@ -259,13 +259,7 @@ scale 1.773594
 endObj
 beginObj
 filename obj/tree3_done.eob
-translation 72.898819 40.355858 -172.355484
-rotation -0.157325 0.544771 0.142415 0.811290 
-scale 1.773594
-endObj
-beginObj
-filename obj/tree3_done.eob
-translation 47.064434 40.355858 -172.355484
+translation 72.898819 40.355858 -165.758606
 rotation -0.157325 0.544771 0.142415 0.811290 
 scale 1.773594
 endObj
@@ -296,12 +290,6 @@ endObj
 beginObj
 filename obj/tree3_done.eob
 translation -169.287125 19.339064 -172.355484
-rotation -0.157325 0.544771 0.142415 0.811290 
-scale 1.773594
-endObj
-beginObj
-filename obj/tree3_done.eob
-translation -229.391022 15.078907 -172.355484
 rotation -0.157325 0.544771 0.142415 0.811290 
 scale 1.773594
 endObj
@@ -423,5 +411,11 @@ beginObj
 filename obj/tree3_done.eob
 translation -125.837914 16.472265 154.205475
 rotation 0.064949 -0.514792 0.202027 0.830636 
+scale 1.773594
+endObj
+beginObj
+filename obj/tree3_done.eob
+translation 48.505066 40.355858 -172.355484
+rotation -0.157325 0.544771 0.142415 0.811290 
 scale 1.773594
 endObj

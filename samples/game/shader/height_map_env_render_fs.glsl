@@ -28,7 +28,6 @@ in vec3 outn;
 
 void main()
 {
-
     vec3 scene_ambient_light = vec3(0.6) * (1.0 -texture(aoMap, texCoord).r);
     vec3 scene_light = vec3(0.8);
 
