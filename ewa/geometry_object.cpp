@@ -11,6 +11,7 @@
 #include "ewa/gl/shader_program.hpp"
 #include "ewa/gl/texture2d.hpp"
 #include "ewa/gl/array_texture.hpp"
+#include "ewa/gl/cube_map_texture.hpp"
 
 #include "ewa/bt_util.hpp"
 
@@ -630,7 +631,7 @@ void GeometryObject::RenderAllEnv(
 
 
 
-void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
+void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap, CubeMapTexture* cubeMapTexture) {
 
     int total = 0;
     int nonCulled = 0;
@@ -666,12 +667,12 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	shadowMap.GetRenderTargetTexture().Bind();
 
 /*
-	if(batch->m_hasHeightMap) {
-	    Config& config = Config::GetInstance();
+  if(batch->m_hasHeightMap) {
+  Config& config = Config::GetInstance();
 
-	    batch->m_defaultShader->SetUniform("zNear", config.GetZNear());
-	    batch->m_defaultShader->SetUniform("zFar", config.GetZFar());
-	}
+  batch->m_defaultShader->SetUniform("zNear", config.GetZNear());
+  batch->m_defaultShader->SetUniform("zFar", config.GetZFar());
+  }
 */
 
 	// render the objects of the batch, one after one.
@@ -710,20 +711,20 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    }
 
 
+	    if(geoObj->GetFilename() == "obj/car_blend.eob") {
+		batch->m_defaultShader->SetUniform("envMap", 7);
+		Texture::SetActiveTextureUnit(7);
+		cubeMapTexture->Bind();
+
+		batch->m_defaultShader->SetUniform("inverseViewNormalMatrix",
+						   camera->GetViewMatrix().Transpose()  );
+	    }
+
 
 	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
 
 		Chunk* chunk = batch->m_chunks[i];
-/*
-		if(batch->m_chunks.size() ==2 && i == 0)
-		    continue;
-*/
 
-
-/*
-		if(i == 1) {
-		    LOG_I("num :%d, ", chunk->m_numTriangles);
-		}*/
 
 
 		if(chunk->m_specularMap == -1) {
@@ -751,6 +752,12 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		chunk->m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk->m_numTriangles)*3);
 		chunk->m_indexBuffer->Unbind();
 	    }
+
+
+	    if(geoObj->GetFilename() == "obj/car_blend.eob") {
+		cubeMapTexture->Unbind();
+	    }
+
 
 	    if(geoObj->IsSelected() ) {
 		// dont render to stencil buffer for remaining objects.
@@ -825,7 +832,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    aabbWireframe->Render(camera->GetVp());
 
 	}
-	}
+    }
 
 }
 

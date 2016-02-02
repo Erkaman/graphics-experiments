@@ -13,13 +13,10 @@ in vec2 texCoord;
 
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
-in vec4 shadowCoordOut;
 
 uniform sampler2D grass;
 uniform sampler2D dirt;
 uniform sampler2D rock;
-
-uniform sampler2DShadow shadowMap;
 
 
 uniform sampler2D splatMap;
@@ -48,7 +45,16 @@ void main()
 	splat.r * texture(grass, scaledTexcoord).xyz +
 	splat.g * texture(dirt, scaledTexcoord).xyz +
 	splat.b * texture(rock, scaledTexcoord).xyz;
+    //diffColor = vec3(1);
 
+    /*
+    vec3 shading = phongVertex(
+	diffuse
+	, viewSpaceNormal,
+			       viewSpaceLightDirection // minus, because its a directional light.
+			       , viewSpacePosition);
+    fragmentColor = vec4(shading, 1.0);
+    */
 
     vec3 ambientMat = vec3(0.6)* (1.0 -texture(aoMap, texCoord).r);
     vec3 diffMat = vec3(0.8);
@@ -56,7 +62,6 @@ void main()
     vec3 specColor = vec3(0);
     float diff=  calcDiff(l,n);
     float spec= calcSpec(l,n,v);
-    float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 
     geoData[0] =vec4(vec3(1.0-texture(aoMap, texCoord).r), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
@@ -67,7 +72,7 @@ void main()
 	specColor.xyz,
 	diff,
 	spec,
-	visibility);
+	1.0f);
 
     geoData[1] = vec4(viewSpaceNormal,0);
     geoData[2] = vec4(viewSpacePosition, 0);

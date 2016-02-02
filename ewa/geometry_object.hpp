@@ -16,6 +16,7 @@ class Cube;
 class PhysicsWorld;
 class btRigidBody;
 class btMotionState;
+class CubeMapTexture;
 
 class GeometryObject : public IGeometryObject {
 private:
@@ -81,7 +82,8 @@ public:
     virtual ~GeometryObject();
 
     static void RenderAll(
-	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
+	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
+	CubeMapTexture* cubeMapTexture);
 
     static void RenderAllEnv(
 	ICamera* camera, const Vector4f& lightPosition, int i);

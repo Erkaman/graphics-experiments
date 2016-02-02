@@ -91,21 +91,7 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Color& colo
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	GL_C(glUniform4f(location, color.r, color.g, color.b, color.a));
-    } else {
-	SetUniformWarn(uniformName);
     }
-}
-
-void ShaderProgram::SetUniformWarn(const std::string& uniformName) {
-    // we will only issue the warning once for every uniform. Otherwise it will completely spam the log.
-    for(const std::string& warned : m_warnedUniforms) {
-	if(warned == uniformName) {
-	    return;
-	}
-    }
-
-    LOG_W("Uniform %s could not be found(the GLSL compiler may have optimized it away)", uniformName.c_str() );
-    m_warnedUniforms.push_back(uniformName);
 }
 
 void ShaderProgram::SetUniform(const std::string& uniformName, const Matrix4f& matrix) {
@@ -113,8 +99,6 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Matrix4f& m
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	const GLfloat* arr = reinterpret_cast<const GLfloat*>(&matrix);
 	GL_C(glUniformMatrix4fv(location, 1, true, arr));
-    } else {
-	SetUniformWarn(uniformName);
     }
 }
 
@@ -124,8 +108,6 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const int val) {
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	GL_C(glUniform1i(location, val));
-    } else {
-	SetUniformWarn(uniformName);
     }
 }
 
@@ -134,8 +116,6 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Vector4f& v
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	GL_C(glUniform4f(location, v.x, v.y, v.z, v.w));
-    } else {
-	SetUniformWarn(uniformName);
     }
 }
 
@@ -143,8 +123,6 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Vector3f& v
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	GL_C(glUniform3f(location, v.x, v.y, v.z));
-    } else {
-	SetUniformWarn(uniformName);
     }
 }
 
@@ -189,8 +167,6 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const float val) 
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	GL_C(glUniform1f(location, val));
-    } else {
-	SetUniformWarn(uniformName);
     }
 }
 
@@ -199,8 +175,6 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Vector2f& v
     if (m_uniformLocationStore->UniformExists(uniformName)) {
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	GL_C(glUniform2f(location, v.x, v.y));
-    } else {
-	SetUniformWarn(uniformName);
     }
 }
 

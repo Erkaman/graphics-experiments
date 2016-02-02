@@ -28,6 +28,7 @@ class DepthFBO;
 class Matrix4f;
 class ViewFrustum;
 class Cube;
+class ViewFrustum;
 
 template<typename T>
 class PBO {
@@ -143,6 +144,7 @@ private:
     ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
 //    ShaderProgram* m_idShader; //outputs only the id. Used for triangle picking in the height map.
     ShaderProgram* m_cursorShader;
+    ShaderProgram* m_envShader;
 
     Texture* m_grassTexture;
     Texture* m_dirtTexture;
@@ -163,6 +165,11 @@ private:
     // information of whether the chunks are in the camera:
     MultArray<bool>* m_inCameraFrustum;
     MultArray<bool>* m_inLightFrustum;
+
+
+
+    MultArray<bool>* m_inEnvFrustums[6];
+
 
 
     // used to store temp data in SmoothTerrain()
@@ -247,6 +254,13 @@ public:
 
     void RenderShadowMap(const Matrix4f& lightVp);
 
+
+    void RenderEnvMapSetup(bool aoOnly);
+
+    void RenderEnvMapUnsetup();
+
+    void RenderEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i);
+
     void SetWireframe(const bool wireframe);
 
     float GetHeightAt(float x, float z)const;
@@ -257,7 +271,10 @@ public:
 		const float framebufferHeight
 	);
 
-    void Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum);
+    void Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
+	ViewFrustum** envLightFrustums);
+
+
 
     void ModifyTerrain(const float delta, const float strength);
     void DistortTerrain(const float delta, const float strength, float noiseScale);

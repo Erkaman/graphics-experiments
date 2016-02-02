@@ -5,6 +5,8 @@ vec4 sample(sampler2D tex, vec2 uv) {
 #include "shader/lighting_lib.glsl"
 
 
+uniform samplerCube envMap;
+
 in vec3 viewSpacePositionOut;
 
 in vec3 viewSpaceNormalOut;
@@ -16,6 +18,7 @@ in vec2 texcoordOut;
 
 uniform vec3 viewSpaceLightDirection;
 in mat4 modelViewMatrixOut;
+uniform mat4 inverseViewNormalMatrix;
 in vec3 eyePosOut;
 in vec4 shadowCoordOut;
 
@@ -138,6 +141,7 @@ void main(void) {
 
     float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 
+
     geoData[0] = calcLighting(
 	ambientMat.xyz,
 	diffMat.xyz,
@@ -148,7 +152,15 @@ void main(void) {
 	spec,
 	/*visibility*/ 1.0f);
 
-//    geoData[0] = vec4(, 1.0);
+
+    vec3 reflectionVector = (inverseViewNormalMatrix *
+			     vec4(
+				 reflect(-v, viewSpaceNormalOut), 0.0)).xyz;
+
+    vec3 envMapSample = texture(envMap, reflectionVector).rgb;
+
+
+    geoData[0] = vec4(envMapSample, 1.0);
 
 
     geoData[1] = vec4(viewSpaceNormalOut, 0);

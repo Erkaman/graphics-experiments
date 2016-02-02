@@ -116,6 +116,8 @@ void HeightMap::Init(
     */
     m_shader = ShaderProgram::Load("shader/height_map_render");
     m_depthShader = ShaderProgram::Load("shader/height_map_output_depth");
+    m_envShader = ShaderProgram::Load("shader/height_map_env_render");
+
 
     if(guiMode) {
 	m_noise = new ValueNoise(2);
@@ -316,6 +318,94 @@ void HeightMap::RenderUnsetup() {
     m_heightMap->Unbind();
 }
 
+
+
+void HeightMap::RenderEnvMapSetup(bool aoOnly) {
+
+    m_envShader->Bind();
+
+
+    m_envShader->SetUniform("aoOnly", aoOnly ? 1.0f : 0.0f);
+
+
+    m_envShader->SetUniform("splatMap", 4);
+    Texture::SetActiveTextureUnit(4);
+    m_splatMap->Bind();
+
+    m_envShader->SetUniform("aoMap", 5);
+    Texture::SetActiveTextureUnit(5);
+    m_aoMap->Bind();
+
+
+
+    m_envShader->SetUniform("grass", 0);
+    Texture::SetActiveTextureUnit(0);
+    m_grassTexture->Bind();
+
+    m_envShader->SetUniform("dirt", 1);
+    Texture::SetActiveTextureUnit(1);
+    m_dirtTexture->Bind();
+
+    m_envShader->SetUniform("rock", 2);
+    Texture::SetActiveTextureUnit(2);
+    m_rockTexture->Bind();
+
+
+    RenderSetup(m_envShader);
+
+
+    // setup vertex buffers.
+    m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
+
+    m_indexBuffer->Bind();
+
+}
+
+void HeightMap::RenderEnvMapUnsetup() {
+    m_indexBuffer->Unbind();
+
+    m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
+
+    RenderUnsetup();
+
+
+
+    m_grassTexture->Unbind();
+    m_dirtTexture->Unbind();
+    m_rockTexture->Unbind();
+
+    m_splatMap->Unbind();
+    m_aoMap->Unbind();
+
+    m_envShader->Unbind();
+
+}
+
+void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i) {
+
+    m_envShader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition);
+
+    MultArray<bool>& inEnvFrustum = *m_inEnvFrustums[i];
+
+    for(int x = 0; x < m_chunks; ++x) {
+	for(int z = 0; z < m_chunks; ++z) {
+
+	    if(!inEnvFrustum(x,z)) {
+		// not in frustum, dont draw.
+		continue;
+	    }
+
+	    //	    LOG_I("draw chunk");
+
+	    m_envShader->SetUniform("chunkPos", Vector2f(x,z) );
+
+	    // DRAW.
+	    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+	}
+    }
+}
+
+
 void HeightMap::Render(ShaderProgram* shader, bool shadows) {
 
     RenderSetup(shader);
@@ -348,12 +438,10 @@ void HeightMap::Render(ShaderProgram* shader, bool shadows) {
 
 	    }
 
+	    shader->SetUniform("chunkPos", Vector2f(x,z) );
 
-
-		shader->SetUniform("chunkPos", Vector2f(x,z) );
-
-		// DRAW.
-		m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+	    // DRAW.
+	    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
 	}
     }
 
@@ -368,13 +456,12 @@ void HeightMap::Render(ShaderProgram* shader, bool shadows) {
 
 
     RenderUnsetup();
-
-
 }
 
 void HeightMap::RenderHeightMap(
     const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
     bool aoOnly) {
+
     m_shader->Bind();
 
     m_shader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition, lightVp);
@@ -410,13 +497,7 @@ void HeightMap::RenderHeightMap(
 
     // set textures and stuff.
 
-    if(m_isWireframe)
-	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
     Render(m_shader,false);
-
-    if(m_isWireframe)
-	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     m_grassTexture->Unbind();
     m_dirtTexture->Unbind();
@@ -1547,6 +1628,10 @@ void HeightMap::CreateAABBs() {
     m_inCameraFrustum = new MultArray<bool>(m_chunks, m_chunks, true);
     m_inLightFrustum = new MultArray<bool>(m_chunks, m_chunks, true);
 
+    for(int i = 0; i < 6; ++i) {
+	m_inEnvFrustums[i] = new MultArray<bool>(m_chunks, m_chunks, true);
+    }
+
     m_aabbs = new MultArray<AABB>(m_chunks, m_chunks);
     MultArray<AABB>& aabbs = *m_aabbs;
 
@@ -1562,12 +1647,20 @@ void HeightMap::CreateAABBs() {
     }
 }
 
-void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum) {
+void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
+    ViewFrustum** envLightFrustums) {
 
     MultArray<AABB>& aabbs = *m_aabbs;
     MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
     MultArray<bool>& inLightFrustum = *m_inLightFrustum;
 
+/*
+    int count[6];
+
+    for(int i=0; i < 6; ++i) {
+	count[i] =0;
+    }
+*/
     for(int x = 0; x < m_chunks; ++x) {
 	for(int z = 0; z < m_chunks; ++z) {
 
@@ -1575,8 +1668,26 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 
 	    inCameraFrustum(x,z) = cameraFrustum.IsAABBInFrustum(aabb);
 	    inLightFrustum(x,z) = lightFrustum.IsAABBInFrustum(aabb);
+
+	    for(int i = 0; i < 6; ++i) {
+
+		MultArray<bool>& inEnvFrustums = *m_inEnvFrustums[i];
+		inEnvFrustums(x,z) = envLightFrustums[i]->IsAABBInFrustum(aabb);
+/*
+		if(inEnvFrustums(x,z)) {
+		    ++count[i];
+		}*/
+
+	    }
+
+
 	}
     }
+/*
+    for(int i=0; i < 6; ++i) {
+	LOG_I("count: %d, %d", i, count[i]);
+    }
+    LOG_I("STOP");*/
 }
 
 

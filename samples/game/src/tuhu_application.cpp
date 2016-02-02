@@ -109,13 +109,12 @@ void TuhuApplication::Init() {
     m_gpuProfiler = new GpuProfiler();
 
 
-
     m_ssaoPass = new SsaoPass(GetFramebufferWidth(),GetFramebufferHeight());
 
     m_skybox = new Skybox();
 
     m_envFbo = new EnvFBO();
-    m_envFbo->Init(ENV_FBO_TEXTURE_UNIT, 512, 512);
+    m_envFbo->Init(ENV_FBO_TEXTURE_UNIT, 1024, 512);
 
 
     m_cubeMapTexture = CubeMapTexture::Load(
@@ -566,7 +565,7 @@ void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Objects);
     {
-	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap());
     }
 
     m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
@@ -591,6 +590,8 @@ void TuhuApplication::Render() {
 
     m_gpuProfiler->Begin(GTS_EnvMap);
 
+
+
     for(int i = 0; i < 6; ++i) {
 	// bind fbo
 	m_envFbo->Bind();
@@ -601,15 +602,25 @@ void TuhuApplication::Render() {
 	    size_t size = m_envFbo->GetSize();
 	    ::SetViewport(0,0,size,size);
 
-
 	    Clear(1.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
 
+
+	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
+	    m_heightMap->RenderEnvMapSetup(aoOnly);
+
+	    m_heightMap->RenderEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
+
+	    m_heightMap->RenderEnvMapUnsetup();
+
+
+
 	}
 	m_envFbo->Unbind();
     }
+
 
     m_gpuProfiler->End(GTS_EnvMap);
 
@@ -634,6 +645,7 @@ void TuhuApplication::Render() {
     //   m_gbuffer->BindForWriting();
 
     RenderScene();
+
 
     //     m_gbuffer->UnbindForWriting();
 
@@ -678,17 +690,18 @@ void TuhuApplication::Update(const float delta) {
 
     m_physicsWorld->Update(delta);
 
+
     for(auto& it : m_geoObjs) {
 //    for(IGeometryObject* geoObj: m_geoObjs) {
 	IGeometryObject* geoObj = it.second;
 
 	geoObj->Update(m_cameraFrustum, m_lightFrustum, m_car->GetLightFrustums() );
 
+
 	//update cameras of env map. here
     }
 
-
-    m_heightMap->Update(*m_cameraFrustum, *m_lightFrustum );
+    m_heightMap->Update(*m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums() );
 
 
     m_totalDelta += delta;

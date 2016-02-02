@@ -15,7 +15,7 @@ void EnvFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
 
     LOG_I("create env fbo");
 
-    m_size = 512;
+    m_size = width;
 
 /*
 	m_envMap = CubeMapTexture::Load(m_size);
@@ -40,14 +40,6 @@ void EnvFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
 	    m_envMap->SetTextureClamping();
 	}
 	m_envMap->Unbind();
-
-	// attach cubemap handle to all sides.
-	for(int i = 0; i < 6; ++i) {
-	    Attach(
-		GL_COLOR_ATTACHMENT0, m_envMap->GetHandle(),
-		GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
-		);
-	}
 
 	// next we create a depth buffer, and attach it to the FBO.
 

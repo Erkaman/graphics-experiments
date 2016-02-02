@@ -21,15 +21,11 @@ private:
 
     UniformLocationStore* m_uniformLocationStore;
 
-    std::vector<std::string> m_warnedUniforms;
-
     std::string m_shaderProgramName;
 
     GLuint m_shaderProgram;
 
     void CompileShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource,const std::string& geometryShaderSource, const std::string& path, void (*beforeLinkingHook)(GLuint));
-
-    void SetUniformWarn(const std::string& uniformName);
 
     ShaderProgram();
 
