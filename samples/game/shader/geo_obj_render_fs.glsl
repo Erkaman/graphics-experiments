@@ -112,15 +112,13 @@ uniform float zFar;
 
 uniform sampler2DArray textureArray;
 
-
+uniform vec3 ambientLight;
+uniform vec3 sceneLight;
 
 out vec4 geoData[3];
 
-
 uniform vec3 specColor;
 uniform float specShiny;
-
-
 
 void main(void) {
 
@@ -128,9 +126,6 @@ void main(void) {
 
     // since it is directional light, minus.
     vec3 lightpos = -viewSpaceLightDirection;
-
-    vec4 ambientMat = vec4(vec3(0.3), 1.0);
-    vec4 diffMat = vec4(vec3(0.5), 1.0);
 
     vec3 p = viewSpacePositionOut; // pixel position in eye space
 
@@ -225,8 +220,8 @@ void main(void) {
     float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 
     geoData[0] = calcLighting(
-	ambientMat.xyz,
-	diffMat.xyz,
+	ambientLight,
+	sceneLight,
 	specShiny,
 	diffColor.xyz,
 	specColor.xyz,

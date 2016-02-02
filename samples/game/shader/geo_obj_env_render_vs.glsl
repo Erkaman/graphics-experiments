@@ -28,7 +28,6 @@ out vec3 viewSpaceLightPositionOut;
 
 void main()
 {
-    // vertex position
     viewSpacePositionOut = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
     viewSpaceNormalOut = normalize(  (normalMatrix * vec4(normalIn, 0.0)).xyz );

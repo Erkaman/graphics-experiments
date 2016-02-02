@@ -8,6 +8,7 @@
 #include "log.hpp"
 #include "string_util.hpp"
 #include "common.hpp"
+#include "config.hpp"
 
 #include "math/color.hpp"
 #include "math/matrix4f.hpp"
@@ -143,6 +144,11 @@ void ShaderProgram::SetShaderUniforms(const Matrix4f& modelMatrix, const ICamera
     SetMvpUniform(mvp);
     SetUniform("modelViewMatrix", modelViewMatrix);
     SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
+
+    Config& config = Config::GetInstance();
+
+    SetUniform("ambientLight", config.GetAmbientLight() );
+    SetUniform("sceneLight", config.GetSceneLight() );
 
 }
 

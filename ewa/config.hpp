@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "math/vector3f.hpp"
+
 class Config {
 
 private:
@@ -16,6 +18,10 @@ private:
     float m_zFar;
     bool m_gui;
     std::string m_worldFilename;
+
+    Vector3f m_ambientLight; // affects ambient
+    Vector3f m_sceneLight; // affects diffuse and specular
+
 
 public:
 
@@ -34,4 +40,6 @@ public:
     void SetWorldFilename(const std::string& str);
     std::string GetWorldFilename()const;
 
+    Vector3f GetAmbientLight()const;
+    Vector3f GetSceneLight()const;
 };

@@ -22,12 +22,9 @@ float calcSpec(vec3 l, vec3 n, vec3 v) {
 
 vec4 calcLighting(
 
-    // TODO: but should not this be the same for all materials.
-    // it should be the ambient light of the scene, which is always the same.
-    vec3 ambientMat, // ambient material
+    vec3 ambientLight, // ambient material
 
-    // TODO: and maybe also this one should be the same for all objects?
-    vec3 diffMat, // diffuse material
+    vec3 sceneLight, // diffuse material
 
     float specShiny,
 
@@ -39,10 +36,11 @@ vec4 calcLighting(
 
     float visibility // shadowing
     ) {
-    vec3 finalcolor=ambientMat*diffColor; // ambient
+    vec3 finalcolor=ambientLight*diffColor; // ambient
 
-    finalcolor.xyz+=(diffColor*diffMat*diff * visibility+
-			 specColor*pow(spec,specShiny) * visibility );
+    finalcolor.xyz+=(
+	diffColor*sceneLight*diff * visibility+
+	specColor*pow(spec,specShiny) * visibility );
 
     return vec4(finalcolor,1.0);
 }

@@ -265,6 +265,9 @@ public:
 
 		    vector<string> defines;
 
+
+
+
 		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
 			string("shader/tree") + string("_vs.glsl"), string("shader/tree") + "_fs.glsl", defines);
 

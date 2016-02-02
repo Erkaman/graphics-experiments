@@ -28,14 +28,12 @@ uniform sampler2D aoMap;
 in vec3 outn;
 
 
+uniform vec3 ambientLight;
+uniform vec3 sceneLight;
+
 
 void main()
 {
-
-    vec3 scene_ambient_light = vec3(0.6) * (1.0 -texture(aoMap, texCoord).r);
-    vec3 scene_light = vec3(0.8);
-
-
     vec3 v = -normalize(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
     vec3 n = viewSpaceNormal;
@@ -49,9 +47,6 @@ void main()
 	splat.g * texture(dirt, scaledTexcoord).xyz +
 	splat.b * texture(rock, scaledTexcoord).xyz;
 
-
-    vec3 ambientMat = vec3(0.6)* (1.0 -texture(aoMap, texCoord).r);
-    vec3 diffMat = vec3(0.8);
     float specShiny = 0;
     vec3 specColor = vec3(0);
     float diff=  calcDiff(l,n);
@@ -60,8 +55,8 @@ void main()
 
     geoData[0] =vec4(vec3(1.0-texture(aoMap, texCoord).r), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
-	ambientMat.xyz,
-	diffMat.xyz,
+	ambientLight* (1.0 -texture(aoMap, texCoord).r),
+	sceneLight,
 	specShiny,
 	diffColor.xyz,
 	specColor.xyz,
