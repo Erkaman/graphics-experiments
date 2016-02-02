@@ -265,7 +265,5 @@ void main(void) {
     geoData[0] = vec4(envMapSample, 1.0);
 #endif
 
-
-
     //  fragmentColor = vec4( vec3(cosTheta), 1.0  );
 }

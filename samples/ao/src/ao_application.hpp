@@ -5,42 +5,9 @@
 
 #include "ewa/math/vector4f.hpp"
 
-/*#include "ewa/common.hpp"
-
-#include "ewa/math/matrix4f.hpp"
-
-#include <LinearMath/btQuaternion.h>
-
-#include "gui_listener.hpp"
-
-#include <map>
-*/
-
-
 class ICamera;
 class IGeometryObject;
-
-/*class HeightMap;
-class Skydome;
-class Grass;
-class Sound;
-class ParticleSystem;
-class DepthFBO;
-class ViewFrustum;
-class PhysicsWorld;
-class Car;
-class CarCamera;
-class Gui;
-class PickingFBO;
-class Gbuffer;
-class GpuProfiler;
-class Line;
-class Cube;
-class SsaoPass;
-class Skybox;
-class CubeMapTexture;
-class EnvFBO;
-*/
+class GeometryObject;
 
 class AoApplication : public Application{
 
@@ -54,13 +21,12 @@ private:
 
     float m_totalDelta;
 
+    GeometryObject* m_geoObj;
+
 //    std::map<unsigned int,IGeometryObject*> m_geoObjs;
 
 
-    /*
-    IGeometryObject* LoadObj(const std::string& path, const Vector3f& position,
-			     const btQuaternion& rotation = btQuaternion::getIdentity(), float scale = 1.0f);
-    */
+    void LoadObj(const std::string& path);
 
 public:
 

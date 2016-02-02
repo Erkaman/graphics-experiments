@@ -58,12 +58,10 @@ public:
 
     std::vector<Chunk*> m_chunks;
 
-
     GeometryObjectData* m_data;
 
     ShaderProgram* m_defaultShader;
     ShaderProgram* m_depthShader; //outputs only the depth. Used for shadow mapping.
-
 
 
 
@@ -98,7 +96,24 @@ private:
 
 	    vector<string> defines;
 
+	    defines.push_back("DIFF_MAPPING");
+	    defines.push_back("ALPHA_MAPPING");
+
+
 	    m_envShader = ResourceManager::LoadShader(
+			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+	}
+
+
+	{
+	    string shaderName = "shader/geo_obj_render";
+
+	    vector<string> defines;
+
+	    defines.push_back("DIFF_MAPPING");
+	    defines.push_back("ALPHA_MAPPING");
+
+	    m_simpleShader = ResourceManager::LoadShader(
 			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 	}
 
@@ -110,6 +125,14 @@ private:
 	 */
 
         vector<string> files = File::EnumerateDirectory("obj");
+
+	if(files.size() == 0) {
+	    // try again!
+
+	    files = File::EnumerateDirectory("../game/obj");
+
+	}
+
         vector<string> pngFiles;
 
 	for(const string& file: files) {
@@ -118,9 +141,27 @@ private:
 
 		if(file.substr(file.size()-3).c_str() == string("png") ) {
 
+/*
 		    string fullpathFile = File::AppendPaths("obj", file);
 
+		    std::string* resourcePath = ResourceManager::GetInstance().SearchResource(fullpathFile);
+
+		    if(!resourcePath) {
+			PrintErrorExit();
+		    }
+		    LOG_I("res: %s", resourcePath->c_str());
+
+		    pngFiles.push_back(*resourcePath);
+*/
+
+
+		    string fullpathFile = File::AppendPaths("obj", file);
+
+		    LOG_I("res: %s", fullpathFile.c_str());
+
 		    pngFiles.push_back(fullpathFile);
+
+
 		}
 	    }
 	}
@@ -157,6 +198,9 @@ public:
 
     ArrayTexture* m_arrayTexture;
 
+    ShaderProgram* m_simpleShader; //outputs only the depth. Used for shadow mapping.
+
+
     static GeoObjManager& GetInstance(){
 	static GeoObjManager instance;
 
@@ -164,6 +208,7 @@ public:
     }
 
     GeometryObjectData* LoadObj(const std::string& filename, GeometryObject* geoObj) {
+
 
 	// check if already a batch for this object has been created.
 	map<string, GeoObjBatch*>::iterator it = m_batches.find(filename);
@@ -182,8 +227,11 @@ public:
 	GeometryObjectData* data = EobFile::Read(filename);
 	geoObjBatch->m_data = data;
 
+
 	m_batches[filename] = geoObjBatch;
 	geoObjBatch->m_geoObjs.push_back(geoObj);
+
+
 
 	if(!data) {
 	    return NULL;
@@ -274,17 +322,7 @@ public:
 
 	    if(geoObjBatch->m_defaultShader == NULL) {
 
-		if(filename == "obj/tree3_done.eob") {
-
-		    vector<string> defines;
-
-		    defines.push_back("ALPHA_MAPPING");
-		    defines.push_back("DIFF_MAPPING");
-
-		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
-			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
-
-		} else if(filename == "obj/car_blend.eob") {
+		if(filename == "obj/car_blend.eob") {
 /*
 		    vector<string> defines;
 
@@ -302,10 +340,6 @@ public:
 
 		} else {
 
-
-
-
-
 		    /*
 		      Next, we create a shader that supports all the texture types.
 		    */
@@ -314,6 +348,7 @@ public:
 
 		    defines.push_back("SHADOW_MAPPING");
 		    defines.push_back("DIFF_MAPPING");
+		    defines.push_back("ALPHA_MAPPING");
 
 
 		    if(newChunk->m_specularMap != -1) {
@@ -425,6 +460,7 @@ bool GeometryObject::Init(
 
     SetScale(scale);
     SetEditScale( 1.0f );
+
 
     GeometryObjectData* data = GeoObjManager::GetInstance().LoadObj(filename, this);
 
@@ -579,6 +615,74 @@ void GeometryObject::RenderIdAll(
 }
 
 
+
+
+
+
+void GeometryObject::RenderSimple(ICamera* camera, const Vector4f& lightPosition){
+
+    auto& batches = GeoObjManager::GetInstance().m_batches;
+
+
+    ShaderProgram* simpleShader = GeoObjManager::GetInstance().m_simpleShader;
+
+    // render all batches, one after one.
+    for(auto& itBatch : batches) {
+
+	const GeoObjBatch* batch = itBatch.second;
+
+	// bind shader of the batch.
+	simpleShader->Bind();
+
+	batch->m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
+
+	simpleShader->SetUniform("textureArray", 0);
+	Texture::SetActiveTextureUnit(0);
+	GeoObjManager::GetInstance().m_arrayTexture->Bind();
+
+	// render the objects of the batch, one after one.
+	for(GeometryObject* geoObj : batch->m_geoObjs ) {
+
+	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
+
+	    simpleShader->SetPhongUniforms(
+		modelMatrix
+		, camera, lightPosition);
+
+	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
+
+		Chunk* chunk = batch->m_chunks[i];
+
+		if(chunk->m_specularMap == -1) {
+		    // if no spec map, the chunk has the same specular color all over the texture.
+		    simpleShader->SetUniform("specColor", chunk->m_specularColor);
+		}
+
+		simpleShader->SetUniform("specShiny", chunk->m_shininess);
+
+		if(chunk->m_texture != -1) {
+		    simpleShader->SetUniform("diffMap", (float)chunk->m_texture  );
+		}
+
+		chunk->m_indexBuffer->Bind();
+		chunk->m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk->m_numTriangles)*3);
+		chunk->m_indexBuffer->Unbind();
+	    }
+	}
+
+	batch->m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
+
+	GeoObjManager::GetInstance().m_arrayTexture->Unbind();
+
+    }
+}
+
+
+
+
+
+
+
 void GeometryObject::RenderAllEnv(
     ICamera* camera, const Vector4f& lightPosition, int i){
 
@@ -588,6 +692,8 @@ void GeometryObject::RenderAllEnv(
 
     auto& batches = GeoObjManager::GetInstance().m_batches;
 
+    ShaderProgram* envShader = GeoObjManager::GetInstance().m_envShader;
+
 
     // render all batches, one after one.
     for(auto& itBatch : batches) {
@@ -595,11 +701,11 @@ void GeometryObject::RenderAllEnv(
 	const GeoObjBatch* batch = itBatch.second;
 
 	// bind shader of the batch.
-	batch->m_defaultShader->Bind();
+	envShader->Bind();
 
 	batch->m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
 
-	batch->m_defaultShader->SetUniform("textureArray", 0);
+	envShader->SetUniform("textureArray", 0);
 	Texture::SetActiveTextureUnit(0);
 	GeoObjManager::GetInstance().m_arrayTexture->Bind();
 
@@ -616,7 +722,7 @@ void GeometryObject::RenderAllEnv(
 
 	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
 
-	    batch->m_defaultShader->SetPhongUniforms(
+	    envShader->SetPhongUniforms(
 		modelMatrix
 		, camera, lightPosition);
 
@@ -626,13 +732,13 @@ void GeometryObject::RenderAllEnv(
 
 		if(chunk->m_specularMap == -1) {
 		    // if no spec map, the chunk has the same specular color all over the texture.
-		    batch->m_defaultShader->SetUniform("specColor", chunk->m_specularColor);
+		    envShader->SetUniform("specColor", chunk->m_specularColor);
 		}
 
-		batch->m_defaultShader->SetUniform("specShiny", chunk->m_shininess);
+		envShader->SetUniform("specShiny", chunk->m_shininess);
 
 		if(chunk->m_texture != -1) {
-		    batch->m_defaultShader->SetUniform("diffMap", (float)chunk->m_texture  );
+		    envShader->SetUniform("diffMap", (float)chunk->m_texture  );
 		}
 
 		chunk->m_indexBuffer->Bind();
@@ -646,14 +752,6 @@ void GeometryObject::RenderAllEnv(
 	GeoObjManager::GetInstance().m_arrayTexture->Unbind();
 
     }
-
-    /*
-    if(nonCulled == 0) {
-	LOG_I("no one drawn");
-    } else {
-	LOG_I("drawn: %d", nonCulled);
-	}*/
-
 }
 
 

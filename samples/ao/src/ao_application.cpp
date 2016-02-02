@@ -5,60 +5,7 @@
 #include "ewa/camera.hpp"
 #include "ewa/mouse_state.hpp"
 #include "ewa/font.hpp"
-
-
-/*
-#include "ewa/keyboard_state.hpp"
-#include "ewa/file.hpp"
-#include "ewa/buffered_file_reader.hpp"
-#include "ewa/string_util.hpp"
-#include "ewa/resource_manager.hpp"
-#include "ewa/timer.hpp"
-
-#include "ewa/gl/depth_fbo.hpp"
-#include "ewa/gl/texture.hpp"
-#include "ewa/gl/cube_map_texture.hpp"
-
-#include "ewa/audio/sound.hpp"
-#include "ewa/audio/wave_loader.hpp"
-
-#include "skydome.hpp"
-#include "height_map.hpp"
-#include "grass.hpp"
-#include "particle_system.hpp"
-#include "smoke_effect.hpp"
-#include "snow_effect.hpp"
-#include "fire_effect.hpp"
-#include "ssao_pass.hpp"
-
-#include "ewa/line.hpp"
-#include "ewa/points.hpp"
-#include "ewa/cube.hpp"
-#include "ewa/view_frustum.hpp"
-
-#include "ewa/config.hpp"
-
-#include "ewa/physics_world.hpp"
-#include "car_camera.hpp"
-
-#include "picking_fbo.hpp"
-
-
-#include "car.hpp"
-#include "gui_enum.hpp"
-#include "bt_util.hpp"
-
-#include "gui.hpp"
-#include "gui_mouse_state.hpp"
-
-#include "gpu_profiler.hpp"
-#include "physics_mask.hpp"
-#include "gbuffer.hpp"
-
-#include "skybox.hpp"
-#include "env_camera.hpp"
-#include "env_fbo.hpp"
-*/
+#include "ewa/geometry_object.hpp"
 
 
 using namespace std;
@@ -106,12 +53,13 @@ void AoApplication::Init() {
 
 
 
+    LoadObj("obj/tree3_done.eob");
+
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
-
     const Vector3f pos =
-	Vector3f(51, 41, 71);
+	Vector3f(10, 10, 10);
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
@@ -142,8 +90,7 @@ void AoApplication::Render() {
     SetViewport();
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-//    GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap());
+    GeometryObject::RenderSimple(m_curCamera, m_lightDirection);
 
     /*
     if(m_gui) {
@@ -201,24 +148,24 @@ void AoApplication::RenderText()  {
     m_font->DrawString(*m_fontShader, 750,170, "lol");
 }
 
-/*
-IGeometryObject* AoApplication::LoadObj(const std::string& path, const Vector3f& position,
-					  const btQuaternion& rotation, float scale) {
 
+void AoApplication::LoadObj(const std::string& path) {
 
-    GeometryObject* obj = new GeometryObject();
+    m_geoObj = new GeometryObject();
+
+    const Vector3f position(0,0,0);
+    const btQuaternion rotation = btQuaternion::getIdentity();
+    float scale = 1.0;
 
 //    LOG_I("add id: %d", currentObjId);
-    bool result = obj->Init(path, position,rotation, scale, currentObjId++, COL_STATIC, staticCollidesWith);
+
+    bool result = m_geoObj->Init(path, position,rotation, scale, 0,
+				 0,0);
 
     if(!result)
 	PrintErrorExit();
-
-    m_geoObjs[obj->GetId()] = obj;
-
-    return obj;
 }
-*/
+
 
 void AoApplication::Cleanup() {
 

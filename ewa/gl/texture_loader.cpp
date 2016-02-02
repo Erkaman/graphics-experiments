@@ -16,6 +16,9 @@ TextureInfo* TextureLoader::Load(const std::string& texturePath) {
     unsigned int height;
 
     std::string* resourcePath = ResourceManager::GetInstance().SearchResource(texturePath);
+
+
+
     if(!resourcePath) {
 	return NULL;
     }
@@ -23,14 +26,13 @@ TextureInfo* TextureLoader::Load(const std::string& texturePath) {
 
     std::vector<unsigned char> buffer;
     lodepng::load_file(buffer,
-
-
 		       *resourcePath);
 
     lodepng::State state;
     unsigned error = lodepng::decode(textureInfo->imageData, width, height, state, buffer);
 
     if(error != 0){
+	LOG_I("ERROR");
 	SetError("could not load png %s: %s", resourcePath->c_str(), lodepng_error_text(error));
 	return NULL;
     }
