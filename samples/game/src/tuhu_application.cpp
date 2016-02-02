@@ -589,6 +589,7 @@ void TuhuApplication::Render() {
 
 
 
+    m_gpuProfiler->Begin(GTS_EnvMap);
 
     for(int i = 0; i < 6; ++i) {
 	// bind fbo
@@ -603,28 +604,14 @@ void TuhuApplication::Render() {
 
 	    Clear(1.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-	    if(i == 3)
-		Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-
-//	    LOG_I("i: %d", i);
-
-//	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
 	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
 
 	}
 	m_envFbo->Unbind();
-
-	// unbind fbo.
     }
 
-
-
-
-
+    m_gpuProfiler->End(GTS_EnvMap);
 
 
 
@@ -898,6 +885,9 @@ void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 750,430,
 		       Format("SSAO: %0.2f ms", m_gpuProfiler->DtAvg(GTS_SSAO) ) );
+
+    m_font->DrawString(*m_fontShader, 750,490,
+		       Format("EnvMap: %0.2f ms", m_gpuProfiler->DtAvg(GTS_EnvMap) ) );
 
 }
 
