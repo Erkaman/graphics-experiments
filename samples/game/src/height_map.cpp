@@ -114,9 +114,29 @@ void HeightMap::Init(
     /*
       load the shader
     */
-    m_shader = ShaderProgram::Load("shader/height_map_render");
+
+
+    string shaderName = "shader/height_map_render";
+
+
+    {
+	vector<string> defines;
+	defines.push_back("SHADOW_MAPPING");
+
+	m_shader =
+	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    }
+
     m_depthShader = ShaderProgram::Load("shader/height_map_output_depth");
-    m_envShader = ShaderProgram::Load("shader/height_map_env_render");
+
+    {
+
+	vector<string> defines;
+
+	m_envShader =
+	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    }
+
 
 
     if(guiMode) {

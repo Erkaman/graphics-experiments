@@ -51,7 +51,12 @@ void main()
     vec3 specColor = vec3(0);
     float diff=  calcDiff(l,n);
     float spec= calcSpec(l,n,v);
+
+#ifdef SHADOW_MAPPING
     float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
+#else
+    float visibility = 1.0;
+#endif
 
     geoData[0] =vec4(vec3(1.0-texture(aoMap, texCoord).r), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(

@@ -1,6 +1,6 @@
 layout (location = 0) in  vec2 positionIn;
 
-#include "height_map_lib.glsl"
+#include "shader/height_map_lib.glsl"
 
 uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
