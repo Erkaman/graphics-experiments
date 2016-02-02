@@ -82,6 +82,9 @@ private:
 
 
     GeoObjManager() {
+
+
+
 	m_outputIdShader = ShaderProgram::Load("shader/geo_obj_output_id");
 
 	m_outlineShader = ShaderProgram::Load("shader/geo_obj_draw_outline");
@@ -89,7 +92,15 @@ private:
 	m_outputDepthShader = ShaderProgram::Load("shader/geo_obj_output_depth");
 
 	// used for env mapping.
-	m_envShader = ShaderProgram::Load("shader/geo_obj_env_render");
+
+	{
+	    string shaderName = "shader/geo_obj_render";
+
+	    vector<string> defines;
+
+	    m_envShader = ResourceManager::LoadShader(
+			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+	}
 
 	m_aabbWireframe = Cube::Load();
 
