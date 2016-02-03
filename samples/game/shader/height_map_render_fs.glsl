@@ -67,7 +67,8 @@ void main()
 	specColor.xyz,
 	diff,
 	spec,
-	visibility);
+	visibility,
+	vec3(0) );
 
     geoData[1] = vec4(viewSpaceNormal,0);
     geoData[2] = vec4(viewSpacePosition, 0);

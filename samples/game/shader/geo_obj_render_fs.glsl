@@ -204,9 +204,6 @@ void main(void) {
 
 #endif
 
-    // compute diffuse and specular terms
-    float diff=  calcDiff(l,n);
-    float spec= calcSpec(l,n,v);
 
 #if defined HEIGHT_MAPPING
     // shadows. DOES NOT WORK YET.
@@ -231,11 +228,41 @@ void main(void) {
 #endif
 
 
+
+#ifdef SPECULAR_LIGHT
+    float spec= calcSpec(l,n,v);
+#else
+    float spec= 0;
+#endif
+
+
+#ifdef DIFFUSE_LIGHT
+    // compute diffuse and specular terms
+    float diff=  calcDiff(l,n);
+#else
+    float diff=  0;
+#endif
+
+
 #ifdef SHADOW_MAPPING
     float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 #else
     float visibility = 1.0;
 #endif
+
+
+
+#ifdef ENV_MAPPING
+    vec3 reflectionVector = (inverseViewNormalMatrix *
+			     vec4(
+				 reflect(-v, viewSpaceNormalOut), 0.0)).xyz;
+
+    vec3 envMapSample = texture(envMap, reflectionVector).rgb;
+#else
+    vec3 envMapSample = vec3(0);
+#endif
+
+
 
     geoData[0] = calcLighting(
 	ambientLight,
@@ -245,25 +272,23 @@ void main(void) {
 	specColor.xyz,
 	diff,
 	spec,
-	visibility);
+	visibility,
+	envMapSample);
 
 //    geoData[0] = vec4(, 1.0);
+
+    /*
+#ifdef ENV_MAPPING
+    geoData[0] = vec4(envMapSample, 1.0);
+#endif
+    */
 
 
     geoData[1] = vec4(viewSpaceNormalOut, 0);
     geoData[2] = vec4(viewSpacePositionOut, 0);
 
 
-#ifdef ENV_MAPPING
-    vec3 reflectionVector = (inverseViewNormalMatrix *
-			     vec4(
-				 reflect(-v, viewSpaceNormalOut), 0.0)).xyz;
 
-    vec3 envMapSample = texture(envMap, reflectionVector).rgb;
-
-
-    geoData[0] = vec4(envMapSample, 1.0);
-#endif
 
     //  fragmentColor = vec4( vec3(cosTheta), 1.0  );
 }

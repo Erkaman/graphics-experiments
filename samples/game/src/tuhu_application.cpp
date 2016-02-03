@@ -114,7 +114,7 @@ void TuhuApplication::Init() {
     m_skybox = new Skybox();
 
     m_envFbo = new EnvFBO();
-    m_envFbo->Init(ENV_FBO_TEXTURE_UNIT, 1024, 512);
+    m_envFbo->Init(ENV_FBO_TEXTURE_UNIT, 512, 512);
 
 
     m_cubeMapTexture = CubeMapTexture::Load(
@@ -591,7 +591,6 @@ void TuhuApplication::Render() {
     m_gpuProfiler->Begin(GTS_EnvMap);
 
 
-
     for(int i = 0; i < 6; ++i) {
 	// bind fbo
 	m_envFbo->Bind();
@@ -604,22 +603,18 @@ void TuhuApplication::Render() {
 
 	    Clear(1.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	    m_skydome->Draw(m_curCamera);
+	    m_skydome->Draw(m_car->GetEnvCameras()[i]);
+
+
+//	    m_skybox->Draw(m_cubeMapTexture, m_car->GetEnvCameras()[i]);
 
 
 	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
-
-
 
 	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	    m_heightMap->RenderEnvMapSetup(aoOnly);
 	    m_heightMap->RenderEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
 	    m_heightMap->RenderEnvMapUnsetup();
-
-
-
-
-
 	}
 	m_envFbo->Unbind();
     }

@@ -1,21 +1,9 @@
-numObjs 70
+numObjs 68
 beginObj
 filename obj/wood_floor.eob
 translation -12.000000 9.000000 38.000000
 rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
-endObj
-beginObj
-filename obj/tree3_done.eob
-translation -22.401171 17.817577 15.315625
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
-endObj
-beginObj
-filename obj/tree3_done.eob
-translation 1.882423 17.817577 15.315625
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.773594
 endObj
 beginObj
 filename obj/rock4.eob

@@ -34,13 +34,16 @@ vec4 calcLighting(
     float diff, // phong diff
     float spec, // phong spec.
 
-    float visibility // shadowing
+    float visibility, // shadowing
+    vec3 envMapSample
     ) {
     vec3 finalcolor=ambientLight*diffColor; // ambient
 
     finalcolor.xyz+=(
 	diffColor*sceneLight*diff * visibility+
-	specColor*pow(spec,specShiny) * visibility * sceneLight );
+	specColor*pow(spec,specShiny) * visibility );
+
+    finalcolor.xyz += spec * envMapSample * 0.3;
 
     return vec4(finalcolor,1.0);
 }
@@ -103,7 +106,7 @@ float calcVisibility(sampler2DShadow shadowMap, float diff, vec4 shadowCoord ) {
     return visibility;
 }
 
-// compute tree AO.
+//
 /*
 float computeAo() {
 

@@ -99,7 +99,6 @@ private:
 	    defines.push_back("DIFF_MAPPING");
 	    defines.push_back("ALPHA_MAPPING");
 
-
 	    m_envShader = ResourceManager::LoadShader(
 			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 	}
@@ -334,6 +333,9 @@ public:
 
 		    defines.push_back("ALPHA_MAPPING");
 		    defines.push_back("ENV_MAPPING");
+		    defines.push_back("SPECULAR_LIGHT");
+		    defines.push_back("DIFFUSE_LIGHT");
+
 
 		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
 			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
@@ -349,6 +351,8 @@ public:
 		    defines.push_back("SHADOW_MAPPING");
 		    defines.push_back("DIFF_MAPPING");
 		    defines.push_back("ALPHA_MAPPING");
+		    defines.push_back("SPECULAR_LIGHT");
+		    defines.push_back("DIFFUSE_LIGHT");
 
 
 		    if(newChunk->m_specularMap != -1) {

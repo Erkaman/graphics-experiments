@@ -39,15 +39,22 @@ EnvCamera::EnvCamera(const Vector3f& position, int i) {
 void EnvCamera::Update(const float delta) {
 
     Vector3f lookAt(0,0,0), up(0,0,0), right(0,0,0);
+
     switch(m_i) {
-    case 0:  lookAt.x =-1;  up.y = 1;  right.z = 1;  break;  // +X
-    case 1:  lookAt.x = 1;  up.y = 1;  right.z =-1;  break;	 // -X
+    case 0:  lookAt.x =-1;  up.y = -1;  right.z = -1;  break;  // +X
+
+
+    case 1:  lookAt.x = 1;  up.y = -1;  right.z =1;  break;	 // -X
+
+
     case 2:  lookAt.y =-1;  up.z = 1;  right.x = 1;  break;	 // +Y
     case 3:  lookAt.y = 1;  up.z =-1;  right.x = 1;  break;	 // -Y
-    case 4:  lookAt.z = 1;  up.y = 1;  right.x =-1;  break;	 // +Z
-    case 5:  lookAt.z =-1;  up.y = 1;  right.x =-1;  break;	 // -Z
-    }
 
+
+    case 4:  lookAt.z = -1;  up.y = -1;  right.x =1;  break;	 // +Z
+
+    case 5:  lookAt.z =1;  up.y = -1;  right.x =-1;  break;	 // -Z
+    }
 
     Vector3f zaxis = lookAt; // forward vector.
     Vector3f xaxis = right; // right vector.

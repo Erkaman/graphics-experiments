@@ -168,8 +168,13 @@ void Skydome::MakeClouds() {
 
 	cloudInfo.m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
+	/*
 	const float cloudWidth = 0.1f + cloudGroup->m_width / 10000.0f;
 	const float cloudHeight = 0.1f + cloudGroup->m_height / 10000.0f;
+	*/
+	const float cloudWidth = 0.1f + cloudGroup->m_width / 10000.0f;
+	const float cloudHeight = 0.1f + cloudGroup->m_height / 10000.0f;
+
 
 	GenerateBillboardVertices(cloudInfo.m_vertexBuffer, cloudInfo.m_indexBuffer,  cloudWidth, cloudHeight);
 

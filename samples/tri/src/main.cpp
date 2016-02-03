@@ -20,7 +20,7 @@ TODO: draw bezier triangle.
 
 #include "util.hpp"
 
-#define DO_EIGEN
+//#define DO_EIGEN
 
 #ifdef DO_EIGEN
 #include "Eigen/Dense"
@@ -145,9 +145,24 @@ float SampleNoise(uint32_t x, uint32_t y) {
     return SampleNoise(Vector2i(x,y));
 }
 
-Vector3f v0(-1.0f * TRI_SCALE, -1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
-Vector3f v1( 1.0f * TRI_SCALE, -1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
-Vector3f v2( 0.0f,  1.0f * TRI_SCALE, -5.0f * TRI_SCALE);
+  // big
+Vector3f v0Big(-1.0f, -1.0f, -5.0f);
+Vector3f v1Big( 1.0f, -1.0f, -5.0f);
+Vector3f v2Big( 0.0f,  1.0f, -5.0f);
+
+
+
+// small right
+Vector3f v0Small1(-1.0f, -1.0f, -7.5f);
+Vector3f v1Small1( 1.0f, -1.0f, -7.5f);
+Vector3f v2Small1( 0.0f,  1.0f, -7.5f);
+
+
+
+Vector3f v0Small2(-2.0f, 1.0f, -7.5f);
+Vector3f v1Small2( 0.0f, 1.0f, -7.5f);
+Vector3f v2Small2( -1.0f, -1.0f, -7.5f);
+
 
 constexpr int DEGREE =5;
 // high quality: 11
@@ -181,7 +196,9 @@ SamplesGrid samples(width, height,0.0f);
 bool rayTriangleIntersect(
     uint32_t i, uint32_t j,
 
-    float &t, float &u, float &v) {
+    float &t, float &u, float &v,
+
+    const Vector3f &v0, const Vector3f &v1, const Vector3f &v2) {
 
     float x = (2 * (i + 0.5) / (float)width - 1) * imageAspectRatio * scale;
     float y = (1 - 2 * (j + 0.5) / (float)height) * scale;
@@ -434,7 +451,13 @@ int main (int, char *[]) {
 	    Vector3f col;
 	    unsigned char alpha;
 
-            if (rayTriangleIntersect(i,j,t, u, v)) {
+	    bool hitFirst = false;
+
+            if (rayTriangleIntersect(i,j,t, u, v, v0Small1, v1Small1, v2Small1)) {
+
+//            if (rayTriangleIntersect(i,j,t, u, v, v0Small2, v1Small2, v2Small2)) {
+
+//            if (rayTriangleIntersect(i,j,t, u, v, v0Big, v1Big, v2Big)) {
 
 		float s = u;
 		float t = v;
@@ -447,11 +470,12 @@ int main (int, char *[]) {
 		    //col = bezTri(2, s, t, cols2);
 
 		    // draw approximated noise.
-		    col = bezTri(DEGREE, s, t, cps);
+//		    col = bezTri(DEGREE, s, t, cps);
 
+		    hitFirst = true;
 
 		    // draw noise.
-//		    float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
+		    float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
 
 
 		    // draw samples
@@ -505,10 +529,19 @@ int main (int, char *[]) {
 */
 
 
-            } else {
-		col = Vector3f(0,0,0);
-		alpha = 0;
+            }
+
+            if (!hitFirst && rayTriangleIntersect(i,j,t, u, v, v0Small2, v1Small2, v2Small2)) {
+
+
+		if(u > 0 && v > 0 && (1 - u -v) > 0 ) {
+
+		    float sample = SampleNoise(Vector2i(i,j)); col =Vector3f(sample);
+
+		    alpha = 255;
+		}
 	    }
+
 
 	    *(pix++) = (unsigned char)((col.x) * 255.0f);
 	    *(pix++) = (unsigned char)((col.y) * 255.0f);
