@@ -257,11 +257,33 @@ void main(void) {
 			     vec4(
 				 reflect(-v, viewSpaceNormalOut), 0.0)).xyz;
 
+
+//    float mipmapLevel = textureQueryLod(envMap, reflectionVector).x;
+
+    float eps = 0.01;
+
+#ifdef HIGH_QUALITY
+    vec3 envMapSample =
+	texture(envMap, reflectionVector).rgb +
+	texture(envMap, reflectionVector+vec3(eps,0,0)).rgb +
+	texture(envMap, reflectionVector+vec3(0,eps,0)).rgb +
+	texture(envMap, reflectionVector+vec3(0,0,eps)).rgb +
+
+	texture(envMap, reflectionVector+vec3(-eps,0,0)).rgb +
+	texture(envMap, reflectionVector+vec3(0,-eps,0)).rgb +
+	texture(envMap, reflectionVector+vec3(0,0,-eps)).rgb;
+     envMapSample *= 1.0 / 7.0;
+#else
     vec3 envMapSample = texture(envMap, reflectionVector).rgb;
+#endif
+
+
+
 #else
     vec3 envMapSample = vec3(0);
 #endif
 
+//  vec3 envMapSample = vec3(0);
 
 
     geoData[0] = calcLighting(

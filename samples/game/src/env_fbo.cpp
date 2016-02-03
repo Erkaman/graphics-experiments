@@ -36,8 +36,9 @@ void EnvFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
 	Texture::SetActiveTextureUnit(m_targetTextureUnit);
 	m_envMap->Bind();
 	{
-	    m_envMap->SetMagMinFilters(GL_LINEAR);
 	    m_envMap->SetTextureClamping();
+	    m_envMap->GenerateMipmap();
+	    m_envMap->SetMagMinFilters(GL_LINEAR);
 	}
 	m_envMap->Unbind();
 
@@ -72,6 +73,9 @@ CubeMapTexture* EnvFBO::GetEnvMap() {
 
 
 int EnvFBO::BindFace(int i) {
+
+
+
 
     Attach(
 	GL_COLOR_ATTACHMENT0, m_envMap->GetHandle(),

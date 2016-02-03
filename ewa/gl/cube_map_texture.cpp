@@ -53,12 +53,16 @@ CubeMapTexture* CubeMapTexture::Load(int size) {
     std::vector<RGBA> testData(size * size * sizeof(RGBA), green );
     std::vector<RGBA> xData(size * size * sizeof(RGBA), red);
 
+
     for(int i = 0; i < 6; ++i) {
 	std::vector<RGBA> d = i % 2 == 0 ? testData : xData;
 
 	glTexImage2D(
 	    GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_RGBA8 , size,size, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		     &d[0]);
+	    /*&d[0]*/ nullptr);
+
+//    GL_C(glGenerateMipmap(m_target));
+
     }
 
 	/*

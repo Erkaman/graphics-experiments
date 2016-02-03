@@ -860,7 +860,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     */
 
     // how many verties wide a chunk is.
-    int chunkVertices = m_chunkSize+1;
+    int chunkVertices = (m_chunkSize+1);
 
     MultArray<Cell> *m_chunk = new MultArray<Cell>(chunkVertices+1,chunkVertices+1);
     MultArray<Cell> &chunk = *m_chunk;
@@ -875,7 +875,6 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 	// x,z will vary in range [0,1]
 	float x = (float)(xpos) / (float)chunkVertices;
 	float z = (float)(zpos) / (float)chunkVertices;
-
 
 	/*
 	  This is very wasteful! We y is always 0, so we do not need a Vector3f
@@ -1825,13 +1824,6 @@ void HeightMap::BakeAo(int samples, int waveLength, int amplitude, float distAtt
     m_aoMap->Unbind();
 
 }
-
-
-
-
-
-
-
 
 void HeightMap::ErodeTerrain() {
 

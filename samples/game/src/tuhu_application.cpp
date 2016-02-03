@@ -594,6 +594,7 @@ void TuhuApplication::Render() {
     m_gpuProfiler->Begin(GTS_EnvMap);
 
 
+
     for(int i = 0; i < 6; ++i) {
 	// bind fbo
 	m_envFbo->Bind();
