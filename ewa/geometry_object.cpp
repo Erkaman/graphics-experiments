@@ -112,8 +112,6 @@ private:
 	    defines.push_back("DIFF_MAPPING");
 	    defines.push_back("ALPHA_MAPPING");
 
-	    m_simpleShader = ResourceManager::LoadShader(
-		shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 	}
 
 	m_aabbWireframe = Cube::Load();
@@ -182,8 +180,6 @@ public:
     ShaderProgram* m_envShader;
 
     ArrayTexture* m_arrayTexture;
-
-    ShaderProgram* m_simpleShader; //outputs only the depth. Used for shadow mapping.
 
 
     static GeoObjManager& GetInstance(){
@@ -603,68 +599,6 @@ void GeometryObject::RenderIdAll(
 
 }
 
-
-
-
-
-
-void GeometryObject::RenderSimple(ICamera* camera, const Vector4f& lightPosition){
-
-    auto& batches = GeoObjManager::GetInstance().m_batches;
-
-
-    ShaderProgram* simpleShader = GeoObjManager::GetInstance().m_simpleShader;
-
-    // render all batches, one after one.
-    for(auto& itBatch : batches) {
-
-	const GeoObjBatch* batch = itBatch.second;
-
-	// bind shader of the batch.
-	simpleShader->Bind();
-
-	batch->m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
-
-	simpleShader->SetUniform("textureArray", 0);
-	Texture::SetActiveTextureUnit(0);
-	GeoObjManager::GetInstance().m_arrayTexture->Bind();
-
-	// render the objects of the batch, one after one.
-	for(GeometryObject* geoObj : batch->m_geoObjs ) {
-
-	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
-
-	    simpleShader->SetPhongUniforms(
-		modelMatrix
-		, camera, lightPosition);
-
-	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
-
-		Chunk* chunk = batch->m_chunks[i];
-
-		if(chunk->m_specularMap == -1) {
-		    // if no spec map, the chunk has the same specular color all over the texture.
-		    simpleShader->SetUniform("specColor", chunk->m_specularColor);
-		}
-
-		simpleShader->SetUniform("specShiny", chunk->m_shininess);
-
-		if(chunk->m_texture != -1) {
-		    simpleShader->SetUniform("diffMap", (float)chunk->m_texture  );
-		}
-
-		chunk->m_indexBuffer->Bind();
-		chunk->m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk->m_numTriangles)*3);
-		chunk->m_indexBuffer->Unbind();
-	    }
-	}
-
-	batch->m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
-
-	GeoObjManager::GetInstance().m_arrayTexture->Unbind();
-
-    }
-}
 
 
 
