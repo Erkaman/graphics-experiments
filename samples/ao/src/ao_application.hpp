@@ -9,6 +9,7 @@ class ICamera;
 class IGeometryObject;
 class GeometryObject;
 class AoGui;
+class SimpleRender;
 
 class AoApplication : public Application{
 
@@ -31,6 +32,8 @@ private:
 
 
     void LoadObj(const std::string& path);
+
+    SimpleRender* m_render;
 
 public:
 

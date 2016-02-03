@@ -14,6 +14,8 @@ ArrayTexture* ArrayTexture::Load(const vector<string>& textureFiles) {
 
 	TextureInfo* ti = TextureLoader::Load(textureFile);
 
+
+
 	if(!ti) {
 	    return NULL;
 	}

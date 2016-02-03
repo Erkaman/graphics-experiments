@@ -1,6 +1,7 @@
 
 #include "ao_application.hpp"
 #include "ao_gui.hpp"
+#include "simple_render.hpp"
 
 #include "ewa/common.hpp"
 #include "ewa/camera.hpp"
@@ -8,6 +9,7 @@
 #include "ewa/font.hpp"
 #include "ewa/geometry_object.hpp"
 #include "ewa/gui_mouse_state.hpp"
+#include "ewa/eob_file.hpp"
 
 
 using namespace std;
@@ -43,6 +45,8 @@ void AoApplication::Init() {
 
     m_gui = new AoGui(m_window, this);
 
+    m_render = new SimpleRender();
+
 
     GuiMouseState::Init(m_guiVerticalScale);
 
@@ -53,7 +57,8 @@ void AoApplication::Init() {
 
 
 
-    LoadObj("obj/tree3_done.eob");
+    m_render->SetEob(EobFile::Read("obj/tree3_done.eob"), "obj" );
+//    LoadObj("obj/tree3_done.eob");
 
     ::SetDepthTest(true);
     ::SetCullFace(true);
@@ -90,7 +95,10 @@ void AoApplication::Render() {
     SetViewport();
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    GeometryObject::RenderSimple(m_curCamera, m_lightDirection);
+//    GeometryObject::RenderSimple(m_curCamera, m_lightDirection);
+
+    m_render->Render(m_curCamera, m_lightDirection);
+
 
 
 	int fb_width, fb_height;

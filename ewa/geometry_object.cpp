@@ -100,7 +100,7 @@ private:
 	    defines.push_back("ALPHA_MAPPING");
 
 	    m_envShader = ResourceManager::LoadShader(
-			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+		shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 	}
 
 
@@ -113,7 +113,7 @@ private:
 	    defines.push_back("ALPHA_MAPPING");
 
 	    m_simpleShader = ResourceManager::LoadShader(
-			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+		shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 	}
 
 	m_aabbWireframe = Cube::Load();
@@ -121,7 +121,7 @@ private:
 
 	/*
 	  Find all PNG files in the obj/ directory, and then load them all into a texture array.
-	 */
+	*/
 
         vector<string> files = File::EnumerateDirectory("obj");
 
@@ -139,20 +139,6 @@ private:
 	    if(file.size() > 4) { // must be long enough to fit a ".png extension.
 
 		if(file.substr(file.size()-3).c_str() == string("png") ) {
-
-/*
-		    string fullpathFile = File::AppendPaths("obj", file);
-
-		    std::string* resourcePath = ResourceManager::GetInstance().SearchResource(fullpathFile);
-
-		    if(!resourcePath) {
-			PrintErrorExit();
-		    }
-		    LOG_I("res: %s", resourcePath->c_str());
-
-		    pngFiles.push_back(*resourcePath);
-*/
-
 
 		    string fullpathFile = File::AppendPaths("obj", file);
 
@@ -208,7 +194,6 @@ public:
 
     GeometryObjectData* LoadObj(const std::string& filename, GeometryObject* geoObj) {
 
-
 	// check if already a batch for this object has been created.
 	map<string, GeoObjBatch*>::iterator it = m_batches.find(filename);
 	if(it != m_batches.end() ) {
@@ -237,17 +222,17 @@ public:
 	}
 
 
-	    geoObjBatch->m_vertexBuffer = VBO::CreateInterleaved(
-		data->m_vertexAttribsSizes);
-	    geoObjBatch->m_vertexBuffer->Bind();
-	    geoObjBatch->m_vertexBuffer->SetBufferData(data->m_verticesSize, data->m_vertices);
-	    geoObjBatch->m_vertexBuffer->Unbind();
+	geoObjBatch->m_vertexBuffer = VBO::CreateInterleaved(
+	    data->m_vertexAttribsSizes);
+	geoObjBatch->m_vertexBuffer->Bind();
+	geoObjBatch->m_vertexBuffer->SetBufferData(data->m_verticesSize, data->m_vertices);
+	geoObjBatch->m_vertexBuffer->Unbind();
 
 
 
 	/*
 	  Next, we create VBOs from the vertex data in the chunks.
-	 */
+	*/
 	for(size_t i = 0; i < data->m_chunks.size(); ++i) {
 
 	    GeometryObjectData::Chunk* baseChunk = data->m_chunks[i];
@@ -317,16 +302,16 @@ public:
 	    newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
 	    newChunk->m_diffuseColor = baseChunk->m_material->m_diffuseColor;
 
-		    string shaderName = "shader/geo_obj_render";
+	    string shaderName = "shader/geo_obj_render";
 
 	    if(geoObjBatch->m_defaultShader == NULL) {
 
 		if(filename == "obj/car_blend.eob") {
 /*
-		    vector<string> defines;
+  vector<string> defines;
 
-		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
-			string("shader/car") + string("_vs.glsl"), string("shader/car") + "_fs.glsl", defines);
+  geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
+  string("shader/car") + string("_vs.glsl"), string("shader/car") + "_fs.glsl", defines);
 */
 
 		    vector<string> defines;
@@ -984,16 +969,16 @@ void GeometryObject::SetRotation(const btQuaternion& rotation) {
 }
 
 /*
-void GeometryObject::ApplyCentralForce(const Vector3f& force) {
-    if(m_rigidBody)
-	m_rigidBody->applyCentralForce(toBtVec(force));
-}
+  void GeometryObject::ApplyCentralForce(const Vector3f& force) {
+  if(m_rigidBody)
+  m_rigidBody->applyCentralForce(toBtVec(force));
+  }
 
-void GeometryObject::ApplyForce(const Vector3f& force, const Vector3f& relPos) {
+  void GeometryObject::ApplyForce(const Vector3f& force, const Vector3f& relPos) {
 
-    if(m_rigidBody)
-	m_rigidBody->applyForce(toBtVec(force), toBtVec(relPos) );
-}
+  if(m_rigidBody)
+  m_rigidBody->applyForce(toBtVec(force), toBtVec(relPos) );
+  }
 */
 
 btRigidBody* GeometryObject::GetRigidBody() const {
@@ -1110,7 +1095,7 @@ void GeometryObject::SetSelected(bool selected) {
 }
 
 void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum,
-    ViewFrustum** envLightFrustums) {
+			    ViewFrustum** envLightFrustums) {
     m_inCameraFrustum = cameraFrustum->IsAABBInFrustum(GetModelSpaceAABB());
     m_inLightFrustum = lightFrustum->IsAABBInFrustum(GetModelSpaceAABB());
 
