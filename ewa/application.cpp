@@ -276,7 +276,7 @@ void Application::RenderText_internal(const std::string& fpsString) {
 
     m_font->DrawString(*m_fontShader,
 
-		       GetFramebufferWidth()-300,
+		       GetFramebufferWidth()-900,
 		       GetFramebufferHeight()-300,
 
 		       fpsString.substr(0,9) );

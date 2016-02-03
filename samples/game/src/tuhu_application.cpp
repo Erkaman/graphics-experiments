@@ -921,6 +921,11 @@ IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3
 
 void TuhuApplication::StartPhysics()  {
 
+    static bool once = false;
+
+    if(once)
+	return;
+
     for(auto& it : m_geoObjs) {
 	IGeometryObject* geoObj = it.second;
 
@@ -928,6 +933,8 @@ void TuhuApplication::StartPhysics()  {
 	    geoObj->AddToPhysicsWorld(m_physicsWorld);
     }
     m_heightMap->AddToPhysicsWorld(m_physicsWorld);
+
+    once = true;
 
 }
 
