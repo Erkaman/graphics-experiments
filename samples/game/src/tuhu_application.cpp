@@ -68,6 +68,9 @@ constexpr int SHADOW_MAP_SIZE =
     1024*2*2 :
     1024*2;
 
+constexpr int WINDOW_WIDTH = HighQuality ? 1000*1.5 : 800*1.5;
+constexpr int WINDOW_HEIGHT = HighQuality ?  800*1.2 : 600*1.2;
+
 const string HEIGHT_MAP_FILENAME = "heightmap.bin";
 const string SPLAT_MAP_FILENAME = "splatmap.bin";
 const string AO_MAP_FILENAME = "aomap.bin";
@@ -80,7 +83,7 @@ void ToClipboard(const std::string& str) {
 }
 
 //(0.705072, 0.0758142, 0.705072)
-TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv),
+TuhuApplication::TuhuApplication(int argc, char *argv[]):Application(argc, argv, WINDOW_WIDTH, WINDOW_HEIGHT),
 m_curCamera(NULL), m_heightMap(NULL), m_skydome(NULL), m_gui(NULL), m_lightDirection (
 
     Vector3f(-0.705072f, -0.958142f, -0.705072f).Normalize(),
