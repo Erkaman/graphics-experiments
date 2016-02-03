@@ -8,6 +8,7 @@
 class ICamera;
 class IGeometryObject;
 class GeometryObject;
+class AoGui;
 
 class AoApplication : public Application{
 
@@ -22,6 +23,9 @@ private:
     float m_totalDelta;
 
     GeometryObject* m_geoObj;
+
+    AoGui* m_gui;
+
 
 //    std::map<unsigned int,IGeometryObject*> m_geoObjs;
 
@@ -38,5 +42,7 @@ public:
     void RenderText() override;
     void Update(const float delta) override;
     void Cleanup() override;
+
+    void BakeAo();
 
 };

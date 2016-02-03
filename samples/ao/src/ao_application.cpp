@@ -1,11 +1,13 @@
 
 #include "ao_application.hpp"
+#include "ao_gui.hpp"
 
 #include "ewa/common.hpp"
 #include "ewa/camera.hpp"
 #include "ewa/mouse_state.hpp"
 #include "ewa/font.hpp"
 #include "ewa/geometry_object.hpp"
+#include "ewa/gui_mouse_state.hpp"
 
 
 using namespace std;
@@ -39,12 +41,10 @@ AoApplication::~AoApplication() {
 
 void AoApplication::Init() {
 
+    m_gui = new AoGui(m_window, this);
 
-    /*
-    m_gui = new Gui(m_window);
-    m_gui->AddListener(this);
+
     GuiMouseState::Init(m_guiVerticalScale);
-    */
 
     m_totalDelta = 0;
 
@@ -74,11 +74,11 @@ void AoApplication::Init() {
 
 void AoApplication::Render() {
 
-    /*
+
     if(m_gui) {
 	m_gui->NewFrame(m_guiVerticalScale);
     }
-    */
+
 
     float SCALE = m_guiVerticalScale;
 
@@ -92,8 +92,6 @@ void AoApplication::Render() {
 
     GeometryObject::RenderSimple(m_curCamera, m_lightDirection);
 
-    /*
-    if(m_gui) {
 
 	int fb_width, fb_height;
 	fb_width = GetFramebufferWidth();
@@ -104,18 +102,16 @@ void AoApplication::Render() {
 
 
 	m_gui->Render(windowWidth, windowHeight);
-    }
-    */
+
 }
 
 void AoApplication::Update(const float delta) {
 
     MouseState& ms = MouseState::GetInstance();
 
-    /*
-    if(m_gui)
+
 	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
-    */
+
 
     m_totalDelta += delta;
 
@@ -172,4 +168,9 @@ void AoApplication::Cleanup() {
 //    string dir = Config::GetInstance().GetWorldFilename();
 
 
+}
+
+
+void AoApplication::BakeAo() {
+    LOG_I("bake AO");
 }

@@ -6,7 +6,7 @@
 #include "log.hpp"
 #include "perlin_seed.hpp"
 #include "common.hpp"
-#include "gui_mouse_state.hpp"
+#include "ewa/gui_mouse_state.hpp"
 
 #include "gl/vbo.hpp"
 #include "gl/shader_program.hpp"
