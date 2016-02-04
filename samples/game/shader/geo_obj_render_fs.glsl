@@ -285,17 +285,25 @@ void main(void) {
 
 //  vec3 envMapSample = vec3(0);
 
+#ifdef FRESNEL
+    vec3 specMat =
+	 specColor +
+	(vec3(1.0) - specColor)  * pow(clamp(1.0 + dot(-v, n), 0.0, 1.0), 5.0);
+#else
+    vec3 specMat = specColor;
+#endif
 
     geoData[0] = calcLighting(
 	ambientLight,
 	sceneLight,
 	specShiny,
 	diffColor.xyz,
-	specColor.xyz,
+	specMat,
 	diff,
 	spec,
 	visibility,
 	envMapSample);
+
 
 //    geoData[0] = vec4(, 1.0);
 

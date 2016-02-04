@@ -43,9 +43,11 @@ vec4 calcLighting(
 	diffColor*sceneLight*diff * visibility+
 	specColor*pow(spec,specShiny) * visibility );
 
-    finalcolor.xyz += spec * envMapSample * 0.3;
+    finalcolor.xyz += specColor * spec * envMapSample * 0.4;
 
     return vec4(finalcolor,1.0);
+
+//    return vec4(specColor * spec * envMapSample * 0.4, 1.0);
 }
 
 float rand(vec4 seed) {

@@ -316,6 +316,7 @@ public:
 		    defines.push_back("ENV_MAPPING");
 		    defines.push_back("SPECULAR_LIGHT");
 		    defines.push_back("DIFFUSE_LIGHT");
+		    defines.push_back("FRESNEL");
 
 
 		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
