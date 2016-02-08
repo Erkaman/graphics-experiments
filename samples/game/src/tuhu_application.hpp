@@ -35,10 +35,12 @@ class Skybox;
 class CubeMapTexture;
 class EnvFBO;
 class Grid;
+class ColorFBO;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
 constexpr int ENV_FBO_TEXTURE_UNIT = 11;
+constexpr int REFRACTION_FBO_TEXTURE_UNIT = 12;
 
 class TuhuApplication : public Application, public GuiListener{
 
@@ -64,6 +66,7 @@ private:
     IGeometryObject* m_selected;
 
     EnvFBO* m_envFbo;
+    ColorFBO* m_refractionFbo;
 
     Car* m_car;
 
@@ -134,6 +137,9 @@ public:
 
 
     void RenderShadowMap();
+    void RenderEnvMap();
+    void RenderRefraction();
+
     void RenderScene();
     void RenderId();
 

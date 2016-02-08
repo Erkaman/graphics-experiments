@@ -39,6 +39,7 @@
 #include "car_camera.hpp"
 
 #include "picking_fbo.hpp"
+#include "ewa/gl/color_fbo.hpp"
 
 
 #include "car.hpp"
@@ -70,8 +71,13 @@ constexpr int SHADOW_MAP_SIZE =
     1024*2;
 
 
-constexpr int WINDOW_WIDTH = HighQuality ? 1000*1.5 : 800*1.5;
-constexpr int WINDOW_HEIGHT = HighQuality ?  800*1.2 : 600*1.2;
+constexpr int WINDOW_WIDTH = HighQuality ? 1500 : 1200;
+constexpr int WINDOW_HEIGHT = HighQuality ?  960 : 720;
+
+constexpr int REFRACTION_WIDTH = WINDOW_WIDTH / 2;
+constexpr int REFRACTION_HEIGHT = WINDOW_HEIGHT / 2;
+
+
 
 /*
 constexpr int WINDOW_WIDTH = 800;
@@ -170,6 +176,10 @@ void TuhuApplication::Init() {
 
     m_envFbo = new EnvFBO();
     m_envFbo->Init(ENV_FBO_TEXTURE_UNIT, 512, 512);
+
+
+    m_refractionFbo = new ColorFBO();
+    m_refractionFbo->Init(REFRACTION_FBO_TEXTURE_UNIT, REFRACTION_WIDTH, REFRACTION_HEIGHT);
 
 
     m_cubeMapTexture = CubeMapTexture::Load(
@@ -631,21 +641,7 @@ void TuhuApplication::RenderScene() {
 
 }
 
-void TuhuApplication::Render() {
-
-    if(m_gui) {
-	m_gui->NewFrame(m_guiVerticalScale);
-    }
-
-    m_gpuProfiler->Begin(GTS_Shadows);
-    RenderShadowMap();
-    m_gpuProfiler->End(GTS_Shadows);
-
-
-
-    m_gpuProfiler->Begin(GTS_EnvMap);
-
-
+void TuhuApplication::RenderEnvMap() {
 
     for(int i = 0; i < 6; ++i) {
 	// bind fbo
@@ -674,9 +670,54 @@ void TuhuApplication::Render() {
 	}
 	m_envFbo->Unbind();
     }
+}
+
+void TuhuApplication::RenderRefraction() {
+
+    m_refractionFbo->Bind();
+    {
+	::SetViewport(0,0,REFRACTION_WIDTH, REFRACTION_HEIGHT);
+
+	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//	m_heightMap->RenderShadowMap(m_lightVp);
+    }
+     m_refractionFbo->Unbind();
 
 
+
+    // bind fbo
+    // set viewport.
+    // cclear viewport.
+
+    // render heightmap with clipping.
+
+
+    // unbind fbo
+
+}
+
+void TuhuApplication::Render() {
+
+    if(m_gui) {
+	m_gui->NewFrame(m_guiVerticalScale);
+    }
+
+    m_gpuProfiler->Begin(GTS_Shadows);
+    RenderShadowMap();
+    m_gpuProfiler->End(GTS_Shadows);
+
+
+
+    m_gpuProfiler->Begin(GTS_EnvMap);
+    RenderEnvMap();
     m_gpuProfiler->End(GTS_EnvMap);
+
+    m_gpuProfiler->Begin(GTS_Refraction);
+    RenderRefraction();
+    m_gpuProfiler->End(GTS_Refraction);
+
+
 
 
 

@@ -217,14 +217,11 @@ public:
 	    return NULL;
 	}
 
-
 	geoObjBatch->m_vertexBuffer = VBO::CreateInterleaved(
 	    data->m_vertexAttribsSizes);
 	geoObjBatch->m_vertexBuffer->Bind();
 	geoObjBatch->m_vertexBuffer->SetBufferData(data->m_verticesSize, data->m_vertices);
 	geoObjBatch->m_vertexBuffer->Unbind();
-
-
 
 	/*
 	  Next, we create VBOs from the vertex data in the chunks.
@@ -233,8 +230,6 @@ public:
 
 	    GeometryObjectData::Chunk* baseChunk = data->m_chunks[i];
 	    Chunk* newChunk = new Chunk;
-
-
 
 	    /*
 	      Load the textures of the object.
@@ -277,17 +272,11 @@ public:
 
 		newChunk->m_specularMap =
 		    m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_specularMapFilename));
-
-
 	    }
-
-
-
 	    newChunk->m_indexBuffer = VBO::CreateIndex(data->m_indexType);
 
 
 	    newChunk->m_numTriangles = baseChunk->m_numTriangles;
-
 
 
 	    newChunk->m_indexBuffer->Bind();
@@ -303,12 +292,6 @@ public:
 	    if(geoObjBatch->m_defaultShader == NULL) {
 
 		if(filename == "obj/car_blend.eob") {
-/*
-  vector<string> defines;
-
-  geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
-  string("shader/car") + string("_vs.glsl"), string("shader/car") + "_fs.glsl", defines);
-*/
 
 		    vector<string> defines;
 
@@ -322,7 +305,25 @@ public:
 		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
 			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 
-		} else {
+		}else if(filename == "obj/water.eob") {
+
+
+		    vector<string> defines;
+
+		    defines.push_back("ALPHA_MAPPING");
+		    defines.push_back("ENV_MAPPING");
+		    defines.push_back("SPECULAR_LIGHT");
+		    defines.push_back("DIFFUSE_LIGHT");
+		    defines.push_back("FRESNEL");
+
+		    string shaderName = "shader/water_render";
+
+
+		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
+			shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+
+
+		}else {
 
 		    /*
 		      Next, we create a shader that supports all the texture types.
@@ -685,7 +686,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
     int total = 0;
     int nonCulled = 0;
 
-
     auto& batches = GeoObjManager::GetInstance().m_batches;
 
     GeometryObject* selectedObj = NULL;
@@ -723,7 +723,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
   batch->m_defaultShader->SetUniform("zFar", config.GetZFar());
   }
 */
-
 
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
@@ -773,8 +772,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
 
 		Chunk* chunk = batch->m_chunks[i];
-
-
 
 		if(chunk->m_specularMap == -1) {
 		    // if no spec map, the chunk has the same specular color all over the texture.
