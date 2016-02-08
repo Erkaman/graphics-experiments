@@ -594,9 +594,6 @@ void TuhuApplication::RenderScene() {
 
     Matrix4f lightVp =  biasMatrix*   m_lightVp;
 
-
-
-
     m_gpuProfiler->Begin(GTS_Sky);
 //   m_skydome->Draw(m_curCamera);
 
@@ -664,9 +661,7 @@ void TuhuApplication::RenderEnvMap() {
 	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
 	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
-	    m_heightMap->RenderEnvMapSetup(aoOnly);
-	    m_heightMap->RenderEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
-	    m_heightMap->RenderEnvMapUnsetup();
+	    m_heightMap->RenderEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i, aoOnly);
 	}
 	m_envFbo->Unbind();
     }

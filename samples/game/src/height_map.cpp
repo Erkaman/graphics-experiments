@@ -55,6 +55,7 @@ constexpr unsigned short MIN_HEIGHT = 0;
 
 
 
+
 static Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
 
@@ -340,8 +341,7 @@ void HeightMap::RenderUnsetup() {
 
 
 
-void HeightMap::RenderEnvMapSetup(bool aoOnly) {
-
+void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i, bool aoOnly) {
     m_envShader->Bind();
 
 
@@ -370,6 +370,12 @@ void HeightMap::RenderEnvMapSetup(bool aoOnly) {
     Texture::SetActiveTextureUnit(2);
     m_rockTexture->Bind();
 
+    m_envShader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition);
+
+
+
+
+
 
     RenderSetup(m_envShader);
 
@@ -379,14 +385,16 @@ void HeightMap::RenderEnvMapSetup(bool aoOnly) {
 
     m_indexBuffer->Bind();
 
-}
+    Render(m_envShader, HeightMapRenderMode(HEIGHT_MAP_RENDER_MODE_ENV_MAP0 + i) );
 
-void HeightMap::RenderEnvMapUnsetup() {
     m_indexBuffer->Unbind();
 
     m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
 
     RenderUnsetup();
+
+
+
 
 
 
@@ -399,34 +407,10 @@ void HeightMap::RenderEnvMapUnsetup() {
 
     m_envShader->Unbind();
 
+
 }
 
-void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i) {
-
-    m_envShader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition);
-
-    MultArray<bool>& inEnvFrustum = *m_inEnvFrustums[i];
-
-    for(int x = 0; x < m_chunks; ++x) {
-	for(int z = 0; z < m_chunks; ++z) {
-
-	    if(!inEnvFrustum(x,z)) {
-		// not in frustum, dont draw.
-		continue;
-	    }
-
-	    //	    LOG_I("draw chunk");
-
-	    m_envShader->SetUniform("chunkPos", Vector2f(x,z) );
-
-	    // DRAW.
-	    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
-	}
-    }
-}
-
-
-void HeightMap::Render(ShaderProgram* shader, bool shadows) {
+void HeightMap::Render(ShaderProgram* shader, HeightMapRenderMode renderMode) {
 
     RenderSetup(shader);
 
@@ -436,26 +420,20 @@ void HeightMap::Render(ShaderProgram* shader, bool shadows) {
 
     m_indexBuffer->Bind();
 
-    MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
-    MultArray<bool>& inLightFrustum = *m_inLightFrustum;;
+
+    MultArray<bool>& inFrustum =
+	renderMode >= HEIGHT_MAP_RENDER_MODE_ENV_MAP0 && renderMode <= HEIGHT_MAP_RENDER_MODE_ENV_MAP5 ?
+	*m_inEnvFrustums[renderMode - HEIGHT_MAP_RENDER_MODE_ENV_MAP0] :
+
+
+	renderMode == HEIGHT_MAP_RENDER_MODE_NORMAL ? *m_inCameraFrustum : *m_inLightFrustum;;
 
     for(int x = 0; x < m_chunks; ++x) {
 	for(int z = 0; z < m_chunks; ++z) {
 
-	    if(shadows) {
-
-		if(!inLightFrustum(x,z)) {
-		    // not in frustum, dont draw.
-		    continue;
-		}
-
-	    } else {
-
-		if(!inCameraFrustum(x,z)) {
-		    // not in frustum, dont draw.
-		    continue;
-		}
-
+	    if(!inFrustum(x,z)) {
+		// not in frustum, dont draw.
+		continue;
 	    }
 
 	    shader->SetUniform("chunkPos", Vector2f(x,z) );
@@ -517,7 +495,7 @@ void HeightMap::RenderHeightMap(
 
     // set textures and stuff.
 
-    Render(m_shader,false);
+    Render(m_shader,HEIGHT_MAP_RENDER_MODE_NORMAL);
 
     m_grassTexture->Unbind();
     m_dirtTexture->Unbind();
@@ -608,7 +586,7 @@ void HeightMap::RenderShadowMap(const Matrix4f& lightVp) {
 
     m_depthShader->SetUniform("mvp", lightVp); // model matrix is identity, so we do not need to multiply by model.
 
-    Render(m_depthShader,true);
+    Render(m_depthShader,HEIGHT_MAP_RENDER_MODE_SHADOWS);
 
     m_depthShader->Unbind();
 }
