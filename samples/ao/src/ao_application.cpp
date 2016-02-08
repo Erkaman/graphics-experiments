@@ -53,24 +53,22 @@ void AoApplication::Init() {
     m_totalDelta = 0;
 
     // NOTE: we can fix the shadows by setting trans to (0,0,0).
-    Vector3f trans = Vector3f(-2,9.0,-2);
 
 
-
-    m_render->SetEob(EobFile::Read("obj/tree3_done.eob"), "obj" );
+    m_render->SetEob(EobFile::Read("obj/corner.eob"), "obj" );
 //    LoadObj("obj/tree3_done.eob");
 
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
     const Vector3f pos =
-	Vector3f(10, 10, 10);
+	Vector3f(-10, 10, 10);
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(-0.50f, -0.50f, -0.50f)
+	Vector3f(0.50f, -0.50f, -0.50f)
 	);
 
     m_curCamera = m_freeCamera;

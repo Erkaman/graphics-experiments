@@ -728,11 +728,11 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
 	    ++total;
-/*
+
 	    if(!geoObj->m_inCameraFrustum) {
 		continue; // if culled, do nothing.
 	    }
-*/
+
 
 
 	    ++nonCulled;
@@ -767,6 +767,12 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 		batch->m_defaultShader->SetUniform("inverseViewNormalMatrix",
 						   camera->GetViewMatrix().Transpose()  );
+	    }
+
+
+
+	    if(geoObj->GetFilename() == "obj/water.eob") {
+//		set refraction map texture, and send to shader.
 	    }
 
 	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {

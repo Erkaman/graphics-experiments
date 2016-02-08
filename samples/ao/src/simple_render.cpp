@@ -36,6 +36,7 @@ SimpleRender::SimpleRender() {
 
 	    defines.push_back("DIFF_MAPPING");
 	    defines.push_back("ALPHA_MAPPING");
+	    defines.push_back("DIFFUSE_LIGHT");
 
 	    m_simpleShader = ResourceManager::LoadShader(
 		shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);

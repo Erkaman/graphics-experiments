@@ -1301,3 +1301,6 @@ void TuhuApplication::UpdateMatrices() {
 void TuhuApplication::BakeAo(int samples, int waveLength, int amplitude, float distAttenuation) {
     m_heightMap->BakeAo(samples, waveLength, amplitude, distAttenuation);
 }
+
+
+set refraction map texture, and send to shader in RenderAll().
