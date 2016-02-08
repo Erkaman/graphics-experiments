@@ -724,15 +724,16 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
   }
 */
 
+
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
 
 	    ++total;
-
+/*
 	    if(!geoObj->m_inCameraFrustum) {
 		continue; // if culled, do nothing.
 	    }
-
+*/
 
 
 	    ++nonCulled;
@@ -1061,7 +1062,6 @@ unsigned int GeometryObject::GetId() {
     return m_id;
 }
 
-
 void GeometryObject::Delete(IGeometryObject* geoObj) {
 
     // remove the obj from its corresponding batch:
@@ -1096,3 +1096,6 @@ void GeometryObject::SetScale(const float scale) {
 void GeometryObject::SetEditScale(const float editScale) {
     m_editScale = editScale;
 }
+
+
+//how many rocks are we drawing per iteration? i think we are drawing them twice!!
