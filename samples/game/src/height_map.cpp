@@ -131,10 +131,19 @@ void HeightMap::Init(
     m_depthShader = ShaderProgram::Load("shader/height_map_output_depth");
 
     {
-
 	vector<string> defines;
 
 	m_envShader =
+	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    }
+
+
+    {
+	vector<string> defines;
+
+	defines.push_back("REFRACTION");
+
+	m_refractionShader =
 	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
     }
 
@@ -475,8 +484,6 @@ void HeightMap::RenderHeightMap(
     Texture::SetActiveTextureUnit(5);
     m_aoMap->Bind();
 
-
-
     m_shader->SetUniform("grass", 0);
     Texture::SetActiveTextureUnit(0);
     m_grassTexture->Bind();
@@ -488,6 +495,8 @@ void HeightMap::RenderHeightMap(
     m_shader->SetUniform("rock", 2);
     Texture::SetActiveTextureUnit(2);
     m_rockTexture->Bind();
+
+
 
     m_shader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
     Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
@@ -507,6 +516,55 @@ void HeightMap::RenderHeightMap(
     shadowMap.GetRenderTargetTexture().Unbind();
 
     m_shader->Unbind();
+}
+
+void HeightMap::RenderRefraction(
+    const ICamera* camera, const Vector4f& lightPosition, bool aoOnly) {
+
+    m_refractionShader->Bind();
+
+    m_refractionShader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition);
+
+    m_refractionShader->SetUniform("aoOnly", aoOnly ? 1.0f : 0.0f);
+
+
+    m_refractionShader->SetUniform("splatMap", 4);
+    Texture::SetActiveTextureUnit(4);
+    m_splatMap->Bind();
+
+    m_refractionShader->SetUniform("aoMap", 5);
+    Texture::SetActiveTextureUnit(5);
+    m_aoMap->Bind();
+
+    m_refractionShader->SetUniform("grass", 0);
+    Texture::SetActiveTextureUnit(0);
+    m_grassTexture->Bind();
+
+    m_refractionShader->SetUniform("dirt", 1);
+    Texture::SetActiveTextureUnit(1);
+    m_dirtTexture->Bind();
+
+    m_refractionShader->SetUniform("rock", 2);
+    Texture::SetActiveTextureUnit(2);
+    m_rockTexture->Bind();
+
+    // set textures and stuff.
+
+
+    GL_C(glEnable(GL_CLIP_DISTANCE0));
+
+    Render(m_refractionShader,HEIGHT_MAP_RENDER_MODE_NORMAL);
+
+    GL_C(glDisable(GL_CLIP_DISTANCE0));
+
+
+    m_grassTexture->Unbind();
+    m_dirtTexture->Unbind();
+    m_rockTexture->Unbind();
+    m_splatMap->Unbind();
+    m_aoMap->Unbind();
+
+    m_refractionShader->Unbind();
 }
 
 
@@ -547,7 +605,12 @@ void HeightMap::Render(
     const bool aoOnly) {
 
 
+
+
+
     RenderHeightMap(camera, lightPosition, lightVp, shadowMap, aoOnly);
+
+
 
     if(m_config->IsGui()) {
 	RenderCursor(camera);

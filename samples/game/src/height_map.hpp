@@ -160,6 +160,7 @@ private:
 //    ShaderProgram* m_idShader; //outputs only the id. Used for triangle picking in the height map.
     ShaderProgram* m_cursorShader;
     ShaderProgram* m_envShader;
+    ShaderProgram* m_refractionShader;
 
     Texture* m_grassTexture;
     Texture* m_dirtTexture;
@@ -271,6 +272,10 @@ public:
 
 
     void RenderEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i, bool aoOnly);
+
+
+    void RenderRefraction(
+	const ICamera* camera, const Vector4f& lightPosition, bool aoOnly);
 
     void SetWireframe(const bool wireframe);
 

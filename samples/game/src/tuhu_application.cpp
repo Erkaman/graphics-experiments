@@ -671,25 +671,13 @@ void TuhuApplication::RenderRefraction() {
 
     m_refractionFbo->Bind();
     {
-	::SetViewport(0,0,REFRACTION_WIDTH, REFRACTION_HEIGHT);
-
+	::SetViewport(200,1000,REFRACTION_WIDTH, REFRACTION_HEIGHT);
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//	m_heightMap->RenderShadowMap(m_lightVp);
+    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
+    m_heightMap->RenderRefraction(m_curCamera, m_lightDirection, aoOnly);
     }
-     m_refractionFbo->Unbind();
-
-
-
-    // bind fbo
-    // set viewport.
-    // cclear viewport.
-
-    // render heightmap with clipping.
-
-
-    // unbind fbo
-
+    m_refractionFbo->Unbind();
 }
 
 void TuhuApplication::Render() {
@@ -761,6 +749,7 @@ void TuhuApplication::Render() {
     //  m_ssaoPass->Render(m_gbuffer, m_curCamera);
     m_gpuProfiler->End(GTS_SSAO);
 
+
     m_gpuProfiler->WaitForDataAndUpdate();
 
 
@@ -819,6 +808,9 @@ void TuhuApplication::Update(const float delta) {
   add to object.
   }
 */
+
+//    RenderRefraction();
+
 
     if( kbs.IsPressed(GLFW_KEY_P) ) {
 
