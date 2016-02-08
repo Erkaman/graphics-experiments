@@ -55,6 +55,7 @@
 #include "skybox.hpp"
 #include "env_camera.hpp"
 #include "env_fbo.hpp"
+#include "grid.hpp"
 
 
 
@@ -68,14 +69,63 @@ constexpr int SHADOW_MAP_SIZE =
     1024*2*2 :
     1024*2;
 
+
 constexpr int WINDOW_WIDTH = HighQuality ? 1000*1.5 : 800*1.5;
 constexpr int WINDOW_HEIGHT = HighQuality ?  800*1.2 : 600*1.2;
+
+/*
+constexpr int WINDOW_WIDTH = 800;
+constexpr int WINDOW_HEIGHT = 800;
+*/
 
 const string HEIGHT_MAP_FILENAME = "heightmap.bin";
 const string SPLAT_MAP_FILENAME = "splatmap.bin";
 const string AO_MAP_FILENAME = "aomap.bin";
 
 const string OBJS_FILENAME = "objs";
+
+
+bool save_screenshot(string filename, int w, int h)
+{
+    w *= 2;
+    h *= 2;
+
+
+  //This prevents the images getting padded
+ // when the width multiplied by 3 is not a multiple of 4
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+  int nSize = w*h*3;
+  // First let's create our buffer, 3 channels per Pixel
+  char* dataBuffer = (char*)malloc(nSize*sizeof(char));
+
+  if (!dataBuffer) return false;
+
+   // Let's fetch them from the backbuffer
+   // We request the pixels in GL_BGR format, thanks to Berzeger for the tip
+   glReadPixels((GLint)0, (GLint)0,
+		(GLint)w, (GLint)h,
+		 GL_BGR, GL_UNSIGNED_BYTE, dataBuffer);
+
+   //Now the file creation
+   FILE *filePtr = fopen(filename.c_str(), "wb");
+   if (!filePtr) return false;
+
+
+   unsigned char TGAheader[12]={0,0,2,0,0,0,0,0,0,0,0,0};
+   unsigned char header[6] = {(unsigned char) (w%256), (unsigned char) (w/256),
+			      (unsigned char) (h%256), (unsigned char)( h/256),
+			       24,0};
+   // We write the headers
+   fwrite(TGAheader,	sizeof(unsigned char),	12,	filePtr);
+   fwrite(header,	sizeof(unsigned char),	6,	filePtr);
+   // And finally our image data
+   fwrite(dataBuffer,	sizeof(GLubyte),	nSize,	filePtr);
+   fclose(filePtr);
+
+  return true;
+}
+
 
 void ToClipboard(const std::string& str) {
     std::string command = "echo '" + str + "' | pbcopy";
@@ -102,7 +152,6 @@ TuhuApplication::~TuhuApplication() {
 
     MY_DELETE(m_depthFbo);
     MY_DELETE(m_pickingFbo);
-
 }
 
 void TuhuApplication::Init() {
@@ -113,6 +162,9 @@ void TuhuApplication::Init() {
 
 
     m_ssaoPass = new SsaoPass(GetFramebufferWidth(),GetFramebufferHeight());
+
+
+    m_grid = new Grid();
 
     m_skybox = new Skybox();
 
@@ -666,6 +718,9 @@ void TuhuApplication::Render() {
 	m_gui->Render(windowWidth, windowHeight);
     }
 
+//    m_grid->Draw();
+
+
     m_gpuProfiler->Begin(GTS_SSAO);
     //  m_ssaoPass->Render(m_gbuffer, m_curCamera);
     m_gpuProfiler->End(GTS_SSAO);
@@ -860,6 +915,10 @@ void TuhuApplication::Update(const float delta) {
 	    m_curCamera = m_freeCamera;
 	}
 	m_curCamera->Update(0);
+    }
+
+    if( kbs.IsPressed(GLFW_KEY_L) ) {
+	save_screenshot("screen.tga", WINDOW_WIDTH, WINDOW_HEIGHT);
     }
 
     m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());

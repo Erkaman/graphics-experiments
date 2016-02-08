@@ -34,6 +34,7 @@ class SsaoPass;
 class Skybox;
 class CubeMapTexture;
 class EnvFBO;
+class Grid;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
@@ -73,6 +74,9 @@ private:
     DepthFBO* m_depthFbo;
     PickingFBO* m_pickingFbo;
     Gbuffer* m_gbuffer;
+
+    Grid* m_grid;
+
 
 
     Vector4f m_lightDirection;

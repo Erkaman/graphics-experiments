@@ -1034,6 +1034,7 @@ void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum*
     m_inCameraFrustum = cameraFrustum->IsAABBInFrustum(GetModelSpaceAABB());
     m_inLightFrustum = lightFrustum->IsAABBInFrustum(GetModelSpaceAABB());
 
+
     for(int i = 0; i < 6; ++i) {
 
 	if(m_filename == "obj/car_blend.eob" ) {
@@ -1042,14 +1043,8 @@ void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum*
 	} else {
 	    m_inEnvLightFrustums[i] = envLightFrustums[i]->IsAABBInFrustum(GetModelSpaceAABB());
 	}
-
-
-/*	if(i == 2 && m_inEnvLightFrustums[i]) {
-//	    LOG_I("in cam");
-
-}*/
-
     }
+
 
 }
 

@@ -1673,13 +1673,8 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
     MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
     MultArray<bool>& inLightFrustum = *m_inLightFrustum;
 
-/*
-    int count[6];
 
-    for(int i=0; i < 6; ++i) {
-	count[i] =0;
-    }
-*/
+
     for(int x = 0; x < m_chunks; ++x) {
 	for(int z = 0; z < m_chunks; ++z) {
 
@@ -1692,16 +1687,15 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 
 		MultArray<bool>& inEnvFrustums = *m_inEnvFrustums[i];
 		inEnvFrustums(x,z) = envLightFrustums[i]->IsAABBInFrustum(aabb);
-/*
-		if(inEnvFrustums(x,z)) {
-		    ++count[i];
-		}*/
 
 	    }
 
 
 	}
     }
+
+
+
 /*
     for(int i=0; i < 6; ++i) {
 	LOG_I("count: %d, %d", i, count[i]);
