@@ -143,6 +143,10 @@ void ShaderProgram::SetShaderUniforms(const Matrix4f& modelMatrix, const ICamera
 
     SetMvpUniform(mvp);
     SetUniform("modelViewMatrix", modelViewMatrix);
+    SetUniform("modelMatrix", modelMatrix);
+    SetUniform("viewMatrix", camera->GetViewMatrix());
+    SetUniform("projectionMatrix", camera->GetProjectionMatrix() );
+
     SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
 
     Config& config = Config::GetInstance();

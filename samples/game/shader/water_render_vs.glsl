@@ -6,14 +6,25 @@ uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
 uniform mat4 normalMatrix;
 
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 modelMatrix;
+uniform vec3 eyePos;
+
 out vec2 texcoordOut;
 out vec4 clipSpace;
+
+out vec3 toCameraVector;
 
 void main()
 {
     texcoordOut = texCoordIn;
 
-    clipSpace = mvp * vec4(positionIn,1);
+    vec4 worldPosition = modelMatrix * vec4(positionIn,1);
+
+    clipSpace = projectionMatrix * viewMatrix * worldPosition;
 
     gl_Position = clipSpace;
+
+    toCameraVector = normalize(eyePos - worldPosition.xyz);
 }

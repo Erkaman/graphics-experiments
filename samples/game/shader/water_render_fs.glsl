@@ -15,6 +15,9 @@ uniform float normalMap;
 
 uniform float totalDelta;
 
+in vec3 toCameraVector;
+
+
 void main(void) {
 
     vec2 ndc = clipSpace.xy / clipSpace.w;
@@ -34,19 +37,23 @@ void main(void) {
     refractionTexcoord += distort * 0.02;
     reflectionTexcoord += distort * 0.02;
 
-
-
     vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
 
     vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
 
     vec3 color;
 
-    color = mix(refraction, reflection, 0.3);
+    float fresnel = dot(
+	toCameraVector, vec3(0,1,0));
+
+    color = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
 //    vec3 color = refraction;
 //    color = reflection;
 
 //    color = vec3(texture(textureArray, vec3(texcoordOut, dudvMap) ).rg, 0);
+
+//    color = vec3(toCameraVector);
+
 
     geoData[0] = vec4(color,1);
 }
