@@ -164,6 +164,11 @@ private:
 	    PrintErrorExit();
 	}
 
+	m_dudvMap =
+	    m_arrayTexture->GetTexture(File::AppendPaths("obj/", "waterDUDV.png"));
+
+	m_normalMap =
+	    m_arrayTexture->GetTexture(File::AppendPaths("obj/", "waterNormalMap.png"));
     }
 
 public:
@@ -182,6 +187,10 @@ public:
 
     ArrayTexture* m_arrayTexture;
 
+    GLint m_normalMap;
+    GLint m_dudvMap;
+
+    float m_totalDelta;
 
     static GeoObjManager& GetInstance(){
 	static GeoObjManager instance;
@@ -844,6 +853,13 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		reflectionMap.GetRenderTargetTexture().Bind();
 
 
+
+		batch->m_defaultShader->SetUniform("dudvMap", (float)GeoObjManager::GetInstance().m_dudvMap);
+		batch->m_defaultShader->SetUniform("normalMap", (float)GeoObjManager::GetInstance().m_normalMap);
+
+
+		batch->m_defaultShader->SetUniform("totalDelta", (float)GeoObjManager::GetInstance().m_totalDelta);
+
 	    }
 
 
@@ -883,6 +899,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    }else if(geoObj->GetFilename() == "obj/water.eob") {
 		refractionMap.GetRenderTargetTexture().Unbind();
 		reflectionMap.GetRenderTargetTexture().Unbind();
+
 	    }
 
 	    if(geoObj->IsSelected() ) {
@@ -1178,3 +1195,8 @@ void GeometryObject::SetEditScale(const float editScale) {
 
 
 //how many rocks are we drawing per iteration? i think we are drawing them twice!!
+
+
+void GeometryObject::SetTotalDelta(float totalDelta) {
+    GeoObjManager::GetInstance().m_totalDelta = totalDelta;
+}

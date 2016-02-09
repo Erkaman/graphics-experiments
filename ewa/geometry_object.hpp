@@ -101,6 +101,8 @@ public:
 
     static void RenderShadowMapAll(const Matrix4f& lightVp); // vp = view projection matrix.
 
+    static void SetTotalDelta(float totalDelta);
+
     virtual void Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, ViewFrustum** envLightFrustums, const ViewFrustum* reflectionFrustum);
 
     /*

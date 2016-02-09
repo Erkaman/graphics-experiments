@@ -39,7 +39,8 @@ void main()
 
     gl_Position = mvp * vec4(scaledPos,1);
 
-    const float height = 1.0 - 0001;
+    const float height = 1.0;
+    //  const float height = 1.0;
 
 #ifdef REFRACTION
     gl_ClipDistance[0] = -dot(scaledPos, vec3(0,height,0));

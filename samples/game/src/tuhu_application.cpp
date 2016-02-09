@@ -233,13 +233,14 @@ void TuhuApplication::Init() {
 
 
     const Vector3f pos =
-	Vector3f(51, 41, 71);
+	Vector3f(83.344063, 76.582664, 148.282547);
+
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(-0.50f, -0.50f, -0.50f)
+	Vector3f(-0.663699, -0.717373, 0.211849)
 	);
 
     m_snow = new SnowEffect(pos);
@@ -791,11 +792,12 @@ void TuhuApplication::Update(const float delta) {
 
     MouseState& ms = MouseState::GetInstance();
 
-
     m_totalDelta += delta;
 
     m_curCamera->Update(delta);
     m_reflectionCamera = m_curCamera->CreateReflectionCamera();
+
+    GeometryObject::SetTotalDelta(m_totalDelta);
 
 
     if(m_gui)
