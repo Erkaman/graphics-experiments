@@ -5,14 +5,15 @@ layout (location = 2)in vec3 normalIn;
 uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
 uniform mat4 normalMatrix;
-uniform vec3 eyePos;
-uniform mat4 lightMvp;
 
 out vec2 texcoordOut;
-
+out vec4 clipSpace;
 
 void main()
 {
     texcoordOut = texCoordIn;
-    gl_Position =mvp * vec4(positionIn,1);
+
+    clipSpace = mvp * vec4(positionIn,1);
+
+    gl_Position = clipSpace;
 }

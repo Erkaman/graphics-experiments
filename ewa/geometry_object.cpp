@@ -25,6 +25,7 @@
 #include "config.hpp"
 #include "physics_world.hpp"
 #include "gl/depth_fbo.hpp"
+#include "ewa/gl/color_fbo.hpp"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -681,7 +682,7 @@ void GeometryObject::RenderAllEnv(
 
 
 
-void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap, CubeMapTexture* cubeMapTexture) {
+void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap, CubeMapTexture* cubeMapTexture, const ColorFBO& refractionMap) {
 
     int total = 0;
     int nonCulled = 0;
@@ -690,8 +691,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
     GeometryObject* selectedObj = NULL;
     const GeoObjBatch* selectedBatch = NULL;
-
-
 
 
     // render all batches, one after one.
@@ -767,13 +766,13 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 		batch->m_defaultShader->SetUniform("inverseViewNormalMatrix",
 						   camera->GetViewMatrix().Transpose()  );
+	    } else if(geoObj->GetFilename() == "obj/water.eob") {
+		batch->m_defaultShader->SetUniform("refractionMap", 8);
+		Texture::SetActiveTextureUnit(8);
+		refractionMap.GetRenderTargetTexture().Bind();
+
 	    }
 
-
-
-	    if(geoObj->GetFilename() == "obj/water.eob") {
-//		set refraction map texture, and send to shader.
-	    }
 
 	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
 
@@ -808,6 +807,8 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 	    if(geoObj->GetFilename() == "obj/car_blend.eob") {
 		cubeMapTexture->Unbind();
+	    }else if(geoObj->GetFilename() == "obj/water.eob") {
+		refractionMap.GetRenderTargetTexture().Unbind();
 	    }
 
 	    if(geoObj->IsSelected() ) {

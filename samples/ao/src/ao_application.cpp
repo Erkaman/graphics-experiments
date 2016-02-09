@@ -2,6 +2,7 @@
 #include "ao_application.hpp"
 #include "ao_gui.hpp"
 #include "simple_render.hpp"
+#include "ray_tracer.hpp"
 
 #include "ewa/common.hpp"
 #include "ewa/camera.hpp"
@@ -55,8 +56,12 @@ void AoApplication::Init() {
     // NOTE: we can fix the shadows by setting trans to (0,0,0).
 
 
-    m_render->SetEob(EobFile::Read("obj/corner.eob"), "obj" );
+    m_eobFile = EobFile::Read("obj/corner.eob");
+    m_render->SetEob(m_eobFile, "obj" );
 //    LoadObj("obj/tree3_done.eob");
+
+    m_rayTracer = new RayTracer(m_eobFile);
+    m_rayTracer->RayTrace();
 
     ::SetDepthTest(true);
     ::SetCullFace(true);
@@ -73,7 +78,6 @@ void AoApplication::Init() {
 
     m_curCamera = m_freeCamera;
 }
-
 
 void AoApplication::Render() {
 
@@ -148,24 +152,6 @@ void AoApplication::RenderText()  {
     string cull = std::to_string(nonCulledObjects) + "\\" + std::to_string(totalObjects);
 
     m_font->DrawString(*m_fontShader, 750,170, "lol");
-}
-
-
-void AoApplication::LoadObj(const std::string& path) {
-
-    m_geoObj = new GeometryObject();
-
-    const Vector3f position(0,0,0);
-    const btQuaternion rotation = btQuaternion::getIdentity();
-    float scale = 1.0;
-
-//    LOG_I("add id: %d", currentObjId);
-
-    bool result = m_geoObj->Init(path, position,rotation, scale, 0,
-				 0,0);
-
-    if(!result)
-	PrintErrorExit();
 }
 
 

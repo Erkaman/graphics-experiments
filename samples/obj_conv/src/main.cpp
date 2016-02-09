@@ -381,6 +381,14 @@ int ParseFEntry(const string& entry) {
     texCoord.Add(globalVertices);
     normal.Add(globalVertices);
 
+    /*
+    LOG_I("points: %s", string(point).c_str() );
+    LOG_I("texcoord: %s", string(texCoord).c_str() );
+    LOG_I("normal: %s", string(normal).c_str() );
+    LOG_I("");
+*/
+
+
     if(generateTangents) {
 	// add an empty tangent for now. we will compute it later.
 	Vector3f tangent(0);
@@ -415,7 +423,6 @@ void GenerateTangents() {
 	Vector2f m_texCoord;
 	Vector3f m_normal;
 	Vector3f m_tangent;
-
     };
 
     map<string, Chunk*>::iterator it;

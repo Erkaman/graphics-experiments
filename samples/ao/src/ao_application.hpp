@@ -10,6 +10,8 @@ class IGeometryObject;
 class GeometryObject;
 class AoGui;
 class SimpleRender;
+class GeometryObjectData;
+class RayTracer;
 
 class AoApplication : public Application{
 
@@ -23,15 +25,15 @@ private:
 
     float m_totalDelta;
 
-    GeometryObject* m_geoObj;
+    RayTracer* m_rayTracer;
 
     AoGui* m_gui;
 
+    GeometryObjectData* m_eobFile;
+
+
 
 //    std::map<unsigned int,IGeometryObject*> m_geoObjs;
-
-
-    void LoadObj(const std::string& path);
 
     SimpleRender* m_render;
 

@@ -627,7 +627,7 @@ void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Objects);
     {
-	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap());
+	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap(), *m_refractionFbo);
     }
 
     m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
@@ -671,11 +671,11 @@ void TuhuApplication::RenderRefraction() {
 
     m_refractionFbo->Bind();
     {
-	::SetViewport(200,1000,REFRACTION_WIDTH, REFRACTION_HEIGHT);
+	::SetViewport(0,0,REFRACTION_WIDTH, REFRACTION_HEIGHT);
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
-    m_heightMap->RenderRefraction(m_curCamera, m_lightDirection, aoOnly);
+	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
+	m_heightMap->RenderRefraction(m_curCamera, m_lightDirection, aoOnly);
     }
     m_refractionFbo->Unbind();
 }
@@ -991,6 +991,10 @@ void TuhuApplication::RenderText()  {
     m_font->DrawString(*m_fontShader, 750,490,
 		       Format("EnvMap: %0.2f ms", m_gpuProfiler->DtAvg(GTS_EnvMap) ) );
 
+    m_font->DrawString(*m_fontShader, 750,550,
+		       Format("Refraction: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Refraction)) );
+
+
 }
 
 IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3f& position,
@@ -1303,4 +1307,4 @@ void TuhuApplication::BakeAo(int samples, int waveLength, int amplitude, float d
 }
 
 
-set refraction map texture, and send to shader in RenderAll().
+//set refraction map texture, and send to shader in RenderAll().

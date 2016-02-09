@@ -44,9 +44,6 @@ Application::Application(int argc, char *argv[], int width, int height): m_width
 void Application::Start() {
 
 
-
-
-
     LogInit();
 
     this->SetupOpenGL();

@@ -9,6 +9,8 @@ int main (int argc, char *argv[]) {
 
     config.SetGui(true);
 
+
+
     AoApplication app(argc, argv);
     app.Start();
     return 0;

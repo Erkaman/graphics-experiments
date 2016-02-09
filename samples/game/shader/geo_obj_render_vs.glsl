@@ -1,6 +1,9 @@
 layout (location = 0)in  vec3 positionIn;
+
+
 layout (location = 1)in vec2 texCoordIn;
 layout (location = 2)in vec3 normalIn;
+
 
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
 layout (location = 3)in vec3 tangentIn;
