@@ -1,5 +1,8 @@
+#ifdef AO
+layout (location = 0)in  vec4 positionIn;
+#else
 layout (location = 0)in  vec3 positionIn;
-
+#endif
 
 layout (location = 1)in vec2 texCoordIn;
 layout (location = 2)in vec3 normalIn;
@@ -31,13 +34,16 @@ out vec3 eyePosOut;
 
 out vec4 shadowCoordOut;
 
+#ifdef AO
+out float aoOut;
+#endif
 
 void main()
 {
     // vertex position
-    viewSpacePositionOut = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
+    viewSpacePositionOut = (modelViewMatrix * vec4(positionIn.xyz, 1.0)).xyz;
 
-    shadowCoordOut = (lightMvp * vec4(positionIn,1));
+    shadowCoordOut = (lightMvp * vec4(positionIn.xyz,1));
 
     viewSpaceNormalOut = normalize(  (normalMatrix * vec4(normalIn, 0.0)).xyz );
 #if defined NORMAL_MAPPING || defined HEIGHT_MAPPING
@@ -46,9 +52,12 @@ void main()
 #endif
     texcoordOut = texCoordIn;
 
-    gl_Position =mvp * vec4(positionIn,1);
+    gl_Position =mvp * vec4(positionIn.xyz,1);
 
     eyePosOut = eyePos;
 
     modelViewMatrixOut = modelViewMatrix;
+#ifdef AO
+    aoOut = positionIn.w;
+#endif
 }

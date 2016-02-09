@@ -61,7 +61,7 @@ void AoApplication::Init() {
 //    LoadObj("obj/tree3_done.eob");
 
     m_rayTracer = new RayTracer(m_eobFile);
-    m_rayTracer->RayTrace();
+    m_render->SetEob(m_rayTracer->RayTrace(), "obj");
 
     ::SetDepthTest(true);
     ::SetCullFace(true);

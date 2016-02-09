@@ -1128,7 +1128,15 @@ void GeometryObject::SetSelected(bool selected) {
 void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum,
 			    ViewFrustum** envLightFrustums, const ViewFrustum* reflectionFrustum) {
     m_inCameraFrustum = cameraFrustum->IsAABBInFrustum(GetModelSpaceAABB());
+
+
+
+    if(m_filename == "obj/water.eob" ) {
+	m_inLightFrustum = false;
+    } else {
     m_inLightFrustum = lightFrustum->IsAABBInFrustum(GetModelSpaceAABB());
+
+    }
     m_inReflectionFrustum = reflectionFrustum->IsAABBInFrustum(GetModelSpaceAABB());
 
 

@@ -42,6 +42,21 @@ SimpleRender::SimpleRender() {
 		shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 	}
 
+
+	{
+	    string shaderName = "shader/geo_obj_render";
+
+	    vector<string> defines;
+
+	    defines.push_back("DIFF_MAPPING");
+	    defines.push_back("ALPHA_MAPPING");
+	    defines.push_back("DIFFUSE_LIGHT");
+	    defines.push_back("AO");
+
+	    m_aoShader = ResourceManager::LoadShader(
+		shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+	}
+
 	vector<string> files = File::EnumerateDirectory("../game/obj");
 
         vector<string> pngFiles;
@@ -85,69 +100,75 @@ void SimpleRender::SetEob(GeometryObjectData* eob, const string& basePath) {
 
 
 
-	m_vertexBuffer = VBO::CreateInterleaved(
-	    eob->m_vertexAttribsSizes);
-	m_vertexBuffer->Bind();
-	m_vertexBuffer->SetBufferData(eob->m_verticesSize, eob->m_vertices);
-	m_vertexBuffer->Unbind();
+    m_vertexBuffer = VBO::CreateInterleaved(
+	eob->m_vertexAttribsSizes);
+    m_vertexBuffer->Bind();
+    m_vertexBuffer->SetBufferData(eob->m_verticesSize, eob->m_vertices);
+    m_vertexBuffer->Unbind();
 
-	/*
-	  Next, we create VBOs from the vertex data in the chunks.
-	*/
-	for(size_t i = 0; i < eob->m_chunks.size(); ++i) {
+    if(eob->m_vertexAttribsSizes[0] == 4 ) {
+	isAo = true;
+    } else {
+	isAo = false;
+    }
 
-	    GeometryObjectData::Chunk* baseChunk = eob->m_chunks[i];
-	    Chunk* newChunk = new Chunk;
+    /*
+      Next, we create VBOs from the vertex data in the chunks.
+    */
+    for(size_t i = 0; i < eob->m_chunks.size(); ++i) {
+
+	GeometryObjectData::Chunk* baseChunk = eob->m_chunks[i];
+	Chunk* newChunk = new Chunk;
 
 
 
 
+	newChunk->m_texture = -1;
+	newChunk->m_specularMap = -1;
+
+
+	Material* mat = eob->m_chunks[i]->m_material;
+
+	if(mat->m_textureFilename != ""){ // empty textures should remain empty.
+
+	    newChunk->m_texture =
+		m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_textureFilename));
+
+	} else {
 	    newChunk->m_texture = -1;
-	    newChunk->m_specularMap = -1;
-
-
-	    Material* mat = eob->m_chunks[i]->m_material;
-
-	    if(mat->m_textureFilename != ""){ // empty textures should remain empty.
-
-		newChunk->m_texture =
-		    m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_textureFilename));
-
-	    } else {
-		newChunk->m_texture = -1;
-	    }
-
-	    if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
-
-
-
-		newChunk->m_specularMap =
-		    m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_specularMapFilename));
-
-
-	    }
-
-
-
-	    newChunk->m_indexBuffer = VBO::CreateIndex(eob->m_indexType);
-
-
-	    newChunk->m_numTriangles = baseChunk->m_numTriangles;
-
-
-
-	    newChunk->m_indexBuffer->Bind();
-	    newChunk->m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
-	    newChunk->m_indexBuffer->Unbind();
-
-	    newChunk->m_shininess = baseChunk->m_material->m_specularExponent;
-	    newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
-	    newChunk->m_diffuseColor = baseChunk->m_material->m_diffuseColor;
-
-	    string shaderName = "shader/geo_obj_render";
-
-	    m_chunks.push_back(newChunk);
 	}
+
+	if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
+
+
+
+	    newChunk->m_specularMap =
+		m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_specularMapFilename));
+
+
+	}
+
+
+
+	newChunk->m_indexBuffer = VBO::CreateIndex(eob->m_indexType);
+
+
+	newChunk->m_numTriangles = baseChunk->m_numTriangles;
+
+
+
+	newChunk->m_indexBuffer->Bind();
+	newChunk->m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
+	newChunk->m_indexBuffer->Unbind();
+
+	newChunk->m_shininess = baseChunk->m_material->m_specularExponent;
+	newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
+	newChunk->m_diffuseColor = baseChunk->m_material->m_diffuseColor;
+
+	string shaderName = "shader/geo_obj_render";
+
+	m_chunks.push_back(newChunk);
+    }
 
 
 }
@@ -155,22 +176,24 @@ void SimpleRender::SetEob(GeometryObjectData* eob, const string& basePath) {
 
 void SimpleRender::Render(ICamera* camera, const Vector4f& lightPosition) {
 
-    ShaderProgram* simpleShader = m_simpleShader;
+    ShaderProgram* shader = isAo ? m_aoShader : m_simpleShader;
 
     // bind shader of the batch.
-    simpleShader->Bind();
+    shader->Bind();
 
     m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
 
-    simpleShader->SetUniform("textureArray", 0);
+    shader->SetUniform("textureArray", 0);
     Texture::SetActiveTextureUnit(0);
     m_arrayTexture->Bind();
 
 
+    shader->SetUniform("aoOnly", 1.0f);
+
 
     Matrix4f modelMatrix = Matrix4f::CreateIdentity(); //geoObj->GetModelMatrix();
 
-    simpleShader->SetPhongUniforms(
+    shader->SetPhongUniforms(
 	modelMatrix
 	, camera, lightPosition);
 
@@ -180,13 +203,13 @@ void SimpleRender::Render(ICamera* camera, const Vector4f& lightPosition) {
 
 	if(chunk->m_specularMap == -1) {
 	    // if no spec map, the chunk has the same specular color all over the texture.
-	    simpleShader->SetUniform("specColor", chunk->m_specularColor);
+	    shader->SetUniform("specColor", chunk->m_specularColor);
 	}
 
-	simpleShader->SetUniform("specShiny", chunk->m_shininess);
+	shader->SetUniform("specShiny", chunk->m_shininess);
 
 	if(chunk->m_texture != -1) {
-	    simpleShader->SetUniform("diffMap", (float)chunk->m_texture  );
+	    shader->SetUniform("diffMap", (float)chunk->m_texture  );
 	}
 
 	chunk->m_indexBuffer->Bind();

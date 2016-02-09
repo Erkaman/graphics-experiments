@@ -39,9 +39,9 @@ void FindBase(const Vector3f& normal, Vector3f& tangent, Vector3f& bitangent) {
 }
 
 
-void RayTracer::RayTrace() {
+GeometryObjectData* RayTracer::RayTrace() {
 
-    LOG_I("size: %d", m_geoObj->m_verticesSize);
+    LOG_I("vertices size: %d", m_geoObj->m_verticesSize);
 
     const int vertexSize = (3+2+3) * 4;
     const int numVertices = m_geoObj->m_verticesSize / vertexSize;
@@ -54,7 +54,6 @@ void RayTracer::RayTrace() {
 
     Vertex* verticesBuffer = (Vertex *)m_geoObj->m_vertices;
     std::vector<Vertex> vertices(verticesBuffer, verticesBuffer + numVertices);
-
 
     vector<Triangle> triangles;
 
@@ -80,7 +79,7 @@ void RayTracer::RayTrace() {
 	}
     }
 
-    constexpr int NUM_SAMPLES = 10;
+    constexpr int NUM_SAMPLES = 100;
 
     // generate evenly distributed unit vectors
     vector<Vector3f> samples;
@@ -116,6 +115,19 @@ void RayTracer::RayTrace() {
 	samples.push_back(v);
 
     }
+
+
+    struct AoVertex {
+	Vector4f point;
+	Vector2f texCoord;
+	Vector3f normal;
+    };
+
+
+    // LOG_I("num vertices: %d", vertices.size());
+
+    AoVertex* aoVertices = new AoVertex[vertices.size()];
+    AoVertex* aoVerticesPointer = aoVertices;
 
 
     for(int i = 0; i < vertices.size(); ++i) {
@@ -215,7 +227,7 @@ void RayTracer::RayTrace() {
 	    if(hit) {
 		++hitCount;
 
-		LOG_I("hit at: %f", tMin );
+//		LOG_I("hit at: %f", tMin );
 
 	    }
 
@@ -224,25 +236,39 @@ void RayTracer::RayTrace() {
 
 	}
 
+	float ao = 1.0 - numerator / denominator;
 
+	/*
 	LOG_I("normal: %s", string(v.normal).c_str() );
 	LOG_I("pos: %s", string(v.point).c_str() );
 	LOG_I("hits: %d", hitCount );
-	LOG_I("ao: %f", 1.0 - numerator / denominator );
+	LOG_I("ao: %f",  ao);
 
 	LOG_I("NEW");
 
+	*/
+	AoVertex aoVertex;
 
+	aoVertex.point = Vector4f(v.point.x, v.point.y, v.point.z, ao);
+	aoVertex.normal = v.normal;
+	aoVertex.texCoord = v.texCoord;
+
+	*(aoVerticesPointer++) = aoVertex;
 
     }
 
+    m_geoObj->m_vertices = ((void *)aoVertices);
+    m_geoObj->m_verticesSize = vertices.size() * sizeof(float) * (4+2+3);
 
-    LOG_I("num vertices %d", numVertices);
+    vector<GLuint> vas{4,2,3};
+    m_geoObj->m_vertexAttribsSizes = vas;
 
-    LOG_I("num tris %d", triangles.size());
+//    LOG_I("vertices size: %d", m_geoObj->m_verticesSize);
+
 
     // iterate over all vertices and cast rays.
 
+    /*
     in data, modify
 	    GLsizeiptr m_verticesSize;
     GLvoid* m_vertices;
@@ -251,6 +277,7 @@ void RayTracer::RayTrace() {
 
 	also remember to modify .
     std::vector<GLuint> m_vertexAttribsSizes;
+    */
 
-
+    return m_geoObj;
 }

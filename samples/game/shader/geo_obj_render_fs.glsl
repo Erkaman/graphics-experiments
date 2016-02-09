@@ -122,6 +122,11 @@ out vec4 geoData[3];
 
 uniform vec3 specColor;
 uniform float specShiny;
+uniform float aoOnly;
+
+#ifdef  AO
+in float aoOut;
+#endif
 
 void main(void) {
 
@@ -293,8 +298,14 @@ void main(void) {
     vec3 specMat = specColor;
 #endif
 
-    geoData[0] = calcLighting(
-	ambientLight,
+#ifdef AO
+    vec3 ambient = ambientLight * aoOut;
+#else
+    vec3 ambient = ambientLight;
+#endif
+
+    geoData[0] = aoOnly * vec4(vec3(ambient),1.0) + (1.0 - aoOnly)* calcLighting(
+	ambient,
 	sceneLight,
 	specShiny,
 	diffColor.xyz,

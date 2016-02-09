@@ -34,8 +34,8 @@ void main(void) {
     vec2 distort = texture(textureArray, vec3(tc, dudvMap) ).rg * 2.0 - 1.0;
 
 
-    refractionTexcoord += distort * 0.02;
-    reflectionTexcoord += distort * 0.02;
+//    refractionTexcoord += distort * 0.02;
+//    reflectionTexcoord += distort * 0.02;
 
     vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
 
@@ -47,7 +47,7 @@ void main(void) {
 	toCameraVector, vec3(0,1,0));
 
     color = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
-//    vec3 color = refraction;
+    color = refraction;
 //    color = reflection;
 
 //    color = vec3(texture(textureArray, vec3(texcoordOut, dudvMap) ).rg, 0);

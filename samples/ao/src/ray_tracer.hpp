@@ -17,6 +17,7 @@ private:
 public:
     RayTracer(GeometryObjectData* geoObj);
 
-    void RayTrace();
+
+    GeometryObjectData* RayTrace();
 
 };

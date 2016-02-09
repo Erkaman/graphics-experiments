@@ -33,10 +33,13 @@ private:
     bool m_hasHeightMap;
 
     ShaderProgram* m_simpleShader;
+    ShaderProgram* m_aoShader;
 
     ArrayTexture* m_arrayTexture;
 
     std::vector<Chunk*> m_chunks;
+
+    bool isAo;
 public:
 
     SimpleRender();
