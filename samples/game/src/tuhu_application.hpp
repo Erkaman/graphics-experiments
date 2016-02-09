@@ -41,6 +41,7 @@ constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
 constexpr int ENV_FBO_TEXTURE_UNIT = 11;
 constexpr int REFRACTION_FBO_TEXTURE_UNIT = 12;
+constexpr int REFLECTION_FBO_TEXTURE_UNIT = 13;
 
 class TuhuApplication : public Application, public GuiListener{
 
@@ -49,6 +50,7 @@ private:
     ICamera* m_freeCamera;
     ICamera* m_carCamera;
     ICamera* m_curCamera; // current camera.
+    ICamera* m_reflectionCamera;
 
 
     HeightMap* m_heightMap;
@@ -67,6 +69,7 @@ private:
 
     EnvFBO* m_envFbo;
     ColorFBO* m_refractionFbo;
+    ColorFBO* m_reflectionFbo;
 
     Car* m_car;
 
@@ -93,6 +96,7 @@ private:
 
     ViewFrustum* m_cameraFrustum;
     ViewFrustum* m_lightFrustum;
+    ViewFrustum* m_reflectionFrustum;
 
 
     PhysicsWorld* m_physicsWorld;
@@ -139,6 +143,7 @@ public:
     void RenderShadowMap();
     void RenderEnvMap();
     void RenderRefraction();
+    void RenderReflection();
 
     void RenderScene();
     void RenderId();

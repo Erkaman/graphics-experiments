@@ -84,7 +84,7 @@ public:
 
     static void RenderAll(
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
-	CubeMapTexture* cubeMapTexture, const ColorFBO& refractionMap);
+	CubeMapTexture* cubeMapTexture, const ColorFBO& refractionMap, const ColorFBO& reflectionMap);
 
     static void RenderAllEnv(
 	ICamera* camera, const Vector4f& lightPosition, int i);

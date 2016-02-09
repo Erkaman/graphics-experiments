@@ -148,6 +148,16 @@ void HeightMap::Init(
     }
 
 
+    {
+	vector<string> defines;
+
+	defines.push_back("REFLECTION");
+
+	m_reflectionShader =
+	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    }
+
+
 
     if(guiMode) {
 	m_noise = new ValueNoise(2);
@@ -435,7 +445,11 @@ void HeightMap::Render(ShaderProgram* shader, HeightMapRenderMode renderMode) {
 	*m_inEnvFrustums[renderMode - HEIGHT_MAP_RENDER_MODE_ENV_MAP0] :
 
 
-	renderMode == HEIGHT_MAP_RENDER_MODE_NORMAL ? *m_inCameraFrustum : *m_inLightFrustum;;
+	renderMode == HEIGHT_MAP_RENDER_MODE_NORMAL ? *m_inCameraFrustum :
+
+	renderMode == HEIGHT_MAP_RENDER_MODE_SHADOWS ? *m_inLightFrustum :
+
+	*m_inReflectionFrustum;
 
     for(int x = 0; x < m_chunks; ++x) {
 	for(int z = 0; z < m_chunks; ++z) {
@@ -527,7 +541,6 @@ void HeightMap::RenderRefraction(
 
     m_refractionShader->SetUniform("aoOnly", aoOnly ? 1.0f : 0.0f);
 
-
     m_refractionShader->SetUniform("splatMap", 4);
     Texture::SetActiveTextureUnit(4);
     m_splatMap->Bind();
@@ -566,6 +579,56 @@ void HeightMap::RenderRefraction(
 
     m_refractionShader->Unbind();
 }
+
+
+void HeightMap::RenderReflection(
+    const ICamera* camera, const Vector4f& lightPosition, bool aoOnly) {
+
+    m_reflectionShader->Bind();
+
+    m_reflectionShader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition);
+
+    m_reflectionShader->SetUniform("aoOnly", aoOnly ? 1.0f : 0.0f);
+
+    m_reflectionShader->SetUniform("splatMap", 4);
+    Texture::SetActiveTextureUnit(4);
+    m_splatMap->Bind();
+
+    m_reflectionShader->SetUniform("aoMap", 5);
+    Texture::SetActiveTextureUnit(5);
+    m_aoMap->Bind();
+
+    m_reflectionShader->SetUniform("grass", 0);
+    Texture::SetActiveTextureUnit(0);
+    m_grassTexture->Bind();
+
+    m_reflectionShader->SetUniform("dirt", 1);
+    Texture::SetActiveTextureUnit(1);
+    m_dirtTexture->Bind();
+
+    m_reflectionShader->SetUniform("rock", 2);
+    Texture::SetActiveTextureUnit(2);
+    m_rockTexture->Bind();
+
+    // set textures and stuff.
+
+
+    GL_C(glEnable(GL_CLIP_DISTANCE0));
+
+    Render(m_reflectionShader,HEIGHT_MAP_RENDER_MODE_REFLECTION);
+
+    GL_C(glDisable(GL_CLIP_DISTANCE0));
+
+
+    m_grassTexture->Unbind();
+    m_dirtTexture->Unbind();
+    m_rockTexture->Unbind();
+    m_splatMap->Unbind();
+    m_aoMap->Unbind();
+
+    m_reflectionShader->Unbind();
+}
+
 
 
 void HeightMap::RenderCursor(const ICamera* camera) {
@@ -1687,6 +1750,7 @@ void HeightMap::CreateAABBs() {
 
     m_inCameraFrustum = new MultArray<bool>(m_chunks, m_chunks, true);
     m_inLightFrustum = new MultArray<bool>(m_chunks, m_chunks, true);
+    m_inReflectionFrustum = new MultArray<bool>(m_chunks, m_chunks, true);
 
     for(int i = 0; i < 6; ++i) {
 	m_inEnvFrustums[i] = new MultArray<bool>(m_chunks, m_chunks, true);
@@ -1708,13 +1772,12 @@ void HeightMap::CreateAABBs() {
 }
 
 void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
-    ViewFrustum** envLightFrustums) {
+		       ViewFrustum** envLightFrustums, const ViewFrustum& reflectionFrustum) {
 
     MultArray<AABB>& aabbs = *m_aabbs;
     MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
     MultArray<bool>& inLightFrustum = *m_inLightFrustum;
-
-
+    MultArray<bool>& inReflectionFrustum = *m_inReflectionFrustum;
 
     for(int x = 0; x < m_chunks; ++x) {
 	for(int z = 0; z < m_chunks; ++z) {
@@ -1723,25 +1786,15 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 
 	    inCameraFrustum(x,z) = cameraFrustum.IsAABBInFrustum(aabb);
 	    inLightFrustum(x,z) = lightFrustum.IsAABBInFrustum(aabb);
+	    inReflectionFrustum(x,z) = reflectionFrustum.IsAABBInFrustum(aabb);
 
 	    for(int i = 0; i < 6; ++i) {
 
 		MultArray<bool>& inEnvFrustums = *m_inEnvFrustums[i];
 		inEnvFrustums(x,z) = envLightFrustums[i]->IsAABBInFrustum(aabb);
-
 	    }
-
-
 	}
     }
-
-
-
-/*
-    for(int i=0; i < 6; ++i) {
-	LOG_I("count: %d, %d", i, count[i]);
-    }
-    LOG_I("STOP");*/
 }
 
 

@@ -20,4 +20,7 @@ public:
     void SetPosition(const Vector3f& position);
 
     virtual Vector3f GetPosition() const;
+
+
+    ICamera* CreateReflectionCamera()const { return NULL; }
 };

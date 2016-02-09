@@ -27,5 +27,5 @@ public:
 
     virtual void Update(const float delta)=0;
 
-
+    virtual ICamera* CreateReflectionCamera()const=0;
 };

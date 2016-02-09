@@ -20,4 +20,6 @@ public:
     virtual void Update(const float);
 
     virtual Vector3f GetPosition() const;
+
+    virtual ICamera* CreateReflectionCamera()const { return NULL; }
 };

@@ -31,4 +31,6 @@ public:
     void Walk(const float amount);
     void Stride(const float amount);
     void Fly(const float amount);
+
+    ICamera* CreateReflectionCamera()const;
 };

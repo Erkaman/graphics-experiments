@@ -141,3 +141,17 @@ Vector3f Camera::GetRight() const {
 Vector3f Camera::GetViewDir() const {
     return m_viewDir;
 }
+
+ICamera* Camera::CreateReflectionCamera()const {
+    Camera* reflectionCamera = new Camera(*this);
+
+    reflectionCamera->m_position.y *= -1;
+    reflectionCamera->m_viewDir.y *= -1;
+    reflectionCamera->m_right = Vector3f::Cross(
+	reflectionCamera->m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
+    reflectionCamera->m_up = Vector3f(0,1.0f,0);
+
+    reflectionCamera->ComputeViewMatrix();
+
+    return reflectionCamera;
+}

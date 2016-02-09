@@ -137,6 +137,8 @@ enum HeightMapRenderMode {
 
     HEIGHT_MAP_RENDER_MODE_NORMAL,
     HEIGHT_MAP_RENDER_MODE_SHADOWS,
+    HEIGHT_MAP_RENDER_MODE_REFLECTION,
+
 
 
 };
@@ -161,6 +163,7 @@ private:
     ShaderProgram* m_cursorShader;
     ShaderProgram* m_envShader;
     ShaderProgram* m_refractionShader;
+    ShaderProgram* m_reflectionShader;
 
     Texture* m_grassTexture;
     Texture* m_dirtTexture;
@@ -181,6 +184,7 @@ private:
     // information of whether the chunks are in the camera:
     MultArray<bool>* m_inCameraFrustum;
     MultArray<bool>* m_inLightFrustum;
+    MultArray<bool>* m_inReflectionFrustum;
 
 
 
@@ -277,6 +281,9 @@ public:
     void RenderRefraction(
 	const ICamera* camera, const Vector4f& lightPosition, bool aoOnly);
 
+    void RenderReflection(
+	const ICamera* camera, const Vector4f& lightPosition, bool aoOnly);
+
     void SetWireframe(const bool wireframe);
 
     float GetHeightAt(float x, float z)const;
@@ -288,7 +295,8 @@ public:
 	);
 
     void Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
-	ViewFrustum** envLightFrustums);
+		ViewFrustum** envLightFrustums,
+		const ViewFrustum& reflectionFrustum);
 
 
 

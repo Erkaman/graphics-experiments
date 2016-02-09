@@ -43,6 +43,11 @@ void main()
     gl_ClipDistance[0] = -dot(scaledPos, vec3(0,1,0));
 #endif
 
+
+#ifdef REFLECTION
+    gl_ClipDistance[0] = dot(scaledPos, vec3(0,1,0));
+#endif
+
     vec3 norm = getNormal(heightMap,globalPos.xy, resolution);
 
     viewSpaceNormal = normalize((normalMatrix * vec4(normalize(

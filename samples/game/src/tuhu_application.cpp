@@ -77,6 +77,10 @@ constexpr int WINDOW_HEIGHT = HighQuality ?  960 : 720;
 constexpr int REFRACTION_WIDTH = WINDOW_WIDTH / 2;
 constexpr int REFRACTION_HEIGHT = WINDOW_HEIGHT / 2;
 
+constexpr int REFLECTION_WIDTH = WINDOW_WIDTH / 2;
+constexpr int REFLECTION_HEIGHT = WINDOW_HEIGHT / 2;
+
+
 
 
 /*
@@ -181,6 +185,9 @@ void TuhuApplication::Init() {
     m_refractionFbo = new ColorFBO();
     m_refractionFbo->Init(REFRACTION_FBO_TEXTURE_UNIT, REFRACTION_WIDTH, REFRACTION_HEIGHT);
 
+    m_reflectionFbo = new ColorFBO();
+    m_reflectionFbo->Init(REFLECTION_FBO_TEXTURE_UNIT, REFLECTION_WIDTH, REFLECTION_HEIGHT);
+
 
     m_cubeMapTexture = CubeMapTexture::Load(
 	"img/bluecloud_ft.png",
@@ -211,6 +218,7 @@ void TuhuApplication::Init() {
 
     m_cameraFrustum = new ViewFrustum();
     m_lightFrustum = new ViewFrustum();
+    m_reflectionFrustum = new ViewFrustum();
 
     m_totalDelta = 0;
 
@@ -627,7 +635,7 @@ void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Objects);
     {
-	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap(), *m_refractionFbo);
+	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo);
     }
 
     m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
@@ -674,11 +682,33 @@ void TuhuApplication::RenderRefraction() {
 	::SetViewport(0,0,REFRACTION_WIDTH, REFRACTION_HEIGHT);
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+	m_skydome->Draw(m_curCamera);
+
+
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderRefraction(m_curCamera, m_lightDirection, aoOnly);
     }
     m_refractionFbo->Unbind();
 }
+
+void TuhuApplication::RenderReflection() {
+
+    m_reflectionFbo->Bind();
+    {
+	::SetViewport(0,0,REFLECTION_WIDTH, REFLECTION_HEIGHT);
+	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	m_skydome->Draw(m_reflectionCamera);
+
+	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
+	m_heightMap->RenderReflection(m_reflectionCamera, m_lightDirection, aoOnly);
+
+
+    }
+    m_reflectionFbo->Unbind();
+}
+
 
 void TuhuApplication::Render() {
 
@@ -701,9 +731,9 @@ void TuhuApplication::Render() {
     m_gpuProfiler->End(GTS_Refraction);
 
 
-
-
-
+    m_gpuProfiler->Begin(GTS_Reflection);
+    RenderReflection();
+    m_gpuProfiler->End(GTS_Reflection);
 
 
 
@@ -744,7 +774,6 @@ void TuhuApplication::Render() {
 
 //    m_grid->Draw();
 
-
     m_gpuProfiler->Begin(GTS_SSAO);
     //  m_ssaoPass->Render(m_gbuffer, m_curCamera);
     m_gpuProfiler->End(GTS_SSAO);
@@ -761,10 +790,18 @@ void TuhuApplication::Update(const float delta) {
 
     MouseState& ms = MouseState::GetInstance();
 
+
+    m_totalDelta += delta;
+
+    m_curCamera->Update(delta);
+    m_reflectionCamera = m_curCamera->CreateReflectionCamera();
+
+
     if(m_gui)
 	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
 
     m_cameraFrustum->Update( m_curCamera->GetVp() );
+    m_reflectionFrustum->Update( m_reflectionCamera->GetVp() );
 
     UpdateMatrices();
 
@@ -783,34 +820,15 @@ void TuhuApplication::Update(const float delta) {
 	//update cameras of env map. here
     }
 
-    m_heightMap->Update(*m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums() );
+    m_heightMap->Update(*m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums(), *m_reflectionFrustum );
 
-
-    m_totalDelta += delta;
-
-    m_curCamera->Update(delta);
 
     m_smoke->Update(delta);
-/*    //   m_snow->Update(delta);
-      m_fire->Update(delta);
-*/
-//    m_skydome->Update(delta);
-
-//      m_grass->Update(delta);
 
     if(m_gui)
 	m_gui->Update();
 
     KeyboardState& kbs = KeyboardState::GetInstance();
-
-/*
-  if(input_accepted) {
-  add to object.
-  }
-*/
-
-//    RenderRefraction();
-
 
     if( kbs.IsPressed(GLFW_KEY_P) ) {
 
@@ -818,16 +836,6 @@ void TuhuApplication::Update(const float delta) {
 	out += "Vector3f" + tos(m_curCamera->GetViewDir());
 	ToClipboard(out);
     }
-
-    /*
-      if( kbs.IsPressed(GLFW_KEY_7) ) {
-      m_heightMap->SaveHeightMap();
-      }
-
-      if( kbs.IsPressed(GLFW_KEY_8) ) {
-      m_heightMap->SaveSplatMap();
-      }
-    */
 
     if( kbs.WasPressed(GLFW_KEY_6)/* && !m_gui*/ ) {
 	StartPhysics();
@@ -846,21 +854,12 @@ void TuhuApplication::Update(const float delta) {
 		} else if(m_gui->GetTerrainMode() == SmoothMode) {
 
 		    m_heightMap->SmoothTerrain(delta, m_gui->GetSmoothRadius() );
-/*
-		    if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 ))
-			m_heightMap->ErodeTerrain();
-*/
 		} else {
 		    // flat.
 		    m_heightMap->LevelTerrain(delta , m_gui->GetStrength());
 
 		}
 	    }
-/*
-	    if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 )) {
-		m_heightMap->ErodeTerrain();
-	    }
-*/
 
 	    if(ms.IsPressed(GLFW_MOUSE_BUTTON_2 )) {
 
@@ -993,6 +992,10 @@ void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 750,550,
 		       Format("Refraction: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Refraction)) );
+
+    m_font->DrawString(*m_fontShader, 750,610,
+		       Format("Reflection: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Reflection)) );
+
 
 
 }
