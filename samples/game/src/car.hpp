@@ -46,7 +46,8 @@ public:
     */
 
     virtual void Update(
-	const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, ViewFrustum** envLightFrustums);
+	const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, ViewFrustum** envLightFrustums,
+	const ViewFrustum* reflectionFrustum);
 
     Vector3f GetForwardVector()const;
 

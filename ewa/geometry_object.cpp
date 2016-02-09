@@ -434,6 +434,7 @@ bool GeometryObject::Init(
 
     m_inCameraFrustum = true;
     m_inLightFrustum = true;
+    m_inReflectionFrustum = true;
     SetSelected(false);
 
     for(int i = 0; i < 6; ++i) {
@@ -682,6 +683,72 @@ void GeometryObject::RenderAllEnv(
 
 
 
+
+void GeometryObject::RenderReflection(
+    ICamera* camera, const Vector4f& lightPosition){
+
+    auto& batches = GeoObjManager::GetInstance().m_batches;
+
+    ShaderProgram* envShader = GeoObjManager::GetInstance().m_envShader;
+
+
+    // render all batches, one after one.
+    for(auto& itBatch : batches) {
+
+	const GeoObjBatch* batch = itBatch.second;
+
+	// bind shader of the batch.
+	envShader->Bind();
+
+	batch->m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
+
+	envShader->SetUniform("textureArray", 0);
+	Texture::SetActiveTextureUnit(0);
+	GeoObjManager::GetInstance().m_arrayTexture->Bind();
+
+	// render the objects of the batch, one after one.
+	for(GeometryObject* geoObj : batch->m_geoObjs ) {
+
+	    if(!geoObj->m_inReflectionFrustum) { // not in frustum?
+		continue; // if culled, do nothing.
+	    }
+
+	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
+
+	    envShader->SetPhongUniforms(
+		modelMatrix
+		, camera, lightPosition);
+
+	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
+
+		Chunk* chunk = batch->m_chunks[i];
+
+		if(chunk->m_specularMap == -1) {
+		    // if no spec map, the chunk has the same specular color all over the texture.
+		    envShader->SetUniform("specColor", chunk->m_specularColor);
+		}
+
+		envShader->SetUniform("specShiny", chunk->m_shininess);
+
+		if(chunk->m_texture != -1) {
+		    envShader->SetUniform("diffMap", (float)chunk->m_texture  );
+		}
+
+		chunk->m_indexBuffer->Bind();
+		chunk->m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk->m_numTriangles)*3);
+		chunk->m_indexBuffer->Unbind();
+	    }
+	}
+
+	batch->m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
+
+	GeoObjManager::GetInstance().m_arrayTexture->Unbind();
+
+    }
+}
+
+
+
 void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap, CubeMapTexture* cubeMapTexture, const ColorFBO& refractionMap, const ColorFBO& reflectionMap) {
 
     int total = 0;
@@ -691,7 +758,6 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
     GeometryObject* selectedObj = NULL;
     const GeoObjBatch* selectedBatch = NULL;
-
 
     // render all batches, one after one.
     for(auto& itBatch : batches) {
@@ -1043,9 +1109,10 @@ void GeometryObject::SetSelected(bool selected) {
 }
 
 void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum,
-			    ViewFrustum** envLightFrustums) {
+			    ViewFrustum** envLightFrustums, const ViewFrustum* reflectionFrustum) {
     m_inCameraFrustum = cameraFrustum->IsAABBInFrustum(GetModelSpaceAABB());
     m_inLightFrustum = lightFrustum->IsAABBInFrustum(GetModelSpaceAABB());
+    m_inReflectionFrustum = reflectionFrustum->IsAABBInFrustum(GetModelSpaceAABB());
 
 
     for(int i = 0; i < 6; ++i) {

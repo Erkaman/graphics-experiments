@@ -50,6 +50,7 @@ private:
 
     bool m_inCameraFrustum;
     bool m_inLightFrustum;
+    bool m_inReflectionFrustum;
 
     bool m_inEnvLightFrustums[6];
 
@@ -89,6 +90,9 @@ public:
     static void RenderAllEnv(
 	ICamera* camera, const Vector4f& lightPosition, int i);
 
+    static void RenderReflection(ICamera* camera, const Vector4f& lightPosition);
+
+
     static void RenderIdAll(
 	const ICamera* camera);
 
@@ -97,7 +101,7 @@ public:
 
     static void RenderShadowMapAll(const Matrix4f& lightVp); // vp = view projection matrix.
 
-    virtual void Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, ViewFrustum** envLightFrustums);
+    virtual void Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, ViewFrustum** envLightFrustums, const ViewFrustum* reflectionFrustum);
 
     /*
     virtual void RenderId(

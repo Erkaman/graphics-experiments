@@ -685,7 +685,6 @@ void TuhuApplication::RenderRefraction() {
 
 	m_skydome->Draw(m_curCamera);
 
-
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderRefraction(m_curCamera, m_lightDirection, aoOnly);
     }
@@ -703,6 +702,8 @@ void TuhuApplication::RenderReflection() {
 
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderReflection(m_reflectionCamera, m_lightDirection, aoOnly);
+
+	GeometryObject::RenderReflection(m_reflectionCamera, m_lightDirection);
 
 
     }
@@ -814,7 +815,7 @@ void TuhuApplication::Update(const float delta) {
 //    for(IGeometryObject* geoObj: m_geoObjs) {
 	IGeometryObject* geoObj = it.second;
 
-	geoObj->Update(m_cameraFrustum, m_lightFrustum, m_car->GetLightFrustums() );
+	geoObj->Update(m_cameraFrustum, m_lightFrustum, m_car->GetLightFrustums(), m_reflectionFrustum );
 
 
 	//update cameras of env map. here
