@@ -5,7 +5,7 @@ Config::Config() {
     m_zNear = 0.1f;
     m_zFar = 500.0f;
 
-    m_ambientLight = Vector3f(0.5);
+    m_ambientLight = Vector3f(0.6);
     m_sceneLight = Vector3f(0.5);
 
 

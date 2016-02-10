@@ -264,6 +264,7 @@ void Application::SetWindowTitle(const std::string& title) {
 
 
 void Application::RenderText_internal(const std::string& fpsString) {
+
     GL_C(glEnable (GL_BLEND));
     GL_C(glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 

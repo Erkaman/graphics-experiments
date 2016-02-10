@@ -12,7 +12,7 @@ using std::vector;
 
     // create the vertices of a unit cube.
 
-    constexpr int GRID = 100;
+    constexpr int GRID = 40;
     constexpr float GRID_SIZE = 2.0f/GRID;
 
 
@@ -49,6 +49,7 @@ Grid::Grid() {
 
 //    m_gridTexture= Texture2D::Load("img/body_ao.png");
     m_gridTexture= Texture2D::Load("img/Lenna.png");
+//    m_gridTexture= Texture2D::Load("img/test_cloud2.png");
 
     if(!m_gridTexture) {
 	PrintErrorExit();

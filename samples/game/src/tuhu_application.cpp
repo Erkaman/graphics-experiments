@@ -71,8 +71,14 @@ constexpr int SHADOW_MAP_SIZE =
     1024*2;
 
 
+
 constexpr int WINDOW_WIDTH = HighQuality ? 1500 : 1200;
 constexpr int WINDOW_HEIGHT = HighQuality ?  960 : 720;
+
+/*
+constexpr int WINDOW_WIDTH = 256;
+constexpr int WINDOW_HEIGHT = 256;
+*/
 
 constexpr int REFRACTION_WIDTH = WINDOW_WIDTH / 2;
 constexpr int REFRACTION_HEIGHT = WINDOW_HEIGHT / 2;
@@ -83,10 +89,6 @@ constexpr int REFLECTION_HEIGHT = WINDOW_HEIGHT / 2;
 
 
 
-/*
-constexpr int WINDOW_WIDTH = 800;
-constexpr int WINDOW_HEIGHT = 800;
-*/
 
 const string HEIGHT_MAP_FILENAME = "heightmap.bin";
 const string SPLAT_MAP_FILENAME = "splatmap.bin";

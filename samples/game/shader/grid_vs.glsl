@@ -10,6 +10,7 @@ void main()
     gl_Position = vec4( positionIn, 0.0, 1.0 );
 
     vec2 texCoord = 0.5 + 0.5 * positionIn;
+    texCoord.y = 1.0 - texCoord.y;
     color = texture(tex, texCoord).xyz;
 
     pos = positionIn;

@@ -21,18 +21,19 @@ int isInt(float f) {
 void main() {
 
     vec2 texCoord = 0.5 + 0.5 * pos;
+    texCoord.y = 1.0 - texCoord.y;
     fragmentColor = vec4( texture(tex, texCoord).xyz ,1);
 
     vec2 ints = (pos + 1) * (1 / gridSize);
 
-
     if(isInt(ints.x)==1 &&  isInt(ints.y)==1  ) {
-	fragmentColor = vec4(vec3(1,0,0), 1);
+	fragmentColor = vec4(vec3(1,1,0), 1);
     } else {
-	fragmentColor = vec4(color, 1);
+	fragmentColor = vec4( texture(tex, texCoord).xyz ,1);
 
+//	fragmentColor = vec4(color, 1);
     }
 
-	fragmentColor = vec4(color, 1);
+//    fragmentColor = vec4(color, 1);
 
 }
