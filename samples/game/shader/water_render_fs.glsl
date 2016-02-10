@@ -1,4 +1,7 @@
 
+#include "shader/lighting_lib.glsl"
+
+
 in vec2 texcoordOut;
 
 out vec4 geoData[3];
@@ -9,6 +12,7 @@ uniform sampler2D reflectionMap;
 in vec4 clipSpace;
 
 uniform sampler2DArray textureArray;
+uniform vec4 lightDirection;
 
 uniform float dudvMap;
 uniform float normalMap;
@@ -17,6 +21,7 @@ uniform float totalDelta;
 
 in vec3 toCameraVector;
 
+uniform vec3 sceneLight;
 
 void main(void) {
 
@@ -26,20 +31,44 @@ void main(void) {
     vec2 refractionTexcoord = ndc;
     vec2 reflectionTexcoord = vec2(ndc.x, 1 -ndc.y);
 
-
+/*
     vec2 tc = vec2(
 	texcoordOut.x + totalDelta * 0.04,
 	texcoordOut.y + totalDelta * 0.01);
+*/
+    vec2 tc = vec2(
+	texcoordOut.x,
+	texcoordOut.y);
 
-    vec2 distort = texture(textureArray, vec3(tc, dudvMap) ).rg * 2.0 - 1.0;
+    tc *= 0.9;
+
+    vec2 distortedTexCoords = texture(textureArray, vec3(tc.x + totalDelta*0.04, tc.y, dudvMap)).rg*0.1;
+    distortedTexCoords = tc + vec2(distortedTexCoords.x, distortedTexCoords.y+ totalDelta * 0.03);
+    vec2 distort = (texture(textureArray, vec3(distortedTexCoords,dudvMap) ).rg * 2.0 - 1.0) * 0.02;
+
+    //vec2 distort = texture(textureArray, vec3(tc, dudvMap) ).rg * 2.0 - 1.0;
 
 
-    refractionTexcoord += distort * 0.02;
-    reflectionTexcoord += distort * 0.02;
+    refractionTexcoord += distort;
+    reflectionTexcoord += distort;
+
+    refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
 
     vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
-
     vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
+
+//    refraction = clamp(refraction, 0.001, 1.0 - 0.001);
+
+
+
+    vec3 n = texture(textureArray, vec3(distortedTexCoords, normalMap) ).xyz;
+    n = vec3(2*n.r - 1.0, n.b, 2*n.g - 1.0);
+    n = normalize(n);
+
+    vec3 v = toCameraVector;
+    vec3 l = -lightDirection.xyz;
+
+    float spec= calcSpec(l,n,v);
 
     vec3 color;
 
@@ -48,15 +77,8 @@ void main(void) {
 
     color = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
 
-//    color = mix(refraction, 0.4 * reflection, 0.5);
-
-//    color = refraction;
-//    color = reflection;
-
-//    color = vec3(texture(textureArray, vec3(texcoordOut, dudvMap) ).rg, 0);
-
-//    color = vec3(toCameraVector);
-
+    color += sceneLight * pow(spec,20.0) * 0.6;
 
     geoData[0] = vec4(color,1);
+
 }

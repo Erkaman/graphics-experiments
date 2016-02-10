@@ -43,7 +43,7 @@ void main()
     //  const float height = 1.0;
 
 #ifdef REFRACTION
-    gl_ClipDistance[0] = -dot(scaledPos, vec3(0,height,0));
+    gl_ClipDistance[0] = -dot(scaledPos, vec3(0,height-0.5,0));
 #endif
 
 
