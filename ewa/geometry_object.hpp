@@ -18,6 +18,7 @@ class btRigidBody;
 class btMotionState;
 class CubeMapTexture;
 class ColorFBO;
+class ColorDepthFbo;
 
 class GeometryObject : public IGeometryObject {
 private:
@@ -85,7 +86,7 @@ public:
 
     static void RenderAll(
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
-	CubeMapTexture* cubeMapTexture, const ColorFBO& refractionMap, const ColorFBO& reflectionMap);
+	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
 
     static void RenderAllEnv(
 	ICamera* camera, const Vector4f& lightPosition, int i);

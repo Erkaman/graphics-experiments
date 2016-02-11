@@ -36,6 +36,7 @@ class CubeMapTexture;
 class EnvFBO;
 class Grid;
 class ColorFBO;
+class ColorDepthFbo;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
@@ -68,7 +69,7 @@ private:
     IGeometryObject* m_selected;
 
     EnvFBO* m_envFbo;
-    ColorFBO* m_refractionFbo;
+    ColorDepthFbo* m_refractionFbo;
     ColorFBO* m_reflectionFbo;
 
     Car* m_car;

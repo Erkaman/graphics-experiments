@@ -39,6 +39,8 @@
 #include "car_camera.hpp"
 
 #include "picking_fbo.hpp"
+#include "ewa/gl/color_depth_fbo.hpp"
+
 #include "ewa/gl/color_fbo.hpp"
 
 
@@ -184,7 +186,7 @@ void TuhuApplication::Init() {
     m_envFbo->Init(ENV_FBO_TEXTURE_UNIT, 512, 512);
 
 
-    m_refractionFbo = new ColorFBO();
+    m_refractionFbo = new ColorDepthFbo();
     m_refractionFbo->Init(REFRACTION_FBO_TEXTURE_UNIT, REFRACTION_WIDTH, REFRACTION_HEIGHT);
 
     m_reflectionFbo = new ColorFBO();

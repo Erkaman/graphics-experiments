@@ -26,6 +26,7 @@
 #include "physics_world.hpp"
 #include "gl/depth_fbo.hpp"
 #include "ewa/gl/color_fbo.hpp"
+#include "ewa/gl/color_depth_fbo.hpp"
 
 #include <btBulletDynamicsCommon.h>
 
@@ -758,7 +759,7 @@ void GeometryObject::RenderReflection(
 
 
 
-void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap, CubeMapTexture* cubeMapTexture, const ColorFBO& refractionMap, const ColorFBO& reflectionMap) {
+void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap, CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap) {
 
     int total = 0;
     int nonCulled = 0;
@@ -845,12 +846,17 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 		batch->m_defaultShader->SetUniform("refractionMap", 8);
 		Texture::SetActiveTextureUnit(8);
-		refractionMap.GetRenderTargetTexture().Bind();
+		refractionMap.GetColorTexture()->Bind();
 
 
 		batch->m_defaultShader->SetUniform("reflectionMap", 9);
 		Texture::SetActiveTextureUnit(9);
 		reflectionMap.GetRenderTargetTexture().Bind();
+
+		batch->m_defaultShader->SetUniform("depthMap", 10);
+		Texture::SetActiveTextureUnit(10);
+		refractionMap.GetDepthTexture()->Bind();
+
 
 
 
@@ -860,7 +866,13 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 		batch->m_defaultShader->SetUniform("totalDelta", (float)GeoObjManager::GetInstance().m_totalDelta);
 
+
+		GL_C(glEnable(GL_BLEND));
+		GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+
 	    }
+
 
 
 	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
@@ -897,9 +909,11 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    if(geoObj->GetFilename() == "obj/car_blend.eob") {
 		cubeMapTexture->Unbind();
 	    }else if(geoObj->GetFilename() == "obj/water.eob") {
-		refractionMap.GetRenderTargetTexture().Unbind();
-		reflectionMap.GetRenderTargetTexture().Unbind();
 
+		GL_C(glDisable(GL_BLEND));
+		refractionMap.GetColorTexture()->Unbind();
+
+		refractionMap.GetDepthTexture()->Unbind();
 	    }
 
 	    if(geoObj->IsSelected() ) {

@@ -8,6 +8,7 @@ out vec4 geoData[3];
 
 uniform sampler2D refractionMap;
 uniform sampler2D reflectionMap;
+uniform sampler2D depthMap;
 
 in vec4 clipSpace;
 
@@ -22,6 +23,13 @@ uniform float totalDelta;
 in vec3 toCameraVector;
 
 uniform vec3 sceneLight;
+
+float toLinearDepth(float depth) {
+    float near = 0.1;
+    float far = 500.0;
+
+    return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+}
 
 void main(void) {
 
@@ -79,6 +87,16 @@ void main(void) {
 
     color += sceneLight * pow(spec,20.0) * 0.6;
 
-    geoData[0] = vec4(color,1);
+    float waterDistance = toLinearDepth(gl_FragCoord.z);
+    float floorDistance = toLinearDepth(  texture(depthMap, ndc).r  );
 
+    float waterDepth = floorDistance - waterDistance;
+
+
+//    color = vec3(waterDepth / 70 );
+
+    float a = clamp(waterDepth / 3.0, 0.0, 1.0);
+//    a = 1.0;
+
+    geoData[0] = vec4(color,a);
 }

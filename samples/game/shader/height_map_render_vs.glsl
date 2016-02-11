@@ -43,12 +43,11 @@ void main()
     //  const float height = 1.0;
 
 #ifdef REFRACTION
-    gl_ClipDistance[0] = -dot(scaledPos, vec3(0,height-0.5,0));
+    gl_ClipDistance[0] = -dot(scaledPos, vec3(0,height-1.0,0));
 #endif
 
-
 #ifdef REFLECTION
-    gl_ClipDistance[0] = dot(scaledPos, vec3(0,height,0));
+    gl_ClipDistance[0] = dot(scaledPos, vec3(0,height-1.0,0));
 #endif
 
     vec3 norm = getNormal(heightMap,globalPos.xy, resolution);
