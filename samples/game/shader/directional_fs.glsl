@@ -38,15 +38,11 @@ void main() {
     vec3 specColor = vec3(0,0,0);
     float specShiny = 0;
 
-//    float visibility = 1.0;
-
     float aoOnly =0.0;
 
     vec4 shadowCoord = (lightVp * (inverseViewMatrix * vec4(viewSpacePosition.xyz,1)));
 
     float visibility = calcVisibility(shadowMap, diff, shadowCoord);
-
-    visibility = 1.0;
 
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
@@ -61,7 +57,14 @@ void main() {
 	vec3(0) );
 
 
-    fragmentColor = vec4(vec3(diff) , 1.0);
+    fragmentColor = vec4(ambientLight* (1.0 -ao)*diffColor +   diffColor*sceneLight*diff * visibility
+
+			 + specColor*pow(spec,specShiny) * visibility+
+			 specColor * spec * vec3(0) * 0.4
+
+			 ,
+			 1.0
+	);
 
 /*
 

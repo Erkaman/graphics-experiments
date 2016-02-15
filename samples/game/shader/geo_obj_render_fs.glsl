@@ -302,8 +302,9 @@ void main(void) {
     float ao = 1.0;
 #endif
 
-
 #ifdef DEFERRED
+
+    ao = 0.0;
 
     geoData[0] = vec4(diffColor.xyz, ao);
 
