@@ -302,6 +302,7 @@ void main(void) {
     vec3 ambient = ambientLight;
 #endif
 
+
     geoData[0] = aoOnly * vec4(vec3(ambient),1.0) + (1.0 - aoOnly)* calcLighting(
 	ambient,
 	sceneLight,
@@ -313,20 +314,8 @@ void main(void) {
 	visibility,
 	envMapSample);
 
-
-//    geoData[0] = vec4(, 1.0);
-
-    /*
-#ifdef ENV_MAPPING
-    geoData[0] = vec4(envMapSample, 1.0);
-#endif
-    */
-
-
     geoData[1] = vec4(viewSpaceNormalOut, 0);
     geoData[2] = vec4(viewSpacePositionOut, 0);
-
-
 
 
     //  fragmentColor = vec4( vec3(cosTheta), 1.0  );

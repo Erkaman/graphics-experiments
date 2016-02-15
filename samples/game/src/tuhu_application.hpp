@@ -31,6 +31,7 @@ class GpuProfiler;
 class Line;
 class Cube;
 class SsaoPass;
+class LightingPass;
 class Skybox;
 class CubeMapTexture;
 class EnvFBO;
@@ -126,6 +127,7 @@ private:
     GpuProfiler* m_gpuProfiler;
 
     SsaoPass* m_ssaoPass;
+    LightingPass* m_lightingPass;
 
     void UpdateMatrices();
 

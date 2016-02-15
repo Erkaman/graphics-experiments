@@ -27,6 +27,7 @@
 #include "snow_effect.hpp"
 #include "fire_effect.hpp"
 #include "ssao_pass.hpp"
+#include "lighting_pass.hpp"
 
 #include "ewa/line.hpp"
 #include "ewa/points.hpp"
@@ -176,6 +177,7 @@ void TuhuApplication::Init() {
 
 
     m_ssaoPass = new SsaoPass(GetFramebufferWidth(),GetFramebufferHeight());
+    m_lightingPass = new LightingPass(GetFramebufferWidth(),GetFramebufferHeight());
 
 
     m_grid = new Grid();
@@ -610,13 +612,13 @@ void TuhuApplication::RenderScene() {
     m_gpuProfiler->Begin(GTS_Sky);
 //   m_skydome->Draw(m_curCamera);
 
-
+/*
     m_skybox->Draw(
 //	m_cubeMapTexture,
 	m_envFbo->GetEnvMap(),
 
 	m_curCamera);
-
+*/
     m_gpuProfiler->End(GTS_Sky);
 
     m_gpuProfiler->Begin(GTS_Terrain);
@@ -624,8 +626,6 @@ void TuhuApplication::RenderScene() {
 
 
     bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
-
-
 
 
     m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, aoOnly);
@@ -640,12 +640,12 @@ void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Objects);
     {
-	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo);
+//	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo);
     }
 
-    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
+//    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
-    m_line->Render(m_curCamera->GetVp());
+//    m_line->Render(m_curCamera->GetVp());
 
     m_gpuProfiler->End(GTS_Objects);
 
@@ -756,12 +756,13 @@ void TuhuApplication::Render() {
     if(m_pickingFbo)
 	RenderId();
 
-    //   m_gbuffer->BindForWriting();
+    m_gbuffer->BindForWriting();
+
+    SetViewport();
+    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     RenderScene();
-
-
-    //     m_gbuffer->UnbindForWriting();
+    m_gbuffer->UnbindForWriting();
 
 	// m_aabbWireframe->Render(m_curCamera->GetVp());
 
@@ -780,9 +781,18 @@ void TuhuApplication::Render() {
 
 //    m_grid->Draw();
 
-    m_gpuProfiler->Begin(GTS_SSAO);
-    //  m_ssaoPass->Render(m_gbuffer, m_curCamera);
-    m_gpuProfiler->End(GTS_SSAO);
+    Matrix4f biasMatrix(
+	0.5f, 0.0f, 0.0f, 0.5f,
+	0.0f, 0.5f, 0.0f, 0.5f,
+	0.0f, 0.0f, 0.5f, 0.5f,
+	0.0f, 0.0f, 0.0f, 1.0f
+	);
+
+    Matrix4f lightVp =  biasMatrix*   m_lightVp;
+
+    m_gpuProfiler->Begin(GTS_Light);
+    m_lightingPass->Render(m_gbuffer, m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+    m_gpuProfiler->End(GTS_Light);
 
 
     m_gpuProfiler->WaitForDataAndUpdate();
@@ -992,7 +1002,7 @@ void TuhuApplication::RenderText()  {
 		       Format("Shadows: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Shadows) ) );
 
     m_font->DrawString(*m_fontShader, 750,430,
-		       Format("SSAO: %0.2f ms", m_gpuProfiler->DtAvg(GTS_SSAO) ) );
+		       Format("Light<x: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Light) ) );
 
     m_font->DrawString(*m_fontShader, 750,490,
 		       Format("EnvMap: %0.2f ms", m_gpuProfiler->DtAvg(GTS_EnvMap) ) );

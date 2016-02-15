@@ -21,7 +21,6 @@ float calcSpec(vec3 l, vec3 n, vec3 v) {
 }
 
 vec4 calcLighting(
-
     vec3 ambientLight, // ambient material
 
     vec3 sceneLight, // diffuse material

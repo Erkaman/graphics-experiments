@@ -58,18 +58,29 @@ void main()
     float visibility = 1.0;
 #endif
 
-    geoData[0] =vec4(vec3(1.0-texture(aoMap, texCoord).r), 1.0) * aoOnly +
+    float ao = texture(aoMap, texCoord).r;
+    ao = 1.0;
+
+
+#ifdef DEFERRED
+
+    geoData[0] = vec4(vec4(1,1,1, 1));
+    geoData[1] = vec4(normalize(viewSpaceNormal),0);
+    geoData[2] = vec4(viewSpacePosition, 0);
+
+#else
+    geoData[0] =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
-	ambientLight* (1.0 -texture(aoMap, texCoord).r),
+	ambientLight* (1.0 -ao),
 	sceneLight,
 	specShiny,
-	diffColor.xyz,
+//	diffColor.xyz,
+	vec3(1,1,1),
 	specColor.xyz,
 	diff,
 	spec,
-	visibility,
+//	visibility,
+	1.0f,
 	vec3(0) );
-
-    geoData[1] = vec4(viewSpaceNormal,0);
-    geoData[2] = vec4(viewSpacePosition, 0);
+#endif
 }

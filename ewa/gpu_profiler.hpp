@@ -8,7 +8,7 @@ enum GpuTimeStamp
     GTS_Terrain,
     GTS_Sky,
     GTS_Shadows,
-    GTS_SSAO,
+    GTS_Light,
     GTS_EnvMap,
     GTS_Refraction,
     GTS_Reflection,

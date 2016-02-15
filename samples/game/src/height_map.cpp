@@ -123,6 +123,7 @@ void HeightMap::Init(
     {
 	vector<string> defines;
 	defines.push_back("SHADOW_MAPPING");
+	defines.push_back("DEFERRED");
 
 	m_shader =
 	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);

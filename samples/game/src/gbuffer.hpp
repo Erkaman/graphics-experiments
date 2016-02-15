@@ -19,7 +19,6 @@ private:
     Texture* m_normalTexture;
     Texture* m_positionTexture;
 
-
 public:
 
     Gbuffer();
