@@ -11,3 +11,5 @@ samples/game/height.png
 
 samples/tri/src/Eigen/
 samples/tri/*.png
+
+samples/game/*.tga
