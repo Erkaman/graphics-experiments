@@ -6,8 +6,9 @@
 #include "ewa/config.hpp"
 
 #include "gbuffer.hpp"
-
+#include "ewa/gl/depth_fbo.hpp"
 #include "ewa/gl/texture2d.hpp"
+
 
 #include "ewa/camera.hpp"
 
@@ -39,6 +40,14 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
     gbuffer->GetPositionTexture()->Bind();
 
 
+    m_directionalShader->SetUniform("shadowMap", 6);
+    Texture::SetActiveTextureUnit(6);
+    shadowMap.GetRenderTargetTexture().Bind();
+
+
+
+
+
     m_directionalShader->SetUniform("screenSize", m_screenSize);
     m_directionalShader->SetLightUniforms(camera, lightPosition, lightVp);
 
@@ -68,6 +77,7 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
     gbuffer->GetColorTexture()->Unbind();
     gbuffer->GetDepthTexture()->Unbind();
     gbuffer->GetPositionTexture()->Unbind();
+    shadowMap.GetRenderTargetTexture().Unbind();
 
 
     m_directionalShader->Unbind();

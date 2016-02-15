@@ -169,9 +169,14 @@ void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera*
 
 void ShaderProgram::SetLightUniforms(const ICamera* camera, const Vector4f& lightDirection, const Matrix4f& lightVp) {
 
-//    SetUniform("lightMvp", lightVp * modelMatrix);
+    SetUniform("lightVp", lightVp);
     SetUniform("viewSpaceLightDirection", Vector3f(camera->GetViewMatrix() * (lightDirection)  ) );
     SetUniform("lightDirection", lightDirection   );
+
+    Matrix4f inverseViewMatrix = camera->GetViewMatrix();
+    inverseViewMatrix.Inverse();
+    SetUniform("inverseViewMatrix", inverseViewMatrix   );
+
 
     SetUniform("eyePos", camera->GetPosition() );
 }

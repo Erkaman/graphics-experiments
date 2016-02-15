@@ -59,12 +59,10 @@ void main()
 #endif
 
     float ao = texture(aoMap, texCoord).r;
-    ao = 1.0;
-
 
 #ifdef DEFERRED
 
-    geoData[0] = vec4(vec4(1,1,1, 1));
+    geoData[0] = vec4(vec4(diffColor, ao));
     geoData[1] = vec4(normalize(viewSpaceNormal),0);
     geoData[2] = vec4(viewSpacePosition, 0);
 

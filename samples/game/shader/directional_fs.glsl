@@ -8,13 +8,16 @@ uniform sampler2D colorTexture;
 uniform sampler2D depthTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D positionTexture;
-uniform sampler2D randomTexture;
+uniform sampler2DShadow shadowMap;
 
 uniform vec2 screenSize;
 
 uniform vec3 ambientLight;
 uniform vec3 sceneLight;
 uniform vec3 viewSpaceLightDirection;
+uniform mat4 lightVp;
+uniform mat4 inverseViewMatrix;
+
 
 void main() {
 
@@ -28,14 +31,20 @@ void main() {
     float diff=  calcDiff(l,n);
     float spec= calcSpec(l,n,v);
 
-    vec3 diffColor = texture(colorTexture, texCoord).xyz;
+    vec4 sample = texture(colorTexture, texCoord);
+    vec3 diffColor = sample.xyz;
+    float ao = sample.w;
+
     vec3 specColor = vec3(0,0,0);
     float specShiny = 0;
 
-    float visibility = 1.0;
+//    float visibility = 1.0;
 
-    float ao = 0.0;
-    float aoOnly = 0.0;
+    float aoOnly =0.0;
+
+    vec4 shadowCoord = (lightVp * (inverseViewMatrix * vec4(viewSpacePosition.xyz,1)));
+
+    float visibility = calcVisibility(shadowMap, diff, shadowCoord);
 
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
