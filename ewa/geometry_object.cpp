@@ -311,6 +311,7 @@ public:
 		    defines.push_back("SPECULAR_LIGHT");
 		    defines.push_back("DIFFUSE_LIGHT");
 		    defines.push_back("FRESNEL");
+		    defines.push_back("DEFERRED");
 
 
 		    geoObjBatch->m_defaultShader = ResourceManager::LoadShader(
@@ -326,6 +327,8 @@ public:
 		    defines.push_back("SPECULAR_LIGHT");
 		    defines.push_back("DIFFUSE_LIGHT");
 		    defines.push_back("FRESNEL");
+		    defines.push_back("DEFERRED");
+
 
 		    string shaderName = "shader/water_render";
 
@@ -347,6 +350,8 @@ public:
 		    defines.push_back("ALPHA_MAPPING");
 		    defines.push_back("SPECULAR_LIGHT");
 		    defines.push_back("DIFFUSE_LIGHT");
+		    defines.push_back("DEFERRED");
+
 
 
 		    if(newChunk->m_specularMap != -1) {

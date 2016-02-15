@@ -46,6 +46,8 @@ void main() {
 
     float visibility = calcVisibility(shadowMap, diff, shadowCoord);
 
+    visibility = 1.0;
+
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
 	ambientLight* (1.0 -ao),
@@ -58,7 +60,8 @@ void main() {
 	visibility,
 	vec3(0) );
 
-//    fragmentColor = vec4(texCoord, 1.0, 1.0);
+
+    fragmentColor = vec4(vec3(diff) , 1.0);
 
 /*
 

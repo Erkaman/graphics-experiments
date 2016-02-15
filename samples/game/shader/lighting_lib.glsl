@@ -39,8 +39,8 @@ vec4 calcLighting(
     vec3 finalcolor=ambientLight*diffColor; // ambient
 
     finalcolor.xyz+=(
-	diffColor*sceneLight*diff * visibility+
-	specColor*pow(spec,specShiny) * visibility );
+	diffColor*sceneLight*diff * visibility +
+	specColor*pow(spec,specShiny) * visibility);
 
     finalcolor.xyz += specColor * spec * envMapSample * 0.4;
 

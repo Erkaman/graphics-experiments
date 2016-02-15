@@ -72,13 +72,11 @@ void main()
 	ambientLight* (1.0 -ao),
 	sceneLight,
 	specShiny,
-//	diffColor.xyz,
-	vec3(1,1,1),
+	diffColor.xyz,
 	specColor.xyz,
 	diff,
 	spec,
-//	visibility,
-	1.0f,
+	visibility,
 	vec3(0) );
 #endif
 }

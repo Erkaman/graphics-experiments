@@ -640,7 +640,7 @@ void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Objects);
     {
-//	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo);
+	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo);
     }
 
 //    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());

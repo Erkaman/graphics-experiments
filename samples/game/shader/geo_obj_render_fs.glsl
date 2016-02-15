@@ -297,11 +297,24 @@ void main(void) {
 #endif
 
 #ifdef AO
-    vec3 ambient = ambientLight * aoOut;
+    float ao = aoOut;
 #else
-    vec3 ambient = ambientLight;
+    float ao = 1.0;
 #endif
 
+
+#ifdef DEFERRED
+
+    geoData[0] = vec4(diffColor.xyz, ao);
+
+
+//    viewSpaceNormalOut.xyz = ; // lol3
+
+    geoData[1] = vec4(normalize(normalize(vec4(viewSpaceNormalOut,0.0)).xyz), 0);
+    geoData[2] = vec4(viewSpacePositionOut, 0);
+#else
+
+    vec3 ambient = ambientLight * ao;
 
     geoData[0] = aoOnly * vec4(vec3(ambient),1.0) + (1.0 - aoOnly)* calcLighting(
 	ambient,
@@ -313,9 +326,7 @@ void main(void) {
 	spec,
 	visibility,
 	envMapSample);
-
-    geoData[1] = vec4(viewSpaceNormalOut, 0);
-    geoData[2] = vec4(viewSpacePositionOut, 0);
+#endif
 
 
     //  fragmentColor = vec4( vec3(cosTheta), 1.0  );
