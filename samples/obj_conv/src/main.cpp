@@ -174,6 +174,7 @@ int main (int argc, char * argv[]) {
 	}else if(firstToken == "f") {
 
 	    GLushort one = (GLushort)ParseFEntry(tokens[1]);
+
 	    GLushort two = (GLushort)ParseFEntry(tokens[2]);
 
 	    for(size_t i = 3; i < tokens.size(); ++i) {
@@ -183,6 +184,10 @@ int main (int argc, char * argv[]) {
 		currentChunk->m_indices.push_back(one);
 		currentChunk->m_indices.push_back(two);
 		currentChunk->m_indices.push_back(three);
+
+
+
+
 		++currentChunk->m_numTriangles;
 
 		two = three;
@@ -191,6 +196,20 @@ int main (int argc, char * argv[]) {
 	}
     }
 
+
+/*
+    for(int i = 0; i < globalVertices.size(); i+=8) {
+
+
+	LOG_I("v1: %f, %f, %f",
+	      globalVertices[i+0],
+	      globalVertices[i+1],
+	      globalVertices[i+2]);
+
+
+    }
+
+*/
     if(generateTangents) {
 	GenerateTangents();
     }
@@ -219,6 +238,10 @@ int main (int argc, char * argv[]) {
     data.m_vertices = &globalVertices[0];
     data.m_verticesSize = globalVertices.size() * sizeof(float);
 
+    LOG_I("m_verticesSize: %d", data.m_verticesSize );
+    LOG_I("globalVertices.size(): %d", globalVertices.size() );
+
+
     /*
 	newChunk->m_vertices = &baseChunk->m_vertices[0];
 	newChunk->m_verticesSize = baseChunk->m_vertices.size() * sizeof(float);
@@ -233,7 +256,6 @@ int main (int argc, char * argv[]) {
 	newChunk->m_material = baseChunk->m_material;
 
 	newChunk->m_numTriangles = baseChunk->m_numTriangles;
-
 
 	newChunk->m_indices = &baseChunk->m_indices[0];
 	newChunk->m_indicesSize = baseChunk->m_indices.size() * sizeof(GLushort);

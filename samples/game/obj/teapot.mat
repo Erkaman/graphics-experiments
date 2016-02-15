@@ -1,0 +1,5 @@
+new_mat Material.001
+diff_map plane_d.png
+shininess 96.078430
+spec_color 0.500000 0.500000 0.500000
+diff_color 0.640000 0.640000 0.640000

@@ -55,10 +55,10 @@ void AoApplication::Init() {
 
     // NOTE: we can fix the shadows by setting trans to (0,0,0).
 
+//    m_eobFile = EobFile::Read("obj/corner.eob");
 
     m_eobFile = EobFile::Read("obj/corner.eob");
     m_render->SetEob(m_eobFile, "obj" );
-//    LoadObj("obj/tree3_done.eob");
 
     m_rayTracer = new RayTracer(m_eobFile);
     m_render->SetEob(m_rayTracer->RayTrace(), "obj");

@@ -17,6 +17,70 @@ struct Triangle {
     Vector3f p2;
 };
 
+bool MahRayTrace(const Triangle& tri, const Vector3f& o, const Vector3f& d, float& t) {
+    		    const Vector3f& v0 = tri.p0;
+		    const Vector3f& v1 = tri.p1;
+		    const Vector3f& v2 = tri.p2;
+
+/*
+  if(
+  v0 == o ||
+  v1 == o ||
+  v2 == o
+  )
+  continue;
+*/
+		    Vector3f e1 = v1 - v0;
+		    Vector3f e2 = v2 - v0;
+		    Vector3f s = o - v0;
+
+
+
+		    Vector3f p = Vector3f::Cross(d, e2);
+		    float a = Vector3f::Dot(p, e1);
+		    float f = 1.0f / a;
+
+		    float u = f * Vector3f::Dot(p, s);
+
+		    if(u < 0) {
+			//	LOG_I("MISS1");
+			return false;
+		    }
+
+
+		    Vector3f q = Vector3f::Cross(s,e1);
+
+
+		    float v = f * Vector3f::Dot(q, d);
+
+		    if(v < 0) {
+			//	LOG_I("MISS2");
+			return false; //we miss this triangle.
+		    }
+
+		    t = f * Vector3f::Dot(q, e2);
+
+		    if(t < 0) {
+//			LOG_I("MISS3");
+
+			return false; // we miss this triangle.
+		    }
+
+/*
+		    			LOG_I("hit da tri");
+
+			LOG_I("d: %s", string(d).c_str() );
+			LOG_I("o: %s", string(o).c_str() );
+
+			LOG_I("v0: %s", string(v0).c_str() );
+			LOG_I("v1: %s", string(v1).c_str() );
+			LOG_I("v2: %s", string(v2).c_str() );
+*/
+		    return true;
+
+
+}
+
 RayTracer::RayTracer(GeometryObjectData* geoObj) {
     m_geoObj = geoObj;
 }
@@ -40,11 +104,33 @@ void FindBase(const Vector3f& normal, Vector3f& tangent, Vector3f& bitangent) {
 
 
 GeometryObjectData* RayTracer::RayTrace() {
+/*
+    Triangle tri;
 
-    LOG_I("vertices size: %d", m_geoObj->m_verticesSize);
+
+    tri.p0 = Vector3f(0,2, 0);
+    tri.p1 = Vector3f(3,-2, 0);
+    tri.p2 = Vector3f(-3,-2, 0);
+
+    Vector3f o(0,0, 10);
+    Vector3f d(0.1,0, -1);
+
+    float t;
+    bool b = MahRayTrace(tri, o, d, t);
+
+    LOG_I("B: %d", b);
+    LOG_I("t: %f", t);
+    exit(1);
+*/
+
+
+//    LOG_I("vertices size: %d", m_geoObj->m_verticesSize);
 
     const int vertexSize = (3+2+3) * 4;
     const int numVertices = m_geoObj->m_verticesSize / vertexSize;
+
+    LOG_I("m_geoObj->m_verticesSize: %d", m_geoObj->m_verticesSize);
+    LOG_I("numVertices: %d", m_geoObj->m_verticesSize / 4);
 
     struct Vertex {
 	Vector3f point;
@@ -55,31 +141,59 @@ GeometryObjectData* RayTracer::RayTrace() {
     Vertex* verticesBuffer = (Vertex *)m_geoObj->m_vertices;
     std::vector<Vertex> vertices(verticesBuffer, verticesBuffer + numVertices);
 
+    for(int i = 0; i < vertices.size(); ++i) {
+//	LOG_I("vert pos: %s", string(vertices[i].point).c_str() );
+    }
+
+    LOG_I("vertices: %s", string(vertices[5].point).c_str() );
+    LOG_I("texcoord: %s", string(vertices[5].texCoord).c_str() );
+
     vector<Triangle> triangles;
 
     for(const GeometryObjectData::Chunk* chunk : m_geoObj->m_chunks) {
-
-
 
 	assert(chunk->m_numTriangles ==  ((chunk->m_indicesSize / 2) / 3) );
 
 	GLushort* indices = (GLushort *)chunk->m_indices;
 
-	LOG_I("num %d", chunk->m_numTriangles);
+	LOG_I("numtriangles %d", chunk->m_numTriangles);
 
 	for(int i = 0; i < chunk->m_numTriangles; ++i) {
 
 	    Triangle tri;
 
-	    tri.p0 = vertices[3*i+0].point;
-	    tri.p1 = vertices[3*i+1].point;
-	    tri.p2 = vertices[3*i+2].point;
+	    tri.p0 = vertices[indices[i+0]].point;
+	    tri.p1 = vertices[indices[i+1]].point;
+	    tri.p2 = vertices[indices[i+2]].point;
+
+/*
+	    LOG_I("v0: %s", string(tri.p0).c_str() );
+	    LOG_I("v1: %s", string(tri.p1).c_str() );
+	    LOG_I("v2: %s", string(tri.p2).c_str() );
+*/
+
 
 	    triangles.push_back(tri);
 	}
     }
+/*
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:168:RayTrace:v0: (0.000000, 0.000000, 1.879216)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:169:RayTrace:v1: (0.000000, 0.000000, -1.000000)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:170:RayTrace:v2: (-1.000000, 0.000000, -1.000000)
 
-    constexpr int NUM_SAMPLES = 100;
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:168:RayTrace:v0: (0.000000, 0.000000, -1.000000)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:169:RayTrace:v1: (-1.000000, 0.000000, -1.000000)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:170:RayTrace:v2: (0.000000, 0.000000, -1.000000)
+
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:168:RayTrace:v0: (-1.000000, 0.000000, -1.000000)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:169:RayTrace:v1: (0.000000, 0.000000, -1.000000)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:170:RayTrace:v2: (0.000000, 0.263956, -1.000000)
+
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:168:RayTrace:v0: (0.000000, 0.000000, -1.000000)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:169:RayTrace:v1: (0.000000, 0.263956, -1.000000)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:170:RayTrace:v2: (-1.000000, 0.263956, -1.000000)
+*/
+    constexpr int NUM_SAMPLES = 20;
 
     // generate evenly distributed unit vectors
     vector<Vector3f> samples;
@@ -87,7 +201,6 @@ GeometryObjectData* RayTracer::RayTrace() {
     Random rng(200);
 
     while(samples.size() < NUM_SAMPLES) {
-
 
 	float x,y,z;
 	float length2;
@@ -110,7 +223,7 @@ GeometryObjectData* RayTracer::RayTrace() {
 	    y /= length,
 	    z /= length);
 
-	LOG_I("length: %s", string(v).c_str() );
+//	LOG_I("length: %s", string(v).c_str() );
 
 	samples.push_back(v);
 
@@ -130,123 +243,118 @@ GeometryObjectData* RayTracer::RayTrace() {
     AoVertex* aoVerticesPointer = aoVertices;
 
 
+
     for(int i = 0; i < vertices.size(); ++i) {
 
-	Vertex& v = vertices[i];
+//	LOG_I("vert: %d", i );
 
-	Vector3f normal = v.normal;
-	Vector3f tangent;
-	Vector3f bitangent;
+	float ao;
 
-	FindBase(normal, tangent, bitangent);
+	    Vertex& v = vertices[i];
 
-	/*
-	LOG_I("normal: %s", string(normal).c_str() );
-	LOG_I("tangent: %s", string(tangent).c_str() );
-	LOG_I("bitangent: %s", string(bitangent).c_str() );
-
-	*/
+/*	if(i > 0) {
+	    ao = 1.0;
+	    } else'*/ {
 
 
-	float numerator = 0;
-	float denominator = 0;
+	    Vector3f normal = v.normal;
+	    Vector3f tangent;
+	    Vector3f bitangent;
 
-	int hitCount = 0;
-	for(Vector3f sample : samples) {
+	    FindBase(normal, tangent, bitangent);
 
-	    // rotate sample vector to be in the base of the point.
+	    /*
+	      LOG_I("normal: %s", string(normal).c_str() );
+	      LOG_I("tangent: %s", string(tangent).c_str() );
+	      LOG_I("bitangent: %s", string(bitangent).c_str() );
 
-	    // ray direction.
-	    Vector3f d = Vector3f(
-		Vector3f::Dot(bitangent, sample),
-		Vector3f::Dot(normal, sample),
-		Vector3f::Dot(tangent, sample)
-		).Normalize();
+	    */
 
 
-	    float cosTheta = Vector3f::Dot(normal, d);
+	    float numerator = 0;
+	    float denominator = 0;
 
+	    int hitCount = 0;
+	    for(Vector3f sample : samples) {
 
-	    // ray origin
-	    const Vector3f o = v.point + d * 0.001f;
-	    float tMin = FLT_MAX;
-	    bool hit = false;
+		// rotate sample vector to be in the base of the point.
 
-	    for(const Triangle& tri : triangles) {
-
-		const Vector3f& v0 = tri.p0;
-		const Vector3f& v1 = tri.p1;
-		const Vector3f& v2 = tri.p2;
+		// ray direction.
+		Vector3f d = Vector3f(
+		    Vector3f::Dot(bitangent, sample),
+		    Vector3f::Dot(normal, sample),
+		    Vector3f::Dot(tangent, sample)
+		    ).Normalize();
 
 /*
-		if(
-		    v0 == o ||
-		    v1 == o ||
-		    v2 == o
-		    )
-		    continue;
+		LOG_I("d: %s", string(d).c_str() );
+
+		LOG_I("length: %f", d.Length() );
 */
-		Vector3f e1 = v1 - v0;
-		Vector3f e2 = v2 - v0;
-		Vector3f s = o - v0;
+		float cosTheta = Vector3f::Dot(normal, d);
 
 
+		// ray origin
+		const Vector3f o = v.point + d * 0.0001f;
 
-		Vector3f p = Vector3f::Cross(d, e2);
-		float a = Vector3f::Dot(p, e1);
-		float f = 1.0f / a;
+//		LOG_I("o: %s", string(o).c_str() );
 
-		float u = f * Vector3f::Dot(p, s);
+		float tMin = FLT_MAX;
+		bool hit = false;
 
-		if(u < 0)
-		    continue; // we miss this triangle.
+		for(const Triangle& tri : triangles) {
 
+		    float t;
+		    if(!MahRayTrace(tri, o, d, t))
+			continue;
 
-		Vector3f q = Vector3f::Cross(s,e1);
+		    if(t < tMin) {
+			tMin = t;
+/*
+			LOG_I("HIT");
+			LOG_I("v0: %s", string(tri.p0).c_str() );
+			LOG_I("v1: %s", string(tri.p1).c_str() );
+			LOG_I("v2: %s", string(tri.p2).c_str() );
+*/
 
+			hit = true;
+		    }
 
-		float v = f * Vector3f::Dot(q, d);
-
-		if(v < 0) {
-		    continue; //we miss this triangle.
+		    //	break;
 		}
 
-		float t = f * Vector3f::Dot(q, e2);
+		if(hit) {
+		    ++hitCount;
 
-		if(t < 0)
-		    continue; // we miss this triangle.
+		    //    LOG_I("hit at: %f", tMin );
 
-		if(t < tMin) {
-		    tMin = t;
-		    hit = true;
+		} else {
+		    //	    LOG_I("no hit at: %f", tMin );
 		}
 
-		//	break;
-	    }
-
-	    if(hit) {
-		++hitCount;
-
-//		LOG_I("hit at: %f", tMin );
+		numerator += hit ? cosTheta : 0;
+		denominator += cosTheta;
 
 	    }
 
-	    numerator += hit ? cosTheta : 0;
-	    denominator += cosTheta;
 
-	}
 
-	float ao = 1.0 - numerator / denominator;
+	    //    LOG_I("div: %f/%f, ",  numerator, denominator);
+	    ao = 1.0 - numerator / denominator;
 
-	/*
-	LOG_I("normal: %s", string(v.normal).c_str() );
+/*	LOG_I("normal: %s", string(v.normal).c_str() );
 	LOG_I("pos: %s", string(v.point).c_str() );
 	LOG_I("hits: %d", hitCount );
-	LOG_I("ao: %f",  ao);
+	LOG_I("ao: %f",  ao);*/
+	}
 
-	LOG_I("NEW");
 
-	*/
+
+
+
+//	LOG_I("NEW");
+
+
 	AoVertex aoVertex;
 
 	aoVertex.point = Vector4f(v.point.x, v.point.y, v.point.z, ao);
@@ -281,3 +389,31 @@ GeometryObjectData* RayTracer::RayTrace() {
 
     return m_geoObj;
 }
+
+
+/*
+  INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:182:RayTrace:d: (-0.930383, -0.300498, -0.209974)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:184:RayTrace:length: 1.000000
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:247:RayTrace:hit da tri
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:249:RayTrace:d: (-0.930383, -0.300498, -0.209974)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:250:RayTrace:o: (-1.000093, -0.714316, -0.714307)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:252:RayTrace:v0: (1.000000, -1.000000, -1.000000)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:253:RayTrace:v1: (0.714286, -1.000000, -1.000000)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:254:RayTrace:v2: (1.000000, -0.714286, 0.714286)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:267:RayTrace:hit at: 0.896671
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:280:RayTrace:div: 9.176004/9.176004,
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:283:RayTrace:normal: (-1.000000, 0.000000, 0.000000)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:284:RayTrace:pos: (-1.000000, -0.714286, -0.714286)
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:285:RayTrace:hits: 20
+INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:286:RayTrace:ao: 0.000000
+ */
+
+
+
+/*
+(0.714286, -1.000000, -1.000000)
+
+
+
+(1.000000, -0.714286, 0.714286)
+*/

@@ -255,8 +255,6 @@ void main(void) {
     float visibility = 1.0;
 #endif
 
-
-
 #ifdef ENV_MAPPING
     vec3 reflectionVector = (inverseViewNormalMatrix *
 			     vec4(
