@@ -17,12 +17,44 @@ uniform vec3 sceneLight;
 uniform vec3 viewSpaceLightDirection;
 uniform mat4 lightVp;
 uniform mat4 inverseViewMatrix;
+uniform mat4 invProj;
+uniform mat4 proj;
+
+float toLinearDepth(float depth) {
+    float near = 0.1;
+    float far = 500.0;
+
+    return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+}
+
+
+vec3 getPosition() {
+
+    float x = texCoord.x * 2 - 1;
+    float y = (texCoord.y) * 2 - 1;
+//    float z = toLinearDepth(texture(depthTexture, texCoord).r* 2 - 1);
+    float z = texture(depthTexture, texCoord).r * 2 - 1;
+    vec4 projectedPos = vec4(x, y,z
+
+			     , 1.0f);
+
+    vec4 p =  invProj * projectedPos;
+
+    return p.xyz / p.w;
+
+
+//    return vec3(z) / 10;
+    //   return vec3(texture(depthTexture, texCoord).r);
+
+}
+
 
 
 void main() {
 
     vec3 viewSpaceNormal = texture(normalTexture, texCoord).xyz;
-    vec3 viewSpacePosition = texture(positionTexture, texCoord).xyz;
+
+    vec3 viewSpacePosition = getPosition();
 
     vec3 v = -normalize(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
@@ -56,7 +88,6 @@ void main() {
 	visibility,
 	vec3(0) );
 
-
     fragmentColor = vec4(ambientLight* (1.0 -ao)*diffColor +   diffColor*sceneLight*diff * visibility
 
 			 + specColor*pow(spec,specShiny) * visibility+
@@ -65,6 +96,14 @@ void main() {
 			 ,
 			 1.0
 	);
+
+/*
+    fragmentColor = vec4(
+	vec3(getPosition().xyz),
+
+//	texture(positionTexture, texCoord).xyz,
+
+1);*/
 
 /*
 

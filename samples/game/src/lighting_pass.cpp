@@ -57,9 +57,12 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
     m_directionalShader->SetUniform("sceneLight", config.GetSceneLight() );
 
     Matrix4f invProj = camera->GetProjectionMatrix();
-    invProj.Inverse();
+    invProj = invProj.Inverse();
+
+    //  LOG_I("onv: %s", std::string(invProj).c_str() );
 
     m_directionalShader->SetUniform("invProj", invProj);
+    m_directionalShader->SetUniform("proj", camera->GetProjectionMatrix());
 
 
 
