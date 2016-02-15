@@ -74,8 +74,8 @@ constexpr int SHADOW_MAP_SIZE =
 
 
 
-constexpr int WINDOW_WIDTH = HighQuality ? 1500 : 1200;
-constexpr int WINDOW_HEIGHT = HighQuality ?  960 : 720;
+constexpr int WINDOW_WIDTH = HighQuality ? 1500 : 720.0;
+constexpr int WINDOW_HEIGHT = HighQuality ?  960 : 432.0;
 
 /*
 constexpr int WINDOW_WIDTH = 256;
