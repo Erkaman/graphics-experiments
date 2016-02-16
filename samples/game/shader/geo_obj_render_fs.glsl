@@ -311,7 +311,10 @@ void main(void) {
 
 //    viewSpaceNormalOut.xyz = ; // lol3
 
-    geoData[1] = vec4(normalize(normalize(vec4(viewSpaceNormalOut,0.0)).xyz), 0);
+    geoData[1] = vec4(
+	normalize(normalize(vec4(n,0.0)).xyz)
+
+	, 0);
     geoData[2] = vec4(viewSpacePositionOut, 0);
 #else
 
