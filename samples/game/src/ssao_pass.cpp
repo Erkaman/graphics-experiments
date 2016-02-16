@@ -38,12 +38,12 @@ void SsaoPass::Render(Gbuffer* gbuffer, const ICamera* camera) {
     Texture::SetActiveTextureUnit(NORMAL_TEXTURE_UNIT);
     gbuffer->GetNormalTexture()->Bind();
 
-    m_shader->SetUniform("positionTexture", POSITION_TEXTURE_UNIT);
-    Texture::SetActiveTextureUnit(POSITION_TEXTURE_UNIT);
-    gbuffer->GetPositionTexture()->Bind();
+    m_shader->SetUniform("specularTexture", SPECULAR_TEXTURE_UNIT);
+    Texture::SetActiveTextureUnit(SPECULAR_TEXTURE_UNIT);
+    gbuffer->GetSpecularTexture()->Bind();
 
-    m_shader->SetUniform("randomTexture", POSITION_TEXTURE_UNIT+1);
-    Texture::SetActiveTextureUnit(POSITION_TEXTURE_UNIT+1);
+    m_shader->SetUniform("randomTexture", SPECULAR_TEXTURE_UNIT+1);
+    Texture::SetActiveTextureUnit(SPECULAR_TEXTURE_UNIT+1);
     m_randomTexture->Bind();
 
 
@@ -74,7 +74,7 @@ void SsaoPass::Render(Gbuffer* gbuffer, const ICamera* camera) {
 
     gbuffer->GetColorTexture()->Unbind();
     gbuffer->GetDepthTexture()->Unbind();
-    gbuffer->GetPositionTexture()->Unbind();
+    gbuffer->GetSpecularTexture()->Unbind();
     m_randomTexture->Unbind();
 
 

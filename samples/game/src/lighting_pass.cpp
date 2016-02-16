@@ -35,9 +35,9 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
     Texture::SetActiveTextureUnit(NORMAL_TEXTURE_UNIT);
     gbuffer->GetNormalTexture()->Bind();
 
-    m_directionalShader->SetUniform("positionTexture", POSITION_TEXTURE_UNIT);
-    Texture::SetActiveTextureUnit(POSITION_TEXTURE_UNIT);
-    gbuffer->GetPositionTexture()->Bind();
+    m_directionalShader->SetUniform("specularTexture", SPECULAR_TEXTURE_UNIT);
+    Texture::SetActiveTextureUnit(SPECULAR_TEXTURE_UNIT);
+    gbuffer->GetSpecularTexture()->Bind();
 
 
     m_directionalShader->SetUniform("shadowMap", 6);
@@ -79,7 +79,7 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
 
     gbuffer->GetColorTexture()->Unbind();
     gbuffer->GetDepthTexture()->Unbind();
-    gbuffer->GetPositionTexture()->Unbind();
+    gbuffer->GetSpecularTexture()->Unbind();
     shadowMap.GetRenderTargetTexture().Unbind();
 
 

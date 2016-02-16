@@ -7,7 +7,7 @@ out vec4 fragmentColor;
 uniform sampler2D colorTexture;
 uniform sampler2D depthTexture;
 uniform sampler2D normalTexture;
-uniform sampler2D positionTexture;
+uniform sampler2D specularTexture;
 uniform sampler2DShadow shadowMap;
 
 uniform vec2 screenSize;
@@ -52,7 +52,17 @@ vec3 getPosition() {
 
 void main() {
 
-    vec3 viewSpaceNormal = texture(normalTexture, texCoord).xyz;
+    vec4 sample = texture(normalTexture, texCoord);
+    vec3 viewSpaceNormal = sample.xyz;
+
+
+    sample = texture(specularTexture, texCoord);
+    vec3 specColor = sample.xyz;
+    float specShiny = sample.w * 100;
+/*
+    specShiny = 0.0;
+    specColor = vec3(0);
+*/
 
     vec3 viewSpacePosition = getPosition();
 
@@ -63,12 +73,13 @@ void main() {
     float diff=  calcDiff(l,n);
     float spec= calcSpec(l,n,v);
 
-    vec4 sample = texture(colorTexture, texCoord);
+    sample = texture(colorTexture, texCoord);
     vec3 diffColor = sample.xyz;
     float ao = sample.w;
 
-    vec3 specColor = vec3(0,0,0);
-    float specShiny = 0;
+
+    vec3 specMat = specColor; // + (vec3(1.0) - specColor)  * pow(clamp(1.0 + dot(-v, n), 0.0, 1.0), 5.0);
+
 
     float aoOnly =0.0;
 
@@ -76,53 +87,35 @@ void main() {
 
     float visibility = calcVisibility(shadowMap, diff, shadowCoord);
 
+
+    /*
+    diffColor = vec3( pow(spec, 20)  );
+
+    diff = 1.0;
+    */
+
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
 	ambientLight* (1.0 -ao),
 	sceneLight,
 	specShiny,
 	diffColor,
-	specColor.xyz,
+	specMat,
 	diff,
 	spec,
 	visibility,
 	vec3(0) );
 
-    fragmentColor = vec4(ambientLight* (1.0 -ao)*diffColor +   diffColor*sceneLight*diff * visibility
+    /*
+    vec3 c =
+    ambientLight*diffColor +
+	diffColor*sceneLight*diff * visibility +
+	specMat *pow(spec,specShiny) * visibility;
 
-			 + specColor*pow(spec,specShiny) * visibility+
-			 specColor * spec * vec3(0) * 0.4
+//    fragmentColor = vec4( vec3(texture(specularTexture, texCoord).w) * 30 ,1.0);
 
-			 ,
-			 1.0
-	);
-
-/*
-    fragmentColor = vec4(
-	vec3(getPosition().xyz),
-
-//	texture(positionTexture, texCoord).xyz,
-
-1);*/
-
-/*
-
-    vec4 color = texture(randomTexture, screenSize * texCoord / vec2(64) );
-
-    fragmentColor = vec4( color.xyz,1);
+//    fragmentColor = vec4(vec3(specShiny), 1.0);
+    fragmentColor = vec4(c, 1.0);
 */
-
-/*
-      float z = texture(depthTexture, texCoord).r;
-
-      float ndcDepth  =
-	  (2.0 * z - 1.1 - 500.0f) /
-	  (500.0f - 1.1);
-*/
-
-//    vec4 color = texture(colorTexture, texCoord);
-
-//      ndcDepth = ndcDepth / gl_FragCoord.w;
-
-//      fragmentColor = vec4( vec3(ndcDepth*0.5 + 0.5 ) ,1);
+//       fragmentColor = vec4(vec3(specShiny / 100), 1.0);
 }

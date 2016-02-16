@@ -7,7 +7,7 @@ enum GBUFFER_TEXTURE_UNITS {
     COLOR_TEXTURE_UNIT,
     DEPTH_TEXTURE_UNIT,
     NORMAL_TEXTURE_UNIT,
-    POSITION_TEXTURE_UNIT,
+    SPECULAR_TEXTURE_UNIT,
 };
 
 class Gbuffer : public FBO{
@@ -17,7 +17,7 @@ private:
     Texture* m_colorTexture;
     Texture* m_depthTexture;
     Texture* m_normalTexture;
-    Texture* m_positionTexture;
+    Texture* m_specularTexture;
 
 public:
 
@@ -30,5 +30,5 @@ public:
     Texture* GetColorTexture();
     Texture* GetDepthTexture();
     Texture* GetNormalTexture();
-    Texture* GetPositionTexture();
+    Texture* GetSpecularTexture();
 };

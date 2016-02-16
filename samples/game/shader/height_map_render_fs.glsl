@@ -64,7 +64,7 @@ void main()
 
     geoData[0] = vec4(vec4(diffColor, ao));
     geoData[1] = vec4(normalize(viewSpaceNormal),0);
-    geoData[2] = vec4(viewSpacePosition, 0);
+    geoData[2] = vec4(vec3(0,0,0), 1);
 
 #else
     geoData[0] =vec4(vec3(1.0-ao), 1.0) * aoOnly +

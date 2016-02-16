@@ -313,9 +313,9 @@ void main(void) {
 
     geoData[1] = vec4(
 	normalize(normalize(vec4(n,0.0)).xyz)
-
 	, 0);
-    geoData[2] = vec4(viewSpacePositionOut, 0);
+
+    geoData[2] = vec4(vec3(specColor.xyz), specShiny / 100.0 );
 #else
 
     vec3 ambient = ambientLight * ao;
