@@ -124,15 +124,19 @@ Skybox::Skybox() {
 
 }
 
-void Skybox::Draw(CubeMapTexture* m_cubeMap, const ICamera* camera) {
+void Skybox::Draw(CubeMapTexture* m_cubeMap, const ICamera* camera, Texture* depthMap, int windowWidth, int windowHeight) {
 
     m_shader->Bind();
 
     Texture::SetActiveTextureUnit(0);
-
-//    LOG_I("bla: %d, %d", m_cubeMap->GetHandle(), m_cubeMap->GetTarget() );
-
     m_cubeMap->Bind();
+    m_shader->SetUniform("sampler", 0);
+
+    Texture::SetActiveTextureUnit(1);
+    depthMap->Bind();
+    m_shader->SetUniform("depthMap", 1);
+
+
 
     SetDepthTest(false);
 
@@ -149,7 +153,8 @@ void Skybox::Draw(CubeMapTexture* m_cubeMap, const ICamera* camera) {
     Matrix4f mvp = camera->GetProjectionMatrix() * modelView;
 
     m_shader->SetUniform("mvp", mvp);
-    m_shader->SetUniform("sampler", 0);
+    m_shader->SetUniform("windowWidth", (float)windowWidth);
+    m_shader->SetUniform("windowHeight", (float)windowHeight);
 
     m_indexBuffer->Bind();
 
@@ -161,6 +166,7 @@ void Skybox::Draw(CubeMapTexture* m_cubeMap, const ICamera* camera) {
     m_indexBuffer->Unbind();
 
     m_positionBuffer->DisableVertexAttribInterleavedWithBind();
+
 
 
     SetDepthTest(true);

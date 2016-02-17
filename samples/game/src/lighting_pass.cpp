@@ -45,9 +45,6 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
     shadowMap.GetRenderTargetTexture().Bind();
 
 
-
-
-
     m_directionalShader->SetUniform("screenSize", m_screenSize);
     m_directionalShader->SetLightUniforms(camera, lightPosition, lightVp);
 

@@ -24,5 +24,5 @@ public:
     Skybox();
     ~Skybox();
 
-    void Draw(CubeMapTexture* m_cubeMap, const ICamera* camera);
+    void Draw(CubeMapTexture* m_cubeMap, const ICamera* camera, Texture* depthMap, int windowWidth, int windowHeight);
 };

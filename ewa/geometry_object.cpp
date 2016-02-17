@@ -828,6 +828,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		// for the selected object, we also render to the stencil buffer
 		// so that we later can draw an outline.
 
+
 		GL_C(glEnable(GL_STENCIL_TEST));
 		GL_C(glStencilFunc(GL_ALWAYS,1,1));
 		GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE));
@@ -922,6 +923,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 	    }
 
 	    if(geoObj->IsSelected() ) {
+
 		// dont render to stencil buffer for remaining objects.
 		GL_C(glStencilMask(0));
 	    }
@@ -936,9 +938,8 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
     }
 
-
-
     if(selectedObj != NULL) {
+
 	// also render outline for selected object.
 	GL_C(glStencilFunc(GL_EQUAL,0,1));
 	GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_KEEP));
@@ -968,7 +969,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
     /*
       Render the AABBs of all objects
     */
-
+/*
     // render all batches, one after one.
     for(auto& itBatch : batches) {
 
@@ -994,7 +995,7 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 	}
     }
-
+*/
 }
 
 AABB GeometryObject::GetModelSpaceAABB()const {

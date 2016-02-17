@@ -75,8 +75,11 @@ constexpr int SHADOW_MAP_SIZE =
 
 
 
-constexpr int WINDOW_WIDTH = HighQuality ? 1500 : 720.0;
-constexpr int WINDOW_HEIGHT = HighQuality ?  960 : 432.0;
+constexpr int WINDOW_WIDTH = HighQuality ? 1500 : 1200;
+constexpr int WINDOW_HEIGHT = HighQuality ?  960 : 720;
+
+//constexpr int WINDOW_WIDTH = HighQuality ? 1500 : 720.0;
+//constexpr int WINDOW_HEIGHT = HighQuality ?  960 : 432.0;
 
 /*
 constexpr int WINDOW_WIDTH = 256;
@@ -610,7 +613,7 @@ void TuhuApplication::RenderScene() {
     Matrix4f lightVp =  biasMatrix*   m_lightVp;
 
     m_gpuProfiler->Begin(GTS_Sky);
-//   m_skydome->Draw(m_curCamera);
+//      m_skydome->Draw(m_curCamera);
 
 /*
     m_skybox->Draw(
@@ -626,7 +629,6 @@ void TuhuApplication::RenderScene() {
 
 
     bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
-
 
     m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, aoOnly);
 
@@ -761,10 +763,70 @@ void TuhuApplication::Render() {
     SetViewport();
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+    if(!m_gui) {
+/*
+	GL_C(glStencilMask(1));
+	GL_C(glClear(GL_STENCIL_BUFFER_BIT));
+	GL_C(glEnable(GL_STENCIL_TEST));
+	GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE));
+	GL_C(glStencilFunc(GL_ALWAYS,1,1));
+*/
+    }
+
     RenderScene();
-    m_gbuffer->UnbindForWriting();
+
+    if(!m_gui) {
+
+	// do no write anymore.
+//	GL_C(glStencilMask(0));
+    }
+
+   m_gbuffer->UnbindForWriting();
 
 	// m_aabbWireframe->Render(m_curCamera->GetVp());
+
+
+//    m_grid->Draw();
+
+    Matrix4f biasMatrix(
+	0.5f, 0.0f, 0.0f, 0.5f,
+	0.0f, 0.5f, 0.0f, 0.5f,
+	0.0f, 0.0f, 0.5f, 0.5f,
+	0.0f, 0.0f, 0.0f, 1.0f
+	);
+
+    Matrix4f lightVp =  biasMatrix*   m_lightVp;
+
+
+
+
+
+
+
+    m_gpuProfiler->Begin(GTS_Light);
+    m_lightingPass->Render(m_gbuffer, m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+    m_gpuProfiler->End(GTS_Light);
+
+//    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
+
+
+    if(!m_gui) {
+/*
+	GL_C(glEnable(GL_STENCIL_TEST));
+	GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_KEEP));
+	GL_C(glStencilFunc(GL_EQUAL,0,1));
+	GL_C(glStencilMask(0x00));
+*/
+
+    }
+
+
+    m_skybox->Draw(
+	m_cubeMapTexture,
+//	m_envFbo->GetEnvMap(),
+	m_curCamera, m_gbuffer->GetDepthTexture(), GetFramebufferWidth(), GetFramebufferHeight() );
+
 
     if(m_gui) {
 
@@ -778,21 +840,6 @@ void TuhuApplication::Render() {
 
 	m_gui->Render(windowWidth, windowHeight);
     }
-
-//    m_grid->Draw();
-
-    Matrix4f biasMatrix(
-	0.5f, 0.0f, 0.0f, 0.5f,
-	0.0f, 0.5f, 0.0f, 0.5f,
-	0.0f, 0.0f, 0.5f, 0.5f,
-	0.0f, 0.0f, 0.0f, 1.0f
-	);
-
-    Matrix4f lightVp =  biasMatrix*   m_lightVp;
-
-    m_gpuProfiler->Begin(GTS_Light);
-    m_lightingPass->Render(m_gbuffer, m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
-    m_gpuProfiler->End(GTS_Light);
 
 
     m_gpuProfiler->WaitForDataAndUpdate();
