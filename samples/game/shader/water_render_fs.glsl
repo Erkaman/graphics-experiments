@@ -98,5 +98,7 @@ void main(void) {
     float a = clamp(waterDepth / 3.0, 0.0, 1.0);
 //    a = 1.0;
 
-    geoData[0] = vec4(color,a);
+//    geoData[0] = vec4(color,a);
+    geoData[0] = vec4(vec3(1,0,0),0);
+
 }

@@ -872,10 +872,11 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 		batch->m_defaultShader->SetUniform("totalDelta", (float)GeoObjManager::GetInstance().m_totalDelta);
 
-
+		// remove this for the time being.
+/*
 		GL_C(glEnable(GL_BLEND));
 		GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
+*/
 
 	    }
 

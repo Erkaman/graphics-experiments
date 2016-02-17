@@ -764,23 +764,8 @@ void TuhuApplication::Render() {
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    if(!m_gui) {
-/*
-	GL_C(glStencilMask(1));
-	GL_C(glClear(GL_STENCIL_BUFFER_BIT));
-	GL_C(glEnable(GL_STENCIL_TEST));
-	GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE));
-	GL_C(glStencilFunc(GL_ALWAYS,1,1));
-*/
-    }
 
     RenderScene();
-
-    if(!m_gui) {
-
-	// do no write anymore.
-//	GL_C(glStencilMask(0));
-    }
 
    m_gbuffer->UnbindForWriting();
 
@@ -800,10 +785,6 @@ void TuhuApplication::Render() {
 
 
 
-
-
-
-
     m_gpuProfiler->Begin(GTS_Light);
     m_lightingPass->Render(m_gbuffer, m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
     m_gpuProfiler->End(GTS_Light);
@@ -811,23 +792,13 @@ void TuhuApplication::Render() {
 //    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 
-    if(!m_gui) {
 /*
-	GL_C(glEnable(GL_STENCIL_TEST));
-	GL_C(glStencilOp(GL_KEEP,GL_KEEP,GL_KEEP));
-	GL_C(glStencilFunc(GL_EQUAL,0,1));
-	GL_C(glStencilMask(0x00));
-*/
-
-    }
-
-
     m_skybox->Draw(
 	m_cubeMapTexture,
 //	m_envFbo->GetEnvMap(),
 	m_curCamera, m_gbuffer->GetDepthTexture(), GetFramebufferWidth(), GetFramebufferHeight() );
 
-
+*/
     if(m_gui) {
 
 	int fb_width, fb_height;
