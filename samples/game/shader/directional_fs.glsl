@@ -27,8 +27,7 @@ float toLinearDepth(float depth) {
     return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
 }
 
-
-vec3 getPosition() {
+vec3 getViewSpacePosition(sampler2D depthTexture, vec2 texCoord) {
 
     float x = texCoord.x * 2 - 1;
     float y = (texCoord.y) * 2 - 1;
@@ -48,51 +47,59 @@ vec3 getPosition() {
 
 }
 
-
-
-void main() {
+vec3 readNormalTexture(sampler2D normalTexture, vec2 texCoord) {
 
     vec4 sample = texture(normalTexture, texCoord);
     vec3 viewSpaceNormal = sample.xyz;
 
+    vec3 n = viewSpaceNormal;
+    return n;
+}
 
-    sample = texture(specularTexture, texCoord);
-    vec3 specColor = sample.xyz;
-    float specShiny = sample.w * 100;
-/*
-    specShiny = 0.0;
-    specColor = vec3(0);
-*/
+void readSpecularTexture(sampler2D specularTexture, vec2 texCoord, out vec3 specColor, out float specShiny) {
 
-    vec3 viewSpacePosition = getPosition();
+    vec4 sample = texture(specularTexture, texCoord);
+    specColor = sample.xyz;
+    specShiny = sample.w * 100;
+}
+
+void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor, out float ao) {
+
+    vec4 sample = texture(colorTexture, texCoord);
+    diffColor = sample.xyz;
+    ao = sample.w;
+}
+
+
+void main() {
+
+    vec3 specColor;
+    float specShiny;
+
+    readSpecularTexture(specularTexture, texCoord, specColor, specShiny);
+
+
+    vec3 viewSpacePosition = getViewSpacePosition(depthTexture, texCoord);
 
     vec3 v = -normalize(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
-    vec3 n = viewSpaceNormal;
+    vec3 n = readNormalTexture(normalTexture, texCoord);
 
     float diff=  calcDiff(l,n);
     float spec= calcSpec(l,n,v);
 
-    sample = texture(colorTexture, texCoord);
-    vec3 diffColor = sample.xyz;
-    float ao = sample.w;
+    vec3 diffColor;
+    float ao;
 
+    readColorTexture(colorTexture, texCoord, diffColor, ao);
 
     vec3 specMat = specColor; // + (vec3(1.0) - specColor)  * pow(clamp(1.0 + dot(-v, n), 0.0, 1.0), 5.0);
-
 
     float aoOnly =0.0;
 
     vec4 shadowCoord = (lightVp * (inverseViewMatrix * vec4(viewSpacePosition.xyz,1)));
 
     float visibility = calcVisibility(shadowMap, diff, shadowCoord);
-
-
-    /*
-    diffColor = vec3( pow(spec, 20)  );
-
-    diff = 1.0;
-    */
 
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
@@ -106,16 +113,4 @@ void main() {
 	visibility,
 	vec3(0) );
 
-    /*
-    vec3 c =
-    ambientLight*diffColor +
-	diffColor*sceneLight*diff * visibility +
-	specMat *pow(spec,specShiny) * visibility;
-
-//    fragmentColor = vec4( vec3(texture(specularTexture, texCoord).w) * 30 ,1.0);
-
-//    fragmentColor = vec4(vec3(specShiny), 1.0);
-    fragmentColor = vec4(c, 1.0);
-*/
-//       fragmentColor = vec4(vec3(specShiny / 100), 1.0);
 }
