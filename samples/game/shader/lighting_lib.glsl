@@ -138,3 +138,51 @@ float computeAo() {
 //    return vcap / (0.5 * 1.33333 * 3.14 * R*R*R );
 }
 */
+
+
+/*
+float toLinearDepth(float depth) {
+    float near = 0.1;
+    float far = 500.0;
+
+    return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+}
+*/
+
+vec3 getViewSpacePosition(mat4 invProj, sampler2D depthTexture, vec2 texCoord) {
+
+    float x = texCoord.x * 2 - 1;
+    float y = (texCoord.y) * 2 - 1;
+//    float z = toLinearDepth(texture(depthTexture, texCoord).r* 2 - 1);
+    float z = texture(depthTexture, texCoord).r * 2 - 1;
+    vec4 projectedPos = vec4(x, y,z
+
+			     , 1.0f);
+
+    vec4 p =  invProj * projectedPos;
+
+    return p.xyz / p.w;
+}
+
+vec3 readNormalTexture(sampler2D normalTexture, vec2 texCoord) {
+
+    vec4 sample = texture(normalTexture, texCoord);
+    vec3 viewSpaceNormal = sample.xyz;
+
+    vec3 n = viewSpaceNormal;
+    return n;
+}
+
+void readSpecularTexture(sampler2D specularTexture, vec2 texCoord, out vec3 specColor, out float specShiny) {
+
+    vec4 sample = texture(specularTexture, texCoord);
+    specColor = sample.xyz;
+    specShiny = sample.w * 100;
+}
+
+void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor, out float ao) {
+
+    vec4 sample = texture(colorTexture, texCoord);
+    diffColor = sample.xyz;
+    ao = sample.w;
+}

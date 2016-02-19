@@ -20,55 +20,6 @@ uniform mat4 inverseViewMatrix;
 uniform mat4 invProj;
 uniform mat4 proj;
 
-float toLinearDepth(float depth) {
-    float near = 0.1;
-    float far = 500.0;
-
-    return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
-}
-
-vec3 getViewSpacePosition(sampler2D depthTexture, vec2 texCoord) {
-
-    float x = texCoord.x * 2 - 1;
-    float y = (texCoord.y) * 2 - 1;
-//    float z = toLinearDepth(texture(depthTexture, texCoord).r* 2 - 1);
-    float z = texture(depthTexture, texCoord).r * 2 - 1;
-    vec4 projectedPos = vec4(x, y,z
-
-			     , 1.0f);
-
-    vec4 p =  invProj * projectedPos;
-
-    return p.xyz / p.w;
-
-
-//    return vec3(z) / 10;
-    //   return vec3(texture(depthTexture, texCoord).r);
-
-}
-
-vec3 readNormalTexture(sampler2D normalTexture, vec2 texCoord) {
-
-    vec4 sample = texture(normalTexture, texCoord);
-    vec3 viewSpaceNormal = sample.xyz;
-
-    vec3 n = viewSpaceNormal;
-    return n;
-}
-
-void readSpecularTexture(sampler2D specularTexture, vec2 texCoord, out vec3 specColor, out float specShiny) {
-
-    vec4 sample = texture(specularTexture, texCoord);
-    specColor = sample.xyz;
-    specShiny = sample.w * 100;
-}
-
-void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor, out float ao) {
-
-    vec4 sample = texture(colorTexture, texCoord);
-    diffColor = sample.xyz;
-    ao = sample.w;
-}
 
 
 void main() {
@@ -78,8 +29,7 @@ void main() {
 
     readSpecularTexture(specularTexture, texCoord, specColor, specShiny);
 
-
-    vec3 viewSpacePosition = getViewSpacePosition(depthTexture, texCoord);
+    vec3 viewSpacePosition = getViewSpacePosition(invProj, depthTexture, texCoord);
 
     vec3 v = -normalize(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
@@ -103,14 +53,14 @@ void main() {
 
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
-	ambientLight* (1.0 -ao),
-	sceneLight,
-	specShiny,
-	diffColor,
-	specMat,
-	diff,
-	spec,
-	visibility,
-	vec3(0) );
+	    ambientLight,
+	    sceneLight,
+	    specShiny,
+	    diffColor,
+	    specMat,
+	    diff,
+	    spec,
+	    visibility,
+	    vec3(0) );
 
 }
