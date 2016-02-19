@@ -1,3 +1,20 @@
+https://www.opengl.org/discussion_boards/showthread.php/177944-Deferred-Shading-Performance-Problems
+
+
+IMPORTANT:
+http://gamedevs.org/uploads/deferred-shading-tutorial.pdf
+
+DEPTH BUFFER COPY:
+http://stackoverflow.com/questions/9914046/opengl-how-to-use-depthbuffer-from-framebuffer-as-usual-depth-buffer
+
+deferred TODO:
+fix water
+fix env map.
+fix particle system shading.
+fix light sources.
+
+
+
 ao TODO:
 ao for trees:
 http://www-sop.inria.fr/reves/Basilic/2006/HPAD06/HPAD06.pdf

@@ -153,7 +153,6 @@ void ShaderProgram::SetShaderUniforms(const Matrix4f& modelMatrix, const ICamera
 
     SetUniform("ambientLight", config.GetAmbientLight() );
     SetUniform("sceneLight", config.GetSceneLight() );
-
 }
 
 void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection, const Matrix4f& lightVp) {

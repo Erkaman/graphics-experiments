@@ -10,6 +10,7 @@ class ICamera;
 class Vector4f;
 class Matrix4f;
 class DepthFBO;
+class VBO;
 
 class LightingPass{
 
@@ -17,6 +18,15 @@ private:
 
     ShaderProgram* m_directionalShader;
     Vector2f m_screenSize;
+
+    unsigned int m_sphereNumTriangles;
+    VBO* m_sphereVertexBuffer;
+    VBO* m_sphereIndexBuffer;
+    ShaderProgram* m_pointShader;
+
+    void SetupShader(ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera);
+    void UnsetupShader(ShaderProgram* shader, Gbuffer* gbuffer);
+
 
 public:
 

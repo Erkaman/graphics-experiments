@@ -792,13 +792,13 @@ void TuhuApplication::Render() {
 //    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 
-/*
+
     m_skybox->Draw(
 	m_cubeMapTexture,
 //	m_envFbo->GetEnvMap(),
 	m_curCamera, m_gbuffer->GetDepthTexture(), GetFramebufferWidth(), GetFramebufferHeight() );
 
-*/
+
     if(m_gui) {
 
 	int fb_width, fb_height;
