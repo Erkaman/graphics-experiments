@@ -295,6 +295,12 @@ public:
 	    newChunk->m_indexBuffer->Unbind();
 
 	    newChunk->m_shininess = baseChunk->m_material->m_specularExponent;
+
+	    float EPS = 0.0001f;
+	    if(newChunk->m_shininess < EPS) {
+		newChunk->m_shininess = EPS;
+	    }
+
 	    newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
 	    newChunk->m_diffuseColor = baseChunk->m_material->m_diffuseColor;
 

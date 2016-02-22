@@ -132,6 +132,7 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
 
     UnsetupShader(m_directionalShader, gbuffer);
 
+    shadowMap.GetRenderTargetTexture().Unbind();
 
 
 
@@ -140,51 +141,54 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
 
     SetupShader(m_pointShader, gbuffer, camera);
 
-    const float RADIUS = 8;
-
-    const Matrix4f modelViewMatrix =
-	camera->GetViewMatrix() *
-
-	Matrix4f::CreateTranslation( Vector3f(0,4,0) ) *
-	Matrix4f::CreateScale(RADIUS,RADIUS,RADIUS);
-
-    const Matrix4f mvp = camera->GetProjectionMatrix() * modelViewMatrix;
 
 
-    m_pointShader->SetUniform("mvp",  mvp);
-    m_pointShader->SetUniform("modelViewMatrix",  modelViewMatrix);
-    m_pointShader->SetUniform("radius",  (float)RADIUS);
-
-
-    //GL_C(glFrontFace(GL_CW));
+    GL_C(glFrontFace(GL_CW));
     GL_C(glDisable(GL_DEPTH_TEST));
-   GL_C(glEnable(GL_BLEND));
-   GL_C(glBlendFunc(GL_ONE, GL_ONE));
 
-//    ::SetCullFace(false);
-
+    GL_C(glEnable(GL_BLEND));
+    GL_C(glBlendFunc(GL_ONE, GL_ONE));
 
 
+    int MIN_X = -2;
+    int MAX_X = +2;
 
-    //  glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    int MIN_Z = -2;
+    int MAX_Z = +2;
+
+    for(int x = MIN_X; x <= MAX_X; ++x) {
+
+	for(int z = MIN_Z; z <= MAX_Z; ++z) {
+
+	    int mod = ((x-MIN_X)+(z-MIN_Z)) % 3;
 
 
-    VBO::DrawIndices(*m_sphereVertexBuffer, *m_sphereIndexBuffer, GL_TRIANGLES, (m_sphereNumTriangles)*3);
+	    float g;
 
+	    if(mod == 0)
+		g = 0;
+	    else if(mod == 1)
+		g = 0.5;
+	    else
+		g = 1;
 
-//    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+	    DrawPointLight(camera, Vector3f(20 * x,4, 20 * z), Vector3f(
+			       (float)(x-MIN_X) / (MAX_X-MIN_X),
+			       g,
+			       (float)(z-MIN_Z) / (MAX_Z-MIN_Z)
 
-   GL_C(glDisable(GL_BLEND));
+			       ));
 
+	}
 
+    }
+
+    GL_C(glDisable(GL_BLEND));
+    GL_C(glFrontFace(GL_CCW));
     GL_C(glEnable(GL_DEPTH_TEST));
-//    ::SetCullFace(true);
 
-
-    shadowMap.GetRenderTargetTexture().Unbind();
 
     UnsetupShader(m_pointShader, gbuffer);
-
 
 }
 
@@ -235,5 +239,29 @@ void LightingPass::UnsetupShader(ShaderProgram* shader, Gbuffer* gbuffer) {
     gbuffer->GetColorTexture()->Unbind();
     gbuffer->GetDepthTexture()->Unbind();
     gbuffer->GetSpecularTexture()->Unbind();
+
+}
+
+
+void LightingPass::DrawPointLight(const ICamera* camera, const Vector3f& position, const Vector3f& color) {
+
+    const float RADIUS = 13;
+
+    const Matrix4f modelViewMatrix =
+	camera->GetViewMatrix() *
+
+	Matrix4f::CreateTranslation( position ) *
+	Matrix4f::CreateScale(RADIUS,RADIUS,RADIUS);
+
+    const Matrix4f mvp = camera->GetProjectionMatrix() * modelViewMatrix;
+
+
+    m_pointShader->SetUniform("mvp",  mvp);
+    m_pointShader->SetUniform("modelViewMatrix",  modelViewMatrix);
+    m_pointShader->SetUniform("radius",  (float)RADIUS);
+    m_pointShader->SetUniform("color",  color  ) ;
+
+
+    VBO::DrawIndices(*m_sphereVertexBuffer, *m_sphereIndexBuffer, GL_TRIANGLES, (m_sphereNumTriangles)*3);
 
 }

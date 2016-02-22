@@ -11,6 +11,7 @@ class Vector4f;
 class Matrix4f;
 class DepthFBO;
 class VBO;
+class Vector3f;
 
 class LightingPass{
 
@@ -27,6 +28,7 @@ private:
     void SetupShader(ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera);
     void UnsetupShader(ShaderProgram* shader, Gbuffer* gbuffer);
 
+    void DrawPointLight(const ICamera* camera, const Vector3f& position, const Vector3f& color);
 
 public:
 

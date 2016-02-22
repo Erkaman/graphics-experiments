@@ -55,10 +55,16 @@ void Gbuffer::RecreateBuffers(const GLsizei width, const GLsizei height)  {
 	    GL_TEXTURE_2D,
 	    width,
 	    height,
-
+/*
 	    GL_RGBA8, // internal format
 	    GL_RGBA,  // format
 	    GL_UNSIGNED_BYTE); // type
+*/
+
+	    GL_RGBA16F, // internal format
+	    GL_RGBA,  // format
+	    GL_FLOAT); // type
+
 
 	    // if position texture
 /*

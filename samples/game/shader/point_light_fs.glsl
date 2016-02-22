@@ -6,6 +6,7 @@ uniform sampler2D normalTexture;
 uniform sampler2D specularTexture;
 uniform sampler2DShadow shadowMap;
 uniform mat4 invProj;
+uniform vec3 color;
 
 out vec4 fragmentColor;
 
@@ -14,8 +15,7 @@ in vec3 lightPos;
 
 uniform float radius;
 
-uniform vec3 ambientLight;
-uniform vec3 sceneLight;
+//uniform vec3 sceneLight;
 
 uniform vec2 screenSize;
 
@@ -70,9 +70,15 @@ void main() {
 
     float visibility = 1.0;
 
+
+    // ambient light was handled in separate pass. so should be zero.
+    vec3 ambientLight = vec3(0.15);
+
+    vec3 sceneLight = vec3(1);
+
     vec4 light = calcLighting(
-	    ambientLight,
-	    sceneLight,
+	ambientLight,
+	sceneLight,
 	    specShiny,
 	    diffColor,
 	    specMat,
@@ -84,7 +90,33 @@ void main() {
     light.a = 1.0;
 
     float atten = clamp(1.0 - length(lightDist) / radius, 0,1);
-    atten = 1.0;
 
-    fragmentColor = light * vec4(1,0,0,1) * ztest * atten;
+//    light = vec4(1,1,1,1);
+
+//    atten = 1;
+
+    fragmentColor = light * vec4(vec3(color),1) * ztest * atten;
+
+//    fragmentColor = vec4(vec3(atten), 1);
+
+//    specColor = vec3(0);
+
+/*
+    vec3 light2=ambientLight*diffColor; // ambient
+
+    light2 += (
+	diffColor*sceneLight*diff * visibility  +
+	specColor*pow(spec,specShiny) * visibility);
+
+      fragmentColor = vec4(vec3(light2.xyz) * vec3(1,0,0), 1);
+
+      fragmentColor = vec4( vec3(1,1,1) + specColor *pow(spec,specShiny) * visibility  , 1);
+
+//      fragmentColor = vec4( vec3(1,1,1) + pow(-0.001,0.001) * visibility  , 1);
+
+
+//      fragmentColor = vec4( specColor  , 1);
+
+//        fragmentColor = vec4(vec3(1,0,0), 1);
+*/
 }

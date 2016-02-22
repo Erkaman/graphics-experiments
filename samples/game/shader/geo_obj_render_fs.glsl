@@ -281,7 +281,6 @@ void main(void) {
 #endif
 
 
-
 #else
     vec3 envMapSample = vec3(0);
 #endif
