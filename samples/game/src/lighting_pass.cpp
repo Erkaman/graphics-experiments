@@ -139,6 +139,8 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
 
 
 
+
+
     SetupShader(m_pointShader, gbuffer, camera);
 
 
@@ -160,6 +162,7 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
 
 	for(int z = MIN_Z; z <= MAX_Z; ++z) {
 
+
 	    int mod = ((x-MIN_X)+(z-MIN_Z)) % 3;
 
 
@@ -172,7 +175,7 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
 	    else
 		g = 1;
 
-	    DrawPointLight(camera, Vector3f(20 * x,4, 20 * z), Vector3f(
+	    DrawPointLight(camera, Vector3f(40 * x,4, 40 * z), Vector3f(
 			       (float)(x-MIN_X) / (MAX_X-MIN_X),
 			       g,
 			       (float)(z-MIN_Z) / (MAX_Z-MIN_Z)
@@ -235,17 +238,15 @@ void LightingPass::SetupShader(ShaderProgram* shader, Gbuffer* gbuffer, const IC
 void LightingPass::UnsetupShader(ShaderProgram* shader, Gbuffer* gbuffer) {
     shader->Unbind();
 
-
     gbuffer->GetColorTexture()->Unbind();
     gbuffer->GetDepthTexture()->Unbind();
     gbuffer->GetSpecularTexture()->Unbind();
 
 }
 
-
 void LightingPass::DrawPointLight(const ICamera* camera, const Vector3f& position, const Vector3f& color) {
 
-    const float RADIUS = 13;
+    const float RADIUS = 30;
 
     const Matrix4f modelViewMatrix =
 	camera->GetViewMatrix() *

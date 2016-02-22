@@ -730,8 +730,6 @@ void TuhuApplication::Render() {
     RenderShadowMap();
     m_gpuProfiler->End(GTS_Shadows);
 
-
-
     m_gpuProfiler->Begin(GTS_EnvMap);
     RenderEnvMap();
     m_gpuProfiler->End(GTS_EnvMap);

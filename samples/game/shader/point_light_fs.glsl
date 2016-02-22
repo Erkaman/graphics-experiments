@@ -33,7 +33,7 @@ void main() {
     vec3 v = -normalize(viewSpacePosition);
     vec3 n = readNormalTexture(normalTexture, texCoord);
     vec3 lightDist = viewSpacePosition - lightCenter;
-    vec3 l = normalize(lightDist);
+    vec3 l = -normalize(lightDist);
 
     float diff=  calcDiff(l,n);
     float spec = 0;
@@ -72,7 +72,7 @@ void main() {
 
 
     // ambient light was handled in separate pass. so should be zero.
-    vec3 ambientLight = vec3(0.15);
+    vec3 ambientLight = vec3(0.75);
 
     vec3 sceneLight = vec3(1);
 
@@ -96,6 +96,13 @@ void main() {
 //    atten = 1;
 
     fragmentColor = light * vec4(vec3(color),1) * ztest * atten;
+
+//    fragmentColor = vec4(vec3(diff), 1);
+
+
+
+//    fragmentColor = vec4(vec3(color),1) * ztest;
+
 
 //    fragmentColor = vec4(vec3(atten), 1);
 
