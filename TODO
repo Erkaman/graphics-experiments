@@ -12,7 +12,7 @@ fix water
 fix env map.
 fix particle system shading.
 fix light sources.
-
+fix so that you can place light sources.
 
 
 ao TODO:

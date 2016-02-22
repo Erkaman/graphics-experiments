@@ -140,20 +140,26 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
 
     SetupShader(m_pointShader, gbuffer, camera);
 
+    const float RADIUS = 8;
 
     const Matrix4f modelViewMatrix =
-	camera->GetViewMatrix() * Matrix4f::CreateScale(5,5,5);
+	camera->GetViewMatrix() *
+
+	Matrix4f::CreateTranslation( Vector3f(0,4,0) ) *
+	Matrix4f::CreateScale(RADIUS,RADIUS,RADIUS);
 
     const Matrix4f mvp = camera->GetProjectionMatrix() * modelViewMatrix;
 
 
     m_pointShader->SetUniform("mvp",  mvp);
+    m_pointShader->SetUniform("modelViewMatrix",  modelViewMatrix);
+    m_pointShader->SetUniform("radius",  (float)RADIUS);
 
 
     //GL_C(glFrontFace(GL_CW));
     GL_C(glDisable(GL_DEPTH_TEST));
-//   GL_C(glEnable(GL_BLEND));
-//   glBlendFunc(GL_ONE, GL_ONE);
+   GL_C(glEnable(GL_BLEND));
+   GL_C(glBlendFunc(GL_ONE, GL_ONE));
 
 //    ::SetCullFace(false);
 
@@ -168,6 +174,7 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
 
 //    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
+   GL_C(glDisable(GL_BLEND));
 
 
     GL_C(glEnable(GL_DEPTH_TEST));
@@ -202,6 +209,9 @@ void LightingPass::SetupShader(ShaderProgram* shader, Gbuffer* gbuffer, const IC
     shader->SetUniform("specularTexture", SPECULAR_TEXTURE_UNIT);
     Texture::SetActiveTextureUnit(SPECULAR_TEXTURE_UNIT);
     gbuffer->GetSpecularTexture()->Bind();
+
+
+    shader->SetUniform("screenSize", m_screenSize);
 
 
     Config& config = Config::GetInstance();

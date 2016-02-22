@@ -242,14 +242,16 @@ void TuhuApplication::Init() {
 
 
     const Vector3f pos =
-	Vector3f(83.344063, 76.582664, 148.282547);
+	Vector3f(39.407707, 36.707958, 71.216125);
+
+
 
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(-0.663699, -0.717373, 0.211849)
+	Vector3f(-0.398544, -0.449568, -0.799406)
 	);
 
     m_snow = new SnowEffect(pos);
