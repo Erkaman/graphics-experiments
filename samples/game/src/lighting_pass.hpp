@@ -28,12 +28,15 @@ private:
     void SetupShader(ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera);
     void UnsetupShader(ShaderProgram* shader, Gbuffer* gbuffer);
 
-    void DrawPointLight(const ICamera* camera, const Vector3f& position, const Vector3f& color);
+    void DrawPointLight(const ICamera* camera, const Vector3f& position, const Vector3f& color, float radius);
+
+    void DrawTestLights(const ICamera* camera);
+    void DrawTorches(const ICamera* camera, const std::vector<Vector3f>& torches);
 
 public:
 
     LightingPass(int framebufferWidth, int framebufferHeight);
 
-    void Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap);
+    void Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches);
 
 };

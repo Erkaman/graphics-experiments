@@ -91,6 +91,9 @@ public:
     static void RenderAllEnv(
 	ICamera* camera, const Vector4f& lightPosition, int i);
 
+    static std::vector<Vector3f> GetTorches();
+
+
     static void RenderReflection(ICamera* camera, const Vector4f& lightPosition);
 
 

@@ -81,6 +81,8 @@ class GeoObjManager {
 private:
 
 
+
+
     GeoObjManager() {
 
 
@@ -175,8 +177,9 @@ private:
 public:
     Cube* m_aabbWireframe;
 
-
     map<string, GeoObjBatch*> m_batches;
+
+    vector<GeometryObject*> m_torches;
 
     ShaderProgram* m_outputIdShader;
 
@@ -446,9 +449,14 @@ bool GeometryObject::Init(
     short physicsGroup,
     short physicsMask    ) {
 
+    /*
+     if filename is torch, add position to light list.
+     */
+    if(filename == "obj/torch.eob" )
+	GeoObjManager::GetInstance().m_torches.push_back(this);
+
     m_physicsGroup = physicsGroup;
     m_physicsMask = physicsMask;
-
 
     m_id = id;
     m_filename = filename;
@@ -1195,6 +1203,26 @@ unsigned int GeometryObject::GetId() {
 
 void GeometryObject::Delete(IGeometryObject* geoObj) {
 
+    /*
+      if torch, remove form light list.
+     */
+    if(geoObj->GetFilename() == "obj/torch.eob" ) {
+	vector<GeometryObject*>::iterator it;
+	for(it = GeoObjManager::GetInstance().m_torches.begin();
+
+	    it != GeoObjManager::GetInstance().m_torches.end();
+	    ++it
+	    ) {
+
+	    if(*it == geoObj ) {
+		break;
+	    }
+
+	}
+
+	GeoObjManager::GetInstance().m_torches.erase(it);
+    }
+
     // remove the obj from its corresponding batch:
 
     // find the batch:x
@@ -1234,4 +1262,16 @@ void GeometryObject::SetEditScale(const float editScale) {
 
 void GeometryObject::SetTotalDelta(float totalDelta) {
     GeoObjManager::GetInstance().m_totalDelta = totalDelta;
+}
+
+
+std::vector<Vector3f> GeometryObject::GetTorches() {
+
+    vector<Vector3f> torches;
+
+    for(GeometryObject* torch : GeoObjManager::GetInstance().m_torches) {
+	torches.push_back(  Vector3f(torch->GetModelMatrix(  ) * Vector4f(0,1.43,0,1)) );
+    }
+
+    return torches;
 }

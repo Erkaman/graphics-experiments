@@ -786,7 +786,7 @@ void TuhuApplication::Render() {
 
 
     m_gpuProfiler->Begin(GTS_Light);
-    m_lightingPass->Render(m_gbuffer, m_curCamera, m_lightDirection, lightVp, *m_depthFbo);
+    m_lightingPass->Render(m_gbuffer, m_curCamera, m_lightDirection, lightVp, *m_depthFbo, GeometryObject::GetTorches() );
     m_gpuProfiler->End(GTS_Light);
 
 //    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
@@ -911,9 +911,7 @@ void TuhuApplication::Update(const float delta) {
 	}
     }
 
-
-    if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 )) {
-
+    if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 ) && GuiMouseState::isWithinWindow()) {
 
 	if(m_gui->GetGuiMode() == ModelMode) {
 
@@ -1041,7 +1039,7 @@ IGeometryObject* TuhuApplication::LoadObj(const std::string& path, const Vector3
 
     GeometryObject* obj = new GeometryObject();
 
-//    LOG_I("add id: %d", currentObjId);
+//    LOG_I("add model id: %d", currentObjId);
     bool result = obj->Init(path, position,rotation, scale, currentObjId++, COL_STATIC, staticCollidesWith);
 
     if(!result)
@@ -1235,7 +1233,6 @@ void TuhuApplication::Duplicate() {
 
 	LOG_I("duplate %d, creating %d", m_selected->GetId(), dupObj->GetId() );
 
-
 	// select duplicated object:
 	m_selected->SetSelected(false);
 	dupObj->SetSelected(true);
@@ -1252,6 +1249,9 @@ void TuhuApplication::Delete() {
 
 	// not selected anymore.
 	m_selected->SetSelected(false);
+
+	LOG_I("delete %d", m_selected->GetId() );
+
 
 	// delete from map:
 	auto it = m_geoObjs.find(m_selected->GetId());

@@ -116,7 +116,7 @@ LightingPass::LightingPass(int framebufferWidth, int framebufferHeight) {
     m_sphereNumTriangles = MyGenerateSphereVertices(1, SLICES, STACKS, m_sphereVertexBuffer, m_sphereIndexBuffer);
 }
 
-void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap) {
+void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches) {
 
     SetupShader(m_directionalShader, gbuffer, camera);
 
@@ -137,10 +137,6 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
 
 
 
-
-
-
-
     SetupShader(m_pointShader, gbuffer, camera);
 
 
@@ -152,6 +148,33 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
     GL_C(glBlendFunc(GL_ONE, GL_ONE));
 
 
+    //DrawTestLights(camera);
+
+    DrawTorches(camera, torches);
+
+
+
+
+
+    GL_C(glDisable(GL_BLEND));
+    GL_C(glFrontFace(GL_CCW));
+    GL_C(glEnable(GL_DEPTH_TEST));
+
+    UnsetupShader(m_pointShader, gbuffer);
+}
+
+
+void LightingPass::DrawTorches(const ICamera* camera, const std::vector<Vector3f>& torches) {
+    for(Vector3f torch : torches ) {
+
+	DrawPointLight(camera, torch, Vector3f(
+			   0.4,0.4,0
+
+			   ),  20.0f);
+    }
+}
+
+void LightingPass::DrawTestLights(const ICamera* camera) {
     int MIN_X = -2;
     int MAX_X = +2;
 
@@ -179,23 +202,12 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
 			       (float)(x-MIN_X) / (MAX_X-MIN_X),
 			       g,
 			       (float)(z-MIN_Z) / (MAX_Z-MIN_Z)
-
-			       ));
+			       ), 			       30.0f);
 
 	}
 
     }
-
-    GL_C(glDisable(GL_BLEND));
-    GL_C(glFrontFace(GL_CCW));
-    GL_C(glEnable(GL_DEPTH_TEST));
-
-
-    UnsetupShader(m_pointShader, gbuffer);
-
 }
-
-
 
 void LightingPass::SetupShader(ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera) {
 
@@ -244,22 +256,20 @@ void LightingPass::UnsetupShader(ShaderProgram* shader, Gbuffer* gbuffer) {
 
 }
 
-void LightingPass::DrawPointLight(const ICamera* camera, const Vector3f& position, const Vector3f& color) {
-
-    const float RADIUS = 30;
+void LightingPass::DrawPointLight(const ICamera* camera, const Vector3f& position, const Vector3f& color, float radius) {
 
     const Matrix4f modelViewMatrix =
 	camera->GetViewMatrix() *
 
 	Matrix4f::CreateTranslation( position ) *
-	Matrix4f::CreateScale(RADIUS,RADIUS,RADIUS);
+	Matrix4f::CreateScale(radius,radius,radius);
 
     const Matrix4f mvp = camera->GetProjectionMatrix() * modelViewMatrix;
 
 
     m_pointShader->SetUniform("mvp",  mvp);
     m_pointShader->SetUniform("modelViewMatrix",  modelViewMatrix);
-    m_pointShader->SetUniform("radius",  (float)RADIUS);
+    m_pointShader->SetUniform("radius",  (float)radius);
     m_pointShader->SetUniform("color",  color  ) ;
 
 
