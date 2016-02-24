@@ -153,7 +153,7 @@ void LightingPass::Render(
     GL_C(glBlendFunc(GL_ONE, GL_ONE));
 
     //DrawTestLights(camera);
-    // DrawTorches(camera, torches);
+    DrawTorches(camera, torches);
 
 
     GL_C(glDisable(GL_BLEND));

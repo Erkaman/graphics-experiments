@@ -54,46 +54,16 @@ void main(void) {
 
     // SHOULD BE ENOUGH IF just send in distortet text coords.
 
-    refractionTexcoord += distort;
-    reflectionTexcoord += distort;
-
-    refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
-
-    vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
-    vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
-
 //    refraction = clamp(refraction, 0.001, 1.0 - 0.001);
 
     vec3 n = texture(textureArray, vec3(distortedTexCoords, normalMap) ).xyz;
     n = vec3(2*n.r - 1.0, n.b, 2*n.g - 1.0);
     n = normalize(n);
 
-    vec3 v = toCameraVector;
-    vec3 l = -lightDirection.xyz;
-
-    float spec= calcSpec(l,n,v);
-
-    vec3 color;
-
-    float fresnel = dot(
-	toCameraVector, vec3(0,1,0));
-
-    color = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
-
-    color += sceneLight * pow(spec,20.0) * 0.6;
-
     float waterDistance = toLinearDepth(gl_FragCoord.z);
     float floorDistance = toLinearDepth(  texture(depthMap, ndc).r  );
-
     float waterDepth = floorDistance - waterDistance;
-
-
-//    color = vec3(waterDepth / 70 );
-
     float a = clamp(waterDepth / 3.0, 0.0, 1.0);
-//    a = 1.0;
-
-//    geoData[0] = vec4(color,a);
 
     float ao = 1;
     float id = 2.0f;
