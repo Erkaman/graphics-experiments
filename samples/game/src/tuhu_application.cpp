@@ -987,11 +987,13 @@ void TuhuApplication::Update(const float delta) {
 	}
 	m_curCamera->Update(0);
     }
-
+/*
     if( kbs.IsPressed(GLFW_KEY_L) ) {
 	save_screenshot("screen.tga", WINDOW_WIDTH, WINDOW_HEIGHT);
     }
+*/
 
+    //
     m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
 
 }
