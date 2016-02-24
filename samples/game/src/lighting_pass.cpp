@@ -126,11 +126,14 @@ void LightingPass::Render(
 
     SetupShader(m_directionalShader, gbuffer, camera, cubeMapTexture, refractionMap, reflectionMap);
 
+
     m_directionalShader->SetUniform("shadowMap", SHADOW_TEXTURE_UNIT);
     Texture::SetActiveTextureUnit(SHADOW_TEXTURE_UNIT);
     shadowMap.GetRenderTargetTexture().Bind();
 
     m_directionalShader->SetLightUniforms(camera, lightPosition, lightVp);
+
+
 
     GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
 
@@ -140,10 +143,7 @@ void LightingPass::Render(
 
     shadowMap.GetRenderTargetTexture().Unbind();
 
-
-
     SetupShader(m_pointShader, gbuffer, camera, cubeMapTexture, refractionMap, reflectionMap);
-
 
 
     GL_C(glFrontFace(GL_CW));
@@ -154,7 +154,6 @@ void LightingPass::Render(
 
     //DrawTestLights(camera);
     DrawTorches(camera, torches);
-
 
     GL_C(glDisable(GL_BLEND));
     GL_C(glFrontFace(GL_CCW));

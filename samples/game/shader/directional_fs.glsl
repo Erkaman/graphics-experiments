@@ -19,7 +19,7 @@ uniform vec3 viewSpaceLightDirection;
 uniform mat4 lightVp;
 uniform mat4 inverseViewMatrix;
 uniform mat4 invProj;
-uniform vec3 lightDirection;
+uniform vec4 lightDirection;
 uniform mat4 proj;
 uniform mat4 inverseViewNormalMatrix;
 uniform mat4 invViewMatrix;

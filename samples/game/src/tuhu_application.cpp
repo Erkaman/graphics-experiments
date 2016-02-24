@@ -190,6 +190,7 @@ void TuhuApplication::Init() {
     m_envFbo = new EnvFBO();
     m_envFbo->Init(ENV_FBO_TEXTURE_UNIT, 512, 512);
 
+    LOG_I("LOG1");
 
     m_refractionFbo = new ColorDepthFbo();
     m_refractionFbo->Init(REFRACTION_FBO_TEXTURE_UNIT, REFRACTION_WIDTH, REFRACTION_HEIGHT);
@@ -210,6 +211,9 @@ void TuhuApplication::Init() {
 	PrintErrorExit();
     }
 
+
+    LOG_I("LOG2");
+
     currentObjId = 0;
 
     Config& m_config = Config::GetInstance();
@@ -225,6 +229,8 @@ void TuhuApplication::Init() {
 	LOG_I("No GUI created");
     }
 
+    LOG_I("LOG3");
+
     m_cameraFrustum = new ViewFrustum();
     m_lightFrustum = new ViewFrustum();
     m_reflectionFrustum = new ViewFrustum();
@@ -233,10 +239,10 @@ void TuhuApplication::Init() {
 
     // NOTE: we can fix the shadows by setting trans to (0,0,0).
     Vector3f trans = Vector3f(-2,9.0,-2);
-
+/*
     m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
     m_smoke->Init();
-
+*/
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
@@ -245,6 +251,7 @@ void TuhuApplication::Init() {
 	Vector3f(39.407707, 36.707958, 71.216125);
 
 
+    LOG_I("LOG4");
 
 
     m_freeCamera = new Camera(
@@ -353,6 +360,8 @@ void TuhuApplication::Init() {
     */
 
     m_curCamera = m_freeCamera;
+
+    LOG_I("LOG5");
 
 
 //    StartPhysics();
@@ -722,6 +731,7 @@ void TuhuApplication::RenderReflection() {
 
 void TuhuApplication::Render() {
 
+
     if(m_gui) {
 	m_gui->NewFrame(m_guiVerticalScale);
     }
@@ -764,7 +774,6 @@ void TuhuApplication::Render() {
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-
     RenderScene();
 
    m_gbuffer->UnbindForWriting();
@@ -782,8 +791,6 @@ void TuhuApplication::Render() {
 	);
 
     Matrix4f lightVp =  biasMatrix*   m_lightVp;
-
-
 
     m_gpuProfiler->Begin(GTS_Light);
     m_lightingPass->Render(
@@ -819,12 +826,12 @@ void TuhuApplication::Render() {
 
     m_gpuProfiler->WaitForDataAndUpdate();
 
-
     m_gpuProfiler->EndFrame();
 
 }
 
 void TuhuApplication::Update(const float delta) {
+
 
     MouseState& ms = MouseState::GetInstance();
 
@@ -862,7 +869,7 @@ void TuhuApplication::Update(const float delta) {
     m_heightMap->Update(*m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums(), *m_reflectionFrustum );
 
 
-    m_smoke->Update(delta);
+//    m_smoke->Update(delta);
 
     if(m_gui)
 	m_gui->Update();
@@ -986,7 +993,6 @@ void TuhuApplication::Update(const float delta) {
     }
 
     m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
-
 
 }
 
