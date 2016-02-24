@@ -39,11 +39,6 @@ void main(void) {
     vec2 refractionTexcoord = ndc;
     vec2 reflectionTexcoord = vec2(ndc.x, 1 -ndc.y);
 
-/*
-    vec2 tc = vec2(
-	texcoordOut.x + totalDelta * 0.04,
-	texcoordOut.y + totalDelta * 0.01);
-*/
     vec2 tc = vec2(
 	texcoordOut.x,
 	texcoordOut.y);
@@ -56,6 +51,8 @@ void main(void) {
 
     //vec2 distort = texture(textureArray, vec3(tc, dudvMap) ).rg * 2.0 - 1.0;
 
+
+    // SHOULD BE ENOUGH IF just send in distortet text coords.
 
     refractionTexcoord += distort;
     reflectionTexcoord += distort;
@@ -97,11 +94,12 @@ void main(void) {
 //    a = 1.0;
 
 //    geoData[0] = vec4(color,a);
-    geoData[0] = vec4(vec3(1,0,0),0);
 
-    geoData[1] = vec4(
-	vec3(0,0,0)
-	, 2);
+    float ao = 1;
+    float id = 2.0f;
 
+    geoData[0] = vec4(vec3(1,0,0),ao);
 
+    geoData[1] = vec4(n, id);
+    geoData[2] = vec4(distort,0, 1);
 }

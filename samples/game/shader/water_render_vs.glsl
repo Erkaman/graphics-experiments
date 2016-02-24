@@ -16,6 +16,8 @@ out vec4 clipSpace;
 
 out vec3 toCameraVector;
 
+out vec3 worldPositionOut;
+
 void main()
 {
     texcoordOut = texCoordIn;
@@ -27,4 +29,6 @@ void main()
     gl_Position = clipSpace;
 
     toCameraVector = normalize(eyePos - worldPosition.xyz);
+
+    worldPositionOut = worldPosition.xyz;
 }

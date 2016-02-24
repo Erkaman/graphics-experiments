@@ -9,6 +9,8 @@
 #include "ewa/gl/depth_fbo.hpp"
 #include "ewa/gl/texture2d.hpp"
 #include "ewa/gl/cube_map_texture.hpp"
+#include "ewa/gl/color_depth_fbo.hpp"
+#include "ewa/gl/color_fbo.hpp"
 
 
 #include "ewa/camera.hpp"
@@ -233,6 +235,14 @@ void LightingPass::SetupShader(
     Texture::SetActiveTextureUnit(ENV_TEXTURE_UNIT);
     cubeMapTexture->Bind();
 
+    shader->SetUniform("refractionMap",REFRACTION_TEXTURE_UNIT );
+    Texture::SetActiveTextureUnit(REFRACTION_TEXTURE_UNIT);
+    refractionMap.GetColorTexture()->Bind();
+
+    shader->SetUniform("reflectionMap", REFLECTION_TEXTURE_UNIT);
+    Texture::SetActiveTextureUnit(REFLECTION_TEXTURE_UNIT);
+    reflectionMap.GetRenderTargetTexture().Bind();
+
 
     shader->SetUniform("screenSize", m_screenSize);
 
@@ -251,9 +261,14 @@ void LightingPass::SetupShader(
     shader->SetUniform("proj", camera->GetProjectionMatrix());
 
 
+    Matrix4f viewMatrix = camera->GetViewMatrix();
+    Matrix4f invViewMatrix = viewMatrix.Inverse();
+    shader->SetUniform("invViewMatrix", invViewMatrix  );
+
     shader->SetUniform("inverseViewNormalMatrix",
 		       camera->GetViewMatrix().Transpose()  );
 
+    shader->SetUniform("eyePos", camera->GetPosition() );
 }
 
 void LightingPass::UnsetupShader(
@@ -265,6 +280,10 @@ void LightingPass::UnsetupShader(
     gbuffer->GetDepthTexture()->Unbind();
     gbuffer->GetSpecularTexture()->Unbind();
     cubeMapTexture->Unbind();
+
+    refractionMap.GetColorTexture()->Unbind();
+    reflectionMap.GetRenderTargetTexture().Unbind();
+
 
 
 
@@ -290,3 +309,11 @@ void LightingPass::DrawPointLight(const ICamera* camera, const Vector3f& positio
     VBO::DrawIndices(*m_sphereVertexBuffer, *m_sphereIndexBuffer, GL_TRIANGLES, (m_sphereNumTriangles)*3);
 
 }
+
+/*
+  Plan:
+
+  send out normal as usually.
+
+  send of textcoord distort
+ */
