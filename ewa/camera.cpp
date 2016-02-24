@@ -12,6 +12,13 @@
 
 using std::string;
 
+
+void Camera::ComputeProjection(float near, float far) {
+    m_projectionMatrix =
+	Matrix4f::CreatePerspective (45.0f, m_ratio, near, far);
+}
+
+
 /*
 constexpr float NEAR = 0.1f;
 constexpr float FAR = 100000.0f;
@@ -25,8 +32,10 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
 
     Config& config = Config::GetInstance();
 
-    m_projectionMatrix =
-	Matrix4f::CreatePerspective (45.0f, (float)windowWidth/(float)windowHeight, config.GetZNear(), config.GetZFar());
+    m_ratio = (float)windowWidth/(float)windowHeight;
+
+    ComputeProjection(config.GetZNear(), config.GetZFar());
+
 
     /*
     float S = 20.0f;
@@ -63,8 +72,6 @@ void Camera::Fly(const float amount) {
 }
 
 void Camera::Update(const float delta) {
-
-
 
     const MouseState& mouse = MouseState::GetInstance();
     const KeyboardState& kbs = KeyboardState::GetInstance();
@@ -151,7 +158,12 @@ ICamera* Camera::CreateReflectionCamera()const {
 	reflectionCamera->m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
     reflectionCamera->m_up = Vector3f(0,1.0f,0);
 
+
+
     reflectionCamera->ComputeViewMatrix();
+
+    reflectionCamera->ComputeProjection(0.1f, 300.0f);
+
 
     return reflectionCamera;
 }

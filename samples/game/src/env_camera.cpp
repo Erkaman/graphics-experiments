@@ -25,7 +25,7 @@ EnvCamera::EnvCamera(const Vector3f& position, int i) {
 
     m_projectionMatrix =
 	Matrix4f::CreatePerspective (90.0f, 1.0f, config.GetZNear(),
-				     HighQuality ? 300.0f : 100.0f);
+				     HighQuality ? 250.0f : 100.0f);
 
 //    Update(0);
 }
@@ -93,3 +93,4 @@ Vector3f EnvCamera::GetPosition() const {
 void EnvCamera::SetPosition(const Vector3f& position) {
     m_position = position;
 }
+

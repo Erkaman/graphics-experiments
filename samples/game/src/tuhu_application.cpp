@@ -667,6 +667,10 @@ void TuhuApplication::RenderScene() {
 void TuhuApplication::RenderEnvMap() {
 
     for(int i = 0; i < 6; ++i) {
+
+	if(i == 3) // dont draw for bottom cube map side.
+	    continue;
+
 	// bind fbo
 	m_envFbo->Bind();
 	{
@@ -723,7 +727,6 @@ void TuhuApplication::RenderReflection() {
 
 	GeometryObject::RenderReflection(m_reflectionCamera, m_lightDirection);
 
-
     }
     m_reflectionFbo->Unbind();
 }
@@ -747,7 +750,6 @@ void TuhuApplication::Render() {
     m_gpuProfiler->Begin(GTS_Refraction);
     RenderRefraction();
     m_gpuProfiler->End(GTS_Refraction);
-
 
     m_gpuProfiler->Begin(GTS_Reflection);
     RenderReflection();

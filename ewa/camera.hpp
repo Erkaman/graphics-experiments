@@ -11,9 +11,10 @@ private:
     Vector3f m_right;
     Vector3f m_up;
 
+    float m_ratio;
 
     void ComputeViewMatrix();
-
+    void ComputeProjection(float near, float far);
 
 public:
 

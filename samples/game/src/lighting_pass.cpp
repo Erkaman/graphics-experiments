@@ -152,8 +152,13 @@ void LightingPass::Render(
     GL_C(glEnable(GL_BLEND));
     GL_C(glBlendFunc(GL_ONE, GL_ONE));
 
-    //DrawTestLights(camera);
+
+
+//    DrawTestLights(camera);
     DrawTorches(camera, torches);
+
+
+
 
     GL_C(glDisable(GL_BLEND));
     GL_C(glFrontFace(GL_CCW));

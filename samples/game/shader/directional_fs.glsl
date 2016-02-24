@@ -84,6 +84,8 @@ void main() {
 				     reflect(-v, n.xyz ), 0.0)).xyz;
 
 	envMapSample = texture(envMap, reflectionVector).rgb;
+
+
     }
 
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
@@ -100,6 +102,13 @@ void main() {
 
 //	fragmentColor = vec4(vec3(1,0,0), 1.0);
 
+/*
+    if(id == 1.0) {
+
+
+	fragmentColor = vec4(envMapSample, 1.0);
+    }
+    */
 
     if(id == 2.0) {
 
