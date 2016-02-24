@@ -862,6 +862,10 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 
 		batch->m_defaultShader->SetUniform("inverseViewNormalMatrix",
 						   camera->GetViewMatrix().Transpose()  );
+
+
+		batch->m_defaultShader->SetUniform("id", 1.0f);
+
 	    } else if(geoObj->GetFilename() == "obj/water.eob") {
 
 		batch->m_defaultShader->SetUniform("refractionMap", 8);
@@ -892,6 +896,8 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 */
 
+	    } else {
+		batch->m_defaultShader->SetUniform("id", 0.0f);
 	    }
 
 

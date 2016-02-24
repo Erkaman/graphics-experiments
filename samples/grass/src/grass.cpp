@@ -56,8 +56,6 @@ void Grass::AddQuad(GrassGroup* grassGroup,
 
 Grass::Grass(const std::vector<std::string>& textureFilenames, const Vector4f& lightPosition): NUM_GRASS_GROUPS(textureFilenames.size()), m_lightPosition(lightPosition){
 
-
-
     m_shader = new ShaderProgram("shader/grass");
 
 

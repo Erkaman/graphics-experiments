@@ -250,7 +250,7 @@ Skydome::~Skydome() {
 
 void Skydome::Draw(const ICamera* camera) {
 
-//    SetDepthTest(false);
+    SetDepthTest(false);
 
 
     DrawDome(camera);
@@ -272,7 +272,7 @@ void Skydome::Draw(const ICamera* camera) {
     m_billboardShader->Unbind();
 
 
-    //   SetDepthTest(true);
+    SetDepthTest(true);
 }
 
 void Skydome::Update(const float delta) {

@@ -8,6 +8,7 @@
 #include "gbuffer.hpp"
 #include "ewa/gl/depth_fbo.hpp"
 #include "ewa/gl/texture2d.hpp"
+#include "ewa/gl/cube_map_texture.hpp"
 
 
 #include "ewa/camera.hpp"
@@ -116,12 +117,15 @@ LightingPass::LightingPass(int framebufferWidth, int framebufferHeight) {
     m_sphereNumTriangles = MyGenerateSphereVertices(1, SLICES, STACKS, m_sphereVertexBuffer, m_sphereIndexBuffer);
 }
 
-void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches) {
+void LightingPass::Render(
+    Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition,
+    const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches,
+    CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap) {
 
-    SetupShader(m_directionalShader, gbuffer, camera);
+    SetupShader(m_directionalShader, gbuffer, camera, cubeMapTexture, refractionMap, reflectionMap);
 
-    m_directionalShader->SetUniform("shadowMap", 6);
-    Texture::SetActiveTextureUnit(6);
+    m_directionalShader->SetUniform("shadowMap", SHADOW_TEXTURE_UNIT);
+    Texture::SetActiveTextureUnit(SHADOW_TEXTURE_UNIT);
     shadowMap.GetRenderTargetTexture().Bind();
 
     m_directionalShader->SetLightUniforms(camera, lightPosition, lightVp);
@@ -130,14 +134,13 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
 
     shadowMap.GetRenderTargetTexture().Unbind();
 
-    UnsetupShader(m_directionalShader, gbuffer);
+    UnsetupShader(m_directionalShader, gbuffer, cubeMapTexture, refractionMap, reflectionMap);
 
     shadowMap.GetRenderTargetTexture().Unbind();
 
 
 
-
-    SetupShader(m_pointShader, gbuffer, camera);
+    SetupShader(m_pointShader, gbuffer, camera, cubeMapTexture, refractionMap, reflectionMap);
 
 
 
@@ -147,20 +150,15 @@ void LightingPass::Render(Gbuffer* gbuffer, const ICamera* camera, const Vector4
     GL_C(glEnable(GL_BLEND));
     GL_C(glBlendFunc(GL_ONE, GL_ONE));
 
-
     //DrawTestLights(camera);
-
-    DrawTorches(camera, torches);
-
-
-
+    // DrawTorches(camera, torches);
 
 
     GL_C(glDisable(GL_BLEND));
     GL_C(glFrontFace(GL_CCW));
     GL_C(glEnable(GL_DEPTH_TEST));
 
-    UnsetupShader(m_pointShader, gbuffer);
+    UnsetupShader(m_pointShader, gbuffer, cubeMapTexture, refractionMap, reflectionMap);
 }
 
 
@@ -209,7 +207,9 @@ void LightingPass::DrawTestLights(const ICamera* camera) {
     }
 }
 
-void LightingPass::SetupShader(ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera) {
+void LightingPass::SetupShader(
+    ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera,
+    CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap) {
 
     shader->Bind();
 
@@ -229,6 +229,10 @@ void LightingPass::SetupShader(ShaderProgram* shader, Gbuffer* gbuffer, const IC
     Texture::SetActiveTextureUnit(SPECULAR_TEXTURE_UNIT);
     gbuffer->GetSpecularTexture()->Bind();
 
+    shader->SetUniform("envMap",ENV_TEXTURE_UNIT );
+    Texture::SetActiveTextureUnit(ENV_TEXTURE_UNIT);
+    cubeMapTexture->Bind();
+
 
     shader->SetUniform("screenSize", m_screenSize);
 
@@ -245,14 +249,24 @@ void LightingPass::SetupShader(ShaderProgram* shader, Gbuffer* gbuffer, const IC
 
     shader->SetUniform("invProj", invProj);
     shader->SetUniform("proj", camera->GetProjectionMatrix());
+
+
+    shader->SetUniform("inverseViewNormalMatrix",
+		       camera->GetViewMatrix().Transpose()  );
+
 }
 
-void LightingPass::UnsetupShader(ShaderProgram* shader, Gbuffer* gbuffer) {
+void LightingPass::UnsetupShader(
+    ShaderProgram* shader, Gbuffer* gbuffer,
+    CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap) {
     shader->Unbind();
 
     gbuffer->GetColorTexture()->Unbind();
     gbuffer->GetDepthTexture()->Unbind();
     gbuffer->GetSpecularTexture()->Unbind();
+    cubeMapTexture->Unbind();
+
+
 
 }
 

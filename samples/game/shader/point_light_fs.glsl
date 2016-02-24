@@ -31,7 +31,11 @@ void main() {
     vec3 viewSpacePosition = getViewSpacePosition(invProj, depthTexture, texCoord);
 
     vec3 v = -normalize(viewSpacePosition);
-    vec3 n = readNormalTexture(normalTexture, texCoord);
+
+    vec3 n;
+    float id;
+    readNormalTexture(normalTexture, texCoord, n, id);
+
     vec3 lightDist = viewSpacePosition - lightCenter;
     vec3 l = -normalize(lightDist);
 

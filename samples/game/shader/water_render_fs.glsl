@@ -67,8 +67,6 @@ void main(void) {
 
 //    refraction = clamp(refraction, 0.001, 1.0 - 0.001);
 
-
-
     vec3 n = texture(textureArray, vec3(distortedTexCoords, normalMap) ).xyz;
     n = vec3(2*n.r - 1.0, n.b, 2*n.g - 1.0);
     n = normalize(n);
@@ -100,5 +98,10 @@ void main(void) {
 
 //    geoData[0] = vec4(color,a);
     geoData[0] = vec4(vec3(1,0,0),0);
+
+    geoData[1] = vec4(
+	vec3(0,0,0)
+	, 2);
+
 
 }

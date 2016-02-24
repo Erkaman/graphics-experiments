@@ -117,6 +117,7 @@ uniform sampler2DArray textureArray;
 
 uniform vec3 ambientLight;
 uniform vec3 sceneLight;
+uniform float id;
 
 out vec4 geoData[3];
 
@@ -280,7 +281,6 @@ void main(void) {
     vec3 envMapSample = texture(envMap, reflectionVector).rgb;
 #endif
 
-
 #else
     vec3 envMapSample = vec3(0);
 #endif
@@ -312,7 +312,7 @@ void main(void) {
 
     geoData[1] = vec4(
 	normalize(normalize(vec4(n,0.0)).xyz)
-	, 0);
+	, id);
 
     geoData[2] = vec4(vec3(specColor.xyz), specShiny / 100.0 );
 #else

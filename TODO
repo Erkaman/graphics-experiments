@@ -10,9 +10,7 @@ http://stackoverflow.com/questions/9914046/opengl-how-to-use-depthbuffer-from-fr
 deferred TODO:
 fix water
 fix env map.
-fix particle system shading.
-fix light sources.
-fix so that you can place light sources.
+
 
 ao TODO:
 ao for trees:

@@ -164,13 +164,14 @@ vec3 getViewSpacePosition(mat4 invProj, sampler2D depthTexture, vec2 texCoord) {
     return p.xyz / p.w;
 }
 
-vec3 readNormalTexture(sampler2D normalTexture, vec2 texCoord) {
+void readNormalTexture(
+    sampler2D normalTexture, vec2 texCoord, out vec3 n, out float id) {
 
     vec4 sample = texture(normalTexture, texCoord);
     vec3 viewSpaceNormal = sample.xyz;
 
-    vec3 n = viewSpaceNormal;
-    return n;
+    n = viewSpaceNormal;
+    id = sample.w;
 }
 
 void readSpecularTexture(sampler2D specularTexture, vec2 texCoord, out vec3 specColor, out float specShiny) {
