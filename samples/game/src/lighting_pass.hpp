@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ewa/math/vector2f.hpp"
+#include "ewa/math/vector3f.hpp"
 
 class ShaderProgram;
 class Gbuffer;
@@ -11,10 +12,22 @@ class Vector4f;
 class Matrix4f;
 class DepthFBO;
 class VBO;
-class Vector3f;
 class CubeMapTexture;
 class ColorDepthFbo;
 class ColorFBO;
+
+struct PointLight {
+    Vector3f m_position;
+    Vector3f m_color;
+    float m_radius;
+
+    PointLight(
+	Vector3f position, Vector3f color, float radius) {
+	m_position = position;
+	m_color = color;
+     m_radius = radius;
+    }
+};
 
 class LightingPass{
 
@@ -37,8 +50,10 @@ private:
 
     void DrawPointLight(const ICamera* camera, const Vector3f& position, const Vector3f& color, float radius);
 
-    void DrawTestLights(const ICamera* camera);
-    void DrawTorches(const ICamera* camera, const std::vector<Vector3f>& torches);
+    std::vector<PointLight> GetTestLights(const ICamera* camera);
+    std::vector<PointLight> GetTorches(const ICamera* camera, const std::vector<Vector3f>& torches);
+
+    void DrawLights(const ICamera* camera, const std::vector<PointLight>& lights);
 
 public:
 

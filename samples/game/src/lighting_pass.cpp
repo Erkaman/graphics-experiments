@@ -154,9 +154,12 @@ void LightingPass::Render(
 
 
 
-//    DrawTestLights(camera);
-    DrawTorches(camera, torches);
+//    std::vector<PointLight> lights = GetTestLights(camera);
 
+    std::vector<PointLight> lights = GetTorches(camera, torches);
+
+
+    DrawLights(camera, lights);
 
 
 
@@ -167,23 +170,34 @@ void LightingPass::Render(
     UnsetupShader(m_pointShader, gbuffer, cubeMapTexture, refractionMap, reflectionMap);
 }
 
+void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLight>& lights) {
 
-void LightingPass::DrawTorches(const ICamera* camera, const std::vector<Vector3f>& torches) {
-    for(Vector3f torch : torches ) {
-
-	DrawPointLight(camera, torch, Vector3f(
-			   0.4,0.4,0
-
-			   ),  20.0f);
+    for(const PointLight& pointLight : lights) {
+	DrawPointLight(
+	    camera, pointLight.m_position,  pointLight.m_color, pointLight.m_radius);
     }
 }
 
-void LightingPass::DrawTestLights(const ICamera* camera) {
+std::vector<PointLight> LightingPass::GetTorches(const ICamera* camera, const std::vector<Vector3f>& torches) {
+
+    std::vector<PointLight> lights;
+
+    for(Vector3f torch : torches ) {
+	lights.push_back( PointLight(torch, Vector3f(0.4,0.4,0), 20.0f  ));
+    }
+
+    return lights;
+}
+
+std::vector<PointLight> LightingPass::GetTestLights(const ICamera* camera) {
     int MIN_X = -2;
     int MAX_X = +2;
 
     int MIN_Z = -2;
     int MAX_Z = +2;
+
+    std::vector<PointLight> lights;
+
 
     for(int x = MIN_X; x <= MAX_X; ++x) {
 
@@ -202,15 +216,23 @@ void LightingPass::DrawTestLights(const ICamera* camera) {
 	    else
 		g = 1;
 
-	    DrawPointLight(camera, Vector3f(40 * x,4, 40 * z), Vector3f(
-			       (float)(x-MIN_X) / (MAX_X-MIN_X),
+	lights.push_back( PointLight(
+
+			      Vector3f(40 * x,4, 40 * z),
+
+			      Vector3f((float)(x-MIN_X) / (MAX_X-MIN_X),
 			       g,
 			       (float)(z-MIN_Z) / (MAX_Z-MIN_Z)
-			       ), 			       30.0f);
+			      ),
+
+			      30.0f));
+
 
 	}
 
     }
+
+    return lights;
 }
 
 void LightingPass::SetupShader(
