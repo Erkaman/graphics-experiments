@@ -126,7 +126,7 @@ GeometryObjectData* RayTracer::RayTrace() {
 
 //    LOG_I("vertices size: %d", m_geoObj->m_verticesSize);
 
-    const int vertexSize = (3+2+3) * 4;
+    const int vertexSize = (3+2+3) * sizeof(float);
     const int numVertices = m_geoObj->m_verticesSize / vertexSize;
 
     LOG_I("m_geoObj->m_verticesSize: %d", m_geoObj->m_verticesSize);
@@ -140,6 +140,11 @@ GeometryObjectData* RayTracer::RayTrace() {
 
     Vertex* verticesBuffer = (Vertex *)m_geoObj->m_vertices;
     std::vector<Vertex> vertices(verticesBuffer, verticesBuffer + numVertices);
+
+/*
+    float* blabla = (float *)m_geoObj->m_vertices;
+    std::vector<float> blas(blabla, blabla +   );
+*/
 
     for(int i = 0; i < vertices.size(); ++i) {
 //	LOG_I("vert pos: %s", string(vertices[i].point).c_str() );
@@ -162,11 +167,11 @@ GeometryObjectData* RayTracer::RayTrace() {
 
 	    Triangle tri;
 
-	    tri.p0 = vertices[indices[i+0]].point;
-	    tri.p1 = vertices[indices[i+1]].point;
-	    tri.p2 = vertices[indices[i+2]].point;
-
+	    tri.p0 = verticesBuffer[indices[i*3+0]].point;
+	    tri.p1 = verticesBuffer[indices[i*3+1]].point;
+	    tri.p2 = verticesBuffer[indices[i*3+2]].point;
 /*
+	    LOG_I("TRI");
 	    LOG_I("v0: %s", string(tri.p0).c_str() );
 	    LOG_I("v1: %s", string(tri.p1).c_str() );
 	    LOG_I("v2: %s", string(tri.p2).c_str() );
@@ -176,6 +181,7 @@ GeometryObjectData* RayTracer::RayTrace() {
 	    triangles.push_back(tri);
 	}
     }
+//    exit(1);
 /*
 INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:168:RayTrace:v0: (0.000000, 0.000000, 1.879216)
 INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:169:RayTrace:v1: (0.000000, 0.000000, -1.000000)
@@ -295,7 +301,7 @@ INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:170:RayTrace:v2: (-1.000000
 
 
 		// ray origin
-		const Vector3f o = v.point + d * 0.0001f;
+		const Vector3f o = v.point + d * 0.01f;
 
 //		LOG_I("o: %s", string(o).c_str() );
 
@@ -389,31 +395,3 @@ INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:170:RayTrace:v2: (-1.000000
 
     return m_geoObj;
 }
-
-
-/*
-  INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:182:RayTrace:d: (-0.930383, -0.300498, -0.209974)
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:184:RayTrace:length: 1.000000
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:247:RayTrace:hit da tri
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:249:RayTrace:d: (-0.930383, -0.300498, -0.209974)
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:250:RayTrace:o: (-1.000093, -0.714316, -0.714307)
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:252:RayTrace:v0: (1.000000, -1.000000, -1.000000)
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:253:RayTrace:v1: (0.714286, -1.000000, -1.000000)
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:254:RayTrace:v2: (1.000000, -0.714286, 0.714286)
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:267:RayTrace:hit at: 0.896671
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:280:RayTrace:div: 9.176004/9.176004,
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:283:RayTrace:normal: (-1.000000, 0.000000, 0.000000)
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:284:RayTrace:pos: (-1.000000, -0.714286, -0.714286)
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:285:RayTrace:hits: 20
-INFO: /Users/eric/tuhu/samples/ao/src/ray_tracer.cpp:286:RayTrace:ao: 0.000000
- */
-
-
-
-/*
-(0.714286, -1.000000, -1.000000)
-
-
-
-(1.000000, -0.714286, 0.714286)
-*/

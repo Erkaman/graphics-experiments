@@ -101,36 +101,6 @@ void main() {
 
     fragmentColor = light * vec4(vec3(color),1) * ztest * atten;
 
-//    fragmentColor = vec4(1,0,0,1);
+//    fragmentColor = light * vec4(vec3(color),1);
 
-
-//    fragmentColor = vec4(vec3(diff), 1);
-
-
-
-//    fragmentColor = vec4(vec3(color),1) * ztest;
-
-
-//    fragmentColor = vec4(vec3(atten), 1);
-
-//    specColor = vec3(0);
-
-/*
-    vec3 light2=ambientLight*diffColor; // ambient
-
-    light2 += (
-	diffColor*sceneLight*diff * visibility  +
-	specColor*pow(spec,specShiny) * visibility);
-
-      fragmentColor = vec4(vec3(light2.xyz) * vec3(1,0,0), 1);
-
-      fragmentColor = vec4( vec3(1,1,1) + specColor *pow(spec,specShiny) * visibility  , 1);
-
-//      fragmentColor = vec4( vec3(1,1,1) + pow(-0.001,0.001) * visibility  , 1);
-
-
-//      fragmentColor = vec4( specColor  , 1);
-
-//        fragmentColor = vec4(vec3(1,0,0), 1);
-*/
 }

@@ -9,8 +9,10 @@ uniform sampler2D depthTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D specularTexture;
 uniform sampler2DShadow shadowMap;
+uniform sampler2D lightGrid;
 
 uniform vec2 screenSize;
+uniform float gridCount;
 
 uniform vec3 ambientLight;
 uniform vec3 sceneLight;
@@ -31,6 +33,41 @@ uniform sampler2D reflectionMap;
 
 uniform samplerCube envMap;
 
+
+bool isInt(float f, float eps) {
+    return
+	((f - floor(f)) < eps ||
+	 (ceil(f) - f) < eps);
+}
+
+// This helper function returns 1.0 if the current pixel is on a grid line, 0.0 otherwise
+float IsGridLine(vec2 fragCoord)
+{
+	// Define the size we want each grid square in pixels
+	vec2 vPixelsPerGridSquare = vec2(100.0, 100.0);
+
+	// fragCoord is an input to the shader, it defines the pixel co-ordinate of the current pixel
+	vec2 vScreenPixelCoordinate = fragCoord.xy;
+
+	// Get a value in the range 0->1 based on where we are in each grid square
+	// fract() returns the fractional part of the value and throws away the whole number part
+	// This helpfully wraps numbers around in the 0->1 range
+	vec2 vGridSquareCoords = fract(vScreenPixelCoordinate / vPixelsPerGridSquare);
+
+	// Convert the 0->1 co-ordinates of where we are within the grid square
+	// back into pixel co-ordinates within the grid square
+	vec2 vGridSquarePixelCoords = vGridSquareCoords * vPixelsPerGridSquare;
+
+	// step() returns 0.0 if the second parmeter is less than the first, 1.0 otherwise
+	// so we get 1.0 if we are on a grid line, 0.0 otherwise
+	vec2 vIsGridLine = step(vGridSquarePixelCoords, vec2(1.0));
+
+	// Combine the x and y gridlines by taking the maximum of the two values
+	float fIsGridLine = max(vIsGridLine.x, vIsGridLine.y);
+
+	// return the result
+	return fIsGridLine;
+}
 
 void main() {
 
@@ -182,7 +219,35 @@ void main() {
 
     }
 
+    float GRID_COUNT = 10.0;
+
+    float gridCellSize = 1 / gridCount;
+
+
+
+//    vec3 gridColor = texture(lightGrid, (texCoord / gridCellSize) / gridCount  ).xyz;
+    vec3 gridColor = texture(lightGrid, texCoord  ).xyz;
+
+    //   fragmentColor = vec4(gridColor, 1.0);
+
+//    fragmentColor = vec4(vec3(texCoord / gridCellSize ,0), 1.0);
+
+
+//	fragmentColor = vec4(vec3(texCoord.xy,0), 1.0);
+
 //    fragmentColor = vec4( vec3(specMat), 1.0 );
 
+/*
+    if(
+
+	isInt(   texCoord.x / gridCellSize, 0.015  ) ||
+	isInt(   texCoord.y / gridCellSize, 0.015  )
+
+
+	){
+	fragmentColor = vec4(vec3(0,1,0), 1.0);
+
+    }
+    */
 
 }

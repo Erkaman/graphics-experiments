@@ -13,10 +13,18 @@
 #include "ewa/gl/color_fbo.hpp"
 
 
+#include "ewa/math/vector4f.hpp"
+
+
 #include "ewa/camera.hpp"
+
+#include <float.h>
+
 
 constexpr int SLICES = 10;
 constexpr int STACKS = 10;
+
+constexpr int GRID_COUNT = 8; // 1,2,4,8,16,32
 
 using std::vector;
 using std::string;
@@ -106,6 +114,7 @@ GLushort MyGenerateSphereVertices(
 
 LightingPass::LightingPass(int framebufferWidth, int framebufferHeight) {
     m_screenSize = Vector2f(framebufferWidth, framebufferHeight);
+
     m_directionalShader = ShaderProgram::Load("shader/directional");
 
 
@@ -117,6 +126,21 @@ LightingPass::LightingPass(int framebufferWidth, int framebufferHeight) {
     m_sphereIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
     m_sphereNumTriangles = MyGenerateSphereVertices(1, SLICES, STACKS, m_sphereVertexBuffer, m_sphereIndexBuffer);
+
+
+    m_lightGridTexture = new Texture2D(nullptr, GRID_COUNT, GRID_COUNT,
+				       GL_RGB16F,
+				       GL_RGB,
+				       GL_FLOAT);
+
+
+    m_lightGridTexture->Bind();
+    m_lightGridTexture->SetTextureClamping();
+    m_lightGridTexture->SetMinFilter(GL_NEAREST);
+    m_lightGridTexture->SetMagFilter(GL_NEAREST);
+    m_lightGridTexture->Unbind();
+
+    m_lightGridTextureBuffer = new Vector3f[GRID_COUNT*GRID_COUNT];
 }
 
 void LightingPass::Render(
@@ -131,13 +155,24 @@ void LightingPass::Render(
     Texture::SetActiveTextureUnit(SHADOW_TEXTURE_UNIT);
     shadowMap.GetRenderTargetTexture().Bind();
 
+
+    m_directionalShader->SetUniform("lightGrid", LIGHT_GRID_TEXTURE_UNIT);
+    Texture::SetActiveTextureUnit(LIGHT_GRID_TEXTURE_UNIT);
+    m_lightGridTexture->Bind();
+
+
+
+
     m_directionalShader->SetLightUniforms(camera, lightPosition, lightVp);
 
+
+    m_directionalShader->SetUniform("gridCount", (float)GRID_COUNT );
 
 
     GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
 
     shadowMap.GetRenderTargetTexture().Unbind();
+    m_lightGridTexture->Unbind();
 
     UnsetupShader(m_directionalShader, gbuffer, cubeMapTexture, refractionMap, reflectionMap);
 
@@ -153,15 +188,12 @@ void LightingPass::Render(
     GL_C(glBlendFunc(GL_ONE, GL_ONE));
 
 
+    std::vector<PointLight> lights = GetTestLights(camera);
 
-//    std::vector<PointLight> lights = GetTestLights(camera);
-
-    std::vector<PointLight> lights = GetTorches(camera, torches);
+//    std::vector<PointLight> lights = GetTorches(camera, torches);
 
 
     DrawLights(camera, lights);
-
-
 
     GL_C(glDisable(GL_BLEND));
     GL_C(glFrontFace(GL_CCW));
@@ -171,6 +203,163 @@ void LightingPass::Render(
 }
 
 void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLight>& lights) {
+
+    Matrix4f viewProjectionMatrix = camera->GetVp();
+
+    MultArray<vector<int> > lightGrid(GRID_COUNT, GRID_COUNT);
+
+    // compute AABB for every light source.
+    for(int iPointLight = 0; iPointLight < lights.size(); ++iPointLight) {
+
+	const PointLight& pointLight = lights[iPointLight];
+
+	// first compute the AABB of the sphere.
+
+	// the corners of the aabb.
+	Vector3f corners[8];
+
+	const Vector3f center = pointLight.m_position;
+	const float radius = pointLight.m_radius;
+
+	// positive y
+	corners[0] = center + Vector3f(+radius, +radius, +radius);
+	corners[1] = center + Vector3f(-radius, +radius, +radius);
+	corners[2] = center + Vector3f(+radius, +radius, -radius);
+	corners[3] = center + Vector3f(-radius, +radius, -radius);
+
+	// negative y
+	corners[4] = center + Vector3f(+radius, -radius, +radius);
+	corners[5] = center + Vector3f(-radius, -radius, +radius);
+	corners[6] = center + Vector3f(+radius, -radius, -radius);
+	corners[7] = center + Vector3f(-radius, -radius, -radius);
+
+	// project AABB corners to screen-space, then find the min and max AABB corners of the resulting 2D AABB.
+
+	Vector2f aabbMin = Vector2f(FLT_MAX, FLT_MAX);
+	Vector2f aabbMax = Vector2f(-FLT_MAX, -FLT_MAX);
+
+	for(int i = 0; i < 8; ++i) {
+
+	    Vector4f nonNormalized = viewProjectionMatrix * Vector4f(corners[i], 1.0);
+	    Vector3f normalized = Vector3f(
+		nonNormalized.x / nonNormalized.w,
+		nonNormalized.y / nonNormalized.w,
+		nonNormalized.z / nonNormalized.w
+		);
+
+//	    LOG_I("normalized.x: %f", normalized.x);
+
+	    if(normalized.x < aabbMin.x) {
+		aabbMin.x = normalized.x;
+	    }
+
+	    if(normalized.y < aabbMin.y) {
+		aabbMin.y = normalized.y;
+	    }
+
+	    if(normalized.x > aabbMax.x) {
+		aabbMax.x = normalized.x;
+
+		//	LOG_I("set: %f", normalized.x);
+
+	    }
+
+	    if(normalized.y > aabbMax.y) {
+		aabbMax.y = normalized.y;
+	    }
+
+
+//	    LOG_I("normx: %f", normalized.x);
+
+
+	}
+
+/*
+	LOG_I("bla minX: %f", aabbMin.x);
+	LOG_I("bla maxX: %f", aabbMax.x);
+
+	LOG_I("bla minY: %f", aabbMin.y);
+	LOG_I("bla maxY: %f", aabbMax.y);
+*/
+
+
+	// max.x cant get negative for some reason. always >= 0
+//	LOG_I("bef: %f", aabbMax.x);
+
+	// remap from [-1,+1] to [0,1], in order to simplify calculations.
+	aabbMin = (aabbMin + 1.0) * 0.5f;
+	aabbMax = (aabbMax + 1.0) * 0.5f;
+
+	aabbMin.x = Clamp(aabbMin.x, 0.0f, 1.0f);
+	aabbMin.y = Clamp(aabbMin.y, 0.0f, 1.0f);
+
+
+	aabbMax.x = Clamp(aabbMax.x, 0.0f, 1.0f);
+	aabbMax.y = Clamp(aabbMax.y, 0.0f, 1.0f);
+
+/*
+	LOG_I("bla minX: %f", aabbMin.x);
+	LOG_I("bla maxX: %f", aabbMax.x);
+
+	LOG_I("bla minY: %f", aabbMin.y);
+	LOG_I("bla maxY: %f", aabbMax.y);
+*/
+
+//	exit(1);
+
+	int gridMinX = aabbMin.x / (1.0 / GRID_COUNT);
+	int gridMaxX = aabbMax.x / (1.0 / GRID_COUNT);
+
+	int gridMinY = aabbMin.y / (1.0 / GRID_COUNT);
+	int gridMaxY = aabbMax.y / (1.0 / GRID_COUNT);
+
+	gridMaxX = gridMaxX >= GRID_COUNT ? GRID_COUNT-1 : gridMaxX;
+	gridMaxY = gridMaxY >= GRID_COUNT ? GRID_COUNT-1 : gridMaxY;
+
+	int count = (gridMaxX - gridMinX + 1) * (gridMaxY - gridMinY + 1);
+
+	// now add the light source to the affected grid cells.
+	for(int x = gridMinX; x <= gridMaxX; ++x) {
+
+	    for(int y = gridMinY; y <= gridMaxY; ++y) {
+
+		lightGrid(x,y).push_back(iPointLight);
+
+	    }
+	}
+    }
+
+    // create light grid texture.
+
+    for(int y = 0; y < GRID_COUNT; ++y) {
+
+
+	for(int x = 0; x < GRID_COUNT; ++x) {
+
+	    int i = x + GRID_COUNT * y;
+
+	    m_lightGridTextureBuffer[i] = lightGrid(x,y).size() > 0 ? Vector3f(1,0,0) : Vector3f(0,0,0);
+
+	    //   LOG_I("%d", i);
+	}
+
+    }
+
+    m_lightGridTexture->Bind();
+    m_lightGridTexture->UpdateTexture( &m_lightGridTextureBuffer[0] );
+    m_lightGridTexture->Unbind();
+
+//    m_lightGridTextureBuffer
+
+    /*
+      tile light index list
+      Put all the Vector<int>s in a flattened array.
+     */
+
+    /*
+      global light list. (list of uniforms)
+     */
+
 
     for(const PointLight& pointLight : lights) {
 	DrawPointLight(
@@ -231,6 +420,20 @@ std::vector<PointLight> LightingPass::GetTestLights(const ICamera* camera) {
 	}
 
     }
+
+
+
+
+    /*
+	lights.push_back( PointLight(
+
+			      Vector3f(0,4, 0),
+
+			      Vector3f(1,0,0
+			      ),
+
+			      30.0f));
+    */
 
     return lights;
 }

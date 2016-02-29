@@ -177,21 +177,44 @@ int main (int argc, char * argv[]) {
 
 	    GLushort two = (GLushort)ParseFEntry(tokens[2]);
 
+/*
+	    LOG_I("one: %f, %f, %f",
+		  globalVertices[ (3+2+3) * one+0  ],
+		  globalVertices[ (3+2+3) * one+1  ],
+		  globalVertices[ (3+2+3) * one+2  ]
+		);
+
+	    LOG_I("two: %f, %f, %f",
+		  globalVertices[ (3+2+3) * two+0  ],
+		  globalVertices[ (3+2+3) * two+1  ],
+		  globalVertices[ (3+2+3) * two+2  ]
+		);
+*/
+	    GLushort three;
 	    for(size_t i = 3; i < tokens.size(); ++i) {
-		GLushort three = (GLushort)ParseFEntry(tokens[i]);
+		three = (GLushort)ParseFEntry(tokens[i]);
 
 		// add the indices of a single triangle
 		currentChunk->m_indices.push_back(one);
 		currentChunk->m_indices.push_back(two);
 		currentChunk->m_indices.push_back(three);
 
+/*
+	    LOG_I("three: %f, %f, %f",
+		  globalVertices[ (3+2+3) * three+0  ],
+		  globalVertices[ (3+2+3) * three+1  ],
+		  globalVertices[ (3+2+3) * three+2  ]
+		);
 
+	    LOG_I("END");
+*/
 
 
 		++currentChunk->m_numTriangles;
 
 		two = three;
 	    }
+
 
 	}
     }

@@ -15,6 +15,7 @@ class VBO;
 class CubeMapTexture;
 class ColorDepthFbo;
 class ColorFBO;
+class Texture2D;
 
 struct PointLight {
     Vector3f m_position;
@@ -40,6 +41,9 @@ private:
     VBO* m_sphereVertexBuffer;
     VBO* m_sphereIndexBuffer;
     ShaderProgram* m_pointShader;
+
+    Texture2D* m_lightGridTexture;
+    Vector3f* m_lightGridTextureBuffer;
 
     void SetupShader(
 	ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera,

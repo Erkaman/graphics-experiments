@@ -187,7 +187,6 @@ void SimpleRender::Render(ICamera* camera, const Vector4f& lightPosition) {
     Texture::SetActiveTextureUnit(0);
     m_arrayTexture->Bind();
 
-
     shader->SetUniform("aoOnly", 1.0f);
 
 
