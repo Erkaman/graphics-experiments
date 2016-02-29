@@ -366,6 +366,8 @@ void TuhuApplication::Init() {
 
 //    StartPhysics();
 
+    LightUpdate();
+
 }
 
 
@@ -1358,5 +1360,9 @@ void TuhuApplication::BakeAo(int samples, int waveLength, int amplitude, float d
     m_heightMap->BakeAo(samples, waveLength, amplitude, distAttenuation);
 }
 
+void TuhuApplication::LightUpdate() {
+    // update textures.
+//    m_lightingPass->UpdateTextures(GeometryObject::GetTorches().size() );
+    m_lightingPass->UpdateTextures(-1 );
 
-//set refraction map texture, and send to shader in RenderAll().
+}

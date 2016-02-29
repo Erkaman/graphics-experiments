@@ -45,6 +45,10 @@ private:
     Texture2D* m_lightGridTexture;
     Vector3f* m_lightGridTextureBuffer;
 
+    Texture2D* m_lightIndexTexture;
+    float* m_lightIndexTextureBuffer;
+
+
     void SetupShader(
 	ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera,
 	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
@@ -54,7 +58,7 @@ private:
 
     void DrawPointLight(const ICamera* camera, const Vector3f& position, const Vector3f& color, float radius);
 
-    std::vector<PointLight> GetTestLights(const ICamera* camera);
+    std::vector<PointLight> GetTestLights();
     std::vector<PointLight> GetTorches(const ICamera* camera, const std::vector<Vector3f>& torches);
 
     void DrawLights(const ICamera* camera, const std::vector<PointLight>& lights);
@@ -67,5 +71,7 @@ public:
 	Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition,
 	const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches,
 	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
+
+    void UpdateTextures(int lightCount);
 
 };

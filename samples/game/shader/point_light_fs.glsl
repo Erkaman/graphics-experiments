@@ -101,6 +101,6 @@ void main() {
 
     fragmentColor = light * vec4(vec3(color),1) * ztest * atten;
 
-//    fragmentColor = light * vec4(vec3(color),1);
+    fragmentColor = light * vec4(vec3(color),1);
 
 }

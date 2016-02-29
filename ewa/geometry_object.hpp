@@ -5,6 +5,7 @@
 #include "geometry_object_data.hpp"
 
 #include "igeometry_object.hpp"
+#include "geometry_object_listener.hpp"
 
 #include <LinearMath/btQuaternion.h>
 
@@ -147,4 +148,5 @@ public:
     virtual void SetScale(const float scale);
     virtual void SetEditScale(const float editScale);
 
+    static void SetListener(GeometryObjectListener* listener);
 };

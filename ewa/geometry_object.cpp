@@ -191,6 +191,9 @@ public:
 
     ArrayTexture* m_arrayTexture;
 
+    GeometryObjectListener* m_listener;
+
+
     GLint m_normalMap;
     GLint m_dudvMap;
 
@@ -452,8 +455,14 @@ bool GeometryObject::Init(
     /*
      if filename is torch, add position to light list.
      */
-    if(filename == "obj/torch.eob" )
+    if(filename == "obj/torch.eob" ) {
 	GeoObjManager::GetInstance().m_torches.push_back(this);
+
+	if(GeoObjManager::GetInstance().m_listener != NULL)
+	    GeoObjManager::GetInstance().m_listener->LightUpdate();
+
+    }
+
 
     m_physicsGroup = physicsGroup;
     m_physicsMask = physicsMask;
@@ -1227,6 +1236,9 @@ void GeometryObject::Delete(IGeometryObject* geoObj) {
 	}
 
 	GeoObjManager::GetInstance().m_torches.erase(it);
+
+	if(GeoObjManager::GetInstance().m_listener != NULL)
+	    GeoObjManager::GetInstance().m_listener->LightUpdate();
     }
 
     // remove the obj from its corresponding batch:
@@ -1280,4 +1292,10 @@ std::vector<Vector3f> GeometryObject::GetTorches() {
     }
 
     return torches;
+}
+
+
+void GeometryObject::SetListener(GeometryObjectListener* listener) {
+
+    GeoObjManager::GetInstance().m_listener = listener;
 }

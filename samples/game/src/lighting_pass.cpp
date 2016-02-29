@@ -12,6 +12,8 @@
 #include "ewa/gl/color_depth_fbo.hpp"
 #include "ewa/gl/color_fbo.hpp"
 
+#include "ewa/common.hpp"
+
 
 #include "ewa/math/vector4f.hpp"
 
@@ -141,6 +143,10 @@ LightingPass::LightingPass(int framebufferWidth, int framebufferHeight) {
     m_lightGridTexture->Unbind();
 
     m_lightGridTextureBuffer = new Vector3f[GRID_COUNT*GRID_COUNT];
+
+    m_lightIndexTexture = NULL;
+    m_lightIndexTextureBuffer = NULL;
+
 }
 
 void LightingPass::Render(
@@ -183,19 +189,19 @@ void LightingPass::Render(
 
     GL_C(glFrontFace(GL_CW));
     GL_C(glDisable(GL_DEPTH_TEST));
-
+/*
     GL_C(glEnable(GL_BLEND));
     GL_C(glBlendFunc(GL_ONE, GL_ONE));
+*/
 
-
-    std::vector<PointLight> lights = GetTestLights(camera);
+    std::vector<PointLight> lights = GetTestLights();
 
 //    std::vector<PointLight> lights = GetTorches(camera, torches);
 
 
     DrawLights(camera, lights);
 
-    GL_C(glDisable(GL_BLEND));
+    //  GL_C(glDisable(GL_BLEND));
     GL_C(glFrontFace(GL_CCW));
     GL_C(glEnable(GL_DEPTH_TEST));
 
@@ -329,6 +335,9 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
 	}
     }
 
+
+    int lightIndex = 0;
+
     // create light grid texture.
 
     for(int y = 0; y < GRID_COUNT; ++y) {
@@ -336,9 +345,22 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
 
 	for(int x = 0; x < GRID_COUNT; ++x) {
 
-	    int i = x + GRID_COUNT * y;
+	    int gridIndex = x + GRID_COUNT * y;
 
-	    m_lightGridTextureBuffer[i] = lightGrid(x,y).size() > 0 ? Vector3f(1,0,0) : Vector3f(0,0,0);
+	    int offset = lightIndex;
+	    int count = 0;
+
+	    vector<int> lights = lightGrid(x,y);
+
+	    for(int light : lights) {
+		m_lightIndexTextureBuffer[lightIndex++] = light;
+		++count;
+	    }
+
+	    // offset
+	    // count
+//	    m_lightGridTextureBuffer[gridIndex] = lightGrid(x,y).size() > 0 ? Vector3f(1,0,0) : Vector3f(0,0,0);
+	    m_lightGridTextureBuffer[gridIndex] = Vector3f(offset,count,0);
 
 	    //   LOG_I("%d", i);
 	}
@@ -378,7 +400,7 @@ std::vector<PointLight> LightingPass::GetTorches(const ICamera* camera, const st
     return lights;
 }
 
-std::vector<PointLight> LightingPass::GetTestLights(const ICamera* camera) {
+std::vector<PointLight> LightingPass::GetTestLights() {
     int MIN_X = -2;
     int MAX_X = +2;
 
@@ -387,7 +409,7 @@ std::vector<PointLight> LightingPass::GetTestLights(const ICamera* camera) {
 
     std::vector<PointLight> lights;
 
-
+/*
     for(int x = MIN_X; x <= MAX_X; ++x) {
 
 	for(int z = MIN_Z; z <= MAX_Z; ++z) {
@@ -420,11 +442,11 @@ std::vector<PointLight> LightingPass::GetTestLights(const ICamera* camera) {
 	}
 
     }
+*/
 
 
 
 
-    /*
 	lights.push_back( PointLight(
 
 			      Vector3f(0,4, 0),
@@ -433,7 +455,7 @@ std::vector<PointLight> LightingPass::GetTestLights(const ICamera* camera) {
 			      ),
 
 			      30.0f));
-    */
+
 
     return lights;
 }
@@ -546,3 +568,41 @@ void LightingPass::DrawPointLight(const ICamera* camera, const Vector3f& positio
 
   send of textcoord distort
  */
+
+void LightingPass::UpdateTextures(int lightCount) {
+
+    if(lightCount == -1) {
+	lightCount = GetTestLights().size();
+    }
+
+    // delete old textures.
+    if(m_lightIndexTexture != NULL) {
+	MY_DELETE(m_lightIndexTexture);
+	MY_DELETE(m_lightIndexTextureBuffer);
+
+    }
+
+    int maxLightIndices = GRID_COUNT * GRID_COUNT * lightCount;
+
+    /*
+      Find smallest power-of-two texture to fit all the indies.
+    */
+    int texSize = 2;
+
+    while(texSize * texSize < maxLightIndices) {
+	texSize *= 2;
+    }
+
+    m_lightIndexTexture = new Texture2D(nullptr, texSize, texSize,
+				       GL_R16F,
+				       GL_RED,
+				       GL_FLOAT);
+
+    m_lightIndexTexture->Bind();
+    m_lightIndexTexture->SetTextureClamping();
+    m_lightIndexTexture->SetMinFilter(GL_NEAREST);
+    m_lightIndexTexture->SetMagFilter(GL_NEAREST);
+    m_lightIndexTexture->Unbind();
+
+    m_lightIndexTextureBuffer = new float[texSize*texSize];
+}

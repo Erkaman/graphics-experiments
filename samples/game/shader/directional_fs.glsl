@@ -226,9 +226,9 @@ void main() {
 
 
 //    vec3 gridColor = texture(lightGrid, (texCoord / gridCellSize) / gridCount  ).xyz;
-    vec3 gridColor = texture(lightGrid, texCoord  ).xyz;
+    vec3 gridColor = texture(lightGrid, texCoord  ).y > 0 ? vec3(1,0,0) : vec3(0,0,0);
 
-    //   fragmentColor = vec4(gridColor, 1.0);
+     fragmentColor = vec4(gridColor, 1.0);
 
 //    fragmentColor = vec4(vec3(texCoord / gridCellSize ,0), 1.0);
 
@@ -237,7 +237,7 @@ void main() {
 
 //    fragmentColor = vec4( vec3(specMat), 1.0 );
 
-/*
+
     if(
 
 	isInt(   texCoord.x / gridCellSize, 0.015  ) ||
@@ -248,6 +248,6 @@ void main() {
 	fragmentColor = vec4(vec3(0,1,0), 1.0);
 
     }
-    */
+
 
 }

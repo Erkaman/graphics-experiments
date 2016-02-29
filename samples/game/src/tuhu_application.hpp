@@ -9,6 +9,8 @@
 #include <LinearMath/btQuaternion.h>
 
 #include "gui_listener.hpp"
+#include "geometry_object_listener.hpp"
+
 
 #include <map>
 
@@ -45,7 +47,7 @@ constexpr int ENV_FBO_TEXTURE_UNIT = 11;
 constexpr int REFRACTION_FBO_TEXTURE_UNIT = 12;
 constexpr int REFLECTION_FBO_TEXTURE_UNIT = 13;
 
-class TuhuApplication : public Application, public GuiListener{
+class TuhuApplication : public Application, public GuiListener, public GeometryObjectListener{
 
 private:
 
@@ -165,5 +167,8 @@ public:
     virtual void Delete();
 
     virtual void BakeAo(int samples, int waveLength, int amplitude, float distAttenuation);
+
+
+    virtual void LightUpdate();
 
 };
