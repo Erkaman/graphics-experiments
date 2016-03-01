@@ -48,7 +48,6 @@ void main() {
 
     readColorTexture(colorTexture, texCoord, diffColor, ao);
 
-
     float ztest = step(0, radius - length(lightDist));
 
     vec3 specColor;
@@ -100,6 +99,6 @@ void main() {
 
     fragmentColor = light * vec4(vec3(color),1) * ztest * atten;
 
-    fragmentColor = light * vec4(vec3(color),1);
+//    fragmentColor = light * ztest;
 
 }

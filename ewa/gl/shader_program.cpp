@@ -109,6 +109,43 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Matrix4f& m
     }
 }
 
+void ShaderProgram::SetUniform(const std::string& uniformName, Vector3f* v, int size) {
+    int uniformLocation;
+    GL_C(uniformLocation = glGetUniformLocation(m_shaderProgram, uniformName.c_str() ));
+
+    const GLuint location =uniformLocation;
+    GLfloat* arr = reinterpret_cast<GLfloat*>(v);
+    GL_C(glUniform3fv(location, size, arr));
+
+
+    /*
+    if (m_uniformLocationStore->UniformExists(uniformName)) {
+	LOG_I("COULD find %s", uniformName.c_str() );
+	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
+	const GLfloat* arr = reinterpret_cast<const GLfloat*>(&v);
+	GL_C(glUniform3fv(location, size, arr));
+    } else {
+	LOG_I("COULD NOT find %s", uniformName.c_str() );
+	}*/
+}
+
+void ShaderProgram::SetUniform(const std::string& uniformName, float* v, int size) {
+
+    int uniformLocation;
+    GL_C(uniformLocation = glGetUniformLocation(m_shaderProgram, uniformName.c_str() ));
+
+    const GLuint location =uniformLocation;
+    GLfloat* arr = reinterpret_cast<GLfloat*>(v);
+    GL_C(glUniform1fv(location, size, arr));
+
+
+    /*
+    if (m_uniformLocationStore->UniformExists(uniformName)) {
+	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
+	const GLfloat* arr = reinterpret_cast<const GLfloat*>(&v);
+	GL_C(glUniform1fv(location, size, arr));
+	}*/
+}
 
 void ShaderProgram::SetUniform(const std::string& uniformName, const int val) {
 

@@ -28,10 +28,14 @@ uniform mat4 proj;
 uniform mat4 inverseViewNormalMatrix;
 uniform mat4 invViewMatrix;
 uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 
 uniform sampler2D refractionMap;
 uniform sampler2D reflectionMap;
 
+uniform vec3 pointLightPosition[256];
+uniform float pointLightRadius[256];
+uniform vec3 pointLightColor[256];
 
 uniform samplerCube envMap;
 
@@ -162,8 +166,6 @@ void main() {
 
 
 
-
-
 //	fragmentColor = vec4(vec3(1,0,0), 1.0);
 
 /*
@@ -200,10 +202,46 @@ void main() {
 
 	lightIndexCoord *= (1.0 / lightIndexTextureSize);
 
-	float sample = texture(lightIndexTexture, lightIndexCoord).r;
+	int pointLightIndex = int(texture(lightIndexTexture, lightIndexCoord).r);
 
+	//fragmentColor = vec4(, 1.0);
+//	fragmentColor = vec4(pointLightPosition[sample], 1.0);
+
+
+	vec3  pointLightColor = pointLightColor[pointLightIndex];
+	vec3  pointLightPosition = pointLightPosition[pointLightIndex];
+	float pointLightRadius = pointLightRadius[pointLightIndex];
+
+	vec3 lightCenter =  (viewMatrix *  vec4(pointLightPosition,1)  ).xyz;
+
+    vec3 lightDist = viewSpacePosition - lightCenter;
+    vec3 l = -normalize(lightDist);
+
+    float diff=  calcDiff(l,n);
+
+    float spec = 0;
+
+        float ztest = step(0, pointLightRadius - length(lightDist));
+
+
+	    vec4 light = calcLighting(
+	ambientLight,
+	sceneLight,
+	    specShiny,
+	    diffColor,
+	    specMat,
+	    diff,
+	    spec,
+	    visibility,
+	    vec3(0) );
+
+    float atten = clamp(1.0 - length(lightDist) / pointLightRadius, 0,1);
+
+    fragmentColor.xyz += light.xyz * vec3(pointLightColor) * atten;
     }
+
 /*
+
     if(
 
 	isInt(   texCoord.x / gridCellSize, 0.015  ) ||
@@ -213,6 +251,6 @@ void main() {
 	){
 	fragmentColor = vec4(vec3(0,1,0), 1.0);
 
-    }
-*/
+    }*/
+
 }

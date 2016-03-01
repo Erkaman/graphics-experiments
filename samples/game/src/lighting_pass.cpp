@@ -149,6 +149,11 @@ LightingPass::LightingPass(int framebufferWidth, int framebufferHeight) {
 
     m_lightIndexTextureSize = 0;
 
+    m_pointLightPosition = new Vector3f[256];
+    m_pointLightRadius = new float[256];
+    m_pointLightColor = new Vector3f[256];
+
+
 }
 
 void LightingPass::Render(
@@ -178,9 +183,23 @@ void LightingPass::Render(
 
     m_directionalShader->SetUniform("gridCountRcp", 1.0f / (float)GRID_COUNT );
 
-
     m_directionalShader->SetUniform("lightIndexTextureSize",
 				    (float)m_lightIndexTextureSize );
+
+
+
+//    LOG_I("pos: %s", std::string(m_pointLightPosition[0]).c_str() );
+    m_directionalShader->SetUniform("pointLightPosition",
+				    m_pointLightPosition, 256);
+
+    m_directionalShader->SetUniform("pointLightRadius",
+				    m_pointLightRadius, 256);
+
+//    LOG_I("color: %s", std::string(m_pointLightColor[0]).c_str() );
+    m_directionalShader->SetUniform("pointLightColor",
+				    m_pointLightColor, 256 );
+//    LOG_I("done color" );
+
 
 
 
@@ -199,10 +218,10 @@ void LightingPass::Render(
 
     GL_C(glFrontFace(GL_CW));
     GL_C(glDisable(GL_DEPTH_TEST));
-/*
-    GL_C(glEnable(GL_BLEND));
-    GL_C(glBlendFunc(GL_ONE, GL_ONE));
-*/
+
+    //  GL_C(glEnable(GL_BLEND));
+    // GL_C(glBlendFunc(GL_ONE, GL_ONE));
+
 
     std::vector<PointLight> lights = GetTestLights();
 
@@ -211,7 +230,7 @@ void LightingPass::Render(
 
     DrawLights(camera, lights);
 
-//    GL_C(glDisable(GL_BLEND));
+    //GL_C(glDisable(GL_BLEND));
     GL_C(glFrontFace(GL_CCW));
     GL_C(glEnable(GL_DEPTH_TEST));
 
@@ -224,10 +243,20 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
 
     MultArray<vector<int> > lightGrid(GRID_COUNT, GRID_COUNT);
 
-    // compute AABB for every light source.
+
+
     for(int iPointLight = 0; iPointLight < lights.size(); ++iPointLight) {
 
 	const PointLight& pointLight = lights[iPointLight];
+
+
+	m_pointLightPosition[iPointLight] = (pointLight.m_position);
+	m_pointLightRadius[iPointLight] = (pointLight.m_radius);
+	m_pointLightColor[iPointLight] = (pointLight.m_color);
+
+
+//	LOG_I("arr: %s", std::string(m_pointLightColor[iPointLight]).c_str() );
+
 
 	// first compute the AABB of the sphere.
 
@@ -400,11 +429,12 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
      */
 
 /*
+    // DO non-tiled DEFERRED RENDERING:
     for(const PointLight& pointLight : lights) {
 	DrawPointLight(
 	    camera, pointLight.m_position,  pointLight.m_color, pointLight.m_radius);
-    }*/
-
+    }
+*/
 }
 
 std::vector<PointLight> LightingPass::GetTorches(const ICamera* camera, const std::vector<Vector3f>& torches) {
@@ -427,7 +457,7 @@ std::vector<PointLight> LightingPass::GetTestLights() {
 
     std::vector<PointLight> lights;
 
-/*
+
     for(int x = MIN_X; x <= MAX_X; ++x) {
 
 	for(int z = MIN_Z; z <= MAX_Z; ++z) {
@@ -452,7 +482,7 @@ std::vector<PointLight> LightingPass::GetTestLights() {
 			      Vector3f((float)(x-MIN_X) / (MAX_X-MIN_X),
 			       g,
 			       (float)(z-MIN_Z) / (MAX_Z-MIN_Z)
-			      ),
+			      ) * 10.0f,
 
 			      30.0f));
 
@@ -460,12 +490,11 @@ std::vector<PointLight> LightingPass::GetTestLights() {
 	}
 
     }
-*/
 
 
 
-
-	lights.push_back( PointLight(
+    /*
+    lights.push_back( PointLight(
 
 			      Vector3f(0,4, 0),
 
@@ -484,7 +513,7 @@ std::vector<PointLight> LightingPass::GetTestLights() {
 
 			      30.0f));
 
-
+*/
     return lights;
 }
 
@@ -522,9 +551,7 @@ void LightingPass::SetupShader(
     Texture::SetActiveTextureUnit(REFLECTION_TEXTURE_UNIT);
     reflectionMap.GetRenderTargetTexture().Bind();
 
-
     shader->SetUniform("screenSize", m_screenSize);
-
 
     Config& config = Config::GetInstance();
 
@@ -543,6 +570,7 @@ void LightingPass::SetupShader(
     Matrix4f viewMatrix = camera->GetViewMatrix();
     Matrix4f invViewMatrix = viewMatrix.Inverse();
     shader->SetUniform("invViewMatrix", invViewMatrix  );
+    shader->SetUniform("viewMatrix", camera->GetViewMatrix()  );
 
     shader->SetUniform("inverseViewNormalMatrix",
 		       camera->GetViewMatrix().Transpose()  );
@@ -581,6 +609,7 @@ void LightingPass::DrawPointLight(const ICamera* camera, const Vector3f& positio
 
     m_pointShader->SetUniform("mvp",  mvp);
     m_pointShader->SetUniform("modelViewMatrix",  modelViewMatrix);
+
     m_pointShader->SetUniform("radius",  (float)radius);
     m_pointShader->SetUniform("color",  color  ) ;
 

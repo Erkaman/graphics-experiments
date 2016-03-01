@@ -51,6 +51,9 @@ private:
 
     int m_lightIndexTextureSize;
 
+    Vector3f* m_pointLightPosition;
+    float* m_pointLightRadius;
+    Vector3f* m_pointLightColor;
 
     void SetupShader(
 	ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera,
