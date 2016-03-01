@@ -4,6 +4,8 @@
 #include "ewa/gl/vbo.hpp"
 #include "ewa/gl/texture.hpp"
 #include "ewa/config.hpp"
+#include "ewa/resource_manager.hpp"
+
 
 #include "gbuffer.hpp"
 #include "ewa/gl/depth_fbo.hpp"
@@ -22,11 +24,13 @@
 
 #include <float.h>
 
+constexpr bool isTiled = true;
+
 
 constexpr int SLICES = 10;
 constexpr int STACKS = 10;
 
-constexpr int GRID_COUNT = 8; // 1,2,4,8,16,32
+constexpr int GRID_COUNT = 32; // 1,2,4,8,16,32
 
 using std::vector;
 using std::string;
@@ -117,8 +121,16 @@ GLushort MyGenerateSphereVertices(
 LightingPass::LightingPass(int framebufferWidth, int framebufferHeight) {
     m_screenSize = Vector2f(framebufferWidth, framebufferHeight);
 
-    m_directionalShader = ShaderProgram::Load("shader/directional");
+    string shaderName = "shader/directional";
 
+    vector<string> defines;
+
+    if(isTiled) {
+	defines.push_back("IS_TILED");
+    }
+
+    m_directionalShader = ResourceManager::LoadShader(
+		shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 
     m_pointShader = ShaderProgram::Load("shader/point_light");
 
@@ -216,11 +228,15 @@ void LightingPass::Render(
     SetupShader(m_pointShader, gbuffer, camera, cubeMapTexture, refractionMap, reflectionMap);
 
 
-    GL_C(glFrontFace(GL_CW));
-    GL_C(glDisable(GL_DEPTH_TEST));
 
-//    GL_C(glEnable(GL_BLEND));
-//    GL_C(glBlendFunc(GL_ONE, GL_ONE));
+    if(!isTiled) {
+	GL_C(glFrontFace(GL_CW));
+	GL_C(glDisable(GL_DEPTH_TEST));
+
+
+	GL_C(glEnable(GL_BLEND));
+	GL_C(glBlendFunc(GL_ONE, GL_ONE));
+    }
 
     std::vector<PointLight> lights = GetTestLights();
 
@@ -229,9 +245,11 @@ void LightingPass::Render(
 
     DrawLights(camera, lights);
 
-//    GL_C(glDisable(GL_BLEND));
-    GL_C(glFrontFace(GL_CCW));
-    GL_C(glEnable(GL_DEPTH_TEST));
+    if(!isTiled) {
+	GL_C(glDisable(GL_BLEND));
+	GL_C(glFrontFace(GL_CCW));
+	GL_C(glEnable(GL_DEPTH_TEST));
+    }
 
     UnsetupShader(m_pointShader, gbuffer, cubeMapTexture, refractionMap, reflectionMap);
 }
@@ -427,13 +445,16 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
       global light list. (list of uniforms)
      */
 
-/*
-    // DO non-tiled DEFERRED RENDERING:
-    for(const PointLight& pointLight : lights) {
-	DrawPointLight(
-	    camera, pointLight.m_position,  pointLight.m_color, pointLight.m_radius);
+
+    if(!isTiled) {
+
+	// DO non-tiled DEFERRED RENDERING:
+	for(const PointLight& pointLight : lights) {
+	    DrawPointLight(
+		camera, pointLight.m_position,  pointLight.m_color, pointLight.m_radius);
+	}
     }
-*/
+
 }
 
 std::vector<PointLight> LightingPass::GetTorches(const ICamera* camera, const std::vector<Vector3f>& torches) {
@@ -448,11 +469,11 @@ std::vector<PointLight> LightingPass::GetTorches(const ICamera* camera, const st
 }
 
 std::vector<PointLight> LightingPass::GetTestLights() {
-    int MIN_X = -3;
-    int MAX_X = +3;
+    int MIN_X = -5;
+    int MAX_X = +5;
 
-    int MIN_Z = -3;
-    int MAX_Z = +3;
+    int MIN_Z = -5;
+    int MAX_Z = +5;
 
     std::vector<PointLight> lights;
 
@@ -475,14 +496,14 @@ std::vector<PointLight> LightingPass::GetTestLights() {
 
 	lights.push_back( PointLight(
 
-			      Vector3f(40 * x,4, 40 * z),
+			      Vector3f(25* x,4, 25 * z),
 
 			      Vector3f((float)(x-MIN_X) / (MAX_X-MIN_X),
 			       g,
 			       (float)(z-MIN_Z) / (MAX_Z-MIN_Z)
 			      ) * 10.0f,
 
-			      30.0f));
+			      20.0f));
 
 
 	}

@@ -178,10 +178,12 @@ void main() {
 
 
 
+
+#ifdef IS_TILED
+
     float GRID_COUNT = 10.0;
 
     float gridCellSize = gridCountRcp;
-
 
 
 //    vec3 gridColor = texture(lightGrid, texCoord  ).y > 0 ? vec3(1,0,0) : vec3(0,0,0);
@@ -244,6 +246,10 @@ void main() {
 
     fragmentColor.xyz += light.xyz * vec3(pointLightColor) * atten;
     }
+
+
+#endif
+
 
 
 /*
