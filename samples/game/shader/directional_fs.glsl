@@ -16,8 +16,8 @@ uniform vec2 screenSize;
 uniform float gridCountRcp;
 uniform float lightIndexTextureSize;
 
-uniform vec3 ambientLight;
-uniform vec3 sceneLight;
+uniform vec3 inAmbientLight;
+uniform vec3 inSceneLight;
 uniform vec3 eyePos;
 uniform vec3 viewSpaceLightDirection;
 uniform mat4 lightVp;
@@ -75,11 +75,8 @@ void main() {
 	envMapSample = texture(envMap, reflectionVector).rgb;
     }
 
-
-
-
-
-
+    vec3 ambientLight = inAmbientLight;
+    vec3 sceneLight = inSceneLight;
 
 
 
@@ -108,6 +105,51 @@ void main() {
     float visibility = calcVisibility(shadowMap, diff, shadowCoord);
 
 
+
+
+
+
+    if(id == 2.0) {
+	vec4 clipSpace = proj * vec4( viewSpacePosition, 1.0);
+
+
+	vec2 ndc = clipSpace.xy / clipSpace.w;
+	ndc = ndc * 0.5 + 0.5;
+
+	vec2 refractionTexcoord = ndc;
+	vec2 reflectionTexcoord = vec2(ndc.x, 1 -ndc.y);
+
+
+	vec2 distort = specColor.xy;
+
+	refractionTexcoord += distort;
+	reflectionTexcoord += distort;
+
+	refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
+
+	vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
+	vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
+
+
+	vec3 worldPosition = (invViewMatrix * vec4(viewSpacePosition, 1)).xyz;
+
+	vec3 toCameraVector = normalize(eyePos - worldPosition.xyz);
+
+	float fresnel = dot(
+	    toCameraVector, vec3(0,1,0));
+
+	diffColor = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
+
+	specMat = 0.6 * sceneLight;
+
+	specShiny = 20.0;
+	diff = 0.0;
+	envMapSample = vec3(0,0,0);
+
+	ambientLight = vec3(1,1,1);
+	sceneLight = vec3(1,1,1);
+    }
+
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
 	    ambientLight,
@@ -132,73 +174,7 @@ void main() {
     }
     */
 
-    if(id == 2.0) {
 
-//	fragmentColor =vec4(vec3(n), 1.0);
-
-
-	vec4 clipSpace = proj * vec4( viewSpacePosition, 1.0);
-
-
-
-	vec2 ndc = clipSpace.xy / clipSpace.w;
-	ndc = ndc * 0.5 + 0.5;
-
-	vec2 refractionTexcoord = ndc;
-	vec2 reflectionTexcoord = vec2(ndc.x, 1 -ndc.y);
-
-
-	vec2 distort = specColor.xy;
-
-	refractionTexcoord += distort;
-	reflectionTexcoord += distort;
-
-	refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
-
-	vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
-	vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
-
-	vec3 worldPosition = (invViewMatrix * vec4(viewSpacePosition, 1)).xyz;
-
-	vec3 toCameraVector = normalize(eyePos - worldPosition.xyz);
-
-	vec3 v = toCameraVector;
-	vec3 l = -lightDirection.xyz;
-
-	float spec= calcSpec(l,n,v);
-
-	vec3 color;
-
-	float fresnel = dot(
-	    toCameraVector, vec3(0,1,0));
-
-	diffColor = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
-
-	visibility = 1.0;
-
-
-	vec3 specMat = 0.6 * sceneLight;
-
-	specShiny = 20.0;
-	diff = 0.0;
-	envMapSample = vec3(0,0,0);
-
-
-    fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
-	(1.0 - aoOnly)*calcLighting(
-	    vec3(1,1,1),//ambientLight,
-	    vec3(1,1,1), //	    sceneLight,
-	    specShiny,
-	    diffColor,
-	    specMat,
-	    diff,
-	    spec,
-	    visibility,
-	    envMapSample );
-
-
-
-    }
 
     float GRID_COUNT = 10.0;
 
@@ -227,7 +203,7 @@ void main() {
 	float sample = texture(lightIndexTexture, lightIndexCoord).r;
 
     }
-
+/*
     if(
 
 	isInt(   texCoord.x / gridCellSize, 0.015  ) ||
@@ -238,5 +214,5 @@ void main() {
 	fragmentColor = vec4(vec3(0,1,0), 1.0);
 
     }
-
+*/
 }

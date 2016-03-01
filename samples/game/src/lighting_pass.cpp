@@ -528,8 +528,8 @@ void LightingPass::SetupShader(
 
     Config& config = Config::GetInstance();
 
-    shader->SetUniform("ambientLight", config.GetAmbientLight() );
-    shader->SetUniform("sceneLight", config.GetSceneLight() );
+    shader->SetUniform("inAmbientLight", config.GetAmbientLight() );
+    shader->SetUniform("inSceneLight", config.GetSceneLight() );
 
     Matrix4f invProj = camera->GetProjectionMatrix();
     invProj = invProj.Inverse();
