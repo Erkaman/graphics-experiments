@@ -238,9 +238,9 @@ void LightingPass::Render(
 	GL_C(glBlendFunc(GL_ONE, GL_ONE));
     }
 
-    std::vector<PointLight> lights = GetTestLights();
+//    std::vector<PointLight> lights = GetTestLights();
 
-//    std::vector<PointLight> lights = GetTorches(camera, torches);
+    std::vector<PointLight> lights = GetTorches(camera, torches);
 
 
     DrawLights(camera, lights);
@@ -462,7 +462,7 @@ std::vector<PointLight> LightingPass::GetTorches(const ICamera* camera, const st
     std::vector<PointLight> lights;
 
     for(Vector3f torch : torches ) {
-	lights.push_back( PointLight(torch, Vector3f(0.4,0.4,0), 20.0f  ));
+	lights.push_back( PointLight(torch, Vector3f(0.8,0.8,0), 20.0f  ));
     }
 
     return lights;
@@ -509,6 +509,23 @@ std::vector<PointLight> LightingPass::GetTestLights() {
 	}
 
     }
+
+/*
+    int x = 2;
+    int z = -1;
+
+	lights.push_back( PointLight(
+
+			      Vector3f(25* x,4, 25 * z),
+
+			      Vector3f((float)(x-MIN_X) / (MAX_X-MIN_X),
+			       1.0,
+			       (float)(z-MIN_Z) / (MAX_Z-MIN_Z)
+			      ) * 10.0f,
+
+			      20.0f));
+*/
+
 
 
 

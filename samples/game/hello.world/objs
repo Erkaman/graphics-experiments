@@ -1,4 +1,4 @@
-numObjs 68
+numObjs 103
 beginObj
 filename obj/wood_floor.eob
 translation -12.000000 9.000000 38.000000
@@ -405,5 +405,215 @@ beginObj
 filename obj/torch.eob
 translation 51.855858 0.965234 60.688282
 rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -35.163280 6.269919 163.462112
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -37.136330 6.269919 179.551559
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -36.128124 6.269919 193.556641
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -31.742577 7.495310 211.603912
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -29.488668 7.495310 218.187500
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -12.144917 3.387107 218.187500
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 3.737891 3.387107 218.187500
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 11.438282 6.172653 218.187500
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -2.601171 7.969529 218.187500
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 23.368361 6.172653 218.214844
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 34.151955 6.172653 224.935150
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 5.288280 16.230076 -110.341019
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 21.654297 22.345310 -139.041412
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 40.874222 30.403515 -156.275787
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 68.175392 32.437107 -176.603912
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 95.834763 31.937107 -188.147659
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 113.887108 20.480076 -206.845703
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -74.980087 10.039452 -74.622269
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -74.980087 2.655079 -127.809372
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -104.738297 27.303516 -148.905853
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -118.907440 32.075783 -160.644531
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -139.686340 19.679688 -175.978119
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -154.130478 2.614846 -216.871872
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -138.416412 2.184764 13.560546
+rotation -0.236792 0.000000 0.000000 0.971560 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -153.337112 1.424998 58.687889
+rotation -0.236792 0.000000 0.000000 0.971560 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -200.786713 32.103912 95.587509
+rotation -0.236792 0.000000 0.000000 0.971560 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 95.428902 1.587499 60.688282
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 123.212105 3.029296 60.688282
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 164.842575 14.749609 60.688282
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 164.251556 11.000000 -2.595699
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 164.251556 17.991795 -97.864838
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 164.251556 2.263280 -148.128510
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -12.827345 1.556248 136.737900
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 9.365622 1.556248 133.644928
+rotation 0.150595 0.007663 -0.050237 0.987288 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 28.523436 1.556248 140.219147
+rotation 0.150595 0.007663 -0.050237 0.987288 
 scale 1.000000
 endObj

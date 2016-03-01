@@ -243,8 +243,10 @@ void main() {
 	    vec3(0) );
 
     float atten = clamp(1.0 - length(lightDist) / pointLightRadius, 0,1);
-
     fragmentColor.xyz += light.xyz * vec3(pointLightColor) * atten;
+
+//    fragmentColor.xyz += vec3(1,0,0);
+
     }
 
 
@@ -252,8 +254,8 @@ void main() {
 
 
 
-/*
 
+/*
     if(
 
 	isInt(   texCoord.x / gridCellSize, 0.015  ) ||
@@ -263,6 +265,6 @@ void main() {
 	){
 	fragmentColor = vec4(vec3(0,1,0), 1.0);
 
-    }*/
-
+    }
+*/
 }

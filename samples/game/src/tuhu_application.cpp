@@ -1362,7 +1362,6 @@ void TuhuApplication::BakeAo(int samples, int waveLength, int amplitude, float d
 
 void TuhuApplication::LightUpdate() {
     // update textures.
-//    m_lightingPass->UpdateTextures(GeometryObject::GetTorches().size() );
-    m_lightingPass->UpdateTextures(-1 );
-
+    m_lightingPass->UpdateTextures(GeometryObject::GetTorches().size() );
+//    m_lightingPass->UpdateTextures(-1 );
 }
