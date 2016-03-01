@@ -120,6 +120,8 @@ void main() {
 	    visibility,
 	    envMapSample );
 
+
+
 //	fragmentColor = vec4(vec3(1,0,0), 1.0);
 
 /*
@@ -141,7 +143,6 @@ void main() {
 
 	vec2 ndc = clipSpace.xy / clipSpace.w;
 	ndc = ndc * 0.5 + 0.5;
-
 
 	vec2 refractionTexcoord = ndc;
 	vec2 reflectionTexcoord = vec2(ndc.x, 1 -ndc.y);
@@ -171,11 +172,32 @@ void main() {
 	float fresnel = dot(
 	    toCameraVector, vec3(0,1,0));
 
-	color = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
+	diffColor = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
 
-	color += sceneLight * pow(spec,20.0) * 0.6;
+	visibility = 1.0;
 
-	fragmentColor = vec4(color, 1.0);
+
+	vec3 specMat = 0.6 * sceneLight;
+
+	specShiny = 20.0;
+	diff = 0.0;
+	envMapSample = vec3(0,0,0);
+
+
+    fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
+	(1.0 - aoOnly)*calcLighting(
+	    vec3(1,1,1),//ambientLight,
+	    vec3(1,1,1), //	    sceneLight,
+	    specShiny,
+	    diffColor,
+	    specMat,
+	    diff,
+	    spec,
+	    visibility,
+	    envMapSample );
+
+
+
     }
 
     float GRID_COUNT = 10.0;
