@@ -50,7 +50,6 @@ void main() {
     readSpecularTexture(specularTexture, texCoord, specColor, specShiny);
     vec3 specMat = specColor;
 
-
     vec3 envMapSample = vec3(0);
 
 
@@ -61,7 +60,6 @@ void main() {
     vec3 n;
     float id;
     readNormalTexture(normalTexture, texCoord, n, id);
-
 
     if(id == 1.0) { // if car
 
@@ -79,19 +77,6 @@ void main() {
     vec3 sceneLight = inSceneLight;
 
 
-
-
-
-
-
-
-
-
-
-
-    float diff=  calcDiff(l,n);
-    float spec= calcSpec(l,n,v);
-
     vec3 diffColor;
     float ao;
 
@@ -101,11 +86,6 @@ void main() {
     float aoOnly =0.0;
 
     vec4 shadowCoord = (lightVp * (inverseViewMatrix * vec4(viewSpacePosition.xyz,1)));
-
-    float visibility = calcVisibility(shadowMap, diff, shadowCoord);
-
-
-
 
 
 
@@ -143,12 +123,22 @@ void main() {
 	specMat = 0.6 * sceneLight;
 
 	specShiny = 20.0;
-	diff = 0.0;
 	envMapSample = vec3(0,0,0);
 
 	ambientLight = vec3(1,1,1);
-	sceneLight = vec3(1,1,1);
+	sceneLight = vec3(0,0,0);
     }
+
+
+
+    /*
+      Compute directional lighting.
+     */
+
+
+    float diff=  calcDiff(l,n);
+    float spec= calcSpec(l,n,v);
+    float visibility = calcVisibility(shadowMap, diff, shadowCoord);
 
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
@@ -161,6 +151,16 @@ void main() {
 	    spec,
 	    visibility,
 	    envMapSample );
+
+
+
+
+    /*
+      Compute point lighting.
+     */
+
+
+
 
 
 
