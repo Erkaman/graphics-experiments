@@ -797,22 +797,24 @@ void TuhuApplication::Render() {
     Matrix4f lightVp =  biasMatrix*   m_lightVp;
 
     m_gpuProfiler->Begin(GTS_Light);
+
     m_lightingPass->Render(
 	m_gbuffer, m_curCamera, m_lightDirection,
 	lightVp, *m_depthFbo, GeometryObject::GetTorches(),
 	m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo
 	);
+
     m_gpuProfiler->End(GTS_Light);
 
 //    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 
-
+/*
     m_skybox->Draw(
 //	m_cubeMapTexture,
 	m_envFbo->GetEnvMap(),
 	m_curCamera, m_gbuffer->GetDepthTexture(), GetFramebufferWidth(), GetFramebufferHeight() );
-
+*/
 
     if(m_gui) {
 

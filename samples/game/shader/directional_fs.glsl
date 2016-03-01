@@ -33,9 +33,9 @@ uniform mat4 viewMatrix;
 uniform sampler2D refractionMap;
 uniform sampler2D reflectionMap;
 
-uniform vec3 pointLightPosition[256];
-uniform float pointLightRadius[256];
-uniform vec3 pointLightColor[256];
+uniform vec3 pointLightPosition[100];
+uniform float pointLightRadius[100];
+uniform vec3 pointLightColor[100];
 
 uniform samplerCube envMap;
 
@@ -64,6 +64,7 @@ void main() {
     vec3 n;
     float id;
     readNormalTexture(normalTexture, texCoord, n, id);
+
 
     if(id == 1.0) { // if car
 
@@ -134,6 +135,7 @@ void main() {
     }
 
 
+
     /*
       Compute directional lighting.
      */
@@ -177,9 +179,8 @@ void main() {
 
 
 
-
 #ifdef IS_TILED
-
+/*
     float GRID_COUNT = 10.0;
 
     float gridCellSize = gridCountRcp;
@@ -248,7 +249,7 @@ void main() {
 //    fragmentColor.xyz += vec3(1,0,0);
 
     }
-
+*/
 
 #endif
 

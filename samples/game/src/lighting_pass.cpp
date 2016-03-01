@@ -24,13 +24,15 @@
 
 #include <float.h>
 
-constexpr bool isTiled = true;
+constexpr bool isTiled = false;
 
 
 constexpr int SLICES = 10;
 constexpr int STACKS = 10;
 
-constexpr int GRID_COUNT = 32; // 1,2,4,8,16,32
+constexpr int GRID_COUNT = 16; // 1,2,4,8,16,32
+
+constexpr int MAX_POINT_LIGHTS = 100;
 
 using std::vector;
 using std::string;
@@ -161,9 +163,9 @@ LightingPass::LightingPass(int framebufferWidth, int framebufferHeight) {
 
     m_lightIndexTextureSize = 0;
 
-    m_pointLightPosition = new Vector3f[256];
-    m_pointLightRadius = new float[256];
-    m_pointLightColor = new Vector3f[256];
+    m_pointLightPosition = new Vector3f[MAX_POINT_LIGHTS];
+    m_pointLightRadius = new float[MAX_POINT_LIGHTS];
+    m_pointLightColor = new Vector3f[MAX_POINT_LIGHTS];
 
 
 }
@@ -202,14 +204,14 @@ void LightingPass::Render(
 
 //    LOG_I("pos: %s", std::string(m_pointLightPosition[0]).c_str() );
     m_directionalShader->SetUniform("pointLightPosition",
-				    m_pointLightPosition, 256);
+				    m_pointLightPosition, MAX_POINT_LIGHTS);
 
     m_directionalShader->SetUniform("pointLightRadius",
-				    m_pointLightRadius, 256);
+				    m_pointLightRadius, MAX_POINT_LIGHTS);
 
 //    LOG_I("color: %s", std::string(m_pointLightColor[0]).c_str() );
     m_directionalShader->SetUniform("pointLightColor",
-				    m_pointLightColor, 256 );
+				    m_pointLightColor, MAX_POINT_LIGHTS );
 //    LOG_I("done color" );
 
 
@@ -701,3 +703,4 @@ void LightingPass::UpdateTextures(int lightCount) {
 
     m_lightIndexTextureBuffer = new float[texSize*texSize];
 }
+
