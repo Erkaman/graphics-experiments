@@ -10,9 +10,11 @@ uniform sampler2D normalTexture;
 uniform sampler2D specularTexture;
 uniform sampler2DShadow shadowMap;
 uniform sampler2D lightGrid;
+uniform sampler2D lightIndexTexture;
 
 uniform vec2 screenSize;
-uniform float gridCount;
+uniform float gridCountRcp;
+uniform float lightIndexTextureSize;
 
 uniform vec3 ambientLight;
 uniform vec3 sceneLight;
@@ -221,14 +223,42 @@ void main() {
 
     float GRID_COUNT = 10.0;
 
-    float gridCellSize = 1 / gridCount;
+    float gridCellSize = gridCountRcp;
 
 
 
-//    vec3 gridColor = texture(lightGrid, (texCoord / gridCellSize) / gridCount  ).xyz;
-    vec3 gridColor = texture(lightGrid, texCoord  ).y > 0 ? vec3(1,0,0) : vec3(0,0,0);
+//    vec3 gridColor = texture(lightGrid, texCoord  ).y > 0 ? vec3(1,0,0) : vec3(0,0,0);
 
-     fragmentColor = vec4(gridColor, 1.0);
+
+    vec3 sample = texture(lightGrid, texCoord  ).rgb;
+    float offset = sample.r;
+    float count = sample.g;
+
+    for(int i = 0; i < count; ++i) {
+
+	//	offset = 0;
+
+	vec2 lightIndexCoord = vec2(
+	    mod( (offset + i), lightIndexTextureSize),
+	    ((offset + i) / lightIndexTextureSize)
+	    );
+
+	lightIndexCoord *= (1.0 / lightIndexTextureSize);
+
+	float sample = texture(lightIndexTexture, lightIndexCoord).r;
+
+/*	if(sample == 0) {
+	    fragmentColor += vec4(1, 0, 0, 0);
+	}
+
+	if(sample == 1) {
+	    fragmentColor += vec4(0, 1, 0, 0);
+	}
+*/
+//	fragmentColor = vec4(vec3(sample,0,0), 1.0);
+    }
+
+//     fragmentColor = vec4(gridColor, 1.0);
 
 //    fragmentColor = vec4(vec3(texCoord / gridCellSize ,0), 1.0);
 
@@ -236,6 +266,7 @@ void main() {
 //	fragmentColor = vec4(vec3(texCoord.xy,0), 1.0);
 
 //    fragmentColor = vec4( vec3(specMat), 1.0 );
+
 
 
     if(

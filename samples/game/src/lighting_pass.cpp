@@ -147,6 +147,8 @@ LightingPass::LightingPass(int framebufferWidth, int framebufferHeight) {
     m_lightIndexTexture = NULL;
     m_lightIndexTextureBuffer = NULL;
 
+    m_lightIndexTextureSize = 0;
+
 }
 
 void LightingPass::Render(
@@ -166,19 +168,27 @@ void LightingPass::Render(
     Texture::SetActiveTextureUnit(LIGHT_GRID_TEXTURE_UNIT);
     m_lightGridTexture->Bind();
 
-
+    m_directionalShader->SetUniform("lightIndexTexture", LIGHT_INDEX_TEXTURE_UNIT);
+    Texture::SetActiveTextureUnit(LIGHT_INDEX_TEXTURE_UNIT);
+    m_lightIndexTexture->Bind();
 
 
     m_directionalShader->SetLightUniforms(camera, lightPosition, lightVp);
 
 
-    m_directionalShader->SetUniform("gridCount", (float)GRID_COUNT );
+    m_directionalShader->SetUniform("gridCountRcp", 1.0f / (float)GRID_COUNT );
+
+
+    m_directionalShader->SetUniform("lightIndexTextureSize",
+				    (float)m_lightIndexTextureSize );
+
 
 
     GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
 
     shadowMap.GetRenderTargetTexture().Unbind();
     m_lightGridTexture->Unbind();
+    m_lightIndexTexture->Unbind();
 
     UnsetupShader(m_directionalShader, gbuffer, cubeMapTexture, refractionMap, reflectionMap);
 
@@ -201,7 +211,7 @@ void LightingPass::Render(
 
     DrawLights(camera, lights);
 
-    //  GL_C(glDisable(GL_BLEND));
+//    GL_C(glDisable(GL_BLEND));
     GL_C(glFrontFace(GL_CCW));
     GL_C(glEnable(GL_DEPTH_TEST));
 
@@ -366,10 +376,17 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
 	}
 
     }
+//    m_lightIndexTextureBuffer[0] = 1.0f;
 
     m_lightGridTexture->Bind();
     m_lightGridTexture->UpdateTexture( &m_lightGridTextureBuffer[0] );
     m_lightGridTexture->Unbind();
+
+
+    m_lightIndexTexture->Bind();
+    m_lightIndexTexture->UpdateTexture( &m_lightIndexTextureBuffer[0]);
+    m_lightIndexTexture->Unbind();
+
 
 //    m_lightGridTextureBuffer
 
@@ -382,11 +399,12 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
       global light list. (list of uniforms)
      */
 
-
+/*
     for(const PointLight& pointLight : lights) {
 	DrawPointLight(
 	    camera, pointLight.m_position,  pointLight.m_color, pointLight.m_radius);
-    }
+    }*/
+
 }
 
 std::vector<PointLight> LightingPass::GetTorches(const ICamera* camera, const std::vector<Vector3f>& torches) {
@@ -452,6 +470,16 @@ std::vector<PointLight> LightingPass::GetTestLights() {
 			      Vector3f(0,4, 0),
 
 			      Vector3f(1,0,0
+			      ),
+
+			      30.0f));
+
+
+	lights.push_back( PointLight(
+
+			      Vector3f(-40,4, 0),
+
+			      Vector3f(0,1,0
 			      ),
 
 			      30.0f));
@@ -592,6 +620,8 @@ void LightingPass::UpdateTextures(int lightCount) {
     while(texSize * texSize < maxLightIndices) {
 	texSize *= 2;
     }
+
+    m_lightIndexTextureSize = texSize;
 
     m_lightIndexTexture = new Texture2D(nullptr, texSize, texSize,
 				       GL_R16F,

@@ -76,6 +76,7 @@ void ShaderProgram::CompileShaderProgram(const string& vertexShaderSource, const
     ShaderProgramBuilder shaderBuilder(vertexShaderSource, fragmentShaderSource, geometryShaderSource, path, beforeLinkingHook);
     m_shaderProgram = shaderBuilder.GetLinkedShaderProgram();
 
+//*    LOG_I("path: %s", path.c_str() );
     m_uniformLocationStore = new UniformLocationStore(m_shaderProgram);
 }
 
@@ -97,9 +98,14 @@ void ShaderProgram::SetUniform(const std::string& uniformName, const Color& colo
 
 void ShaderProgram::SetUniform(const std::string& uniformName, const Matrix4f& matrix) {
     if (m_uniformLocationStore->UniformExists(uniformName)) {
+
+//	LOG_I("could set %s", uniformName.c_str() );
+
 	const GLuint location =m_uniformLocationStore->GetUniformLocation(uniformName);
 	const GLfloat* arr = reinterpret_cast<const GLfloat*>(&matrix);
 	GL_C(glUniformMatrix4fv(location, 1, true, arr));
+    } else {
+//	LOG_I("could not set %s", uniformName.c_str() );
     }
 }
 

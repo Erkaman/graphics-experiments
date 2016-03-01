@@ -22,6 +22,7 @@ struct PointLight {
     Vector3f m_color;
     float m_radius;
 
+
     PointLight(
 	Vector3f position, Vector3f color, float radius) {
 	m_position = position;
@@ -47,6 +48,8 @@ private:
 
     Texture2D* m_lightIndexTexture;
     float* m_lightIndexTextureBuffer;
+
+    int m_lightIndexTextureSize;
 
 
     void SetupShader(

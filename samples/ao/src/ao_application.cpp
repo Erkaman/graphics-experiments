@@ -81,11 +81,11 @@ void AoApplication::Init() {
 
 void AoApplication::Render() {
 
-
+/*
     if(m_gui) {
 	m_gui->NewFrame(m_guiVerticalScale);
     }
-
+*/
 
     float SCALE = m_guiVerticalScale;
 
@@ -94,6 +94,10 @@ void AoApplication::Render() {
     int windowWidth;
     int windowHeight;
 
+
+    m_rayTracer->RayTrace();
+
+    /*
     SetViewport();
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -112,7 +116,7 @@ void AoApplication::Render() {
 
 
 	m_gui->Render(windowWidth, windowHeight);
-
+*/
 }
 
 void AoApplication::Update(const float delta) {

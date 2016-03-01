@@ -1,5 +1,8 @@
 #include "uniform_location_store.hpp"
 
+#include "log.hpp"
+
+
 using namespace std;
 
 int getActiveUniforms(GLuint shaderProgram);
@@ -38,6 +41,8 @@ UniformLocationStore::UniformLocationStore(const GLuint shaderProgram) {
 	if(uniformLocation != -1) {
 
 	    this->uniformLocationStore[std::string(nameBuffer)] = uniformLocation;
+
+//	    LOG_I("buffer %s", nameBuffer );
 	}
     }
 }
