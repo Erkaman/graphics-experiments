@@ -130,9 +130,8 @@ void main() {
 	envMapSample = vec3(0,0,0);
 
 	ambientLight = vec3(1,1,1);
-	sceneLight = vec3(0,0,0);
+	sceneLight = vec3(0.0);
     }
-
 
 
     /*
@@ -226,7 +225,8 @@ void main() {
 
     float diff=  calcDiff(l,n);
 
-    float spec = 0;
+//    float spec = 0;
+    float spec= calcSpec(l,n,v);
 
         float ztest = step(0, pointLightRadius - length(lightDist));
 
