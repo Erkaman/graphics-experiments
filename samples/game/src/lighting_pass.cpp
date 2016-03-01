@@ -24,7 +24,7 @@
 
 #include <float.h>
 
-constexpr bool isTiled = true;
+constexpr bool isTiled = false;
 
 
 constexpr int SLICES = 10;
@@ -664,6 +664,7 @@ void LightingPass::DrawPointLight(const ICamera* camera, const Vector3f& positio
 
 void LightingPass::UpdateTextures(int lightCount) {
 
+    LOG_I("lightcount: %d",  lightCount);
     if(lightCount == -1) {
 	lightCount = GetTestLights().size();
     }
