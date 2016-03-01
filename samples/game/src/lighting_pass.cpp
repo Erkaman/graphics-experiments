@@ -219,9 +219,8 @@ void LightingPass::Render(
     GL_C(glFrontFace(GL_CW));
     GL_C(glDisable(GL_DEPTH_TEST));
 
-    //  GL_C(glEnable(GL_BLEND));
-    // GL_C(glBlendFunc(GL_ONE, GL_ONE));
-
+//    GL_C(glEnable(GL_BLEND));
+//    GL_C(glBlendFunc(GL_ONE, GL_ONE));
 
     std::vector<PointLight> lights = GetTestLights();
 
@@ -230,7 +229,7 @@ void LightingPass::Render(
 
     DrawLights(camera, lights);
 
-    //GL_C(glDisable(GL_BLEND));
+//    GL_C(glDisable(GL_BLEND));
     GL_C(glFrontFace(GL_CCW));
     GL_C(glEnable(GL_DEPTH_TEST));
 
@@ -449,14 +448,13 @@ std::vector<PointLight> LightingPass::GetTorches(const ICamera* camera, const st
 }
 
 std::vector<PointLight> LightingPass::GetTestLights() {
-    int MIN_X = -2;
-    int MAX_X = +2;
+    int MIN_X = -3;
+    int MAX_X = +3;
 
-    int MIN_Z = -2;
-    int MAX_Z = +2;
+    int MIN_Z = -3;
+    int MAX_Z = +3;
 
     std::vector<PointLight> lights;
-
 
     for(int x = MIN_X; x <= MAX_X; ++x) {
 

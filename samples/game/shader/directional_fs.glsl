@@ -191,6 +191,11 @@ void main() {
     float offset = sample.r;
     float count = sample.g;
 
+    ambientLight = vec3(0.75);
+
+    sceneLight = vec3(1);
+
+
     for(int i = 0; i < count; ++i) {
 
 	//	offset = 0;
@@ -239,6 +244,7 @@ void main() {
 
     fragmentColor.xyz += light.xyz * vec3(pointLightColor) * atten;
     }
+
 
 /*
 
