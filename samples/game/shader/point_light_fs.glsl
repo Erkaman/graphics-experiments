@@ -74,7 +74,6 @@ void main() {
 
     float visibility = 1.0;
 
-
     // ambient light was handled in separate pass. so should be zero.
     vec3 ambientLight = vec3(0.75);
 
