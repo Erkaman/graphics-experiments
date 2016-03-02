@@ -3,6 +3,9 @@ out vec4 fragmentColor;
 in float isRender;
 in float d;
 
+out vec4 geoData[3];
+
+
 void main()
 {
 
@@ -22,6 +25,8 @@ void main()
 	col = vec3(0,0,0);
     }
 */
-    fragmentColor = vec4(vec3(1,0,0),1);
+    geoData[0] = vec4(vec3(1,1,1),1);
+    geoData[1] = vec4(
+	normalize(-vec3(-0.705072f, -0.958142f, -0.705072f)),0);
 
 }

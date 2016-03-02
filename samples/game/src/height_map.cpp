@@ -311,9 +311,9 @@ void HeightMap::CreateCursor() {
 
     const float rad = m_cursorSize;
 
-    for(int ix = -rad; ix <= +rad; ++ix) {
+    for(float ix = -rad; ix <= +rad; ix+=0.5f ) {
 
-	for(int iz = -rad; iz <= +rad; ++iz) {
+	for(float iz = -rad; iz <= +rad; iz+=0.5f) {
 
 	    float dist = sqrt( (float)ix * (float)ix + (float)iz * (float)iz  );
 	    int idist = dist;

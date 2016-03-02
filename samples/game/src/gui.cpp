@@ -478,8 +478,6 @@ int Gui::GetSmoothRadius()const {
     return m_smoothRadius;
 }
 
-
-
 bool Gui::isAoOnly()const {
     return m_aoOnly;
 }

@@ -8,6 +8,8 @@
 #include "ewa/log.hpp"
 #include "ewa/random.hpp"
 #include "ewa/math/matrix4f.hpp"
+#include "ewa/keyboard_state.hpp"
+
 
 #include <math.h>
 #include <float.h>
@@ -23,16 +25,59 @@ RayTracer::RayTracer(GeometryObjectData* geoObj) {
 
     m_positionFbo = new PositionFbo();
     m_positionFbo->Init(0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
-
-
+/*
+    LOG_I("attribs: %d", m_geoObj->m_vertexAttribsSizes.size() );
+    LOG_I("attribs1: %d", m_geoObj->m_vertexAttribsSizes[0] );
+    LOG_I("attribs2: %d", m_geoObj->m_vertexAttribsSizes[1] );
+    LOG_I("attribs3: %d", m_geoObj->m_vertexAttribsSizes[2] );
+*/
     m_vertexBuffer = VBO::CreateInterleaved(
 	    m_geoObj->m_vertexAttribsSizes);
 
-
+/*
     LOG_I("size: %d", m_geoObj->m_verticesSize );
 
+    LOG_I("verticessize: %d", m_geoObj->m_verticesSize );
+*/
+
+    GLfloat* vs = (GLfloat *)m_geoObj->m_vertices;
+
+    //  LOG_I("verticessize: %d", m_geoObj->m_verticesSize );
+
+/*
+    vs[8*0 + 0] = 0.0f;
+    vs[8*0 + 1] = 0.5f;
+    vs[8*0 + 2] = 0.0f;
+
+
+    vs[8*1 + 0] = -0.5f;
+    vs[8*1 + 1] = -0.5f;
+    vs[8*1 + 2] = 0.0f;
+
+    vs[8*2 + 0] = 0.5f;
+    vs[8*2 + 1] = -0.5f;
+    vs[8*2 + 2] = 0.0f;
+
+
+    LOG_I("vertices0: %f", vs[8*0 + 0] );
+    LOG_I("vertices1: %f", vs[8*0 + 1] );
+    LOG_I("vertices1: %f", vs[8*0 + 2] );
+
+    LOG_I("NEXT");
+
+    LOG_I("vertices0: %f", vs[8*1 + 0] );
+    LOG_I("vertices1: %f", vs[8*1 + 1] );
+    LOG_I("vertices1: %f", vs[8*1 + 2] );
+
+    LOG_I("NEXT");
+
+    LOG_I("vertices0: %f", vs[8*2 + 0] );
+    LOG_I("vertices1: %f", vs[8*2 + 1] );
+    LOG_I("vertices1: %f", vs[8*2 + 2] );
+
+*/
     m_vertexBuffer->Bind();
-    m_vertexBuffer->SetBufferData(m_geoObj->m_verticesSize, m_geoObj->m_vertices);
+    m_vertexBuffer->SetBufferData(m_geoObj->m_verticesSize, vs /*m_geoObj->m_vertices*/);
     m_vertexBuffer->Unbind();
 
     for(size_t i = 0; i < m_geoObj->m_chunks.size(); ++i) {
@@ -44,6 +89,16 @@ RayTracer::RayTracer(GeometryObjectData* geoObj) {
 	newChunk.m_indexBuffer = VBO::CreateIndex(m_geoObj->m_indexType);
 	newChunk.m_numTriangles = baseChunk->m_numTriangles;
 
+	unsigned short* indices = (unsigned short*)baseChunk->m_indices;
+/*
+	LOG_I("indices0: %d", indices[0] );
+	LOG_I("indices1: %d", indices[1] );
+	LOG_I("indices2: %d", indices[2] );
+	LOG_I("indices3: %d", indices[3] );
+	LOG_I("indices4: %d", indices[4] );
+
+	LOG_I("indicessize: %d", baseChunk->m_indicesSize );
+*/
 	newChunk.m_indexBuffer->Bind();
 	newChunk.m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
 	newChunk.m_indexBuffer->Unbind();
@@ -56,6 +111,20 @@ RayTracer::RayTracer(GeometryObjectData* geoObj) {
 
 GeometryObjectData* RayTracer::RayTrace() {
 
+    static float xAngle = 30;
+    static float yAngle = 80;
+
+
+    KeyboardState& kbs = KeyboardState::GetInstance();
+/*
+    if( kbs.IsPressed(GLFW_KEY_P) ) {
+	xAngle += 1.5f;
+    }
+
+    if( kbs.IsPressed(GLFW_KEY_L) ) {
+	yAngle += 1.5f;
+    }
+*/
 
 /*
     LOG_I("aabbMin: %s",  string( m_geoObj->aabb.min ).c_str() );
@@ -78,7 +147,7 @@ GeometryObjectData* RayTracer::RayTrace() {
 	    );
 
 
-	float bound = 0.9f;
+	float bound =  0.5f;
 
 	Matrix4f scale = Matrix4f::CreateScale(
 	    bound / (aabb.max.x - aabb.min.x),
@@ -87,6 +156,8 @@ GeometryObjectData* RayTracer::RayTrace() {
 
 	    );
 
+//	LOG_I("translation: %s", string(translate).c_str() );
+
 
 /*
 	LOG_I("boundx: %f", 	    bound / (aabb.max.x - aabb.min.x));
@@ -94,18 +165,17 @@ GeometryObjectData* RayTracer::RayTrace() {
 	LOG_I("boundz: %f", 	    bound / (aabb.max.z - aabb.min.z));
 */
 
-	Matrix4f modelMatrix = Matrix4f::CreateIdentity();//scale * translate;
+	Matrix4f modelMatrix = scale * translate;
 
-	float xAngle = 60;
-	float yAngle = 10;
-/*
+
+
 	Matrix4f viewMatrix =
 	    Matrix4f::CreateRotate(xAngle, Vector3f(1,0,0) ) *
 	    Matrix4f::CreateRotate(yAngle, Vector3f(0,1,0) );
-*/
-	Matrix4f viewMatrix = Matrix4f::CreateIdentity();
 
-	float size = 10.5f;
+//	Matrix4f viewMatrix = Matrix4f::CreateIdentity();
+
+	float size = 0.5f;
 
 	Matrix4f projectionMatrix = Matrix4f::CreateOrthographic(
 	    -size, +size,
@@ -126,14 +196,18 @@ GeometryObjectData* RayTracer::RayTrace() {
 
 	::SetCullFace(false);
 
+	m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
+
+
 	for(const Chunk& chunk : m_chunks) {
 //	    LOG_I("lol: %d",  chunk.m_numTriangles);
-
 
 	    chunk.m_indexBuffer->Bind();
 	    chunk.m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk.m_numTriangles)*3);
 	    chunk.m_indexBuffer->Unbind();
 	}
+
+	m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
 
 	m_shader->Unbind();
 
