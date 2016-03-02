@@ -91,48 +91,10 @@ void main() {
 
     vec4 shadowCoord = (lightVp * (inverseViewMatrix * vec4(viewSpacePosition.xyz,1)));
 
-
-
     if(id == 2.0) {
-	vec4 clipSpace = proj * vec4( viewSpacePosition, 1.0);
 
-
-	vec2 ndc = clipSpace.xy / clipSpace.w;
-	ndc = ndc * 0.5 + 0.5;
-
-	vec2 refractionTexcoord = ndc;
-	vec2 reflectionTexcoord = vec2(ndc.x, 1 -ndc.y);
-
-
-	vec2 distort = specColor.xy;
-
-	refractionTexcoord += distort;
-	reflectionTexcoord += distort;
-
-	refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
-
-	vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
-	vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
-
-
-	vec3 worldPosition = (invViewMatrix * vec4(viewSpacePosition, 1)).xyz;
-
-	vec3 toCameraVector = normalize(eyePos - worldPosition.xyz);
-
-	float fresnel = dot(
-	    toCameraVector, vec3(0,1,0));
-
-	diffColor = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
-
-	specMat = 0.6 * sceneLight;
-
-	specShiny = 20.0;
-	envMapSample = vec3(0,0,0);
-
-	ambientLight = vec3(1,1,1);
-	sceneLight = vec3(0.0);
+	waterShader(viewSpacePosition, proj, specColor, refractionMap, reflectionMap, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
     }
-
 
     /*
       Compute directional lighting.

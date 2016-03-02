@@ -187,3 +187,44 @@ void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor,
     diffColor = sample.xyz;
     ao = sample.w;
 }
+
+void waterShader(vec3 viewSpacePosition, mat4 proj, vec3 specColor, sampler2D refractionMap, sampler2D reflectionMap,
+		 mat4 invViewMatrix, vec3 eyePos, inout vec3 diffColor, inout vec3 specMat, inout vec3 sceneLight, inout float specShiny, inout vec3 envMapSample, inout vec3 ambientLight) {
+	vec4 clipSpace = proj * vec4( viewSpacePosition, 1.0);
+
+
+	vec2 ndc = clipSpace.xy / clipSpace.w;
+	ndc = ndc * 0.5 + 0.5;
+
+	vec2 refractionTexcoord = ndc;
+	vec2 reflectionTexcoord = vec2(ndc.x, 1 -ndc.y);
+
+
+	vec2 distort = specColor.xy;
+
+	refractionTexcoord += distort;
+	reflectionTexcoord += distort;
+
+	refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
+
+	vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
+	vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
+
+
+	vec3 worldPosition = (invViewMatrix * vec4(viewSpacePosition, 1)).xyz;
+
+	vec3 toCameraVector = normalize(eyePos - worldPosition.xyz);
+
+	float fresnel = dot(
+	    toCameraVector, vec3(0,1,0));
+
+	diffColor = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
+
+	specMat = 0.6 * sceneLight;
+
+	specShiny = 20.0;
+	envMapSample = vec3(0,0,0);
+
+	ambientLight = vec3(1,1,1);
+	sceneLight = vec3(0.0);
+}

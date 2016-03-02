@@ -7,6 +7,12 @@ uniform sampler2D specularTexture;
 uniform sampler2DShadow shadowMap;
 uniform mat4 invProj;
 uniform vec3 color;
+uniform mat4 proj;
+
+uniform sampler2D refractionMap;
+uniform sampler2D reflectionMap;
+uniform mat4 invViewMatrix;
+uniform vec3 eyePos;
 
 out vec4 fragmentColor;
 
@@ -55,21 +61,7 @@ void main() {
 
     readSpecularTexture(specularTexture, texCoord, specColor, specShiny);
 
-
-    vec3 specMat = specColor; // + (vec3(1.0) - specColor)  * pow(clamp(1.0 + dot(-v, n), 0.0, 1.0), 5.0);
-
-
-//    col *= length(viewSpacePosition - lightCenter) / 15;
-
-//    col = viewSpacePosition;
-
-//    col *= (length(lightPos - lightCenter) ) / 5;
-
-    col =
-	//vec3(1,0,0)
-	n
-
-	* ztest;
+    vec3 specMat = specColor;
 
     float visibility = 1.0;
 
@@ -78,7 +70,16 @@ void main() {
 
     vec3 sceneLight = vec3(1);
 
+    vec3 envMapSample = vec3(0);
+
+    if(id == 2.0) {
+
+	waterShader(viewSpacePosition, proj, specColor, refractionMap, reflectionMap, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
+    }
+
+
     vec4 light = calcLighting(
+
 	ambientLight,
 	sceneLight,
 	    specShiny,
@@ -87,18 +88,11 @@ void main() {
 	    diff,
 	    spec,
 	    visibility,
-	    vec3(0) );
+	    envMapSample );
 
     light.a = 1.0;
 
     float atten = clamp(1.0 - length(lightDist) / radius, 0,1);
 
-//    light = vec4(1,1,1,1);
-
-//    atten = 1;
-
     fragmentColor = light * vec4(vec3(color),1) * ztest * atten;
-
-//    fragmentColor = light * ztest;
-
 }
