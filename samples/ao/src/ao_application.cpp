@@ -61,10 +61,13 @@ void AoApplication::Init() {
     m_render->SetEob(m_eobFile, "obj" );
 
     m_rayTracer = new RayTracer(m_eobFile);
-    m_render->SetEob(m_rayTracer->RayTrace(), "obj");
+//      m_render->SetEob(m_rayTracer->RayTrace(), "obj");
+    m_rayTracer->RayTrace();
 
+    LOG_I("init");
     ::SetDepthTest(true);
     ::SetCullFace(true);
+
 
     const Vector3f pos =
 	Vector3f(-10, 10, 10);
@@ -75,6 +78,8 @@ void AoApplication::Init() {
 	pos,
 	Vector3f(0.50f, -0.50f, -0.50f)
 	);
+
+    LOG_I("init1");
 
     m_curCamera = m_freeCamera;
 }
@@ -95,8 +100,7 @@ void AoApplication::Render() {
     int windowHeight;
 
 
-
-    m_rayTracer->RayTrace();
+//    m_rayTracer->RayTrace();
 
 /*
     SetViewport();

@@ -3,6 +3,8 @@
 #include "gl/texture.hpp"
 #include "gl/render_buffer.hpp"
 
+#include "log.hpp"
+
 void PositionFbo::RecreateBuffers(const GLsizei width, const GLsizei height)  {
     Bind();
     {
@@ -44,6 +46,7 @@ void PositionFbo::RecreateBuffers(const GLsizei width, const GLsizei height)  {
     }
     // switch to default frame buffer.
     Unbind();
+
 }
 
 PositionFbo::PositionFbo() {

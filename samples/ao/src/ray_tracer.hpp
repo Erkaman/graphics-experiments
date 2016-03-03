@@ -27,7 +27,11 @@ private:
 
     std::vector<Chunk> m_chunks;
 
-    ShaderProgram* m_shader;
+    ShaderProgram* m_outputPosShader;
+    ShaderProgram* m_occlusionShader;
+
+
+    PositionFbo* m_occlusionFbos[2];
 
 
 public:
