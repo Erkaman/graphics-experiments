@@ -194,15 +194,20 @@ private:
     MultArray<AABB>* m_aabbs;// the AABBs of the chunks.
     Cube* m_aabbWireframe;
 
+    /*
     // information of whether the chunks are in the camera:
     MultArray<bool>* m_inCameraFrustum;
     MultArray<bool>* m_inLightFrustum;
     MultArray<bool>* m_inReflectionFrustum;
+    */
 
+//    MultArray<bool>* m_inEnvFrustums[6];
 
+    std::vector<Vector2i>* m_inCameraFrustum;
+    std::vector<Vector2i>* m_inLightFrustum;
+    std::vector<Vector2i>* m_inReflectionFrustum;
 
-    MultArray<bool>* m_inEnvFrustums[6];
-
+    std::vector<Vector2i>* m_inEnvFrustums[6];
 
 
     // used to store temp data in SmoothTerrain()

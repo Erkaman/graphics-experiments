@@ -29,6 +29,10 @@
 #include "math/vector2i.hpp"
 #include "math/color.hpp"
 
+
+#include "whirl_pattern_creator.hpp"
+
+
 #include "gui_enum.hpp"
 #include "ewa/physics_world.hpp"
 #include "value_noise.hpp"
@@ -348,8 +352,6 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
     m_heightMap->Bind();
 
 
-
-
     shader->SetUniform("xzScale", m_xzScale);
     shader->SetUniform("yScale", m_yScale);
     shader->SetUniform("offset", m_offset);
@@ -440,7 +442,7 @@ void HeightMap::Render(ShaderProgram* shader, HeightMapRenderMode renderMode) {
     m_indexBuffer->Bind();
 
 
-    MultArray<bool>& inFrustum =
+    std::vector<Vector2i>& inFrustum =
 	renderMode >= HEIGHT_MAP_RENDER_MODE_ENV_MAP0 && renderMode <= HEIGHT_MAP_RENDER_MODE_ENV_MAP5 ?
 	*m_inEnvFrustums[renderMode - HEIGHT_MAP_RENDER_MODE_ENV_MAP0] :
 
@@ -448,29 +450,35 @@ void HeightMap::Render(ShaderProgram* shader, HeightMapRenderMode renderMode) {
 	renderMode == HEIGHT_MAP_RENDER_MODE_SHADOWS ? *m_inLightFrustum :
 
 	*m_inReflectionFrustum;
+/*
+    LOG_I("max chunks: %d", m_chunks * m_chunks );
 
-    // LOG_I("max chunks: %d", m_chunks * m_chunks );
-
+    LOG_I("count: %d", m_inCameraFrustum->size() );
+*/
     //  int count = 0;
+/*
 
-    for(int x = 0; x < m_chunks; ++x) {
-	for(int z = 0; z < m_chunks; ++z) {
-
-	    if(!inFrustum(x,z)) {
-		// not in frustum, dont draw.
-		continue;
-	    }
-
-//	    ++count;
-
-	    shader->SetUniform("chunkPos", Vector2f(x,z) );
-
-	    // DRAW.
-	    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+    if(renderMode == HEIGHT_MAP_RENDER_MODE_NORMAL) {
+	LOG_I("draw chunk: %d, %d", inFrustum[0].x, inFrustum[0].y );
+    }*/
 
 
-	}
+    for(Vector2i chunkPos : inFrustum) {
+
+	int x = chunkPos.x;
+	int z = chunkPos.y;
+
+
+	shader->SetUniform("chunkPos", Vector2f(x,z) );
+
+
+
+	// DRAW.
+	m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+
+
     }
+
 /*
     if(renderMode == HEIGHT_MAP_RENDER_MODE_NORMAL) {
 	LOG_I("count: %d", count);
@@ -636,8 +644,6 @@ void HeightMap::RenderReflection(
 
     m_reflectionShader->Unbind();
 }
-
-
 
 void HeightMap::RenderCursor(const ICamera* camera) {
 
@@ -1798,12 +1804,19 @@ Vector3f HeightMap::GetChunkCornerPos(int chunkX, int chunkZ, float y) {
 
 void HeightMap::CreateAABBs() {
 
-    m_inCameraFrustum = new MultArray<bool>(m_chunks, m_chunks, true);
-    m_inLightFrustum = new MultArray<bool>(m_chunks, m_chunks, true);
-    m_inReflectionFrustum = new MultArray<bool>(m_chunks, m_chunks, true);
+    m_inCameraFrustum = new std::vector<Vector2i>;
+    m_inCameraFrustum->reserve(m_chunks * m_chunks);
+
+
+    m_inLightFrustum = new std::vector<Vector2i>;
+    m_inLightFrustum->reserve(m_chunks * m_chunks);
+
+    m_inReflectionFrustum = new std::vector<Vector2i>;
+    m_inReflectionFrustum->reserve(m_chunks * m_chunks);
 
     for(int i = 0; i < 6; ++i) {
-	m_inEnvFrustums[i] = new MultArray<bool>(m_chunks, m_chunks, true);
+	m_inEnvFrustums[i] =new std::vector<Vector2i>;
+	m_inEnvFrustums[i]->reserve(m_chunks * m_chunks);
     }
 
     m_aabbs = new MultArray<AABB>(m_chunks, m_chunks);
@@ -1825,24 +1838,129 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 		       ViewFrustum** envLightFrustums, const ViewFrustum& reflectionFrustum) {
 
     MultArray<AABB>& aabbs = *m_aabbs;
+
+/*
     MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
     MultArray<bool>& inLightFrustum = *m_inLightFrustum;
     MultArray<bool>& inReflectionFrustum = *m_inReflectionFrustum;
+*/
+
+
+    m_inCameraFrustum->clear();
+    m_inLightFrustum->clear();
+    m_inReflectionFrustum->clear();
+
+    for(int i = 0; i < 6; ++i) {
+	m_inEnvFrustums[i]->clear();
+    }
+
+    Vector3f cameraPos = cameraFrustum.GetPosition();
+
+    Vector2i chunkPos = Vector2i(
+	Clamp(  int( ((cameraPos.x + 0.5f*m_xzScale) / m_xzScale) * m_chunks), 0, m_chunks-1),
+	Clamp( int(((cameraPos.z + 0.5f*m_xzScale) / m_xzScale) * m_chunks), 0, m_chunks-1)
+	);
+
+//    LOG_I("chunkPos: %d, %d", chunkPos.x, chunkPos.y );>
+
+
+    WhirlPatternCreator pattern;
+
+
+
+    /*
+      find which chunks to draw for player camera and reflection camera.
+     */
+    pattern.Start(m_chunks+1);
+    int checkedChunks = 0;
+    while(checkedChunks < (m_chunks * m_chunks) ) {
+
+	pattern.Next(); // next chunk.
+
+	int x = chunkPos.x + pattern.GetX();
+	int z = chunkPos.y + pattern.GetZ();
+
+	if(x < 0 ||  x >= m_chunks || z < 0 ||  z >= m_chunks ) {
+	    continue; // out of range.
+	}
+
+	AABB aabb = aabbs(x,z);
+
+	Vector2i v(x,z);
+
+	if(cameraFrustum.IsAABBInFrustum(aabb)) {
+	    m_inCameraFrustum->push_back(v);
+	}
+
+	if(reflectionFrustum.IsAABBInFrustum(aabb)) {
+	    m_inReflectionFrustum->push_back(v);
+	}
+
+	++checkedChunks;
+    }
+
+
+
+
+
+
+
+    /*
+      Find which chunks to draw for environment map camera.
+     */
+
+    cameraPos = envLightFrustums[0]->GetPosition();
+
+    chunkPos = Vector2i(
+	Clamp(  int( ((cameraPos.x + 0.5f*m_xzScale) / m_xzScale) * m_chunks), 0, m_chunks-1),
+	Clamp( int(((cameraPos.z + 0.5f*m_xzScale) / m_xzScale) * m_chunks), 0, m_chunks-1)
+	);
+
+    pattern.Start(m_chunks+1);
+
+    checkedChunks = 0;
+
+    while(checkedChunks < (m_chunks * m_chunks) ) {
+
+	pattern.Next(); // next chunk.
+
+	int x = chunkPos.x + pattern.GetX();
+	int z = chunkPos.y + pattern.GetZ();
+
+	if(x < 0 ||  x >= m_chunks || z < 0 ||  z >= m_chunks ) {
+	    continue; // out of range.
+	}
+
+	AABB aabb = aabbs(x,z);
+
+	Vector2i v(x,z);
+
+
+
+	for(int i = 0; i < 6; ++i) {
+
+	    if(envLightFrustums[i]->IsAABBInFrustum(aabb)) {
+		m_inEnvFrustums[i]->push_back(v);
+	    }
+	}
+
+	++checkedChunks;
+    }
+
+
+
 
     for(int x = 0; x < m_chunks; ++x) {
 	for(int z = 0; z < m_chunks; ++z) {
 
 	    AABB aabb = aabbs(x,z);
 
-	    inCameraFrustum(x,z) = cameraFrustum.IsAABBInFrustum(aabb);
-	    inLightFrustum(x,z) = lightFrustum.IsAABBInFrustum(aabb);
-	    inReflectionFrustum(x,z) = reflectionFrustum.IsAABBInFrustum(aabb);
+	    Vector2i v(x,z);
 
-	    for(int i = 0; i < 6; ++i) {
-
-		MultArray<bool>& inEnvFrustums = *m_inEnvFrustums[i];
-		inEnvFrustums(x,z) = envLightFrustums[i]->IsAABBInFrustum(aabb);
+	    if(lightFrustum.IsAABBInFrustum(aabb)) {
+		m_inLightFrustum->push_back(v);
 	    }
+
 	}
     }
 }
@@ -2090,3 +2208,11 @@ void HeightMap::ErodeTerrain() {
 
     m_heightMapPbo->RequestUpdate();
 }
+
+/*
+  TODO:
+
+  test order of drawing skybox.
+
+  do bounding volume test for light sources.
+ */

@@ -1280,7 +1280,6 @@ void GeometryObject::Delete(IGeometryObject* geoObj) {
 }
 
 
-
 float GeometryObject::GetScale() const {
     return m_scale;
 }

@@ -29,7 +29,6 @@ vec3 computePos(
     vec3 offset,
     float yScale) {
 
-
     return offset + vec3(
 	pos.x * xzScale,
 	f(heightMap,pos.xy)*yScale,

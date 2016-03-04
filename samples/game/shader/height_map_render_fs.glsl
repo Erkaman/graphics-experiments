@@ -34,6 +34,7 @@ uniform vec3 sceneLight;
 
 void main()
 {
+
     vec3 v = -normalize(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
     vec3 n = viewSpaceNormal;
@@ -79,4 +80,10 @@ void main()
 	visibility,
 	vec3(0) );
 #endif
+
+
+
+
+//    geoData[0] = vec4(vec4(vec3(1,0,0), 1));
+
 }

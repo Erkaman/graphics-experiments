@@ -66,7 +66,7 @@ void Car::Update(
 
 	m_envCameras[i]->SetPosition(GetPosition() );
 	m_envCameras[i]->Update(0);
-	m_lightFrustums[i]->Update( m_envCameras[i]->GetVp() );
+	m_lightFrustums[i]->Update( m_envCameras[i]->GetVp(), GetPosition() );
      }
 
 

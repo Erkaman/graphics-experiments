@@ -317,6 +317,7 @@ void main(void) {
     geoData[2] = vec4(vec3(specColor.xyz), specShiny / 100.0 );
 #else
 
+
     vec3 ambient = ambientLight * ao;
 
     geoData[0] = aoOnly * vec4(vec3(ambient),1.0) + (1.0 - aoOnly)* calcLighting(

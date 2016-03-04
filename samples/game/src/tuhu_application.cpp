@@ -850,15 +850,14 @@ void TuhuApplication::Update(const float delta) {
     if(m_gui)
 	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
 
-    m_cameraFrustum->Update( m_curCamera->GetVp() );
-    m_reflectionFrustum->Update( m_reflectionCamera->GetVp() );
+    m_cameraFrustum->Update( m_curCamera->GetVp(), m_curCamera->GetPosition() );
+    m_reflectionFrustum->Update( m_reflectionCamera->GetVp(),  m_curCamera->GetPosition()  );
 
     UpdateMatrices();
 
-    m_lightFrustum->Update( m_lightVp );
+    m_lightFrustum->Update( m_lightVp, Vector3f(0) );
 
     m_physicsWorld->Update(delta);
-
 
     for(auto& it : m_geoObjs) {
 //    for(IGeometryObject* geoObj: m_geoObjs) {

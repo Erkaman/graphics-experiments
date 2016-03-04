@@ -64,8 +64,9 @@ Vector3f Intersect(const float* p1, const float* p2, const float* p3) {
 
 }
 
-void ViewFrustum::Update(const Matrix4f& vp) {
+void ViewFrustum::Update(const Matrix4f& vp, const Vector3f& position) {
 
+    m_position = position;
 
 
     // right plane
@@ -251,4 +252,8 @@ Vector3f ViewFrustum::rbn()const {
 
 Vector3f ViewFrustum::rtn()const {
     return IntersectPlanes(RIGHT,TOP,NEAR);
+}
+
+Vector3f ViewFrustum::GetPosition()const {
+    return m_position;
 }
