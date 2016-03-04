@@ -625,33 +625,11 @@ void TuhuApplication::RenderScene() {
 
     Matrix4f lightVp =  biasMatrix*   m_lightVp;
 
-    m_gpuProfiler->Begin(GTS_Sky);
-//      m_skydome->Draw(m_curCamera);
-
-/*
-    m_skybox->Draw(
-//	m_cubeMapTexture,
-	m_envFbo->GetEnvMap(),
-
-	m_curCamera);
-*/
-    m_gpuProfiler->End(GTS_Sky);
-
-    m_gpuProfiler->Begin(GTS_Terrain);
 
 
 
-    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 
-    m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, aoOnly);
 
-    m_gpuProfiler->End(GTS_Terrain);
-
-//    m_grass->Draw(m_curCamera, m_lightDirection);
-
-    //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
-
-    //   m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
     m_gpuProfiler->Begin(GTS_Objects);
     {
@@ -663,6 +641,30 @@ void TuhuApplication::RenderScene() {
 //    m_line->Render(m_curCamera->GetVp());
 
     m_gpuProfiler->End(GTS_Objects);
+
+
+
+
+    m_gpuProfiler->Begin(GTS_Terrain);
+
+
+
+    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
+
+    m_heightMap->Render(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, aoOnly);
+
+    m_gpuProfiler->End(GTS_Terrain);
+
+
+
+
+
+//    m_grass->Draw(m_curCamera, m_lightDirection);
+
+    //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
+
+    //   m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
+
 
 }
 
@@ -684,10 +686,9 @@ void TuhuApplication::RenderEnvMap() {
 
 	    Clear(1.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	    m_skydome->Draw(m_car->GetEnvCameras()[i]);
+	    //   m_skydome->Draw(m_car->GetEnvCameras()[i]);
 
-
-//	    m_skybox->Draw(m_cubeMapTexture, m_car->GetEnvCameras()[i]);
+	    m_skybox->DrawForward(m_cubeMapTexture, m_car->GetEnvCameras()[i]);
 
 
 	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
@@ -706,9 +707,6 @@ void TuhuApplication::RenderRefraction() {
 	::SetViewport(0,0,REFRACTION_WIDTH, REFRACTION_HEIGHT);
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-	m_skydome->Draw(m_curCamera);
-
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderRefraction(m_curCamera, m_lightDirection, aoOnly);
     }
@@ -722,12 +720,13 @@ void TuhuApplication::RenderReflection() {
 	::SetViewport(0,0,REFLECTION_WIDTH, REFLECTION_HEIGHT);
 	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	m_skydome->Draw(m_reflectionCamera);
+	m_skybox->DrawForward(m_cubeMapTexture, m_reflectionCamera );
+
+	GeometryObject::RenderReflection(m_reflectionCamera, m_lightDirection);
 
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderReflection(m_reflectionCamera, m_lightDirection, aoOnly);
 
-	GeometryObject::RenderReflection(m_reflectionCamera, m_lightDirection);
 
     }
     m_reflectionFbo->Unbind();
@@ -807,11 +806,12 @@ void TuhuApplication::Render() {
 //    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 
-
-    m_skybox->Draw(
+    m_gpuProfiler->Begin(GTS_Sky);
+    m_skybox->DrawDeferred(
 //	m_cubeMapTexture,
 	m_envFbo->GetEnvMap(),
 	m_curCamera, m_gbuffer->GetDepthTexture(), GetFramebufferWidth(), GetFramebufferHeight() );
+    m_gpuProfiler->End(GTS_Sky);
 
 
     if(m_gui) {

@@ -15,7 +15,8 @@ private:
 
     VBO* m_indexBuffer;
     VBO* m_positionBuffer;
-    ShaderProgram* m_shader;
+    ShaderProgram* m_deferredShader;
+    ShaderProgram* m_forwardShader;
 
     GLushort m_numIndices;
 
@@ -24,5 +25,7 @@ public:
     Skybox();
     ~Skybox();
 
-    void Draw(CubeMapTexture* m_cubeMap, const ICamera* camera, Texture* depthMap, int windowWidth, int windowHeight);
+    void DrawDeferred(CubeMapTexture* m_cubeMap, const ICamera* camera, Texture* depthMap, int windowWidth, int windowHeight);
+
+    void DrawForward(CubeMapTexture* m_cubeMap, const ICamera* camera);
 };

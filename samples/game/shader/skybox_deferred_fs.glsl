@@ -19,12 +19,6 @@ float toLinearDepth(float depth) {
 
 void main()
 {
-    //if()
-
-    /*
-
-    */
-
     float depth = texture(depthMap,  vec2(gl_FragCoord.x/windowWidth, gl_FragCoord.y/(windowHeight)) ).r;
 
     if(depth < 1.0 )
@@ -34,8 +28,5 @@ void main()
 
 
     vec3 color = texture(sampler, texCoord).rgb;
-//    color = vec3(depth / 100);
     fragmentColor =   vec4(color.rgb, 1.0);
-
-//    fragmentColor = vec4(gl_FragCoord.x/windowWidth, gl_FragCoord.y/(windowHeight), 0, 1);
 }

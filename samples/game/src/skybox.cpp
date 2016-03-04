@@ -47,7 +47,8 @@ Skybox::Skybox() {
 
 
     // load shader.
-    m_shader = ShaderProgram::Load("shader/skybox");
+    m_deferredShader = ShaderProgram::Load("shader/skybox_deferred");
+    m_forwardShader = ShaderProgram::Load("shader/skybox_forward");
 
 
     // create the vertex data.
@@ -124,17 +125,17 @@ Skybox::Skybox() {
 
 }
 
-void Skybox::Draw(CubeMapTexture* m_cubeMap, const ICamera* camera, Texture* depthMap, int windowWidth, int windowHeight) {
+void Skybox::DrawDeferred(CubeMapTexture* m_cubeMap, const ICamera* camera, Texture* depthMap, int windowWidth, int windowHeight) {
 
-    m_shader->Bind();
+    m_deferredShader->Bind();
 
     Texture::SetActiveTextureUnit(0);
     m_cubeMap->Bind();
-    m_shader->SetUniform("sampler", 0);
+    m_deferredShader->SetUniform("sampler", 0);
 
     Texture::SetActiveTextureUnit(1);
     depthMap->Bind();
-    m_shader->SetUniform("depthMap", 1);
+    m_deferredShader->SetUniform("depthMap", 1);
 
 
 
@@ -149,12 +150,11 @@ void Skybox::Draw(CubeMapTexture* m_cubeMap, const ICamera* camera, Texture* dep
     modelView.m23 = 0;
 
 
-
     Matrix4f mvp = camera->GetProjectionMatrix() * modelView;
 
-    m_shader->SetUniform("mvp", mvp);
-    m_shader->SetUniform("windowWidth", (float)windowWidth);
-    m_shader->SetUniform("windowHeight", (float)windowHeight);
+    m_deferredShader->SetUniform("mvp", mvp);
+    m_deferredShader->SetUniform("windowWidth", (float)windowWidth);
+    m_deferredShader->SetUniform("windowHeight", (float)windowHeight);
 
     m_indexBuffer->Bind();
 
@@ -167,16 +167,57 @@ void Skybox::Draw(CubeMapTexture* m_cubeMap, const ICamera* camera, Texture* dep
 
     m_positionBuffer->DisableVertexAttribInterleavedWithBind();
 
+    SetDepthTest(true);
 
+    m_cubeMap->Unbind();
+    m_deferredShader->Unbind();
+}
+
+void Skybox::DrawForward(CubeMapTexture* m_cubeMap, const ICamera* camera) {
+
+    m_forwardShader->Bind();
+
+    Texture::SetActiveTextureUnit(0);
+    m_cubeMap->Bind();
+    m_forwardShader->SetUniform("sampler", 0);
+
+
+
+    SetDepthTest(false);
+
+    Matrix4f modelView = camera->GetViewMatrix();//  * Matrix4f::CreateTranslation(camera->GetPosition());
+
+    // make sure that camera position is always zero.
+    // this ensures that the skybox follows the player.
+    modelView.m03 = 0;
+    modelView.m13 = 0;
+    modelView.m23 = 0;
+
+
+    Matrix4f mvp = camera->GetProjectionMatrix() * modelView;
+
+    m_forwardShader->SetUniform("mvp", mvp);
+
+    m_indexBuffer->Bind();
+
+    m_positionBuffer->EnableVertexAttribInterleavedWithBind();
+
+
+    m_indexBuffer->DrawIndices(GL_TRIANGLES, m_numIndices);
+
+    m_indexBuffer->Unbind();
+
+    m_positionBuffer->DisableVertexAttribInterleavedWithBind();
 
     SetDepthTest(true);
 
     m_cubeMap->Unbind();
-    m_shader->Unbind();
+    m_forwardShader->Unbind();
 }
+
 
 Skybox::~Skybox() {
     delete m_indexBuffer;
     delete m_positionBuffer;
-    delete m_shader;
+    delete m_deferredShader;
 }
