@@ -1190,6 +1190,21 @@ void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum*
     m_inReflectionFrustum = reflectionFrustum->IsAABBInFrustum(GetModelSpaceAABB());
 
 
+/*
+    if(m_filename == "obj/car_blend.eob" ) {
+	m_inReflectionFrustum = false;
+	m_inLightFrustum = false;
+	m_inCameraFrustum = false;
+    }*/
+
+/*
+    if(m_filename != "obj/water.eob" && m_filename != "obj/car_blend.eob" ) {
+	m_inReflectionFrustum = false;
+	m_inLightFrustum = false;
+	m_inCameraFrustum = false;
+    }
+*/
+
     for(int i = 0; i < 6; ++i) {
 
 	if(m_filename == "obj/car_blend.eob" ) {
@@ -1198,8 +1213,12 @@ void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum*
 	} else {
 	    m_inEnvLightFrustums[i] = envLightFrustums[i]->IsAABBInFrustum(GetModelSpaceAABB());
 	}
+/*
+	if(m_filename != "obj/water.eob" && m_filename != "obj/car_blend.eob" ) {
+	    m_inEnvLightFrustums[i] = false;
+	}
+*/
     }
-
 
 }
 
