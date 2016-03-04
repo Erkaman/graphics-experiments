@@ -13,7 +13,6 @@ in vec2 texCoord;
 
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
-in vec4 shadowCoordOut;
 
 uniform sampler2D grass;
 uniform sampler2D dirt;
@@ -31,10 +30,8 @@ in vec3 outn;
 uniform vec3 ambientLight;
 uniform vec3 sceneLight;
 
-
 void main()
 {
-
     vec3 v = -normalize(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
     vec3 n = viewSpaceNormal;
@@ -51,13 +48,18 @@ void main()
     float specShiny = 0;
     vec3 specColor = vec3(0);
     float diff=  calcDiff(l,n);
-    float spec= calcSpec(l,n,v);
 
+   float spec= calcSpec(l,n,v);
+
+   // shadowing is done in screenspace, so comment out.
+/*
 #ifdef SHADOW_MAPPING
     float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
 #else
     float visibility = 1.0;
 #endif
+*/
+    float visibility = 1.0;
 
     float ao = texture(aoMap, texCoord).r;
 

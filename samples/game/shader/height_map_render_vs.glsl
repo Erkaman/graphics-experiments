@@ -6,6 +6,7 @@ uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
 uniform mat4 normalMatrix;
 uniform mat4 lightMvp;
+uniform mat4 projectionMatrix;
 
 uniform sampler2D heightMap;
 
@@ -24,14 +25,12 @@ out vec2 texCoord;
 
 out vec3 position;
 
-out vec4 shadowCoordOut;
 
 out vec3 outn;
 
 void main()
 {
     // pos local in the chunk.
-    vec2 localPos = positionIn;
 
     vec2 globalPos = (positionIn + chunkPos) / chunks;
 
@@ -61,8 +60,6 @@ void main()
     texCoord = globalPos;
 
     position = scaledPos;
-
-    shadowCoordOut = (lightMvp * vec4(scaledPos,1));
 
     outn = norm;
 }
