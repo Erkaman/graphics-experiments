@@ -171,7 +171,8 @@ LightingPass::LightingPass(int framebufferWidth, int framebufferHeight) {
 void LightingPass::Render(
     Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition,
     const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches,
-    CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap) {
+    CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap,
+    const ViewFrustum& cameraFrustum) {
 
     SetupShader(m_directionalShader, gbuffer, camera, cubeMapTexture, refractionMap, reflectionMap);
 
@@ -243,7 +244,7 @@ void LightingPass::Render(
     std::vector<PointLight> lights = GetTorches(camera, torches);
 
 
-    DrawLights(camera, lights);
+    DrawLights(camera, lights, cameraFrustum);
 
     if(!isTiled) {
 	GL_C(glDisable(GL_BLEND));
@@ -254,10 +255,14 @@ void LightingPass::Render(
     UnsetupShader(m_pointShader, gbuffer, cubeMapTexture, refractionMap, reflectionMap);
 }
 
-void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLight>& lights) {
+void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLight>& lights, const ViewFrustum& cameraFrustum) {
+
 
     Matrix4f viewProjectionMatrix = camera->GetVp();
 
+
+
+    /*
     MultArray<vector<int> > lightGrid(GRID_COUNT, GRID_COUNT);
 
 
@@ -270,10 +275,6 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
 	m_pointLightPosition[iPointLight] = (pointLight.m_position);
 	m_pointLightRadius[iPointLight] = (pointLight.m_radius);
 	m_pointLightColor[iPointLight] = (pointLight.m_color);
-
-
-//	LOG_I("arr: %s", std::string(m_pointLightColor[iPointLight]).c_str() );
-
 
 	// first compute the AABB of the sphere.
 
@@ -309,8 +310,6 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
 		nonNormalized.z / nonNormalized.w
 		);
 
-//	    LOG_I("normalized.x: %f", normalized.x);
-
 	    if(normalized.x < aabbMin.x) {
 		aabbMin.x = normalized.x;
 	    }
@@ -322,31 +321,12 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
 	    if(normalized.x > aabbMax.x) {
 		aabbMax.x = normalized.x;
 
-		//	LOG_I("set: %f", normalized.x);
-
 	    }
 
 	    if(normalized.y > aabbMax.y) {
 		aabbMax.y = normalized.y;
 	    }
-
-
-//	    LOG_I("normx: %f", normalized.x);
-
-
 	}
-
-/*
-	LOG_I("bla minX: %f", aabbMin.x);
-	LOG_I("bla maxX: %f", aabbMax.x);
-
-	LOG_I("bla minY: %f", aabbMin.y);
-	LOG_I("bla maxY: %f", aabbMax.y);
-*/
-
-
-	// max.x cant get negative for some reason. always >= 0
-//	LOG_I("bef: %f", aabbMax.x);
 
 	// remap from [-1,+1] to [0,1], in order to simplify calculations.
 	aabbMin = (aabbMin + 1.0) * 0.5f;
@@ -358,16 +338,6 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
 
 	aabbMax.x = Clamp(aabbMax.x, 0.0f, 1.0f);
 	aabbMax.y = Clamp(aabbMax.y, 0.0f, 1.0f);
-
-/*
-	LOG_I("bla minX: %f", aabbMin.x);
-	LOG_I("bla maxX: %f", aabbMax.x);
-
-	LOG_I("bla minY: %f", aabbMin.y);
-	LOG_I("bla maxY: %f", aabbMax.y);
-*/
-
-//	exit(1);
 
 	int gridMinX = aabbMin.x / (1.0 / GRID_COUNT);
 	int gridMaxX = aabbMax.x / (1.0 / GRID_COUNT);
@@ -435,21 +405,15 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
 
 
 //    m_lightGridTextureBuffer
-
-    /*
-      tile light index list
-      Put all the Vector<int>s in a flattened array.
-     */
-
-    /*
-      global light list. (list of uniforms)
-     */
-
+*/
 
     if(!isTiled) {
 
 	// DO non-tiled DEFERRED RENDERING:
 	for(const PointLight& pointLight : lights) {
+
+
+
 	    DrawPointLight(
 		camera, pointLight.m_position,  pointLight.m_color, pointLight.m_radius);
 	}

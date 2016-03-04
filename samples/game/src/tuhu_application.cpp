@@ -690,7 +690,6 @@ void TuhuApplication::RenderEnvMap() {
 
 	    m_skybox->DrawForward(m_cubeMapTexture, m_car->GetEnvCameras()[i]);
 
-
 	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
 	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
@@ -731,7 +730,6 @@ void TuhuApplication::RenderReflection() {
     }
     m_reflectionFbo->Unbind();
 }
-
 
 void TuhuApplication::Render() {
 
@@ -799,7 +797,8 @@ void TuhuApplication::Render() {
     m_lightingPass->Render(
 	m_gbuffer, m_curCamera, m_lightDirection,
 	lightVp, *m_depthFbo, GeometryObject::GetTorches(),
-	m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo
+	m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo,
+    *m_cameraFrustum
 	);
     m_gpuProfiler->End(GTS_Light);
 

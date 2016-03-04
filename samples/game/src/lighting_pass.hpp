@@ -16,6 +16,7 @@ class CubeMapTexture;
 class ColorDepthFbo;
 class ColorFBO;
 class Texture2D;
+class ViewFrustum;
 
 struct PointLight {
     Vector3f m_position;
@@ -67,7 +68,7 @@ private:
     std::vector<PointLight> GetTestLights();
     std::vector<PointLight> GetTorches(const ICamera* camera, const std::vector<Vector3f>& torches);
 
-    void DrawLights(const ICamera* camera, const std::vector<PointLight>& lights);
+    void DrawLights(const ICamera* camera, const std::vector<PointLight>& lights, const ViewFrustum& cameraFrustum);
 
 public:
 
@@ -76,7 +77,8 @@ public:
     void Render(
 	Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition,
 	const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches,
-	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
+	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap,
+	 const ViewFrustum& cameraFrustum);
 
     void UpdateTextures(int lightCount);
 
