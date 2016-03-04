@@ -226,5 +226,7 @@ void waterShader(vec3 viewSpacePosition, mat4 proj, vec3 specColor, sampler2D re
 	envMapSample = vec3(0,0,0);
 
 	ambientLight = vec3(1,1,1);
-	sceneLight = vec3(0.0);
+//	sceneLight = vec3(1);
+//	sceneLight = vec3(0);
+
 }

@@ -125,7 +125,6 @@ public:
     unsigned char a;
 
 };
-
 enum HeightMapRenderMode {
 
     HEIGHT_MAP_RENDER_MODE_ENV_MAP0,
@@ -138,23 +137,37 @@ enum HeightMapRenderMode {
     HEIGHT_MAP_RENDER_MODE_NORMAL,
     HEIGHT_MAP_RENDER_MODE_SHADOWS,
     HEIGHT_MAP_RENDER_MODE_REFLECTION,
+    HEIGHT_MAP_RENDER_MODE_REFRACTION,
+    HEIGHT_MAP_RENDER_MODE_COUNT,
 
 
 
 };
+
+
 
 class HeightMap {
 
 
 private:
 
+    struct Chunk {
+	VBO* m_vertexBuffer;
+	VBO* m_indexBuffer;
+	unsigned int m_numTriangles;
+    };
+
+    Chunk* CreateChunk(float scaling);
+
+
+
     unsigned int m_numTriangles;
     bool m_isWireframe;
 
-    VBO* m_vertexBuffer;
-    VBO* m_indexBuffer;
+    Chunk* m_chunkVersions[HEIGHT_MAP_RENDER_MODE_COUNT];
 
     VBO* m_cursorVertexBuffer;
+
     unsigned short m_numCursorPoints;
 
     ShaderProgram* m_shader;

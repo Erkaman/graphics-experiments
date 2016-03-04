@@ -299,9 +299,13 @@ HeightMap::HeightMap(const std::string& heightMapFilename, const std::string& sp
 HeightMap::~HeightMap() {
 
     MY_DELETE(m_shader);
+
+
+    /*
     MY_DELETE(m_indexBuffer);
     MY_DELETE(m_vertexBuffer);
     MY_DELETE(m_grassTexture);
+    */
 }
 
 
@@ -399,17 +403,7 @@ void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPositio
 
     RenderSetup(m_envShader);
 
-
-    // setup vertex buffers.
-    m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
-
-    m_indexBuffer->Bind();
-
     Render(m_envShader, HeightMapRenderMode(HEIGHT_MAP_RENDER_MODE_ENV_MAP0 + i) );
-
-    m_indexBuffer->Unbind();
-
-    m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
 
     RenderUnsetup();
 
@@ -434,6 +428,11 @@ void HeightMap::Render(ShaderProgram* shader, HeightMapRenderMode renderMode) {
 
     RenderSetup(shader);
 
+    Chunk* chunk = m_chunkVersions[renderMode];
+
+    VBO* m_vertexBuffer = chunk->m_vertexBuffer;
+    VBO* m_indexBuffer = chunk->m_indexBuffer;
+    unsigned int m_numTriangles = chunk->m_numTriangles;
 
     // setup vertex buffers.
     m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
@@ -445,12 +444,14 @@ void HeightMap::Render(ShaderProgram* shader, HeightMapRenderMode renderMode) {
 	renderMode >= HEIGHT_MAP_RENDER_MODE_ENV_MAP0 && renderMode <= HEIGHT_MAP_RENDER_MODE_ENV_MAP5 ?
 	*m_inEnvFrustums[renderMode - HEIGHT_MAP_RENDER_MODE_ENV_MAP0] :
 
-
-	renderMode == HEIGHT_MAP_RENDER_MODE_NORMAL ? *m_inCameraFrustum :
-
+	renderMode == HEIGHT_MAP_RENDER_MODE_NORMAL || renderMode == HEIGHT_MAP_RENDER_MODE_REFRACTION ? *m_inCameraFrustum :
 	renderMode == HEIGHT_MAP_RENDER_MODE_SHADOWS ? *m_inLightFrustum :
 
 	*m_inReflectionFrustum;
+
+    // LOG_I("max chunks: %d", m_chunks * m_chunks );
+
+    //  int count = 0;
 
     for(int x = 0; x < m_chunks; ++x) {
 	for(int z = 0; z < m_chunks; ++z) {
@@ -460,13 +461,21 @@ void HeightMap::Render(ShaderProgram* shader, HeightMapRenderMode renderMode) {
 		continue;
 	    }
 
+//	    ++count;
+
 	    shader->SetUniform("chunkPos", Vector2f(x,z) );
 
 	    // DRAW.
 	    m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
+
+
 	}
     }
-
+/*
+    if(renderMode == HEIGHT_MAP_RENDER_MODE_NORMAL) {
+	LOG_I("count: %d", count);
+    }
+*/
     // DRAW.
     // m_indexBuffer->DrawIndices(GL_TRIANGLES, (m_numTriangles)*3);
 
@@ -510,7 +519,6 @@ void HeightMap::RenderHeightMap(
     m_shader->SetUniform("rock", 2);
     Texture::SetActiveTextureUnit(2);
     m_rockTexture->Bind();
-
 
 
     m_shader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
@@ -564,10 +572,9 @@ void HeightMap::RenderRefraction(
 
     // set textures and stuff.
 
-
     GL_C(glEnable(GL_CLIP_DISTANCE0));
 
-    Render(m_refractionShader,HEIGHT_MAP_RENDER_MODE_NORMAL);
+    Render(m_refractionShader,HEIGHT_MAP_RENDER_MODE_REFRACTION);
 
     GL_C(glDisable(GL_CLIP_DISTANCE0));
 
@@ -926,6 +933,8 @@ void HeightMap::CreateSplatMap(const std::string& splatMapFilename, bool guiMode
 
 void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMode) {
 
+
+
     size_t width = m_resolution;
     size_t depth = m_resolution;
 
@@ -960,12 +969,48 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     m_heightMap->Unbind();
 
 
+
+
     /*
       Create a chunk mesh:
     */
 
+
+    Chunk* normalChunk = CreateChunk(1);
+    Chunk* halfChunk = CreateChunk(2);
+    Chunk* waterChunk = CreateChunk(4);
+
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP0] = halfChunk;
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP1] = halfChunk;
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP2] = halfChunk;
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP3] = halfChunk;
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP4] = halfChunk;
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP5] = halfChunk;
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_NORMAL] = normalChunk;
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_SHADOWS] = halfChunk;
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_REFLECTION] = waterChunk;
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_REFRACTION] = waterChunk;
+
+
+    m_cursorVertexBuffer = VBO::CreateInterleaved(
+	vector<GLuint>{2}, // pos
+	GL_STATIC_DRAW //GL_DYNAMIC_DRAW
+	);
+
+}
+
+
+HeightMap::Chunk* HeightMap::CreateChunk(float scaling) {
+
+    VBO* m_vertexBuffer;
+    VBO* m_indexBuffer;
+    unsigned int m_numTriangles;
+
+
+    int CHUNK_SIZE = m_chunkSize / scaling;
+
     // how many verties wide a chunk is.
-    int chunkVertices = (m_chunkSize+1);
+    int chunkVertices = (CHUNK_SIZE+1);
 
     MultArray<Cell> *m_chunk = new MultArray<Cell>(chunkVertices+1,chunkVertices+1);
     MultArray<Cell> &chunk = *m_chunk;
@@ -981,10 +1026,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 	float x = (float)(xpos) / (float)chunkVertices;
 	float z = (float)(zpos) / (float)chunkVertices;
 
-	/*
-	  This is very wasteful! We y is always 0, so we do not need a Vector3f
-  Vector2f is enough.
-	 */
+
 	c.position =
 	    Vector2f(
 		x,
@@ -1006,18 +1048,14 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     m_vertexBuffer->SetBufferData(chunk);
     m_vertexBuffer->Unbind();
 
-    m_cursorVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{2}, // pos
-	GL_DYNAMIC_DRAW
-	);
 
     GLuint baseIndex = 0;
     UintVector indices;
 
     m_numTriangles = 0;
 
-    for(size_t x = 0; x < (m_chunkSize+1); ++x) {
-	for(size_t z = 0; z < (m_chunkSize+1); ++z) {
+    for(size_t x = 0; x < (CHUNK_SIZE+1); ++x) {
+	for(size_t z = 0; z < (CHUNK_SIZE+1); ++z) {
 
 	    indices.push_back(baseIndex+chunkVertices +1);
 	    indices.push_back(baseIndex+1);
@@ -1034,11 +1072,22 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 	baseIndex += 1;
     }
 
+    //LOG_I("m_numTriangles trerrain: %d", m_numTriangles );
+
     m_indexBuffer = VBO::CreateIndex(GL_UNSIGNED_INT);
 
     m_indexBuffer->Bind();
     m_indexBuffer->SetBufferData(indices);
     m_indexBuffer->Unbind();
+
+
+    HeightMap::Chunk* mahchunk = new HeightMap::Chunk;
+
+    mahchunk->m_vertexBuffer = m_vertexBuffer;
+    mahchunk->m_indexBuffer = m_indexBuffer;
+    mahchunk->m_numTriangles = m_numTriangles;
+
+    return mahchunk;
 }
 
 float HeightMap::GetHeightAt(float, float)const {
@@ -1857,7 +1906,6 @@ Vector3f HeightMap::ComputeHeightMapNormal(int x, int z) {
 
     return n;
 }
-
 
 void HeightMap::BakeAo(int samples, int waveLength, int amplitude, float distAttenuation) {
 

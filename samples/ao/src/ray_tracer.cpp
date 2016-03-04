@@ -256,7 +256,7 @@ GeometryObjectData* RayTracer::RayTrace() {
 */
 
     // fullscreen.
-    // GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
+    GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
 
 
 
@@ -287,14 +287,24 @@ GeometryObjectData* RayTracer::RayTrace() {
 	vertexPosTextureSize * vertexPosTextureSize *  2, GL_RGBA, GL_FLOAT  );
 
 
+    LOG_I("pix: %f", pixels[0] );
+    LOG_I("pix: %f", pixels[1] );
+    LOG_I("pix: %f", pixels[2] );
+    LOG_I("pix: %f", pixels[3] );
+
+
 //    fboDest->Unbind();
     LOG_I("RETURN");
 
-    MY_DELETE(pixels);
+    LOG_I("%d", pixels == NULL );
+
+
+//    MY_DELETE(pixels);
+//    delete pixels;
 
     LOG_I("RETURN");
 
-    MY_DELETE(fboDest);
+//    MY_DELETE(fboDest);
 
     return m_geoObj;
 }
