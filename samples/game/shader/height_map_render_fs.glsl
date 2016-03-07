@@ -66,7 +66,7 @@ void main()
 
 #ifdef DEFERRED
 
-    splat =texture(roadMap, texCoord);
+    splat = texture(roadMap, texCoord);
 
     diffColor = splat.xyz;
 

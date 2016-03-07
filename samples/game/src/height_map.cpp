@@ -1,6 +1,3 @@
-//todo: add button that rebakes the ao map.
-//todo: if the ao map does not exist, we create it at startup. te
-
 #include "height_map.hpp"
 
 #include "log.hpp"
@@ -782,7 +779,6 @@ void HeightMap::Render(
     const bool aoOnly) {
 
 
-
     RenderHeightMap(camera, lightPosition, lightVp, shadowMap, aoOnly);
 
 
@@ -1075,7 +1071,7 @@ void HeightMap::CreateRoadMap(const std::string& roadMapFilename, bool guiMode) 
     Random random(3);
 
     SplatColor def; // default road color.
-    def.r = 255;
+    def.r = 0;
     def.g = 0;
     def.b = 0;
     def.a = 0;
@@ -2531,13 +2527,20 @@ void HeightMap::BuildRoad() {
     def.b = 0;
     def.a = 0;
 
-    m_roadData = new MultArray<SplatColor>(width, depth, def  );
+//    m_roadData = new MultArray<SplatColor>(width, depth, def  );
+
+    MultArray<SplatColor>& roadData = *m_roadData;
+
+    for(Vector2i cp : m_controlPoints) {
+//	LOG_I("add: %d, %d", cp.x, cp.y);
+	roadData(cp.x, cp.y).g = 255;
+	roadData(cp.x, cp.y).r = 255;
+	roadData(cp.x, cp.y).b = 255;
+    }
 
     m_roadMap->Bind();
 
     m_roadMap->UpdateTexture(  m_roadData->GetData() );
     m_roadMap->Unbind();
-
-
 
 }
