@@ -22,6 +22,7 @@ uniform sampler2DShadow shadowMap;
 
 
 uniform sampler2D splatMap;
+uniform sampler2D roadMap;
 uniform sampler2D aoMap;
 
 in vec3 outn;
@@ -64,6 +65,10 @@ void main()
     float ao = texture(aoMap, texCoord).r;
 
 #ifdef DEFERRED
+
+    splat =texture(roadMap, texCoord);
+
+    diffColor = splat.xyz;
 
     geoData[0] = vec4(vec4(diffColor, ao));
     geoData[1] = vec4(normalize(viewSpaceNormal),0);
