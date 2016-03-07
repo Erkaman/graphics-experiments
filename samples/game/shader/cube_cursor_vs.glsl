@@ -29,5 +29,5 @@ void main()
 
     float scale = 2.0;
 
-    gl_Position = mvp * vec4(  ( scale * (positionIn+vec3(0,0.5,0)) + pos ),1);
+    gl_Position = mvp * vec4(  ( scale * (positionIn+vec3(0,9.5,0)) + pos ),1);
 }

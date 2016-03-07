@@ -2514,6 +2514,13 @@ void HeightMap::AddControlPoint() {
     m_controlPoints.push_back(m_cursorPosition);
 }
 
+Vector2f CatmullRomSpline(const Vector2f &P1,const Vector2f &P2,const Vector2f &P3,const Vector2f &P4,float t)
+{
+    float t2 = t * t;
+    float t3 = t * t2;
+
+    return ((P2 * 2.0f) + (-P1 + P3) * t + (P1 * 2.0f - P2 * 5.0f + P3 * 4.0f - P4) * t2 + (-P1 + P2 * 3.0f - P3 * 3.0f + P4) * t3) * 0.5f;
+}
 
 void HeightMap::BuildRoad() {
 
@@ -2531,15 +2538,63 @@ void HeightMap::BuildRoad() {
 
     MultArray<SplatColor>& roadData = *m_roadData;
 
+    /*
     for(Vector2i cp : m_controlPoints) {
 //	LOG_I("add: %d, %d", cp.x, cp.y);
 	roadData(cp.x, cp.y).g = 255;
 	roadData(cp.x, cp.y).r = 255;
 	roadData(cp.x, cp.y).b = 255;
     }
+    */
+
+    LOG_I("size: %d", m_controlPoints.size());
+
+    for(int i = 0; i < m_controlPoints.size(); ++i) {
+
+//	LOG_I("BEG");
+
+	int size = m_controlPoints.size();
+
+#define WRAP(I) ((I) >= size ? (I) % size : (  (I) < 0 ? (size + (I) )  : (I) ) )
+	int ip1 = WRAP(i-1);
+	int ip2 = WRAP(i+0);
+	int ip3 = WRAP(i+1);
+	int ip4 = WRAP(i+2);
+#undef WRAP
+
+	Vector2f p1 = Vector2f(m_controlPoints[ip1].x, m_controlPoints[ip1].y);
+	Vector2f p2 = Vector2f(m_controlPoints[ip2].x, m_controlPoints[ip2].y);
+	Vector2f p3 = Vector2f(m_controlPoints[ip3].x, m_controlPoints[ip3].y);
+	Vector2f p4 = Vector2f(m_controlPoints[ip4].x, m_controlPoints[ip4].y);
+
+
+	float t= 0;
+
+	while(t < 1.0) {
+
+	    Vector2f sample =  CatmullRomSpline(p1,p2,p3,p4, t);
+
+	    int sx = (int)sample.x;
+	    int sy = (int)sample.y;
+
+	    roadData(sx, sy).g = 255;
+	    roadData(sx, sy).r = 255;
+	    roadData(sx, sy).b = 255;
+
+	    t+= 0.01;
+	}
+
+
+
+//	LOG_I("%d, %d, %d, %d", ip1, ip2, ip3, ip4);
+
+//	LOG_I("END");
+
+
+
+    }
 
     m_roadMap->Bind();
-
     m_roadMap->UpdateTexture(  m_roadData->GetData() );
     m_roadMap->Unbind();
 
