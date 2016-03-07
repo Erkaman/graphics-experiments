@@ -190,6 +190,16 @@ void HeightMap::Init(
     }
 
     CreateCube();
+
+m_controlPoints.push_back(Vector2i(420,439));
+m_controlPoints.push_back(Vector2i(434,425));
+m_controlPoints.push_back(Vector2i(452,420));
+m_controlPoints.push_back(Vector2i(489,448));
+m_controlPoints.push_back(Vector2i(487,479));
+m_controlPoints.push_back(Vector2i(463,491));
+m_controlPoints.push_back(Vector2i(429,496));
+m_controlPoints.push_back(Vector2i(404,487));
+m_controlPoints.push_back(Vector2i(408,458));
 }
 
 void HeightMap::CreateAoMap(const std::string& aoMapFilename, bool guiMode){
@@ -686,20 +696,44 @@ void HeightMap::RenderCubeCursor(const ICamera* camera) {
 
     m_cubeShader->SetShaderUniforms(Matrix4f::CreateTranslation(0,0,0), camera);
 
+
+    RenderSetup(m_cubeShader);
+
+
+    // RENDER CURSOR
+
     m_cubeShader->SetUniform("cursorPos",
 			       Vector2f((float)m_cursorPosition.x, (float)m_cursorPosition.y) );
 
-    m_cubeShader->SetUniform("cameraPos",
-			       camera->GetPosition() );
+    m_cubeShader->SetUniform("color", Vector3f(1,0,0) );
 
-
-    RenderSetup(m_cubeShader);
 
     m_cubeIndexBuffer->Bind();
     m_cubePositionBuffer->EnableVertexAttribInterleavedWithBind();
     m_cubeIndexBuffer->DrawIndices(GL_TRIANGLES, m_cubeNumIndices);
     m_cubePositionBuffer->DisableVertexAttribInterleavedWithBind();
     m_cubeIndexBuffer->Unbind();
+
+    for(Vector2i cp : m_controlPoints) {
+
+
+	m_cubeShader->SetUniform("cursorPos",
+				 Vector2f((float)cp.x, (float)cp.y) );
+
+	m_cubeShader->SetUniform("color", Vector3f(1,1,1) );
+
+
+	m_cubeIndexBuffer->Bind();
+	m_cubePositionBuffer->EnableVertexAttribInterleavedWithBind();
+	m_cubeIndexBuffer->DrawIndices(GL_TRIANGLES, m_cubeNumIndices);
+	m_cubePositionBuffer->DisableVertexAttribInterleavedWithBind();
+	m_cubeIndexBuffer->Unbind();
+
+    }
+
+
+    // RENDER CONTROL POINTS:
+
 
 
     RenderUnsetup();
@@ -1660,6 +1694,10 @@ void HeightMap::SaveHeightMap(const std::string& filename) {
     File::WriteArray(filename, data, m_resolution * m_resolution*2);
 
 //    m_heightMap->Write16ToFile("height.png");
+/*
+    for(Vector2i cp : m_controlPoints) {
+	printf("m_controlPoints.push_back(Vector2i(%d,%d));\n", cp.x, cp.y );
+    }*/
 }
 
 void HeightMap::SaveSplatMap(const std::string& filename) {
@@ -2371,4 +2409,11 @@ void HeightMap::CreateCube() {
 
     m_cubeShader = ShaderProgram::Load("shader/cube_cursor");
 
+}
+
+
+void HeightMap::AddControlPoint() {
+    LOG_I("ADD");
+
+    m_controlPoints.push_back(m_cursorPosition);
 }

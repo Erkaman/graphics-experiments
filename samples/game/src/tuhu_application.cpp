@@ -248,17 +248,14 @@ void TuhuApplication::Init() {
 
 
     const Vector3f pos =
-	Vector3f(39.407707, 36.707958, 71.216125);
-
-
-    LOG_I("LOG4");
+	Vector3f(86.313034, 88.535843, 82.006859);
 
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(-0.398544, -0.449568, -0.799406)
+	Vector3f(0.712218, -0.428032, 0.556358)
 	);
 
     m_snow = new SnowEffect(pos);
@@ -925,7 +922,15 @@ void TuhuApplication::Update(const float delta) {
 	    if(ms.IsPressed(GLFW_MOUSE_BUTTON_1 )) {
 		m_heightMap->DrawTexture(delta, m_gui->GetDrawTextureType() );
 	    }
+	} else if(m_gui->GetGuiMode() == RoadMode) {
+
+	    if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 )) {
+		m_heightMap->AddControlPoint();
+	    }
 	}
+
+
+
     }
 
     if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 ) && GuiMouseState::isWithinWindow()) {

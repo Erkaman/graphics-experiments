@@ -248,6 +248,8 @@ private:
     VBO* m_cubePositionBuffer;
     GLushort m_cubeNumIndices;
 
+    std::vector<Vector2i> m_controlPoints;
+
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);
@@ -358,5 +360,7 @@ public:
     Vector3f ComputeHeightMapNormal(int x, int z);
 
     void SetGuiMode(int guiMode);
+
+    void AddControlPoint();
 
 };
