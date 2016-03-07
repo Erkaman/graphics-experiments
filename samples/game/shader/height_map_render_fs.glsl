@@ -70,6 +70,7 @@ void main()
 
     diffColor = splat.xyz * splat.a;
 */
+
     geoData[0] = vec4(vec4(diffColor, ao));
     geoData[1] = vec4(normalize(viewSpaceNormal),0);
     geoData[2] = vec4(vec3(0,0,0), 1);
