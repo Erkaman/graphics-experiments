@@ -49,6 +49,16 @@ void main(void) {
     distortedTexCoords = tc + vec2(distortedTexCoords.x, distortedTexCoords.y+ totalDelta * 0.03);
     vec2 distort = (texture(textureArray, vec3(distortedTexCoords,dudvMap) ).rg * 2.0 - 1.0) * 0.02;
 
+
+    refractionTexcoord += distort;
+    reflectionTexcoord += distort;
+
+    refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
+
+    vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
+    vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
+
+
     //vec2 distort = texture(textureArray, vec3(tc, dudvMap) ).rg * 2.0 - 1.0;
 
 
@@ -68,8 +78,8 @@ void main(void) {
     float ao = 1;
     float id = 2.0f;
 
-    geoData[0] = vec4(vec3(1,0,0),ao);
+    geoData[0] = vec4(refraction,ao);
 
     geoData[1] = vec4(n, id);
-    geoData[2] = vec4(distort,0, 1);
+    geoData[2] = vec4(reflection, 1);
 }

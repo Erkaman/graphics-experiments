@@ -190,7 +190,7 @@ void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor,
 
 void waterShader(vec3 viewSpacePosition, mat4 proj, vec3 specColor, sampler2D refractionMap, sampler2D reflectionMap,
 		 mat4 invViewMatrix, vec3 eyePos, inout vec3 diffColor, inout vec3 specMat, inout vec3 sceneLight, inout float specShiny, inout vec3 envMapSample, inout vec3 ambientLight) {
-	vec4 clipSpace = proj * vec4( viewSpacePosition, 1.0);
+/*	vec4 clipSpace = proj * vec4( viewSpacePosition, 1.0);
 
 
 	vec2 ndc = clipSpace.xy / clipSpace.w;
@@ -207,8 +207,19 @@ void waterShader(vec3 viewSpacePosition, mat4 proj, vec3 specColor, sampler2D re
 
 	refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
 
+
 	vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
 	vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
+*/
+
+	vec3 refraction = diffColor.xyz;
+	vec3 reflection = specColor.xyz;
+
+
+
+	/*
+	vec3 refraction = vec3(1,0,0);
+	vec3 reflection = vec3(0,1,0);*/
 
 
 	vec3 worldPosition = (invViewMatrix * vec4(viewSpacePosition, 1)).xyz;
