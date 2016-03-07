@@ -182,6 +182,7 @@ private:
     ShaderProgram* m_envShader;
     ShaderProgram* m_refractionShader;
     ShaderProgram* m_reflectionShader;
+    ShaderProgram* m_cubeShader;
 
     Texture* m_grassTexture;
     Texture* m_dirtTexture;
@@ -241,12 +242,19 @@ private:
     PBO<unsigned short>* m_heightMapPbo;
     PBO<SplatColor>* m_splatMapPbo;
 
+
+
+    VBO* m_cubeIndexBuffer;
+    VBO* m_cubePositionBuffer;
+    GLushort m_cubeNumIndices;
+
     static const float ComputeY(const unsigned char heightMapData );
     static const float ScaleXZ(const int x);
     static const Color VertexColoring(const float y);
 
     void CreateHeightmap(const std::string& heightMapFilename, bool guiMode);
     void CreateCursor();
+    void CreateCube();
     void CreateSplatMap(const std::string& splatMapFilename, bool guiMode);
     void CreateAABBs();
 
@@ -257,7 +265,7 @@ private:
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
 	const bool aoOnly);
     void RenderCursor(const ICamera* camera);
-
+    void RenderCubeCursor(const ICamera* camera);
 
     void Render(ShaderProgram* shader, HeightMapRenderMode renderMode);
 

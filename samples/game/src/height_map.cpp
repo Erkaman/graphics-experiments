@@ -188,6 +188,8 @@ void HeightMap::Init(
 	// if not in GUI, we do not need this array beyond this point.
 	MY_DELETE(m_heightData);
     }
+
+    CreateCube();
 }
 
 void HeightMap::CreateAoMap(const std::string& aoMapFilename, bool guiMode){
@@ -311,6 +313,8 @@ HeightMap::~HeightMap() {
     MY_DELETE(m_grassTexture);
     */
 }
+
+
 
 
 void HeightMap::CreateCursor() {
@@ -676,12 +680,37 @@ void HeightMap::RenderCursor(const ICamera* camera) {
     m_cursorShader->Unbind();
 }
 
+void HeightMap::RenderCubeCursor(const ICamera* camera) {
+
+    m_cubeShader->Bind();
+
+    m_cubeShader->SetShaderUniforms(Matrix4f::CreateTranslation(0,0,0), camera);
+
+    m_cubeShader->SetUniform("cursorPos",
+			       Vector2f((float)m_cursorPosition.x, (float)m_cursorPosition.y) );
+
+    m_cubeShader->SetUniform("cameraPos",
+			       camera->GetPosition() );
+
+
+    RenderSetup(m_cubeShader);
+
+    m_cubeIndexBuffer->Bind();
+    m_cubePositionBuffer->EnableVertexAttribInterleavedWithBind();
+    m_cubeIndexBuffer->DrawIndices(GL_TRIANGLES, m_cubeNumIndices);
+    m_cubePositionBuffer->DisableVertexAttribInterleavedWithBind();
+    m_cubeIndexBuffer->Unbind();
+
+
+    RenderUnsetup();
+
+    m_cubeShader->Unbind();
+}
+
 
 void HeightMap::Render(
     const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
     const bool aoOnly) {
-
-
 
 
 
@@ -694,6 +723,11 @@ void HeightMap::Render(
 	if(m_guiMode == ModifyTerrainMode || m_guiMode == DrawTextureMode) {
 	    RenderCursor(camera);
 	} else if(m_guiMode == ModelMode) {
+
+
+	} else if(m_guiMode == RoadMode) {
+	    RenderCubeCursor(camera);
+
 
 	}
 
@@ -2226,4 +2260,115 @@ void HeightMap::ErodeTerrain() {
 
 void HeightMap::SetGuiMode(int guiMode) {
     m_guiMode = guiMode;
+}
+
+static void  AddFace(
+    FloatVector& positions,
+    UshortVector& indices,
+    const float ax, const float ay, const float az,
+    const float bx, const float by, const float bz,
+    const float cx, const float cy, const float cz,
+    const float dx, const float dy, const float dz
+    ) {
+    const GLushort base = (GLushort)(positions.size() / 3);
+
+    positions.push_back(ax);
+    positions.push_back(ay);
+    positions.push_back(az);
+
+    positions.push_back(bx);
+    positions.push_back(by);
+    positions.push_back(bz);
+
+    positions.push_back(cx);
+    positions.push_back(cy);
+    positions.push_back(cz);
+
+    positions.push_back(dx);
+    positions.push_back(dy);
+    positions.push_back(dz);
+
+    indices.push_back(base);
+    indices.push_back(base + 1);
+    indices.push_back(base + 2);
+    indices.push_back(base);
+    indices.push_back(base + 2);
+    indices.push_back(base + 3);
+}
+
+void HeightMap::CreateCube() {
+
+    // create the vertex data.
+
+    FloatVector positions;
+    positions.reserve(4*3*6);
+
+    UshortVector indices;
+    indices.reserve(6*6);
+
+    // create the vertices of a unit cube.
+
+    AddFace(positions, indices,
+	0.5f, 0.5f, 0.5f,
+	0.5f, -0.5f, 0.5f,
+	-0.5f, -0.5f, 0.5f,
+	-0.5f, 0.5f, 0.5f);
+
+    //Back face
+    AddFace(positions, indices,
+	-0.5f, 0.5f, -0.5f,
+	-0.5f, -0.5f, -0.5f,
+
+	0.5f, -0.5f, -0.5f,
+	0.5f, 0.5f, -0.5f);
+
+    //Top face
+    AddFace(positions, indices,
+	-0.5f, 0.5f, -0.5f,
+	0.5f, 0.5f, -0.5f,
+	0.5f, 0.5f, 0.5f,
+	-0.5f, 0.5f, 0.5f
+	);
+
+    //Bottom face
+    AddFace(positions, indices,
+	0.5f, -0.5f, -0.5f,
+	-0.5f, -0.5f, -0.5f,
+	-0.5f, -0.5f, 0.5f,
+	0.5f, -0.5f, 0.5f
+	);
+
+    //Right face
+    AddFace(positions, indices,
+	0.5f, 0.5f, -0.5f,
+	0.5f, -0.5f, -0.5f,
+	0.5f, -0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f
+	);
+
+    //Left face
+    AddFace(positions, indices,
+	-0.5f, 0.5f, 0.5f,
+	-0.5f, -0.5f, 0.5f,
+	-0.5f, -0.5f, -0.5f,
+	-0.5f, 0.5f, -0.5f);
+
+    m_cubeNumIndices =(GLushort)indices.size();
+
+    m_cubePositionBuffer = VBO::CreateInterleaved(
+	    vector<GLuint>{3} // pos,
+	    );
+
+    m_cubePositionBuffer->Bind();
+    m_cubePositionBuffer->SetBufferData(positions);
+    m_cubePositionBuffer->Unbind();
+
+    m_cubeIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
+
+    m_cubeIndexBuffer->Bind();
+    m_cubeIndexBuffer->SetBufferData(indices);
+    m_cubeIndexBuffer->Unbind();
+
+    m_cubeShader = ShaderProgram::Load("shader/cube_cursor");
+
 }

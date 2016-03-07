@@ -56,6 +56,8 @@ using std::string;
 Gui::Gui(GLFWwindow* window) {
 
     m_guiMode = ModifyTerrainMode;
+    m_guiMode = RoadMode;
+
     m_drawTextureType = GrassTexture;
     m_inputMode = InputNoneMode;
     m_axisMode = NoneAxis;
