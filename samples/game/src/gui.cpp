@@ -129,7 +129,8 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
     ImGui::RadioButton("MT", &m_guiMode, ModifyTerrainMode); ImGui::SameLine();
     ImGui::RadioButton("DT", &m_guiMode, DrawTextureMode);  ImGui::SameLine();
-    ImGui::RadioButton("M", &m_guiMode, ModelMode);
+    ImGui::RadioButton("M", &m_guiMode, ModelMode); ImGui::SameLine();
+    ImGui::RadioButton("RM", &m_guiMode, RoadMode);
 
     if(m_guiMode == ModifyTerrainMode) {
 
@@ -181,7 +182,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 
         ImGui::Combo("Texture", &m_drawTextureType, "Grass\0Dirt\0Rock\0Eraser\0\0");   // Combo using values packed in a single
-    } else {
+    } else if(m_guiMode == ModelMode){
 
 	ImGui::Text("lol:");
 
