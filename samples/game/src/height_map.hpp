@@ -363,4 +363,6 @@ public:
 
     void AddControlPoint();
 
+    void BuildRoad();
+
 };

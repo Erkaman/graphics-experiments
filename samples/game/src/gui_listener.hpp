@@ -19,4 +19,6 @@ public:
     virtual void Duplicate()=0;
     virtual void Delete()=0;
 
+    virtual void BuildRoad()=0;
+
 };

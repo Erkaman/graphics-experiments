@@ -184,7 +184,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
 
         ImGui::Combo("Texture", &m_drawTextureType, "Grass\0Dirt\0Rock\0Eraser\0\0");   // Combo using values packed in a single
-    } else if(m_guiMode == ModelMode){
+    } else if(m_guiMode == ModelMode) {
 
 	ImGui::Text("lol:");
 
@@ -268,6 +268,15 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	    }
 	}
 
+
+    } else if(m_guiMode == RoadMode){
+
+	if (ImGui::Button("Build Road")) {
+	    for(GuiListener* listener : m_listeners) {
+		listener->BuildRoad();
+	    }
+
+	}
 
     }
 

@@ -1372,3 +1372,8 @@ void TuhuApplication::LightUpdate() {
     m_lightingPass->UpdateTextures(GeometryObject::GetTorches().size() );
 //    m_lightingPass->UpdateTextures(-1 );
 }
+
+
+void TuhuApplication::BuildRoad() {
+    m_heightMap->BuildRoad();
+}

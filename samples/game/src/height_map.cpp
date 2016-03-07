@@ -373,10 +373,15 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
     shader->SetUniform("textureScale", (float)m_textureScale);
     shader->SetUniform("chunks", (float)m_chunks );
 
+    // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
 }
 
 void HeightMap::RenderUnsetup() {
     m_heightMap->Unbind();
+
+//    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
 }
 
 
@@ -2416,4 +2421,9 @@ void HeightMap::AddControlPoint() {
     LOG_I("ADD");
 
     m_controlPoints.push_back(m_cursorPosition);
+}
+
+
+void HeightMap::BuildRoad() {
+
 }

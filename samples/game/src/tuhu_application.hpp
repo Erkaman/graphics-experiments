@@ -171,4 +171,6 @@ public:
 
     virtual void LightUpdate();
 
+    virtual void BuildRoad();
+
 };
