@@ -690,7 +690,13 @@ void HeightMap::Render(
 
 
     if(m_config->IsGui()) {
-	RenderCursor(camera);
+
+	if(m_guiMode == ModifyTerrainMode || m_guiMode == DrawTextureMode) {
+	    RenderCursor(camera);
+	} else if(m_guiMode == ModelMode) {
+
+	}
+
     }
 
 
@@ -2216,3 +2222,8 @@ void HeightMap::ErodeTerrain() {
 
   do bounding volume test for light sources.
  */
+
+
+void HeightMap::SetGuiMode(int guiMode) {
+    m_guiMode = guiMode;
+}

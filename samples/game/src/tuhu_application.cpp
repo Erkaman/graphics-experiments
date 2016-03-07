@@ -873,8 +873,10 @@ void TuhuApplication::Update(const float delta) {
 
 //    m_smoke->Update(delta);
 
-    if(m_gui)
+    if(m_gui) {
 	m_gui->Update();
+	m_heightMap->SetGuiMode( m_gui->GetGuiMode() );
+    }
 
     KeyboardState& kbs = KeyboardState::GetInstance();
 
@@ -888,6 +890,8 @@ void TuhuApplication::Update(const float delta) {
     if( kbs.WasPressed(GLFW_KEY_6)/* && !m_gui*/ ) {
 	StartPhysics();
     }
+
+
 
     if(GuiMouseState::isWithinWindow()) {
 

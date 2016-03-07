@@ -13,6 +13,8 @@
 #include "ewa/gl/gl_common.hpp"
 #include "ewa/gl/texture2d.hpp"
 
+#include "gui_enum.hpp"
+
 class VBO;
 class ShaderProgram;
 class ICamera;
@@ -40,6 +42,7 @@ private:
     const int TEXTURE_SIZE;
 
     unsigned int m_pboIds[2];
+
 
 public:
     PBO(Texture2D* texture, MultArray<T> *textureData, const int textureSize):
@@ -158,6 +161,8 @@ private:
     };
 
     Chunk* CreateChunk(float scaling);
+
+    int m_guiMode;
 
 
 
@@ -343,5 +348,7 @@ public:
     Vector3f ComputeHeightMapPos(int x, int z);
     float ComputeHeightMapHeight(int x, int z);
     Vector3f ComputeHeightMapNormal(int x, int z);
+
+    void SetGuiMode(int guiMode);
 
 };
