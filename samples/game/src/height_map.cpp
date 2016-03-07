@@ -191,15 +191,21 @@ void HeightMap::Init(
 
     CreateCube();
 
-m_controlPoints.push_back(Vector2i(420,439));
-m_controlPoints.push_back(Vector2i(434,425));
-m_controlPoints.push_back(Vector2i(452,420));
-m_controlPoints.push_back(Vector2i(489,448));
-m_controlPoints.push_back(Vector2i(487,479));
-m_controlPoints.push_back(Vector2i(463,491));
-m_controlPoints.push_back(Vector2i(429,496));
-m_controlPoints.push_back(Vector2i(404,487));
-m_controlPoints.push_back(Vector2i(408,458));
+    m_controlPoints.push_back(Vector2i(471,461));
+m_controlPoints.push_back(Vector2i(470,428));
+m_controlPoints.push_back(Vector2i(477,404));
+m_controlPoints.push_back(Vector2i(470,376));
+m_controlPoints.push_back(Vector2i(460,352));
+m_controlPoints.push_back(Vector2i(435,336));
+m_controlPoints.push_back(Vector2i(406,337));
+m_controlPoints.push_back(Vector2i(400,365));
+m_controlPoints.push_back(Vector2i(404,398));
+m_controlPoints.push_back(Vector2i(406,429));
+m_controlPoints.push_back(Vector2i(406,447));
+m_controlPoints.push_back(Vector2i(417,474));
+m_controlPoints.push_back(Vector2i(428,478));
+m_controlPoints.push_back(Vector2i(442,476));
+m_controlPoints.push_back(Vector2i(456,470));
 }
 
 void HeightMap::CreateAoMap(const std::string& aoMapFilename, bool guiMode){
@@ -1790,10 +1796,10 @@ void HeightMap::SaveHeightMap(const std::string& filename) {
     File::WriteArray(filename, data, m_resolution * m_resolution*2);
 
 //    m_heightMap->Write16ToFile("height.png");
-/*
+
     for(Vector2i cp : m_controlPoints) {
 	printf("m_controlPoints.push_back(Vector2i(%d,%d));\n", cp.x, cp.y );
-    }*/
+    }
 }
 
 void HeightMap::SaveSplatMap(const std::string& filename) {
@@ -2528,12 +2534,6 @@ void HeightMap::BuildRoad() {
     size_t depth = m_resolution;
 
 
-    SplatColor def; // default road color.
-    def.r = 0;
-    def.g = 255;
-    def.b = 0;
-    def.a = 0;
-
 //    m_roadData = new MultArray<SplatColor>(width, depth, def  );
 
     MultArray<SplatColor>& roadData = *m_roadData;
@@ -2570,18 +2570,82 @@ void HeightMap::BuildRoad() {
 
 	float t= 0;
 
+	const float step = 0.005;
+
 	while(t < 1.0) {
 
-	    Vector2f sample =  CatmullRomSpline(p1,p2,p3,p4, t);
+	    // the sample point on the spline.
+	    Vector2f sample =  CatmullRomSpline(p1,p2,p3,p4,t);
 
-	    int sx = (int)sample.x;
-	    int sy = (int)sample.y;
+	    // tangent vector at sample point.
+	    Vector2f tangent =
+		(CatmullRomSpline(p1,p2,p3,p4,t+step) -
+		 CatmullRomSpline(p1,p2,p3,p4,t-step)).Normalize();
 
-	    roadData(sx, sy).g = 255;
-	    roadData(sx, sy).r = 255;
-	    roadData(sx, sy).b = 255;
+	    // bitangent is perpendicular to tangent
+	    Vector2f bitangent = Vector2f(-tangent.y, tangent.x).Normalize();
 
-	    t+= 0.01;
+	    const int roadWidth = 30;
+	    const int fadeWidth = 20; // start fading from this width.
+
+	    for(int a = -roadWidth; a <= +roadWidth; ++a ) {
+
+		sample = sample + bitangent * a * 0.03;
+
+		int sx = (int)sample.x;
+		int sy = (int)sample.y;
+
+		if(sx >= 512 || sx < 0 || sy >= 512 || sy < 0)
+		    continue;
+
+
+		unsigned char alpha;
+
+		int dist = a < 0 ? -a : +a;
+
+		int g = 255;
+		int r = 255;
+
+
+		if(a < 0) {
+		    r = 0;
+		    // never happens!
+		    //   LOG_I("HALLO");
+		} else {
+		    //   LOG_I("HALLO");
+
+		    g = 0;
+		}
+
+
+		if(dist >= fadeWidth) {
+		    float ratio = ((float)(dist - fadeWidth) / (float)(roadWidth - fadeWidth));
+
+		    alpha =
+			255 *(1.0f - ratio);
+
+
+		} else {
+		    alpha = 255;
+		}
+
+//		LOG_I("a, alpha = %d, %d", a, alpha);
+
+
+		    alpha = 255;
+
+/*
+		if(roadData(sx, sy).a < 255 && roadData(sx, sy).a != 0)
+		    continue; // dont overwrite.
+*/
+		roadData(sx, sy).g = g;
+		roadData(sx, sy).r = r;
+		roadData(sx, sy).b = 255;
+		roadData(sx, sy).a = alpha;
+
+
+	    }
+	    t+= step;
 	}
 
 
