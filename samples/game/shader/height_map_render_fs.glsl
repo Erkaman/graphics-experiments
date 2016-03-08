@@ -46,6 +46,13 @@ void main()
 	splat.g * texture(dirt, scaledTexcoord).xyz +
 	splat.b * texture(rock, scaledTexcoord).xyz;
 
+
+    vec4 road = texture(roadMap, texCoord);
+
+//    diffColor = road.xyz * road.a;
+    diffColor = (road.a) * road.xyz + (1.0 - road.a) * diffColor;
+
+
     float specShiny = 0;
     vec3 specColor = vec3(0);
     float diff=  calcDiff(l,n);
@@ -66,9 +73,6 @@ void main()
 
 #ifdef DEFERRED
 
-    splat = texture(roadMap, texCoord);
-
-    diffColor = splat.xyz * splat.a;
 
 
     geoData[0] = vec4(vec4(diffColor, ao));
