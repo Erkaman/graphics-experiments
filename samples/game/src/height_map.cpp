@@ -2570,7 +2570,7 @@ void HeightMap::BuildRoad() {
 
 	float t= 0;
 
-	const float step = 0.005;
+	const float step = 0.01;
 
 	while(t < 1.0) {
 
@@ -2589,11 +2589,10 @@ void HeightMap::BuildRoad() {
 	    const int fadeWidth = 20; // start fading from this width.
 
 	    for(int a = -roadWidth; a <= +roadWidth; ++a ) {
+		Vector2f temp = sample + bitangent * a * 0.5;
 
-		sample = sample + bitangent * a * 0.03;
-
-		int sx = (int)sample.x;
-		int sy = (int)sample.y;
+		int sx = (int)temp.x;
+		int sy = (int)temp.y;
 
 		if(sx >= 512 || sx < 0 || sy >= 512 || sy < 0)
 		    continue;
@@ -2607,17 +2606,6 @@ void HeightMap::BuildRoad() {
 		int r = 255;
 
 
-		if(a < 0) {
-		    r = 0;
-		    // never happens!
-		    //   LOG_I("HALLO");
-		} else {
-		    //   LOG_I("HALLO");
-
-		    g = 0;
-		}
-
-
 		if(dist >= fadeWidth) {
 		    float ratio = ((float)(dist - fadeWidth) / (float)(roadWidth - fadeWidth));
 
@@ -2629,33 +2617,14 @@ void HeightMap::BuildRoad() {
 		    alpha = 255;
 		}
 
-//		LOG_I("a, alpha = %d, %d", a, alpha);
-
-
-		    alpha = 255;
-
-/*
-		if(roadData(sx, sy).a < 255 && roadData(sx, sy).a != 0)
-		    continue; // dont overwrite.
-*/
 		roadData(sx, sy).g = g;
 		roadData(sx, sy).r = r;
 		roadData(sx, sy).b = 255;
 		roadData(sx, sy).a = alpha;
 
-
 	    }
 	    t+= step;
 	}
-
-
-
-//	LOG_I("%d, %d, %d, %d", ip1, ip2, ip3, ip4);
-
-//	LOG_I("END");
-
-
-
     }
 
     m_roadMap->Bind();

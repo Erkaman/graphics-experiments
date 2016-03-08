@@ -365,7 +365,8 @@ void TuhuApplication::Init() {
 
     LightUpdate();
 
-//    BuildRoad();
+
+    BuildRoad();
 }
 
 
