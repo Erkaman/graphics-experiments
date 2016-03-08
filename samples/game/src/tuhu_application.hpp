@@ -172,5 +172,7 @@ public:
     virtual void LightUpdate();
 
     virtual void BuildRoad();
+    virtual void DeleteCP();
+
 
 };

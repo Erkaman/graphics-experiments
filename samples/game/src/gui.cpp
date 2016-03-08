@@ -275,7 +275,12 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	    for(GuiListener* listener : m_listeners) {
 		listener->BuildRoad();
 	    }
+	}
 
+	if (ImGui::Button("Delete CP")) {
+	    for(GuiListener* listener : m_listeners) {
+		listener->DeleteCP();
+	    }
 	}
 
     }

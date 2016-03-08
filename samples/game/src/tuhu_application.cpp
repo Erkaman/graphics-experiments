@@ -1379,3 +1379,10 @@ void TuhuApplication::LightUpdate() {
 void TuhuApplication::BuildRoad() {
     m_heightMap->BuildRoad();
 }
+
+
+void TuhuApplication::DeleteCP() {
+
+    m_heightMap->DeleteCP();
+
+}

@@ -371,5 +371,6 @@ public:
     void AddControlPoint();
 
     void BuildRoad();
+    void DeleteCP();
 
 };

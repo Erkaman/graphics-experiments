@@ -20,5 +20,6 @@ public:
     virtual void Delete()=0;
 
     virtual void BuildRoad()=0;
+    virtual void DeleteCP()=0;
 
 };

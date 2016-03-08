@@ -193,6 +193,7 @@ void HeightMap::Init(
 
     CreateCube();
 
+    /*
     m_controlPoints.push_back(Vector2i(471,461));
 m_controlPoints.push_back(Vector2i(470,428));
 m_controlPoints.push_back(Vector2i(477,404));
@@ -208,6 +209,7 @@ m_controlPoints.push_back(Vector2i(417,474));
 m_controlPoints.push_back(Vector2i(428,478));
 m_controlPoints.push_back(Vector2i(442,476));
 m_controlPoints.push_back(Vector2i(456,470));
+*/
 }
 
 void HeightMap::CreateAoMap(const std::string& aoMapFilename, bool guiMode){
@@ -1821,10 +1823,10 @@ void HeightMap::SaveHeightMap(const std::string& filename) {
     File::WriteArray(filename, data, m_resolution * m_resolution*2);
 
 //    m_heightMap->Write16ToFile("height.png");
-
+/*
     for(Vector2i cp : m_controlPoints) {
 	printf("m_controlPoints.push_back(Vector2i(%d,%d));\n", cp.x, cp.y );
-    }
+    }*/
 }
 
 void HeightMap::SaveSplatMap(const std::string& filename) {
@@ -2558,8 +2560,14 @@ void HeightMap::BuildRoad() {
     size_t width = m_resolution;
     size_t depth = m_resolution;
 
+    SplatColor def; // default splat color.
+    def.r = 0;
+    def.g = 0;
+    def.b = 0;
+    def.a = 0;
 
-//    m_roadData = new MultArray<SplatColor>(width, depth, def  );
+    MY_DELETE(m_roadData);
+    m_roadData = new MultArray<SplatColor>(width, depth, def  );
 
     MultArray<SplatColor>& roadData = *m_roadData;
 
@@ -2655,5 +2663,12 @@ void HeightMap::BuildRoad() {
     m_roadMap->Bind();
     m_roadMap->UpdateTexture(  m_roadData->GetData() );
     m_roadMap->Unbind();
+
+}
+
+
+void HeightMap::DeleteCP() {
+
+    m_controlPoints.clear();
 
 }
