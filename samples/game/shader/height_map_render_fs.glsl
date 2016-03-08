@@ -17,6 +17,7 @@ in vec3 viewSpacePosition;
 uniform sampler2D grass;
 uniform sampler2D dirt;
 uniform sampler2D rock;
+uniform sampler2D road;
 
 uniform sampler2DShadow shadowMap;
 
@@ -47,10 +48,12 @@ void main()
 	splat.b * texture(rock, scaledTexcoord).xyz;
 
 
-    vec4 road = texture(roadMap, texCoord);
+    vec4 s = texture(roadMap, texCoord);
 
 //    diffColor = road.xyz * road.a;
-    diffColor = (road.a) * road.xyz + (1.0 - road.a) * diffColor;
+    diffColor = (s.a) * texture(road, scaledTexcoord).xyz + (1.0 - s.a) * diffColor;
+
+//    diffColor = texture(road, scaledTexcoord).xyz;
 
 
     float specShiny = 0;

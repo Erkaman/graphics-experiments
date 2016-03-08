@@ -114,6 +114,8 @@ void HeightMap::Init(
 
     m_rockTexture = LoadTexture("img/rock.png");
 
+    m_asphaltTexture = LoadTexture("img/asphalt.png");
+
     /*
       load the shader
     */
@@ -426,6 +428,10 @@ void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPositio
     Texture::SetActiveTextureUnit(2);
     m_rockTexture->Bind();
 
+    m_envShader->SetUniform("road", 7);
+    Texture::SetActiveTextureUnit(7);
+    m_asphaltTexture->Bind();
+
     m_envShader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition);
 
 
@@ -447,6 +453,8 @@ void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPositio
     m_grassTexture->Unbind();
     m_dirtTexture->Unbind();
     m_rockTexture->Unbind();
+    m_asphaltTexture->Unbind();
+
 
     m_splatMap->Unbind();
     m_roadMap->Unbind();
@@ -565,6 +573,11 @@ void HeightMap::RenderHeightMap(
     m_rockTexture->Bind();
 
 
+    m_shader->SetUniform("road", 7);
+    Texture::SetActiveTextureUnit(7);
+    m_asphaltTexture->Bind();
+
+
     m_shader->SetUniform("shadowMap", (int)shadowMap.GetTargetTextureUnit() );
     Texture::SetActiveTextureUnit(shadowMap.GetTargetTextureUnit());
     shadowMap.GetRenderTargetTexture().Bind();
@@ -576,6 +589,7 @@ void HeightMap::RenderHeightMap(
     m_grassTexture->Unbind();
     m_dirtTexture->Unbind();
     m_rockTexture->Unbind();
+    m_asphaltTexture->Unbind();
 
     m_splatMap->Unbind();
     m_aoMap->Unbind();
@@ -621,6 +635,10 @@ void HeightMap::RenderRefraction(
     Texture::SetActiveTextureUnit(2);
     m_rockTexture->Bind();
 
+    m_refractionShader->SetUniform("road", 7);
+    Texture::SetActiveTextureUnit(7);
+    m_asphaltTexture->Bind();
+
     // set textures and stuff.
 
     GL_C(glEnable(GL_CLIP_DISTANCE0));
@@ -630,6 +648,7 @@ void HeightMap::RenderRefraction(
     GL_C(glDisable(GL_CLIP_DISTANCE0));
 
 
+    m_asphaltTexture->Unbind();
     m_grassTexture->Unbind();
     m_dirtTexture->Unbind();
     m_rockTexture->Unbind();
@@ -676,6 +695,11 @@ void HeightMap::RenderReflection(
     Texture::SetActiveTextureUnit(2);
     m_rockTexture->Bind();
 
+    m_reflectionShader->SetUniform("road", 7);
+    Texture::SetActiveTextureUnit(7);
+    m_asphaltTexture->Bind();
+
+
     // set textures and stuff.
 
 
@@ -689,6 +713,7 @@ void HeightMap::RenderReflection(
     m_grassTexture->Unbind();
     m_dirtTexture->Unbind();
     m_rockTexture->Unbind();
+    m_asphaltTexture->Unbind();
     m_splatMap->Unbind();
     m_aoMap->Unbind();
     m_roadMap->Unbind();
