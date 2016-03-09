@@ -191,13 +191,11 @@ private:
 
     Texture2D* m_heightMap;
     Texture2D* m_splatMap;
-    Texture2D* m_roadMap;
     Texture2D* m_aoMap;
 
 
     MultArray<unsigned short>* m_heightData;
     MultArray<SplatColor>* m_splatData;
-    MultArray<SplatColor>* m_roadData;
 
     MultArray<float>* m_aoData;
 
@@ -259,7 +257,6 @@ private:
     static const Color VertexColoring(const float y);
 
     void CreateHeightmap(const std::string& heightMapFilename, bool guiMode);
-    void CreateRoadMap(const std::string& roadMapFilename, bool guiMode);
     void CreateCursor();
     void CreateCube();
     void CreateSplatMap(const std::string& splatMapFilename, bool guiMode);
@@ -267,7 +264,6 @@ private:
 
     void LoadHeightmap(const std::string& heightMapFilename);
     void LoadSplatMap(const std::string& splatMapFilename);
-    void LoadRoadMap(const std::string& roadMapFilename);
 
     void RenderHeightMap(
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
@@ -288,7 +284,6 @@ private:
 	const std::string& heightMapFilename,
 	const std::string& splatMapFilename,
 	const std::string& aoMapFilename,
-	const std::string& roadMapFilename,
 	bool guiMode );
 
     bool InBounds(int x, int z);

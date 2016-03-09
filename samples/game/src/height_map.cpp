@@ -78,7 +78,6 @@ void HeightMap::Init(
     const std::string& heightMapFilename,
     const std::string& splatMapFilename,
     const std::string& aoMapFilename,
-    const std::string& roadMapFilename,
     bool guiMode ) {
 
     m_aabbWireframe = Cube::Load();
@@ -173,8 +172,6 @@ void HeightMap::Init(
     CreateHeightmap(heightMapFilename, guiMode);
 
     CreateSplatMap(splatMapFilename, guiMode);
-
-    CreateRoadMap(roadMapFilename, guiMode);
 
     CreateAoMap(aoMapFilename, guiMode);
 
@@ -312,13 +309,13 @@ void HeightMap::SetCursorSize(int cursorSize) {
 }
 
 HeightMap::HeightMap( bool guiMode) {
-    Init("", "", "", "", guiMode);
+    Init("", "", "", guiMode);
 }
 
 HeightMap::HeightMap(const std::string& heightMapFilename, const std::string& splatMapFilename,
 		         const std::string& aoMapFilename,bool guiMode ){
 
-    Init(heightMapFilename, splatMapFilename, aoMapFilename, "", guiMode);
+    Init(heightMapFilename, splatMapFilename, aoMapFilename, guiMode);
 
 }
 
@@ -412,11 +409,6 @@ void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPositio
     m_aoMap->Bind();
 
 
-    m_envShader->SetUniform("roadMap", 6);
-    Texture::SetActiveTextureUnit(6);
-    m_roadMap->Bind();
-
-
 
     m_envShader->SetUniform("grass", 0);
     Texture::SetActiveTextureUnit(0);
@@ -459,7 +451,6 @@ void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPositio
 
 
     m_splatMap->Unbind();
-    m_roadMap->Unbind();
     m_aoMap->Unbind();
 
     m_envShader->Unbind();
@@ -557,10 +548,6 @@ void HeightMap::RenderHeightMap(
     Texture::SetActiveTextureUnit(5);
     m_aoMap->Bind();
 
-    m_shader->SetUniform("roadMap", 6);
-    Texture::SetActiveTextureUnit(6);
-    m_roadMap->Bind();
-
 
     m_shader->SetUniform("grass", 0);
     Texture::SetActiveTextureUnit(0);
@@ -595,7 +582,6 @@ void HeightMap::RenderHeightMap(
 
     m_splatMap->Unbind();
     m_aoMap->Unbind();
-    m_roadMap->Unbind();
 
 
     shadowMap.GetRenderTargetTexture().Unbind();
@@ -619,10 +605,6 @@ void HeightMap::RenderRefraction(
     m_refractionShader->SetUniform("aoMap", 5);
     Texture::SetActiveTextureUnit(5);
     m_aoMap->Bind();
-
-    m_refractionShader->SetUniform("roadMap", 6);
-    Texture::SetActiveTextureUnit(6);
-    m_roadMap->Bind();
 
 
     m_refractionShader->SetUniform("grass", 0);
@@ -656,7 +638,6 @@ void HeightMap::RenderRefraction(
     m_rockTexture->Unbind();
     m_splatMap->Unbind();
     m_aoMap->Unbind();
-    m_roadMap->Unbind();
 
     m_refractionShader->Unbind();
 }
@@ -679,10 +660,6 @@ void HeightMap::RenderReflection(
     Texture::SetActiveTextureUnit(5);
     m_aoMap->Bind();
 
-
-    m_reflectionShader->SetUniform("roadMap", 6);
-    Texture::SetActiveTextureUnit(6);
-    m_roadMap->Bind();
 
 
     m_reflectionShader->SetUniform("grass", 0);
@@ -718,7 +695,6 @@ void HeightMap::RenderReflection(
     m_asphaltTexture->Unbind();
     m_splatMap->Unbind();
     m_aoMap->Unbind();
-    m_roadMap->Unbind();
 
 
     m_reflectionShader->Unbind();
@@ -964,25 +940,6 @@ void HeightMap::LoadSplatMap(const std::string& splatMapFilename) {
 
 
 
-void HeightMap::LoadRoadMap(const std::string& roadMapFilename) {
-
-
-    size_t unused;
-    SplatColor* data = (SplatColor *)File::ReadArray(roadMapFilename, unused);
-
-    MultArray<SplatColor>& roadData = *m_roadData;
-
-    for(int j = 0; j < m_resolution; ++j) {
-
-	for(int i = 0; i < m_resolution; ++i) {
-
-	    roadData(i,j) = *data;
-
-	    ++data;
-	}
-    }
-}
-
 
 void HeightMap::LoadHeightmap(const std::string& heightMapFilename) {
 
@@ -1093,49 +1050,6 @@ void HeightMap::CreateSplatMap(const std::string& splatMapFilename, bool guiMode
     if(!guiMode){
 	// if not in GUI, we do not need this array beyond this point.
 	MY_DELETE(m_splatData);
-    }
-}
-
-void HeightMap::CreateRoadMap(const std::string& roadMapFilename, bool guiMode) {
-
-    size_t width = m_resolution;
-    size_t depth = m_resolution;
-
-    Random random(3);
-
-    SplatColor def; // default road color.
-    def.r = 0;
-    def.g = 0;
-    def.b = 0;
-    def.a = 0;
-
-    m_roadData = new MultArray<SplatColor>(width, depth, def  );
-
-    MultArray<SplatColor>& roadData = *m_roadData;
-
-    if(roadMapFilename != "") {
-	LoadRoadMap(roadMapFilename);
-    }
-
-
-    LOG_I("LOAD ROAD MAP");
-
-
-    m_roadMap = new Texture2D(roadData.GetData(), width, depth,
-			       GL_RGBA8, // internal format
-			       GL_RGBA, // format
-			       GL_UNSIGNED_BYTE);
-
-    m_roadMap->Bind();
-    m_roadMap->SetTextureClamping();
-    m_roadMap->GenerateMipmap();
-    m_roadMap->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
-    m_roadMap->SetMagFilter(GL_LINEAR);
-    m_roadMap->Unbind();
-
-    if(!guiMode){
-	// if not in GUI, we do not need this array beyond this point.
-	MY_DELETE(m_roadData);
     }
 }
 
@@ -2560,16 +2474,18 @@ void HeightMap::BuildRoad() {
     size_t width = m_resolution;
     size_t depth = m_resolution;
 
-    SplatColor def; // default splat color.
-    def.r = 0;
-    def.g = 0;
-    def.b = 0;
-    def.a = 0;
 
-    MY_DELETE(m_roadData);
-    m_roadData = new MultArray<SplatColor>(width, depth, def  );
 
-    MultArray<SplatColor>& roadData = *m_roadData;
+
+    MultArray<SplatColor>& splatData = *m_splatData;
+
+
+    for(int j = 0; j < m_resolution; ++j) {
+
+	for(int i = 0; i < m_resolution; ++i) {
+	    splatData(i,j).a = 0;
+	}
+    }
 
     /*
     for(Vector2i cp : m_controlPoints) {
@@ -2650,19 +2566,14 @@ void HeightMap::BuildRoad() {
 		    alpha = 255;
 		}
 
-		roadData(sx, sy).g = g;
-		roadData(sx, sy).r = r;
-		roadData(sx, sy).b = 255;
-		roadData(sx, sy).a = alpha;
+		splatData(sx, sy).a = alpha;
 
 	    }
 	    t+= step;
 	}
     }
 
-    m_roadMap->Bind();
-    m_roadMap->UpdateTexture(  m_roadData->GetData() );
-    m_roadMap->Unbind();
+    m_splatMapPbo->RequestUpdate();
 
 }
 
