@@ -21,6 +21,7 @@ uniform vec3 inSceneLight;
 uniform vec3 eyePos;
 uniform vec3 viewSpaceLightDirection;
 uniform mat4 lightVp;
+uniform mat4 lightVpTimesInverseViewMatrix;
 uniform mat4 inverseViewMatrix;
 uniform mat4 toViewSpacePositionMat;
 
@@ -89,7 +90,7 @@ void main() {
 
     float aoOnly =0.0;
 
-    vec4 shadowCoord = (lightVp * (inverseViewMatrix * vec4(viewSpacePosition.xyz,1)));
+    vec4 shadowCoord = (lightVpTimesInverseViewMatrix * ( vec4(viewSpacePosition.xyz,1)));
 
 
     if(id == 2.0) {

@@ -38,15 +38,11 @@ vec4 calcLighting(
     ) {
     vec3 finalcolor=ambientLight*diffColor; // ambient
 
-    finalcolor.xyz+=(
-	diffColor*sceneLight*diff * visibility  +
-	specColor*pow(spec,specShiny) * visibility);
-
-    finalcolor.xyz += specColor * spec * envMapSample * 0.4;
+    finalcolor+= (diffColor*sceneLight)* (diff * visibility);
+    finalcolor += specColor*pow(spec,specShiny) * visibility;
+    finalcolor += (specColor * envMapSample) * (spec  * 0.4);
 
     return vec4(finalcolor,1.0);
-
-//    return vec4(specColor * spec * envMapSample * 0.4, 1.0);
 }
 
 float rand(vec4 seed) {
@@ -190,54 +186,23 @@ void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor,
 
 void waterShader(vec3 viewSpacePosition, mat4 proj, vec3 specColor, sampler2D refractionMap, sampler2D reflectionMap,
 		 mat4 invViewMatrix, vec3 eyePos, inout vec3 diffColor, inout vec3 specMat, inout vec3 sceneLight, inout float specShiny, inout vec3 envMapSample, inout vec3 ambientLight) {
-/*	vec4 clipSpace = proj * vec4( viewSpacePosition, 1.0);
 
+    vec3 refraction = diffColor.xyz;
+    vec3 reflection = specColor.xyz;
 
-	vec2 ndc = clipSpace.xy / clipSpace.w;
-	ndc = ndc * 0.5 + 0.5;
+    vec3 worldPosition = (invViewMatrix * vec4(viewSpacePosition, 1)).xyz;
 
-	vec2 refractionTexcoord = ndc;
-	vec2 reflectionTexcoord = vec2(ndc.x, 1 -ndc.y);
+    vec3 toCameraVector = normalize(eyePos - worldPosition.xyz);
 
+    float fresnel = dot(
+	toCameraVector, vec3(0,1,0));
 
-	vec2 distort = specColor.xy;
+    diffColor = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
 
-	refractionTexcoord += distort;
-	reflectionTexcoord += distort;
+    specMat = 0.6 * sceneLight;
 
-	refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
+    specShiny = 20.0;
+    envMapSample = vec3(0,0,0);
 
-
-	vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
-	vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
-*/
-
-	vec3 refraction = diffColor.xyz;
-	vec3 reflection = specColor.xyz;
-
-
-
-	/*
-	vec3 refraction = vec3(1,0,0);
-	vec3 reflection = vec3(0,1,0);*/
-
-
-	vec3 worldPosition = (invViewMatrix * vec4(viewSpacePosition, 1)).xyz;
-
-	vec3 toCameraVector = normalize(eyePos - worldPosition.xyz);
-
-	float fresnel = dot(
-	    toCameraVector, vec3(0,1,0));
-
-	diffColor = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
-
-	specMat = 0.6 * sceneLight;
-
-	specShiny = 20.0;
-	envMapSample = vec3(0,0,0);
-
-	ambientLight = vec3(1,1,1);
-//	sceneLight = vec3(1);
-//	sceneLight = vec3(0);
-
+    ambientLight = vec3(1,1,1);
 }

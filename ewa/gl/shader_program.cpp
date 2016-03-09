@@ -221,6 +221,9 @@ void ShaderProgram::SetLightUniforms(const ICamera* camera, const Vector4f& ligh
 
 
     SetUniform("eyePos", camera->GetPosition() );
+
+    SetUniform("lightVpTimesInverseViewMatrix", lightVp * inverseViewMatrix   );
+
 }
 
 void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection) {
