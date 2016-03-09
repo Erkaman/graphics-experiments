@@ -107,13 +107,14 @@ void HeightMap::Init(
     // position the heightfield so that it is centered at the origin:
     m_offset = Vector3f(-m_xzScale/2.0f,0,-m_xzScale/2.0f);
 
-    m_grassTexture = LoadTexture("img/grass.png");
+//    m_grassTexture = LoadTexture("img/grass.png");
 
-    m_dirtTexture = LoadTexture("img/dirt.png");
+    string format = "dds";
 
-    m_rockTexture = LoadTexture("img/rock.png");
-
-    m_asphaltTexture = LoadTexture("img/asphalt.png");
+    m_grassTexture = LoadTexture("img/grass." + format);
+    m_dirtTexture = LoadTexture("img/dirt."+format);
+    m_rockTexture = LoadTexture("img/rock."+format);
+    m_asphaltTexture = LoadTexture("img/asphalt."+format);
 
     /*
       load the shader
