@@ -90,7 +90,7 @@ void main() {
 
     float aoOnly =0.0;
 
-    vec4 shadowCoord = (lightVpTimesInverseViewMatrix * ( vec4(viewSpacePosition.xyz,1)));
+    vec4 shadowCoord = mulWhereWIsOne(lightVpTimesInverseViewMatrix, viewSpacePosition.xyz);
 
 
     if(id == 2.0) {
