@@ -109,12 +109,19 @@ void HeightMap::Init(
 
 //    m_grassTexture = LoadTexture("img/grass.png");
 
+    string qual = "";
+
+    if(!HighQuality) {
+	qual = "_lq"; // use low quality textures.
+    }
+
     string format = "dds";
 
-    m_grassTexture = LoadTexture("img/grass." + format);
-    m_dirtTexture = LoadTexture("img/dirt."+format);
-    m_rockTexture = LoadTexture("img/rock."+format);
-    m_asphaltTexture = LoadTexture("img/asphalt."+format);
+    m_grassTexture = LoadTexture("img/grass" + qual +"." + format);
+    m_dirtTexture = LoadTexture("img/dirt" + qual +"." + format);
+    m_rockTexture = LoadTexture("img/rock" + qual +"." + format);
+    m_asphaltTexture = LoadTexture("img/asphalt" + qual + "." + format);
+
 
     /*
       load the shader
