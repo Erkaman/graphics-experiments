@@ -8,6 +8,7 @@ float f(sampler2D heightMap, float x, float z) {
 
 vec3 getNormal(sampler2D hm, vec2 texCoord)
 {
+
     float eps = 1.0 / resolution;
     vec3 p = vec3(texCoord.x, 0, texCoord.y);
 
@@ -21,14 +22,12 @@ vec3 getNormal(sampler2D hm, vec2 texCoord)
     vec3 n = normalize(cross(normalize(vb), normalize(va) ));
 
     return n;
+
 }
 
 vec3 computePos(
     vec2 pos,
     sampler2D heightMap) {
 
-    return offset + vec3(
-	pos.x * xzScale,
-	f(heightMap,pos.xy)*yScale,
-	pos.y * xzScale);
+    return offset + vec3(pos.x, f(heightMap,pos.xy), pos.y) *  vec3(xzScale,yScale,xzScale);
 }

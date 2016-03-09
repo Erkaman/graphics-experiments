@@ -39,14 +39,12 @@ void main()
 
     vec4 splat =texture(splatMap, texCoord);
 
-    vec3 diffColor =
-	splat.r * texture(grass, scaledTexcoord).xyz +
-	splat.g * texture(dirt, scaledTexcoord).xyz +
-	splat.b * texture(rock, scaledTexcoord).xyz;
+    vec3 diffColor = splat.r * texture(grass, scaledTexcoord).xyz;
+    diffColor += splat.g * texture(dirt, scaledTexcoord).xyz;
+    diffColor +=  splat.b * texture(rock, scaledTexcoord).xyz;
 
     // TODO, use mix function here!
     diffColor = mix(diffColor, texture(road, scaledTexcoord).xyz, splat.a);
-
 
    // shadowing is done in screenspace, so comment out.
 /*
@@ -92,9 +90,6 @@ void main()
 	visibility,
 	vec3(0) );
 #endif
-
-
-
 
 //    geoData[0] = vec4(vec4(vec3(1,0,0), 1));
 
