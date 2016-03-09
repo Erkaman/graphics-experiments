@@ -21,9 +21,7 @@ uniform sampler2D road;
 
 uniform sampler2DShadow shadowMap;
 
-
 uniform sampler2D splatMap;
-uniform sampler2D roadMap;
 uniform sampler2D aoMap;
 
 in vec3 outn;
@@ -34,11 +32,10 @@ uniform vec3 sceneLight;
 
 void main()
 {
-    vec3 v = -normalize(viewSpacePosition);
-    vec3 l= -viewSpaceLightDirection;
-    vec3 n = viewSpaceNormal;
 
+    // TODO OPTIMIZE.
     vec2 scaledTexcoord = texCoord * resolution * textureScale;
+
 
     vec4 splat =texture(splatMap, texCoord);
 
@@ -47,17 +44,9 @@ void main()
 	splat.g * texture(dirt, scaledTexcoord).xyz +
 	splat.b * texture(rock, scaledTexcoord).xyz;
 
-
-//    vec4 s = texture(roadMap, texCoord);
-
+    // TODO, use mix function here!
     diffColor = (splat.a) * texture(road, scaledTexcoord).xyz + (1.0 - splat.a) * diffColor;
 
-
-    float specShiny = 0;
-    vec3 specColor = vec3(0);
-    float diff=  calcDiff(l,n);
-
-   float spec= calcSpec(l,n,v);
 
    // shadowing is done in screenspace, so comment out.
 /*
@@ -74,12 +63,24 @@ void main()
 #ifdef DEFERRED
 
 
-
     geoData[0] = vec4(vec4(diffColor, ao));
     geoData[1] = vec4(normalize(viewSpaceNormal),0);
     geoData[2] = vec4(vec3(0,0,0), 1);
 
 #else
+
+    vec3 v = -normalize(viewSpacePosition);
+    vec3 l= -viewSpaceLightDirection;
+    vec3 n = viewSpaceNormal;
+
+
+    // TODO: we really need all this?
+    float specShiny = 0;
+    vec3 specColor = vec3(0);
+    float diff=  calcDiff(l,n);
+
+   float spec= calcSpec(l,n,v);
+
     geoData[0] =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
 	ambientLight* (1.0 -ao),

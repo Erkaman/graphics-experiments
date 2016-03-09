@@ -10,13 +10,12 @@ uniform mat4 projectionMatrix;
 
 uniform sampler2D heightMap;
 
-uniform float xzScale;
+// TODO: OPTIMIZE AWAY uniforms.
 uniform vec3 offset;
 
 uniform vec2 chunkPos;
 uniform float chunks; // num chunks.
 
-uniform float yScale;
 uniform float resolution;
 
 out vec3 viewSpaceNormal;
@@ -30,11 +29,10 @@ out vec3 outn;
 
 void main()
 {
-    // pos local in the chunk.
-
+    // TODO: pre-multiply by chunks?
     vec2 globalPos = (positionIn + chunkPos) / chunks;
 
-    vec3 scaledPos = computePos(globalPos, heightMap,  xzScale, offset, yScale);
+    vec3 scaledPos = computePos(globalPos, heightMap, offset);
 
     gl_Position = mvp * vec4(scaledPos,1);
 
@@ -49,6 +47,7 @@ void main()
     gl_ClipDistance[0] = dot(scaledPos, vec3(0,height-1.0,0));
 #endif
 
+    // TODO: can we optimize this?
     vec3 norm = getNormal(heightMap,globalPos.xy, resolution);
 
     viewSpaceNormal = normalize((normalMatrix * vec4(normalize(

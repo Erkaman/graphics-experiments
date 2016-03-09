@@ -7,15 +7,13 @@ uniform mat4 mvp;
 
 uniform sampler2D heightMap;
 
-uniform float xzScale;
 uniform vec3 offset;
-uniform float yScale;
 
 out float id;
 
 void main()
 {
-    vec3 pos = computePos(positionIn, heightMap,  xzScale, offset, yScale);
+    vec3 pos = computePos(positionIn, heightMap, offset);
 
     gl_Position = mvp * vec4(pos,1);
 

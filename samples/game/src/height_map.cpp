@@ -123,8 +123,12 @@ void HeightMap::Init(
     string shaderName = "shader/height_map_render";
 
 
+    vector<string> defaultDefines;
+    defaultDefines.push_back("yScale " + std::to_string(m_yScale) );
+    defaultDefines.push_back("xzScale " + std::to_string(m_xzScale) );
+
     {
-	vector<string> defines;
+	vector<string> defines(defaultDefines);
 	defines.push_back("SHADOW_MAPPING");
 	defines.push_back("DEFERRED");
 
@@ -132,10 +136,18 @@ void HeightMap::Init(
 	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
     }
 
-    m_depthShader = ShaderProgram::Load("shader/height_map_output_depth");
+
 
     {
-	vector<string> defines;
+	vector<string> defines(defaultDefines);
+
+	m_depthShader =
+	    ResourceManager::LoadShader(string("shader/height_map_output_depth") + "_vs.glsl",
+					string("shader/height_map_output_depth") + "_fs.glsl", defines);
+    }
+
+    {
+	vector<string> defines(defaultDefines);
 
 	m_envShader =
 	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
@@ -143,7 +155,7 @@ void HeightMap::Init(
 
 
     {
-	vector<string> defines;
+	vector<string> defines(defaultDefines);
 
 	defines.push_back("REFRACTION");
 
@@ -153,7 +165,7 @@ void HeightMap::Init(
 
 
     {
-	vector<string> defines;
+	vector<string> defines(defaultDefines);
 
 	defines.push_back("REFLECTION");
 
@@ -166,7 +178,18 @@ void HeightMap::Init(
     if(guiMode) {
 	m_noise = new ValueNoise(2);
 //	m_idShader = ShaderProgram::Load("shader/height_map_output_id");
-	m_cursorShader = ShaderProgram::Load("shader/height_map_cursor");
+
+
+	{
+	    vector<string> defines(defaultDefines);
+
+	    m_cursorShader =
+		ResourceManager::LoadShader(string("shader/height_map_cursor") + "_vs.glsl",
+					    string("shader/height_map_cursor") + "_fs.glsl", defines);
+
+	}
+
+
     }
 
     CreateHeightmap(heightMapFilename, guiMode);
@@ -189,6 +212,15 @@ void HeightMap::Init(
     }
 
     CreateCube();
+
+    {
+	vector<string> defines(defaultDefines);
+
+	m_cubeShader =
+	    ResourceManager::LoadShader(string("shader/cube_cursor") + "_vs.glsl",
+					string("shader/cube_cursor") + "_fs.glsl", defines);
+
+    }
 
     /*
     m_controlPoints.push_back(Vector2i(471,461));
@@ -373,8 +405,6 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
     m_heightMap->Bind();
 
 
-    shader->SetUniform("xzScale", m_xzScale);
-    shader->SetUniform("yScale", m_yScale);
     shader->SetUniform("offset", m_offset);
     shader->SetUniform("resolution", (float)m_resolution);
     shader->SetUniform("textureScale", (float)m_textureScale);
@@ -2450,7 +2480,10 @@ void HeightMap::CreateCube() {
     m_cubeIndexBuffer->SetBufferData(indices);
     m_cubeIndexBuffer->Unbind();
 
-    m_cubeShader = ShaderProgram::Load("shader/cube_cursor");
+
+
+
+
 
 }
 

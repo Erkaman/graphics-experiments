@@ -16,6 +16,7 @@ vec3 getNormal(sampler2D hm, vec2 texCoord, float resolution)
 
     vec3 vb = vec3(0, f(hm,p.x,p.z+eps) - f(hm,p.x,p.z-eps), 2*eps );
 
+    // is there not some more optimal way of doing this?
     // http://stackoverflow.com/questions/5281261/generating-a-normal-map-from-a-height-map
     vec3 n = normalize(cross(normalize(vb), normalize(va) ));
 
@@ -25,9 +26,7 @@ vec3 getNormal(sampler2D hm, vec2 texCoord, float resolution)
 vec3 computePos(
     vec2 pos,
     sampler2D heightMap,
-    float xzScale,
-    vec3 offset,
-    float yScale) {
+    vec3 offset) {
 
     return offset + vec3(
 	pos.x * xzScale,

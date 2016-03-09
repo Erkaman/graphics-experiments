@@ -129,6 +129,8 @@ ShaderProgram* ResourceManager::LoadShader(
     for(size_t i = 0; i < defines.size(); ++i) {
 	vertexSource = string("#define ") + defines[i] +  string("\n\n") + vertexSource;
 	fragmentSource = string("#define ") + defines[i] +  string("\n\n") + fragmentSource;
+
+//	LOG_I("append: %s",  (string("#define ") + defines[i] +  string("\n\n")).c_str() );
     }
 
     return ShaderProgram::Load(vertexSource, fragmentSource);

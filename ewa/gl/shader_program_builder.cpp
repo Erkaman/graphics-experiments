@@ -45,7 +45,10 @@ ShaderProgramBuilder::ShaderProgramBuilder(const string& vertexShaderSource, con
 
 GLuint ShaderProgramBuilder::BuildAndCompileShader(const string& shaderSource, const GLenum shaderType, const std::string& path){
 
+
     string shaderContents = ParseShader(shaderSource, path);
+
+//    LOG_I("shaderContents: %s", shaderSource.c_str() );
 
     return CreateShaderFromString(shaderContents, shaderType);
 }

@@ -1,15 +1,13 @@
 layout (location = 0) in  vec2 positionIn;
 layout (location = 2) in vec2 texCoordIn;
 
-#include "height_map_lib.glsl"
+#include "shader/height_map_lib.glsl"
 
 uniform mat4 mvp;
 
 uniform sampler2D heightMap;
 
-uniform float xzScale;
 uniform vec3 offset;
-uniform float yScale;
 uniform float resolution;
 
 uniform vec2 cursorPos;
@@ -58,7 +56,7 @@ void main()
 {
     vec3 pos = computePos(
 	positionIn + vec2(cursorPos.x / resolution, cursorPos.y / resolution),
-	heightMap,  xzScale, offset, yScale);
+	heightMap, offset);
 
     gl_Position = mvp * vec4(pos,1);
 
