@@ -28,11 +28,13 @@ in vec3 outn;
 uniform vec3 ambientLight;
 uniform vec3 sceneLight;
 
+in vec2 scaledTexcoord;
+
+
 void main()
 {
 
     // TODO OPTIMIZE.
-    vec2 scaledTexcoord = texCoord * resolution * textureScale;
 
 
     vec4 splat =texture(splatMap, texCoord);
@@ -43,7 +45,7 @@ void main()
 	splat.b * texture(rock, scaledTexcoord).xyz;
 
     // TODO, use mix function here!
-    diffColor = (splat.a) * texture(road, scaledTexcoord).xyz + (1.0 - splat.a) * diffColor;
+    diffColor = mix(diffColor, texture(road, scaledTexcoord).xyz, splat.a);
 
 
    // shadowing is done in screenspace, so comment out.
@@ -60,9 +62,8 @@ void main()
 
 #ifdef DEFERRED
 
-
     geoData[0] = vec4(vec4(diffColor, ao));
-    geoData[1] = vec4(normalize(viewSpaceNormal),0);
+    geoData[1] = vec4(viewSpaceNormal,0);
     geoData[2] = vec4(vec3(0,0,0), 1);
 
 #else

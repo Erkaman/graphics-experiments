@@ -21,6 +21,8 @@ out vec2 texCoord;
 
 out vec3 position;
 
+out vec2 scaledTexcoord;
+
 
 out vec3 outn;
 
@@ -31,7 +33,6 @@ void main()
 
     vec3 scaledPos = computePos(globalPos, heightMap);
 
-    gl_Position = mvp * vec4(scaledPos,1);
 
     const float height = 1.0;
     //  const float height = 1.0;
@@ -53,9 +54,16 @@ void main()
 
     viewSpacePosition = (modelViewMatrix * vec4(scaledPos, 1.0)).xyz;
 
+//    gl_Position = mvp * vec4(scaledPos,1);
+    gl_Position = projectionMatrix * vec4(viewSpacePosition,1);
+
+
     texCoord = globalPos;
 
     position = scaledPos;
 
     outn = norm;
+
+    scaledTexcoord = texCoord * resolution * textureScale;
+
 }
