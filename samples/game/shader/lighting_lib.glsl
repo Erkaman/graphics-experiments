@@ -149,15 +149,17 @@ float toLinearDepth(float depth) {
 }
 */
 
+vec4 mulWhereWIsOne(mat4 m, vec3 v) {
+    return v.x * m[0] + (v.y * m[1] + (v.z * m[2] + m[3]) );
+}
+
 //toViewSpacePositionMat = invProj * Trans(-1,-1,-1) * Scale(2,2,2)
 vec3 getViewSpacePosition(
     mat4 toViewSpacePositionMat,
     sampler2D depthTexture, vec2 texCoord) {
 
-    vec4 pos = vec4(texCoord.x, texCoord.y, texture(depthTexture, texCoord).r, 1.0);
-
-     vec4 p = toViewSpacePositionMat * pos;
-
+    vec3 pos = vec3(texCoord.x, texCoord.y, texture(depthTexture, texCoord).r);
+    vec4 p = mulWhereWIsOne(toViewSpacePositionMat, pos.xyz);
 
     return p.xyz / p.w;
 }
