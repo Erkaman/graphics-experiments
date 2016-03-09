@@ -56,49 +56,10 @@ vec3 getCentroid(sampler2D hm, vec2 texCoord, float resolution)
 
 void main()
 {
-    // vec3 dir = getDir(heightMap, positionIn.xz, resolution);
-
-    //   vec3 p = positionIn + dir * (1.0 / (256*2) );
-
-    /*  vec3 p  = getCentroid(heightMap,positionIn.xz, resolution );
-
-    vec3 pos =
-	offset + vec3(
-	p.x * xzScale,
-	p.y*yScale,
-	p.z * xzScale);
-*/
-
-
     vec3 pos = computePos(
 	positionIn + vec2(cursorPos.x / resolution, cursorPos.y / resolution),
 	heightMap,  xzScale, offset, yScale);
 
     gl_Position = mvp * vec4(pos,1);
 
-/*
-
-    float ix = positionIn.x * resolution;
-    float iz = positionIn.z * resolution;
-    float dist = sqrt( ix * ix + iz * iz  );
-    int idist = int(dist);
-
-//    if(m_cursorSize > 15 && idist % 3 != 0 )
-
-
-
-    // cursor center pos
-     vec3 cursorCenter = computePos(
-	vec3(cursorPos.x / resolution, 0, cursorPos.z / resolution),
-	heightMap,  xzScale, offset, yScale);
-
-    float cameraDist = distance( vec2(cameraPos.x, cameraPos.z), vec2(cursorCenter.x, cursorCenter.z)  );
-
-    d = 2 + float(int(cameraDist / 100));
-
-    if(idist % int(d) != 0 )
-	isRender = 0;
-    else
-	isRender = 1;
-*/
 }

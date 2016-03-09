@@ -47,14 +47,9 @@ void main()
 	splat.g * texture(dirt, scaledTexcoord).xyz +
 	splat.b * texture(rock, scaledTexcoord).xyz;
 
-
     vec4 s = texture(roadMap, texCoord);
 
-//    diffColor = road.xyz * road.a;
     diffColor = (s.a) * texture(road, scaledTexcoord).xyz + (1.0 - s.a) * diffColor;
-
-//    diffColor = texture(road, scaledTexcoord).xyz;
-
 
     float specShiny = 0;
     vec3 specColor = vec3(0);
