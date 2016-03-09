@@ -7,8 +7,6 @@ uniform mat4 mvp;
 
 uniform sampler2D heightMap;
 
-uniform vec3 offset;
-
 uniform vec2 cursorPos;
 uniform vec3 cameraPos;
 
@@ -20,7 +18,7 @@ void main()
 {
     vec3 pos = computePos(
 	positionIn + vec2(cursorPos.x / resolution, cursorPos.y / resolution),
-	heightMap, offset);
+	heightMap);
 
     gl_Position = mvp * vec4(pos,1);
 

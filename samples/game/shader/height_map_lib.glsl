@@ -25,8 +25,7 @@ vec3 getNormal(sampler2D hm, vec2 texCoord)
 
 vec3 computePos(
     vec2 pos,
-    sampler2D heightMap,
-    vec3 offset) {
+    sampler2D heightMap) {
 
     return offset + vec3(
 	pos.x * xzScale,

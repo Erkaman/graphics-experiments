@@ -6,8 +6,6 @@ uniform mat4 mvp;
 
 uniform sampler2D heightMap;
 
-uniform vec3 offset;
-
 uniform vec2 chunkPos;
 
 void main()
@@ -17,7 +15,7 @@ void main()
     vec2 globalPos = (positionIn + chunkPos) / numChunks;
 
     vec3 scaledPos =
-	computePos(globalPos,heightMap, offset);
+	computePos(globalPos,heightMap);
 
     gl_Position = mvp * vec4(scaledPos,1);
 }

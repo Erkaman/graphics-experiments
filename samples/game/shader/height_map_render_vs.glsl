@@ -11,7 +11,6 @@ uniform mat4 projectionMatrix;
 uniform sampler2D heightMap;
 
 // TODO: OPTIMIZE AWAY uniforms.
-uniform vec3 offset;
 
 uniform vec2 chunkPos;
 
@@ -30,7 +29,7 @@ void main()
     // TODO: pre-multiply by chunks?
     vec2 globalPos = (positionIn + chunkPos) / numChunks;
 
-    vec3 scaledPos = computePos(globalPos, heightMap, offset);
+    vec3 scaledPos = computePos(globalPos, heightMap);
 
     gl_Position = mvp * vec4(scaledPos,1);
 

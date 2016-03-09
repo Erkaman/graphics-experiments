@@ -7,8 +7,6 @@ uniform mat4 mvp;
 
 uniform sampler2D heightMap;
 
-uniform vec3 offset;
-
 uniform vec2 cursorPos;
 uniform vec3 cameraPos;
 
@@ -19,7 +17,7 @@ void main()
 {
     vec3 pos = computePos(
 	vec2(cursorPos.x / resolution, cursorPos.y / resolution),
-	heightMap, offset);
+	heightMap);
 
     float scale = 2.0;
 

@@ -129,6 +129,9 @@ void HeightMap::Init(
     defaultDefines.push_back("numChunks " + std::to_string(m_chunks) );
     defaultDefines.push_back("textureScale " + std::to_string((float)m_textureScale) );
     defaultDefines.push_back("resolution " + std::to_string( (float)m_resolution )   );
+    defaultDefines.push_back(
+	string("offset vec3(") + std::to_string(m_offset.x) +
+	"," + std::to_string(m_offset.y) + "," + std::to_string(m_offset.z) + ")"	);
 
     {
 	vector<string> defines(defaultDefines);
