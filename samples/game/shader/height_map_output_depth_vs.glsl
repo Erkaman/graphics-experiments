@@ -9,13 +9,12 @@ uniform sampler2D heightMap;
 uniform vec3 offset;
 
 uniform vec2 chunkPos;
-uniform float chunks; // num chunks.
 
 void main()
 {
     vec2 localPos = positionIn;
 
-    vec2 globalPos = (positionIn + chunkPos) / chunks;
+    vec2 globalPos = (positionIn + chunkPos) / numChunks;
 
     vec3 scaledPos =
 	computePos(globalPos,heightMap, offset);

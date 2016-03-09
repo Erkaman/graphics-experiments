@@ -14,7 +14,6 @@ uniform sampler2D heightMap;
 uniform vec3 offset;
 
 uniform vec2 chunkPos;
-uniform float chunks; // num chunks.
 
 uniform float resolution;
 
@@ -30,7 +29,7 @@ out vec3 outn;
 void main()
 {
     // TODO: pre-multiply by chunks?
-    vec2 globalPos = (positionIn + chunkPos) / chunks;
+    vec2 globalPos = (positionIn + chunkPos) / numChunks;
 
     vec3 scaledPos = computePos(globalPos, heightMap, offset);
 
