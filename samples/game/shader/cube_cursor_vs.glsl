@@ -8,7 +8,6 @@ uniform mat4 mvp;
 uniform sampler2D heightMap;
 
 uniform vec3 offset;
-uniform float resolution;
 
 uniform vec2 cursorPos;
 uniform vec3 cameraPos;

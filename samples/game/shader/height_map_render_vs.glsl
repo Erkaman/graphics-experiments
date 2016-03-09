@@ -15,7 +15,6 @@ uniform vec3 offset;
 
 uniform vec2 chunkPos;
 
-uniform float resolution;
 
 out vec3 viewSpaceNormal;
 out vec3 viewSpacePosition;
@@ -47,7 +46,7 @@ void main()
 #endif
 
     // TODO: can we optimize this?
-    vec3 norm = getNormal(heightMap,globalPos.xy, resolution);
+    vec3 norm = getNormal(heightMap,globalPos.xy);
 
     viewSpaceNormal = normalize((normalMatrix * vec4(normalize(
 							 norm

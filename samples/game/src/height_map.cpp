@@ -127,6 +127,8 @@ void HeightMap::Init(
     defaultDefines.push_back("yScale " + std::to_string(m_yScale) );
     defaultDefines.push_back("xzScale " + std::to_string(m_xzScale) );
     defaultDefines.push_back("numChunks " + std::to_string(m_chunks) );
+    defaultDefines.push_back("textureScale " + std::to_string((float)m_textureScale) );
+    defaultDefines.push_back("resolution " + std::to_string( (float)m_resolution )   );
 
     {
 	vector<string> defines(defaultDefines);
@@ -407,8 +409,6 @@ void HeightMap::RenderSetup(ShaderProgram* shader) {
 
 
     shader->SetUniform("offset", m_offset);
-    shader->SetUniform("resolution", (float)m_resolution);
-    shader->SetUniform("textureScale", (float)m_textureScale);
 
     // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 

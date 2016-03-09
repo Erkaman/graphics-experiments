@@ -6,7 +6,7 @@ float f(sampler2D heightMap, float x, float z) {
     return f(heightMap, vec2(x,z));
 }
 
-vec3 getNormal(sampler2D hm, vec2 texCoord, float resolution)
+vec3 getNormal(sampler2D hm, vec2 texCoord)
 {
     float eps = 1.0 / resolution;
     vec3 p = vec3(texCoord.x, 0, texCoord.y);

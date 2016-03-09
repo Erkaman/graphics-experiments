@@ -5,8 +5,6 @@ in vec3 position;
 out vec4 geoData[3];
 
 uniform vec3 viewSpaceLightDirection;
-uniform float resolution;
-uniform float textureScale;
 uniform float aoOnly;
 
 in vec2 texCoord;
