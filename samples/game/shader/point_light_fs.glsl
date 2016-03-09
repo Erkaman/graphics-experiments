@@ -36,14 +36,17 @@ void main() {
 
     vec3 viewSpacePosition = getViewSpacePosition(toViewSpacePositionMat, depthTexture, texCoord);
 
-    vec3 v = -normalize(viewSpacePosition);
+    vec3 v = -(viewSpacePosition);
 
     vec3 n;
     float id;
     readNormalTexture(normalTexture, texCoord, n, id);
 
     vec3 lightDist = viewSpacePosition - lightCenter;
-    vec3 l = -normalize(lightDist);
+    float lightDistLength = length(lightDist);
+
+    // l = normalize(lightDist).
+    vec3 l = - lightDist * 1/ ( lightDistLength );
 
     float diff=  calcDiff(l,n);
     float spec = 0;
@@ -54,7 +57,7 @@ void main() {
 
     readColorTexture(colorTexture, texCoord, diffColor, ao);
 
-    float ztest = step(0, radius - length(lightDist));
+    float ztest = step(0, radius - lightDistLength );
 
     vec3 specColor;
     float specShiny;
@@ -92,8 +95,8 @@ void main() {
 
     light.a = 1.0;
 
-    float atten = clamp(1.0 - length(lightDist) / radius, 0,1);
+    float atten = clamp(1.0 - lightDistLength / radius, 0,1);
 
-    fragmentColor = light * vec4(vec3(color),1) * ztest * atten;
+    fragmentColor = (light * vec4(vec3(color),1)) * (ztest * atten);
 
 }

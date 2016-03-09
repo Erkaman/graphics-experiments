@@ -59,7 +59,7 @@ void main() {
 
     vec3 viewSpacePosition = getViewSpacePosition(toViewSpacePositionMat, depthTexture, texCoord);
 
-    vec3 v = -normalize(viewSpacePosition);
+    vec3 v = -(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
     vec3 n;
     float id;
