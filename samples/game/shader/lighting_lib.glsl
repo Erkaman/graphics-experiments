@@ -149,17 +149,15 @@ float toLinearDepth(float depth) {
 }
 */
 
-vec3 getViewSpacePosition(mat4 invProj, sampler2D depthTexture, vec2 texCoord) {
+//toViewSpacePositionMat = invProj * Trans(-1,-1,-1) * Scale(2,2,2)
+vec3 getViewSpacePosition(
+    mat4 toViewSpacePositionMat,
+    sampler2D depthTexture, vec2 texCoord) {
 
-    float x = texCoord.x * 2 - 1;
-    float y = (texCoord.y) * 2 - 1;
-//    float z = toLinearDepth(texture(depthTexture, texCoord).r* 2 - 1);
-    float z = texture(depthTexture, texCoord).r * 2 - 1;
-    vec4 projectedPos = vec4(x, y,z
+    vec4 pos = vec4(texCoord.x, texCoord.y, texture(depthTexture, texCoord).r, 1.0);
 
-			     , 1.0f);
+     vec4 p = toViewSpacePositionMat * pos;
 
-    vec4 p =  invProj * projectedPos;
 
     return p.xyz / p.w;
 }

@@ -36,7 +36,6 @@ void main()
 
     // TODO OPTIMIZE.
 
-
     vec4 splat =texture(splatMap, texCoord);
 
     vec3 diffColor = splat.r * texture(grass, scaledTexcoord).xyz;
@@ -47,6 +46,8 @@ void main()
     diffColor = mix(diffColor, texture(road, scaledTexcoord).xyz, splat.a);
 
    // shadowing is done in screenspace, so comment out.
+
+
 /*
 #ifdef SHADOW_MAPPING
     float visibility = calcVisibility(shadowMap, diff, shadowCoordOut);
@@ -54,9 +55,10 @@ void main()
     float visibility = 1.0;
 #endif
 */
-    float visibility = 1.0;
+       float visibility = 1.0;
 
     float ao = texture(aoMap, texCoord).r;
+
 
 #ifdef DEFERRED
 

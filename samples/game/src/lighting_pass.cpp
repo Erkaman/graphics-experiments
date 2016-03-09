@@ -563,7 +563,10 @@ void LightingPass::SetupShader(
 
     //  LOG_I("onv: %s", std::string(invProj).c_str() );
 
-    shader->SetUniform("invProj", invProj);
+    shader->SetUniform("toViewSpacePositionMat", invProj * Matrix4f::CreateTranslation(-1,-1,-1) * Matrix4f::CreateScale(2,2,2) );
+//    shader->SetUniform("invProj", invProj);
+
+
     shader->SetUniform("proj", camera->GetProjectionMatrix());
 
 

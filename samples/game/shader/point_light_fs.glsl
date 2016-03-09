@@ -5,7 +5,10 @@ uniform sampler2D depthTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D specularTexture;
 uniform sampler2DShadow shadowMap;
-uniform mat4 invProj;
+
+uniform mat4 toViewSpacePositionMat;
+//uniform mat4 invProj;
+
 uniform vec3 color;
 uniform mat4 proj;
 
@@ -29,12 +32,9 @@ void main() {
 
     vec2 texCoord = gl_FragCoord.xy / screenSize;
 
-    vec3 col = vec3(1,0,0);
+    vec3 col;
 
-
-    col = vec3(1,0,0);
-
-    vec3 viewSpacePosition = getViewSpacePosition(invProj, depthTexture, texCoord);
+    vec3 viewSpacePosition = getViewSpacePosition(toViewSpacePositionMat, depthTexture, texCoord);
 
     vec3 v = -normalize(viewSpacePosition);
 
@@ -95,4 +95,5 @@ void main() {
     float atten = clamp(1.0 - length(lightDist) / radius, 0,1);
 
     fragmentColor = light * vec4(vec3(color),1) * ztest * atten;
+
 }

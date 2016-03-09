@@ -22,7 +22,8 @@ uniform vec3 eyePos;
 uniform vec3 viewSpaceLightDirection;
 uniform mat4 lightVp;
 uniform mat4 inverseViewMatrix;
-uniform mat4 invProj;
+uniform mat4 toViewSpacePositionMat;
+
 uniform vec4 lightDirection;
 uniform mat4 proj;
 uniform mat4 inverseViewNormalMatrix;
@@ -56,8 +57,7 @@ void main() {
 
     vec3 envMapSample = vec3(0);
 
-
-    vec3 viewSpacePosition = getViewSpacePosition(invProj, depthTexture, texCoord);
+    vec3 viewSpacePosition = getViewSpacePosition(toViewSpacePositionMat, depthTexture, texCoord);
 
     vec3 v = -normalize(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
