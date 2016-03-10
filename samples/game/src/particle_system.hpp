@@ -70,16 +70,8 @@ public:
 private:
 
     void UpdateParticles(float delta);
-    void RenderParticles(const Matrix4f& VP, const Vector3f& CameraPos);
 
 
-    bool m_isFirst;
-    unsigned int m_currVB;
-    unsigned int m_currTFB;
-    VBO* m_particleBuffer[2];
-    GLuint m_transformFeedback[2];
-
-    ShaderProgram* m_particleUpdateShader;
     ShaderProgram* m_particleBillboardShader;
     RandomTexture* m_randomTexture;
 

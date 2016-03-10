@@ -248,14 +248,16 @@ void TuhuApplication::Init() {
 
 
     const Vector3f pos =
-	Vector3f(86.313034, 88.535843, 82.006859);
+	Vector3f(19.691696, 19.842316, 19.874208);
+
 
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(0.712218, -0.428032, 0.556358)
+
+	Vector3f(-0.662049, -0.452847, -0.597178)
 	);
 
     m_snow = new SnowEffect(pos);
@@ -659,7 +661,6 @@ void TuhuApplication::RenderScene() {
 
     //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
 
-    //   m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 
 
 }
@@ -809,6 +810,8 @@ void TuhuApplication::Render() {
     m_gpuProfiler->End(GTS_Sky);
 
 
+    m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
+
     if(m_gui) {
 
 	int fb_width, fb_height;
@@ -841,6 +844,8 @@ void TuhuApplication::Update(const float delta) {
 
     GeometryObject::SetTotalDelta(m_totalDelta);
 
+
+    m_fire->Update(delta);
 
     if(m_gui)
 	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
