@@ -264,8 +264,7 @@ void TuhuApplication::Init() {
     m_snow->Init();
 
 
-
-    m_fire = new FireEffect(Vector3f(12,-3,10));
+    m_fire = new FireEffect(Vector3f(0,20,0));
     m_fire->Init();
 
 

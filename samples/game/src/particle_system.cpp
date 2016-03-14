@@ -20,9 +20,7 @@ ParticleSystem::~ParticleSystem()
     MY_DELETE(m_randomTexture);
 
     MY_DELETE(m_particleBillboardShader);
-
 }
-
 
 ParticleSystem::ParticleSystem(){
     m_time = 0;
@@ -63,10 +61,15 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
     m_particleBillboardShader->SetUniform("gVP", VP);
 //    m_particleBillboardShader->SetUniform("gBillboardSize", m_billboardSize);
 
-    m_particleBillboardShader->SetUniform("time", m_time);
+    m_particleBillboardShader->SetUniform("time", m_time + 10000);
 
+    /*
+    LOG_I("minvel: %s", std::string(m_minVelocity).c_str() );
+    LOG_I("maxvel: %s", std::string(m_maxVelocity).c_str() );
+*/
     m_particleBillboardShader->SetUniform("minVelocity", m_minVelocity);
     m_particleBillboardShader->SetUniform("maxVelocity", m_maxVelocity);
+
 
 
     m_particleBillboardShader->SetUniform("baseParticleLifetime", m_particleLifetime );
@@ -91,11 +94,10 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
     Texture::SetActiveTextureUnit(1);
     m_randomTexture->Bind();
 
-
     GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
     GL_C(glBlendFunc(m_sfactor, m_dfactor));
 
-    GL_C(glDepthMask(GL_FALSE) );
+//    GL_C(glDepthMask(GL_FALSE) );
 
     m_particleBillboardShader->SetUniform("gColorMap", 0);
     Texture::SetActiveTextureUnit(0);
@@ -103,13 +105,11 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
 
     SetDepthTest(false);
 
-
     // RENDER HERE.
     // RENDER.
-    GL_C(glDrawArrays(GL_POINTS, 0, 3));
+    GL_C(glDrawArrays(GL_POINTS, 0, 2));
 
-    SetDepthTest(true);
-
+      SetDepthTest(true);
 
     GL_C(glDisable(GL_BLEND));
 

@@ -7,19 +7,28 @@ uniform vec3 gCameraPos;
 
 /*
 in float type[];
-in float size[];
 in vec4 color[];
 */
+
+in float size[];
+
+in Vertex
+{
+    float size;
+    vec4 color;
+
+} vo[];
+
 
 //in vec4 positionIn[];
 
 out vec2 TexCoord;
-//out vec4 Color;
+out vec4 Color;
 
 void main()
 {
-//	float billboardSize = size[0];
-    float billboardSize = 10.0;
+
+    float billboardSize = vo[0].size;
 
     vec3 Pos = gl_in[0].gl_Position.xyz;
     vec3 toCamera = normalize(gCameraPos - Pos);
@@ -30,29 +39,27 @@ void main()
     Pos.y -= billboardSize * 0.5;
     gl_Position = gVP * vec4(Pos, 1.0);
     TexCoord = vec2(0.0, 0.0);
-    //  Color = color[0];
+    Color = vo[0].color;
     EmitVertex();
 
     Pos.y += billboardSize;
     gl_Position = gVP * vec4(Pos, 1.0);
     TexCoord = vec2(0.0, 1.0);
-    //   Color = color[0];
+    Color = vo[0].color;
     EmitVertex();
 
     Pos.y -= billboardSize;
     Pos += right;
     gl_Position = gVP * vec4(Pos, 1.0);
     TexCoord = vec2(1.0, 0.0);
-    // Color = color[0];
+    Color = vo[0].color;
     EmitVertex();
 
     Pos.y +=billboardSize;
     gl_Position = gVP * vec4(Pos, 1.0);
     TexCoord = vec2(1.0, 1.0);
-    //   Color = color[0];
+    Color = vo[0].color;
     EmitVertex();
 
     EndPrimitive();
-
-
 }

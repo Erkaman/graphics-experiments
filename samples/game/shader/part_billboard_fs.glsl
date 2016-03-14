@@ -18,5 +18,5 @@ void main()
         discard;
 	}*/
 
-    fragmentColor = vec4(1,0,0,1);
+    fragmentColor =  Color * texture(gColorMap, TexCoord);
 }
