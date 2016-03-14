@@ -808,14 +808,7 @@ void TuhuApplication::Render() {
 
     m_gpuProfiler->Begin(GTS_Particles);
 
-    m_fire->RenderSetup(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
-
-
-    m_fire->Render(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
-
-    m_fire->RenderUnsetup(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
-
-
+    RenderParticles();
 
     m_gpuProfiler->End(GTS_Particles);
 
@@ -1396,5 +1389,34 @@ void TuhuApplication::BuildRoad() {
 void TuhuApplication::DeleteCP() {
 
     m_heightMap->DeleteCP();
+
+}
+
+
+void TuhuApplication::RenderParticles() {
+    m_fire->RenderSetup(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
+
+
+    // particle positions.
+    vector<Vector3f> positions = GeometryObject::GetTorches();
+
+
+    for(Vector3f pos : positions) {
+
+
+	m_fire->Render(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(),
+		       GetFramebufferHeight(),  pos);
+
+    }
+
+    /*
+
+
+    m_fire->Render(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight(), Vector3f(40,20,0));
+    */
+
+
+    m_fire->RenderUnsetup(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
+
 
 }

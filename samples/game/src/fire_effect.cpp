@@ -28,10 +28,10 @@ FireEffect::FireEffect(const Vector3f& position) {
 
 
 
-    SetBaseStartSize(0.20f);
-    SetBaseEndSize(0.09f);
-    SetStartSizeVariance(0.06f);
-    SetEndSizeVariance(0.03f);
+    SetBaseStartSize(0.40f);
+    SetBaseEndSize(0.18f);
+    SetStartSizeVariance(0.12f);
+    SetEndSizeVariance(0.06f);
 
 /*
     SetBaseStartSize(0.80f);

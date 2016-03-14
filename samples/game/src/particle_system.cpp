@@ -54,7 +54,7 @@ void ParticleSystem::UpdateParticles(float delta){
     m_time += delta;
 }
 
-void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f& CameraPos, int windowWidth, int windowHeight){
+void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f& CameraPos, int windowWidth, int windowHeight, const Vector3f& emitPosition){
 
 
 
@@ -65,7 +65,7 @@ void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f
     const int NUM_PARTICLES = 100;
 
     m_particleBillboardShader->SetUniform("numParticles", (float)NUM_PARTICLES );
-    m_particleBillboardShader->SetUniform("emitPosition", m_emitPosition );
+    m_particleBillboardShader->SetUniform("emitPosition", emitPosition );
     m_particleBillboardShader->SetUniform("time", m_time + 10000);
 
 

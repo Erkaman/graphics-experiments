@@ -1306,7 +1306,7 @@ std::vector<Vector3f> GeometryObject::GetTorches() {
     vector<Vector3f> torches;
 
     for(GeometryObject* torch : GeoObjManager::GetInstance().m_torches) {
-	torches.push_back(  Vector3f(torch->GetModelMatrix(  ) * Vector4f(0,1.43,0,1)) );
+	torches.push_back(  Vector3f(torch->GetModelMatrix(  ) * Vector4f(0,2.05,0,1)) );
     }
 
     return torches;

@@ -152,6 +152,7 @@ public:
     void RenderScene();
     void RenderId();
 
+    void RenderParticles();
 
     /*
       Implementation of GuiListener
@@ -172,6 +173,8 @@ public:
 
     virtual void BuildRoad();
     virtual void DeleteCP();
+
+
 
 
 };
