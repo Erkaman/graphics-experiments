@@ -29,6 +29,13 @@ public:
     virtual ~ParticleSystem();
 
     virtual void Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f& CameraPos, int windowWidth, int windowHeight);
+
+    virtual void RenderSetup(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f& CameraPos, int windowWidth, int windowHeight);
+
+    virtual void RenderUnsetup(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f& CameraPos, int windowWidth, int windowHeight);
+
+
+
     virtual void Update(float delta);
 
     void SetMinVelocity(const Vector3f& vel);

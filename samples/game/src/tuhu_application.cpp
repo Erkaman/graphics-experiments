@@ -808,7 +808,12 @@ void TuhuApplication::Render() {
 
     m_gpuProfiler->Begin(GTS_Particles);
 
+    m_fire->RenderSetup(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
+
+
     m_fire->Render(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
+
+    m_fire->RenderUnsetup(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
 
 
 

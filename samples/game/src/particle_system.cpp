@@ -57,17 +57,36 @@ void ParticleSystem::UpdateParticles(float delta){
 void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f& CameraPos, int windowWidth, int windowHeight){
 
 
+
+
+
+
+
+    const int NUM_PARTICLES = 100;
+
+    m_particleBillboardShader->SetUniform("numParticles", (float)NUM_PARTICLES );
+    m_particleBillboardShader->SetUniform("emitPosition", m_emitPosition );
+    m_particleBillboardShader->SetUniform("time", m_time + 10000);
+
+
+    GL_C(glDrawArrays(GL_POINTS, 0, NUM_PARTICLES));
+
+
+
+
+
+
+
+}
+
+
+void ParticleSystem::RenderSetup(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f& CameraPos, int windowWidth, int windowHeight){
+
     m_particleBillboardShader->Bind();
     m_particleBillboardShader->SetUniform("gCameraPos", CameraPos);
     m_particleBillboardShader->SetUniform("gVP", VP);
-//    m_particleBillboardShader->SetUniform("gBillboardSize", m_billboardSize);
 
-    m_particleBillboardShader->SetUniform("time", m_time + 10000);
 
-    /*
-    LOG_I("minvel: %s", std::string(m_minVelocity).c_str() );
-    LOG_I("maxvel: %s", std::string(m_maxVelocity).c_str() );
-*/
     m_particleBillboardShader->SetUniform("minVelocity", m_minVelocity);
     m_particleBillboardShader->SetUniform("maxVelocity", m_maxVelocity);
 
@@ -83,7 +102,6 @@ void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f
     m_particleBillboardShader->SetUniform("baseEndSize", m_endSize );
     m_particleBillboardShader->SetUniform("endSizeVariance", m_endSizeVariance );
 
-    m_particleBillboardShader->SetUniform("emitPosition", m_emitPosition );
     m_particleBillboardShader->SetUniform("emitPositionVariance", m_emitPositionVariance );
 
     m_particleBillboardShader->SetUniform("emitRate", m_emitRate);
@@ -100,13 +118,9 @@ void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f
     GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
     GL_C(glBlendFunc(m_sfactor, m_dfactor));
 
-//    GL_C(glDepthMask(GL_FALSE) );
-
     m_particleBillboardShader->SetUniform("gColorMap", 0);
     Texture::SetActiveTextureUnit(0);
     m_texture->Bind();
-
-
 
     m_particleBillboardShader->SetUniform("depthTexture", 7);
     Texture::SetActiveTextureUnit(7);
@@ -115,21 +129,12 @@ void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f
 
     SetDepthTest(false);
 
-    const int NUM_PARTICLES = 100;
+}
 
-    m_particleBillboardShader->SetUniform("numParticles", (float)NUM_PARTICLES );
-
-
-    // RENDER HERE.
-    // RENDER.
-//    GL_C(glDrawArrays(GL_POINTS, 0, 200));
-    GL_C(glDrawArrays(GL_POINTS, 0, NUM_PARTICLES));
-
-      SetDepthTest(true);
+void ParticleSystem::RenderUnsetup(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f& CameraPos, int windowWidth, int windowHeight) {
+    SetDepthTest(true);
 
     GL_C(glDisable(GL_BLEND));
-
-    GL_C(glDepthMask(GL_TRUE) );
 
     m_particleBillboardShader->Unbind();
 
@@ -137,11 +142,6 @@ void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f
     m_texture->Unbind();
 
 }
-
-/*
-  3. figure out how to emit per second.
-
- */
 
 void ParticleSystem::SetMinVelocity(const Vector3f& vel) {
     m_minVelocity = vel;
