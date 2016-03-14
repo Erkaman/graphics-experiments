@@ -1011,6 +1011,10 @@ void TuhuApplication::Update(const float delta) {
     //
     m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
 
+
+    m_particles = GeometryObject::GetTorches();
+
+    // TODO: view frustum cull the particles.
 }
 
 string Format(const string& fmt, float val) {
@@ -1397,11 +1401,9 @@ void TuhuApplication::RenderParticles() {
     m_fire->RenderSetup(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
 
 
-    // particle positions.
-    vector<Vector3f> positions = GeometryObject::GetTorches();
 
 
-    for(Vector3f pos : positions) {
+    for(Vector3f pos : m_particles) {
 
 
 	m_fire->Render(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(),
@@ -1417,6 +1419,5 @@ void TuhuApplication::RenderParticles() {
 
 
     m_fire->RenderUnsetup(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
-
 
 }

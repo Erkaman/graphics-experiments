@@ -132,6 +132,9 @@ private:
 
     void UpdateMatrices();
 
+    std::vector<Vector3f> m_particles;
+
+
 public:
 
     TuhuApplication(int argc, char *argv[]);
