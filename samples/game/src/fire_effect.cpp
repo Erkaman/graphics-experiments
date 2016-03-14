@@ -32,6 +32,7 @@ FireEffect::FireEffect(const Vector3f& position) {
     SetBaseEndSize(0.09f);
     SetStartSizeVariance(0.06f);
     SetEndSizeVariance(0.03f);
+
 /*
     SetBaseStartSize(0.80f);
     SetBaseEndSize(0.80f);
@@ -52,7 +53,7 @@ FireEffect::FireEffect(const Vector3f& position) {
 
 
 
-    Texture* texture = Texture2D::Load("img/particle_post.png");
+    Texture* texture = Texture2D::Load("img/particle_post2.png");
 
     if(!texture) {
 	PrintErrorExit();

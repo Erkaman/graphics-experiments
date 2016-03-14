@@ -810,6 +810,8 @@ void TuhuApplication::Render() {
 
     m_fire->Render(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
 
+
+
     m_gpuProfiler->End(GTS_Particles);
 
     if(m_gui) {
