@@ -107,7 +107,7 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
 
     // RENDER HERE.
     // RENDER.
-    GL_C(glDrawArrays(GL_POINTS, 0, 2));
+    GL_C(glDrawArrays(GL_POINTS, 0, 200));
 
       SetDepthTest(true);
 

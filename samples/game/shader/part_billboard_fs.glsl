@@ -5,18 +5,7 @@ out vec4 fragmentColor;
 
 in vec4 Color;
 
-
 void main()
 {
-//    FragColor = Color * texture(gColorMap, TexCoord);
-
-/*    if(FragColor.a < 0.9) {
-	discard;
-	}*/
-
-/*    if (FragColor.r >= 0.9 && FragColor.g >= 0.9 && FragColor.b >= 0.9) {
-        discard;
-	}*/
-
     fragmentColor =  Color * texture(gColorMap, TexCoord);
 }

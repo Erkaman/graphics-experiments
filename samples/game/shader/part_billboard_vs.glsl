@@ -132,13 +132,9 @@ vec4 GetColor(float age, float lifetime) {
 void main(){
      float id = gl_VertexID;
 
-    float seed = (id);
-//    vec3 position = GetRandomPosition(seed);
-//    position = vec3(emitPosition) + emitPositionVariance * seed;
+     float seed = (id) / 200;
 
     float lifetime =RandVariance(seed, baseParticleLifetime, particleLifetimeVariance);
-//	randVariation(seed*43.2121, baseParticleLifetime, particleLifetimeVariance);
-
 
     // pgen = particle generation
     // every time a particle has outlived its lifespan,
@@ -155,14 +151,7 @@ void main(){
 
 
     float startSize =RandVariance(seed, baseStartSize, startSizeVariance);
-//	randRange(pseed, baseStartSize, startSizeVariance);
     float endSize = RandVariance(seed, baseEndSize, endSizeVariance);
-	//randRange(pseed, baseEndSize, endSizeVariance);
-
-/*
-    float startSize = 5;
-    float endSize = 0;
-*/
 
     vec3 velocity = GetRandomDir(pseed, minVelocity, maxVelocity);
 
@@ -171,7 +160,6 @@ void main(){
 
     gl_Position = vec4(vec3(position), 1.0);
 
-
-    vo.size = 4.0;//lerp(startSize, endSize, age, lifetime);
-    vo.color = vec4(1,0,0,1);//GetColor(age, lifetime);
+    vo.size = lerp(startSize, endSize, age, lifetime);
+    vo.color = GetColor(age, lifetime);
 }
