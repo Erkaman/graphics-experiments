@@ -1011,8 +1011,22 @@ void TuhuApplication::Update(const float delta) {
     //
     m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
 
+    m_particles.clear();
 
-    m_particles = GeometryObject::GetTorches();
+    for(Vector3f particle : GeometryObject::GetTorches()) {
+
+
+
+	if(m_cameraFrustum->IsSphereInFrustum(particle.x, particle.y, particle.z, 1)  ) {
+	    m_particles.push_back(particle);
+	}
+
+//	break;
+
+    }
+
+//    LOG_I("particle culling: %d / %d",  m_particles.size(), GeometryObject::GetTorches().size() );
+
 
     // TODO: view frustum cull the particles.
 }

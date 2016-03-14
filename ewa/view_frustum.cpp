@@ -166,7 +166,6 @@ void ViewFrustum::Update(const Matrix4f& vp, const Vector3f& position) {
 }
 
 // solve for left, near, bottom.
-
 bool ViewFrustum::IsCuboidInFrustum( const float x, const float y, const float z, const float xSize, const float ySize, const float zSize )const
 {
     int p;
@@ -256,4 +255,59 @@ Vector3f ViewFrustum::rtn()const {
 
 Vector3f ViewFrustum::GetPosition()const {
     return m_position;
+}
+
+
+
+bool ViewFrustum::IsSphereInFrustum(
+    const float x, const float y, const float z,
+    const float radius )const {
+
+
+/*    for(int i = 0; i < 4; ++i) {
+
+	LOG_I("plane%d: %f", i,
+
+	      m_frustum[i][0] * (x ) + m_frustum[i][1] * (y ) + m_frustum[i][2] * (z ) + m_frustum[0][3]);
+
+
+	LOG_I("plane%d:  normal = %f, %f, %f, d = %f", i,
+
+	      m_frustum[i][0], m_frustum[i][1], m_frustum[i][2], m_frustum[0][3]);
+
+    }
+
+*/
+
+
+    /*
+    int i = 0;
+    LOG_I("plane%d:  normal = %f, %f, %f, d = %f", i,
+
+	      m_frustum[i][0], m_frustum[i][1], m_frustum[i][2], m_frustum[0][3]);
+
+    LOG_I("dist: %f", m_frustum[0][0] * (x ) + m_frustum[0][1] * (y ) + m_frustum[0][2] * (z ) + m_frustum[0][3]);
+*/
+
+
+
+    if( m_frustum[0][0] * (x ) + m_frustum[0][1] * (y ) + m_frustum[0][2] * (z ) + m_frustum[0][3] < radius )
+	return false;
+    if( (m_frustum[1][0] * (x ) + m_frustum[1][1] * (y ) + m_frustum[1][2] * (z ) + m_frustum[1][3]) < radius )
+	return false;
+
+
+    if( m_frustum[2][0] * (x ) + m_frustum[2][1] * (y ) + m_frustum[2][2] * (z ) + m_frustum[2][3] < radius )
+	return false;
+    if( (m_frustum[3][0] * (x ) + m_frustum[3][1] * (y ) + m_frustum[3][2] * (z ) + m_frustum[3][3]) < radius )
+	return false;
+
+
+    if( m_frustum[4][0] * (x ) + m_frustum[4][1] * (y ) + m_frustum[4][2] * (z ) + m_frustum[4][3] < radius )
+	return false;
+    if( (m_frustum[5][0] * (x ) + m_frustum[5][1] * (y ) + m_frustum[5][2] * (z ) + m_frustum[5][3]) < radius )
+	return false;
+
+
+    return true;
 }

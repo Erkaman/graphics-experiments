@@ -26,6 +26,10 @@ public:
 	const float x, const float y, const float z,
 	const float xSize, const float ySize, const float zSize )const;
 
+    bool IsSphereInFrustum(
+	const float x, const float y, const float z,
+	const float radius )const;
+
 
     Vector3f lbf()const;
     Vector3f ltf()const;
