@@ -291,21 +291,20 @@ bool ViewFrustum::IsSphereInFrustum(
 
 
 
-    if( m_frustum[0][0] * (x ) + m_frustum[0][1] * (y ) + m_frustum[0][2] * (z ) + m_frustum[0][3] < radius )
+    if( m_frustum[0][0] * (x ) + m_frustum[0][1] * (y ) + m_frustum[0][2] * (z ) + m_frustum[0][3] < -radius )
 	return false;
-    if( (m_frustum[1][0] * (x ) + m_frustum[1][1] * (y ) + m_frustum[1][2] * (z ) + m_frustum[1][3]) < radius )
-	return false;
-
-
-    if( m_frustum[2][0] * (x ) + m_frustum[2][1] * (y ) + m_frustum[2][2] * (z ) + m_frustum[2][3] < radius )
-	return false;
-    if( (m_frustum[3][0] * (x ) + m_frustum[3][1] * (y ) + m_frustum[3][2] * (z ) + m_frustum[3][3]) < radius )
+    if( (m_frustum[1][0] * (x ) + m_frustum[1][1] * (y ) + m_frustum[1][2] * (z ) + m_frustum[1][3]) < -radius )
 	return false;
 
 
-    if( m_frustum[4][0] * (x ) + m_frustum[4][1] * (y ) + m_frustum[4][2] * (z ) + m_frustum[4][3] < radius )
+    if( m_frustum[2][0] * (x ) + m_frustum[2][1] * (y ) + m_frustum[2][2] * (z ) + m_frustum[2][3] < -radius )
 	return false;
-    if( (m_frustum[5][0] * (x ) + m_frustum[5][1] * (y ) + m_frustum[5][2] * (z ) + m_frustum[5][3]) < radius )
+    if( (m_frustum[3][0] * (x ) + m_frustum[3][1] * (y ) + m_frustum[3][2] * (z ) + m_frustum[3][3]) < -radius )
+	return false;
+
+    if( m_frustum[4][0] * (x ) + m_frustum[4][1] * (y ) + m_frustum[4][2] * (z ) + m_frustum[4][3] < (-radius) )
+	return false;
+    if( (m_frustum[5][0] * (x ) + m_frustum[5][1] * (y ) + m_frustum[5][2] * (z ) + m_frustum[5][3]) < (-radius) )
 	return false;
 
 
