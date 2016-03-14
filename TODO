@@ -1,3 +1,12 @@
+* change start position of particles randomly. to reduce overdraw.
+* find better fitting polygon of particles.
+* render to half size buffer.
+* optimize system to need less particles.
+
+
+http://realtimecollisiondetection.net/blog/?p=91
+
+
 http://leifnode.com/2015/05/tiled-deferred-shading/
 
 

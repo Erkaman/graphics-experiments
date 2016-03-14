@@ -97,7 +97,6 @@ void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f
     m_randomTexture->Bind();
 
 
-
     GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
     GL_C(glBlendFunc(m_sfactor, m_dfactor));
 
@@ -116,10 +115,15 @@ void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f
 
     SetDepthTest(false);
 
+    const int NUM_PARTICLES = 200;
+
+    m_particleBillboardShader->SetUniform("numParticles", (float)NUM_PARTICLES );
+
+
     // RENDER HERE.
     // RENDER.
 //    GL_C(glDrawArrays(GL_POINTS, 0, 200));
-    GL_C(glDrawArrays(GL_POINTS, 0, 200));
+    GL_C(glDrawArrays(GL_POINTS, 0, NUM_PARTICLES));
 
       SetDepthTest(true);
 

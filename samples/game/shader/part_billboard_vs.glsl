@@ -6,6 +6,7 @@ uniform sampler1D randomTexture;
 uniform float emitRate;
 uniform float baseParticleLifetime;
 uniform int emitCount;
+uniform float numParticles;
 
 uniform float baseStartSize;
 uniform float baseEndSize;
@@ -132,7 +133,7 @@ vec4 GetColor(float age, float lifetime) {
 void main(){
      float id = gl_VertexID;
 
-     float seed = (id) / 200;
+     float seed = (id) / numParticles;
 
     float lifetime =RandVariance(seed, baseParticleLifetime, particleLifetimeVariance);
 
