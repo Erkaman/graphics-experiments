@@ -7,9 +7,9 @@
 
 FireEffect::FireEffect(const Vector3f& position) {
 
-    constexpr float V = 0.286f;
+    constexpr float V = 0.386f;
 
-    constexpr float range = 0.05f;
+    constexpr float range = 0.005f;
 
 
     SetMinVelocity(Vector3f(-range,V,-range) );
@@ -40,18 +40,13 @@ FireEffect::FireEffect(const Vector3f& position) {
     SetEndSizeVariance(0.00f);
 */
 
-
-
-
     SetStartColor(Color(1.0f,0.3f,0.0f,0.6f));
     SetEndColor(Color(1.0f,0.3f,0.0f,0.0f));
 
     SetBlendingMode(ADDITIVE_BLENDING_MODE);
 
     SetEmitPosition(position);
-    SetEmitPositionVariance(Vector3f(0.0f,0.0f,0.0f));
-
-
+    SetEmitPositionVariance(Vector3f(0.05f));
 
     Texture* texture = Texture2D::Load("img/particle_post2.png");
 

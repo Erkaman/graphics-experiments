@@ -115,7 +115,7 @@ void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f
 
     SetDepthTest(false);
 
-    const int NUM_PARTICLES = 200;
+    const int NUM_PARTICLES = 100;
 
     m_particleBillboardShader->SetUniform("numParticles", (float)NUM_PARTICLES );
 
