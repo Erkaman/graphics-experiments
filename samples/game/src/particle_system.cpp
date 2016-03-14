@@ -1,4 +1,5 @@
 #include "particle_system.hpp"
+#include "gbuffer.hpp"
 
 #include "ewa/math/vector3f.hpp"
 #include "ewa/math/matrix4f.hpp"
@@ -53,7 +54,7 @@ void ParticleSystem::UpdateParticles(float delta){
     m_time += delta;
 }
 
-void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
+void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f& CameraPos, int windowWidth, int windowHeight){
 
 
     m_particleBillboardShader->Bind();
@@ -70,7 +71,8 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
     m_particleBillboardShader->SetUniform("minVelocity", m_minVelocity);
     m_particleBillboardShader->SetUniform("maxVelocity", m_maxVelocity);
 
-
+    m_particleBillboardShader->SetUniform("windowWidth", (float)windowWidth);
+    m_particleBillboardShader->SetUniform("windowHeight", (float)windowHeight);
 
     m_particleBillboardShader->SetUniform("baseParticleLifetime", m_particleLifetime );
     m_particleBillboardShader->SetUniform("particleLifetimeVariance", m_particleLifetimeVariance );
@@ -94,6 +96,10 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
     Texture::SetActiveTextureUnit(1);
     m_randomTexture->Bind();
 
+
+
+
+
     GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
     GL_C(glBlendFunc(m_sfactor, m_dfactor));
 
@@ -103,10 +109,18 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
     Texture::SetActiveTextureUnit(0);
     m_texture->Bind();
 
+
+
+    m_particleBillboardShader->SetUniform("depthTexture", 7);
+    Texture::SetActiveTextureUnit(7);
+    gbuffer->GetDepthTexture()->Bind();
+
+
     SetDepthTest(false);
 
     // RENDER HERE.
     // RENDER.
+//    GL_C(glDrawArrays(GL_POINTS, 0, 200));
     GL_C(glDrawArrays(GL_POINTS, 0, 200));
 
       SetDepthTest(true);
@@ -116,6 +130,10 @@ void ParticleSystem::Render(const Matrix4f& VP, const Vector3f& CameraPos){
     GL_C(glDepthMask(GL_TRUE) );
 
     m_particleBillboardShader->Unbind();
+
+    gbuffer->GetDepthTexture()->Unbind();
+    m_texture->Unbind();
+
 }
 
 /*

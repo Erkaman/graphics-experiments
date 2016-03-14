@@ -24,7 +24,6 @@
 #include "grass.hpp"
 #include "particle_system.hpp"
 #include "smoke_effect.hpp"
-#include "snow_effect.hpp"
 #include "fire_effect.hpp"
 #include "ssao_pass.hpp"
 #include "lighting_pass.hpp"
@@ -259,9 +258,6 @@ void TuhuApplication::Init() {
 
 	Vector3f(0.645661, -0.137159, -0.751206)
 	);
-
-    m_snow = new SnowEffect(pos);
-    m_snow->Init();
 
 
     m_fire = new FireEffect(Vector3f(0,20,0));
@@ -812,7 +808,7 @@ void TuhuApplication::Render() {
 
     m_gpuProfiler->Begin(GTS_Particles);
 
-    m_fire->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
+    m_fire->Render(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
 
     m_gpuProfiler->End(GTS_Particles);
 

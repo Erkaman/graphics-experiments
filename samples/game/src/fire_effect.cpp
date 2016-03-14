@@ -11,22 +11,36 @@ FireEffect::FireEffect(const Vector3f& position) {
 
     constexpr float range = 0.05f;
 
+
     SetMinVelocity(Vector3f(-range,V,-range) );
     SetMaxVelocity(Vector3f(+range,V + 0.2,+range));
-
     /*
-    SetMaxParticles(1000);
-    SetEmitRate(0.01f);
-    SetEmitCount(1);
+    SetMinVelocity(Vector3f(0,0,0) );
+    SetMaxVelocity(Vector3f(0,0,0));
     */
 
     SetBaseParticleLifetime(0.9f);
     SetParticleLifetimeVariance(0.9f);
+    /*
+    SetBaseParticleLifetime(1000.0f);
+    SetParticleLifetimeVariance(0.0f);
+    */
+
+
 
     SetBaseStartSize(0.20f);
     SetBaseEndSize(0.09f);
     SetStartSizeVariance(0.06f);
     SetEndSizeVariance(0.03f);
+/*
+    SetBaseStartSize(0.80f);
+    SetBaseEndSize(0.80f);
+    SetStartSizeVariance(0.00f);
+    SetEndSizeVariance(0.00f);
+*/
+
+
+
 
     SetStartColor(Color(1.0f,0.3f,0.0f,0.6f));
     SetEndColor(Color(1.0f,0.3f,0.0f,0.0f));

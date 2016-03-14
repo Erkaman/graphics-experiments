@@ -26,7 +26,6 @@ void main()
 
     depth = toLinearDepth(depth);
 
-
     vec3 color = texture(sampler, texCoord).rgb;
     fragmentColor =   vec4(color.rgb, 1.0);
 }
