@@ -851,7 +851,7 @@ void TuhuApplication::Update(const float delta) {
     GeometryObject::SetTotalDelta(m_totalDelta);
 
 
-    m_particlesRenderer->Update(m_cameraFrustum, delta);
+    m_particlesRenderer->Update(m_cameraFrustum, m_curCamera, delta);
 
     if(m_gui)
 	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());

@@ -26,11 +26,12 @@ private:
     int m_particlesFboWidth;
     int m_particlesFboHeight;
 
+    bool m_useSimpleRenderer;
 
 public:
     ParticlesRenderer(int framebufferWidth, int framebufferHeight);
 
-    void Update(ViewFrustum* cameraFrustum, const float delta);
+    void Update(ViewFrustum* cameraFrustum, ICamera* camera, const float delta);
 
     void Render(Gbuffer* gbuffer, ICamera* camera, int framebufferWidth, int framebufferHeight);
 
