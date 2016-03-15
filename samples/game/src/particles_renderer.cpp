@@ -22,8 +22,8 @@ ParticlesRenderer::ParticlesRenderer(int framebufferWidth, int framebufferHeight
 				    string("shader/composite") + "_fs.glsl", defines);
 
 
-    m_particlesFboWidth =framebufferWidth/4;
-    m_particlesFboHeight =framebufferHeight/4;
+    m_particlesFboWidth =framebufferWidth/16;
+    m_particlesFboHeight =framebufferHeight/16;
 
     m_particlesFbo  = new ColorFBO();
     m_particlesFbo->Init(0, m_particlesFboWidth,  m_particlesFboHeight);
