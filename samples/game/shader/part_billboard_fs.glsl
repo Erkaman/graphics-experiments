@@ -24,11 +24,9 @@ void main()
 
     depth = toLinearDepth(depth);
 
-    if( (gl_FragCoord.z  / gl_FragCoord.w) > depth )
-	discard;
+    float ztest = 1.0 - clamp( (gl_FragCoord.z  / gl_FragCoord.w) -depth, 0, 1);
 
-
-    fragmentColor =  Color * texture(gColorMap, TexCoord);
+    fragmentColor =  Color * texture(gColorMap, TexCoord) * ztest;
 
 //    fragmentColor =  vec4(vec3(toLinearDepth(depth) / 100 ),1);
 
