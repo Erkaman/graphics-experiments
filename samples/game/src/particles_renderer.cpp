@@ -22,8 +22,8 @@ ParticlesRenderer::ParticlesRenderer(int framebufferWidth, int framebufferHeight
 					    string("shader/composite") + "_fs.glsl", defines);
 
 
-    m_particlesFboWidth =framebufferWidth;
-    m_particlesFboHeight =framebufferHeight;
+    m_particlesFboWidth =framebufferWidth/4;
+    m_particlesFboHeight =framebufferHeight/4;
 
     m_particlesFbo  = new ColorFBO();
     m_particlesFbo->Init(0, m_particlesFboWidth,  m_particlesFboHeight);
@@ -62,17 +62,20 @@ void ParticlesRenderer::Render(Gbuffer* gbuffer, ICamera* camera, int framebuffe
 	GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
-	m_fire->RenderSetup(gbuffer, camera->GetVp(), camera->GetPosition(), framebufferWidth, framebufferHeight );
+	m_fire->RenderSetup(gbuffer, camera->GetVp(), camera->GetPosition(),
+
+			    m_particlesFboWidth,  m_particlesFboHeight );
 
 	for(Vector3f pos : m_particles) {
 
 
-	    m_fire->Render(gbuffer, camera->GetVp(), camera->GetPosition(), framebufferWidth,
-			   framebufferHeight,  pos);
+	    m_fire->Render(gbuffer, camera->GetVp(), camera->GetPosition(),
+			   m_particlesFboWidth,  m_particlesFboHeight,  pos);
 
 	}
 
-	m_fire->RenderUnsetup(gbuffer, camera->GetVp(), camera->GetPosition(), framebufferWidth, framebufferHeight );
+	m_fire->RenderUnsetup(gbuffer, camera->GetVp(), camera->GetPosition(),
+			      m_particlesFboWidth,  m_particlesFboHeight );
 
 
     }
@@ -82,6 +85,8 @@ void ParticlesRenderer::Render(Gbuffer* gbuffer, ICamera* camera, int framebuffe
 //    Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+    ::SetViewport(0,0,framebufferWidth, framebufferHeight);
+
     m_compositeShader->Bind();
 
 
@@ -89,11 +94,10 @@ void ParticlesRenderer::Render(Gbuffer* gbuffer, ICamera* camera, int framebuffe
     GL_C(glBlendFunc(GL_ONE, GL_SRC_ALPHA));
 
 
+
     m_compositeShader->SetUniform("particlesTexture", 0);
     Texture::SetActiveTextureUnit(0);
     m_particlesFbo->GetRenderTargetTexture().Bind();
-
-
 
 
      GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
@@ -104,8 +108,9 @@ void ParticlesRenderer::Render(Gbuffer* gbuffer, ICamera* camera, int framebuffe
     GL_C(glDisable(GL_BLEND)); // all the billboards use alpha blending.
 
 
-
-
     m_compositeShader->Unbind();
+
+
+
 
 }
