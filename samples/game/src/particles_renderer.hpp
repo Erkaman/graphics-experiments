@@ -7,6 +7,7 @@ class ViewFrustum;
 class Gbuffer;
 class ICamera;
 class ShaderProgram;
+class ColorFBO;
 
 #include <vector>
 
@@ -20,8 +21,14 @@ private:
     // used for compositing the particles.
     ShaderProgram* m_compositeShader;
 
+    ColorFBO* m_particlesFbo;
+
+    int m_particlesFboWidth;
+    int m_particlesFboHeight;
+
+
 public:
-    ParticlesRenderer();
+    ParticlesRenderer(int framebufferWidth, int framebufferHeight);
 
     void Update(ViewFrustum* cameraFrustum, const float delta);
 

@@ -93,4 +93,3 @@ Vector3f EnvCamera::GetPosition() const {
 void EnvCamera::SetPosition(const Vector3f& position) {
     m_position = position;
 }
-

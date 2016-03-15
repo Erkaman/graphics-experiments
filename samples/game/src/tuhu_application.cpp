@@ -244,7 +244,7 @@ void TuhuApplication::Init() {
     m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
     m_smoke->Init();
 */
-    m_particlesRenderer = new ParticlesRenderer();
+    m_particlesRenderer = new ParticlesRenderer(GetFramebufferWidth(), GetFramebufferHeight());
 
     ::SetDepthTest(true);
     ::SetCullFace(true);
