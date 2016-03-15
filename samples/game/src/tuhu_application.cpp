@@ -1,6 +1,8 @@
 
 #include "tuhu_application.hpp"
 
+#include "particles_renderer.hpp"
+
 #include "ewa/camera.hpp"
 #include "ewa/common.hpp"
 #include "ewa/font.hpp"
@@ -242,6 +244,8 @@ void TuhuApplication::Init() {
     m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
     m_smoke->Init();
 */
+    m_particlesRenderer = new ParticlesRenderer();
+
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
@@ -260,8 +264,7 @@ void TuhuApplication::Init() {
 	);
 
 
-    m_fire = new FireEffect(Vector3f(0,20,0));
-    m_fire->Init();
+
 
 
     m_skydome = new Skydome(1, 10, 10);
@@ -808,7 +811,7 @@ void TuhuApplication::Render() {
 
     m_gpuProfiler->Begin(GTS_Particles);
 
-    RenderParticles();
+    m_particlesRenderer->Render(m_gbuffer, m_curCamera, GetFramebufferWidth(), GetFramebufferHeight() );
 
     m_gpuProfiler->End(GTS_Particles);
 
@@ -845,7 +848,7 @@ void TuhuApplication::Update(const float delta) {
     GeometryObject::SetTotalDelta(m_totalDelta);
 
 
-    m_fire->Update(delta);
+    m_particlesRenderer->Update(m_cameraFrustum, delta);
 
     if(m_gui)
 	GuiMouseState::Update(GetFramebufferWidth(), GetFramebufferHeight());
@@ -1011,24 +1014,7 @@ void TuhuApplication::Update(const float delta) {
     //
     m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
 
-    m_particles.clear();
 
-    for(Vector3f particle : GeometryObject::GetTorches()) {
-
-
-
-	if(m_cameraFrustum->IsSphereInFrustum(particle.x, particle.y, particle.z, 1)  ) {
-	    m_particles.push_back(particle);
-	}
-
-//	break;
-
-    }
-
-//    LOG_I("particle culling: %d / %d",  m_particles.size(), GeometryObject::GetTorches().size() );
-
-
-    // TODO: view frustum cull the particles.
 }
 
 string Format(const string& fmt, float val) {
@@ -1407,31 +1393,5 @@ void TuhuApplication::BuildRoad() {
 void TuhuApplication::DeleteCP() {
 
     m_heightMap->DeleteCP();
-
-}
-
-
-void TuhuApplication::RenderParticles() {
-    m_fire->RenderSetup(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
-
-
-
-
-    for(Vector3f pos : m_particles) {
-
-
-	m_fire->Render(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(),
-		       GetFramebufferHeight(),  pos);
-
-    }
-
-    /*
-
-
-    m_fire->Render(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight(), Vector3f(40,20,0));
-    */
-
-
-    m_fire->RenderUnsetup(m_gbuffer, m_curCamera->GetVp(), m_curCamera->GetPosition(), GetFramebufferWidth(), GetFramebufferHeight() );
 
 }

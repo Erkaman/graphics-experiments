@@ -40,6 +40,7 @@ class EnvFBO;
 class Grid;
 class ColorFBO;
 class ColorDepthFbo;
+class ParticlesRenderer;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
@@ -65,8 +66,7 @@ private:
 
     Sound* m_windSound;
 
-    ParticleSystem* m_smoke;
-    ParticleSystem* m_fire;
+    ParticlesRenderer* m_particlesRenderer;
 
     IGeometryObject* m_selected;
 
@@ -132,7 +132,6 @@ private:
 
     void UpdateMatrices();
 
-    std::vector<Vector3f> m_particles;
 
 
 public:
