@@ -788,6 +788,7 @@ void TuhuApplication::Render() {
 
     Matrix4f lightVp =  biasMatrix*   m_lightVp;
 
+
     m_gpuProfiler->Begin(GTS_Light);
     m_lightingPass->Render(
 	m_gbuffer, m_curCamera, m_lightDirection,
@@ -796,6 +797,8 @@ void TuhuApplication::Render() {
     *m_cameraFrustum
 	);
     m_gpuProfiler->End(GTS_Light);
+
+
 
 //    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
 

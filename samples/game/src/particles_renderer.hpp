@@ -6,6 +6,7 @@ class ParticleSystem;
 class ViewFrustum;
 class Gbuffer;
 class ICamera;
+class ShaderProgram;
 
 #include <vector>
 
@@ -15,6 +16,9 @@ private:
     ParticleSystem* m_fire;
 
     std::vector<Vector3f> m_particles;
+
+    // used for compositing the particles.
+    ShaderProgram* m_compositeShader;
 
 public:
     ParticlesRenderer();
