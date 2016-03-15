@@ -32,24 +32,20 @@ out Vertex
 
 } vo;
 
-
-/*
-vec3 GetRandomPosition(float seed) {
-    seed += emitPosition.x * emitPosition.y * emitPosition.z;
-
-    vec3 rands =  texture(randomTexture, seed).xyz;
-    rands = -1 + 2 * rands; // convert from range [0,1] to range [-1,1]
-
-    return emitPosition + rands * emitPositionVariance;
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
+vec3 myTexture(sampler1D tex, float seed) {
+    return texture(tex, seed).xyz;
 
-*/
+}
+
 
 vec3 GetRandomPosition(float seed, vec3 emitPosition, vec3 emitArea) {
     seed += seed * emitPosition.x + emitPosition.y + emitPosition.z;
 
-    vec3 rands =  texture(randomTexture, seed).xyz;
+    vec3 rands =  myTexture(randomTexture, seed).xyz;
     rands = -1 + 2 * rands; // convert from range [0,1] to range [-1,1]
 
     return emitPosition + rands * emitArea;
@@ -64,7 +60,7 @@ float rand_variance(float rand, float base, float variance) {
 }
 
 float RandVariance(float seed, float base, float variance) {
-    float rand =  texture(randomTexture, seed).x;
+    float rand =  myTexture(randomTexture, seed).x;
     return rand_variance(rand, base, variance);
 }
 /*
@@ -76,7 +72,7 @@ vec3 GetRandomColor(float seed) {
 
     seed += color.x * color.y * color.z;
 
-    vec3 rands =  texture(randomTexture, seed).xyz;
+    vec3 rands =  myTexture(randomTexture, seed).xyz;
     rands = -1 + 2 * rands; // convert from range [0,1] to range [-1,1]
 
     return color + rands * colorVariance;
@@ -85,7 +81,7 @@ vec3 GetRandomColor(float seed) {
 
 vec3 GetRandomDir(float seed, vec3 minVel, vec3 maxVel) {
 
-    vec3 seeds =  texture(randomTexture, seed).xyz;
+    vec3 seeds =  myTexture(randomTexture, seed).xyz;
 
     return vec3(
 	rand_range(seeds.x, minVel.x, maxVel.x),
