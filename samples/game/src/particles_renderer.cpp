@@ -59,6 +59,7 @@ void ParticlesRenderer::Update(ViewFrustum* cameraFrustum, ICamera* camera, cons
     m_useSimpleRenderer = minDist > 5;
 
 
+
 }
 
 void ParticlesRenderer::Render(Gbuffer* gbuffer, ICamera* camera, int framebufferWidth, int framebufferHeight) {

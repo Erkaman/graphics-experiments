@@ -7,41 +7,24 @@
 
 FireEffect::FireEffect(const Vector3f& position) {
 
-    constexpr float V = 0.386f;
+    constexpr float minV = 0.886f;
+    constexpr float maxV = minV + 0.2f;
 
-    constexpr float range = 0.005f;
+    constexpr float range = 1.305f;
 
+    SetMinVelocity(Vector3f(-range,minV,-range) );
+    SetMaxVelocity(Vector3f(+range,maxV,+range));
 
-    SetMinVelocity(Vector3f(-range,V,-range) );
-    SetMaxVelocity(Vector3f(+range,V + 0.2,+range));
-    /*
-    SetMinVelocity(Vector3f(0,0,0) );
-    SetMaxVelocity(Vector3f(0,0,0));
-    */
+    SetBaseParticleLifetime(1.5f);
+    SetParticleLifetimeVariance(1.5f);
 
-    SetBaseParticleLifetime(0.9f);
-    SetParticleLifetimeVariance(0.9f);
-    /*
-    SetBaseParticleLifetime(1000.0f);
-    SetParticleLifetimeVariance(0.0f);
-    */
+    SetBaseStartSize(0.70f);
+    SetBaseEndSize(0.38f);
+    SetStartSizeVariance(0.22f);
+    SetEndSizeVariance(0.16f);
 
-
-
-    SetBaseStartSize(0.40f);
-    SetBaseEndSize(0.18f);
-    SetStartSizeVariance(0.12f);
-    SetEndSizeVariance(0.06f);
-
-/*
-    SetBaseStartSize(0.80f);
-    SetBaseEndSize(0.80f);
-    SetStartSizeVariance(0.00f);
-    SetEndSizeVariance(0.00f);
-*/
-
-    SetStartColor(Color(1.0f,0.3f,0.0f,0.6f));
-    SetEndColor(Color(1.0f,0.3f,0.0f,0.0f));
+    SetStartColor(Color(1.0f,0.2f,0.0f,0.6f));
+    SetEndColor(Color(1.0f,0.2f,0.0f,0.0f));
 
     SetBlendingMode(ADDITIVE_BLENDING_MODE);
 

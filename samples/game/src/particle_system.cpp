@@ -62,7 +62,7 @@ void ParticleSystem::Render(Gbuffer* gbuffer, const Matrix4f& VP, const Vector3f
 
 
 
-    const int NUM_PARTICLES = 100;
+    const int NUM_PARTICLES = 150;
 
     m_particleBillboardShader->SetUniform("numParticles", (float)NUM_PARTICLES );
     m_particleBillboardShader->SetUniform("emitPosition", emitPosition );
