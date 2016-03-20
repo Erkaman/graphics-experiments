@@ -1398,3 +1398,9 @@ void TuhuApplication::DeleteCP() {
     m_heightMap->DeleteCP();
 
 }
+
+/*
+the reason that tree rendering is slow is because the shaders are simply to complex.
+since there is lots of overdraw, we simply cannot have a complex shader for alpha tested objects.
+    also, we may possible solve problems by making a thin gbuffer .
+*/

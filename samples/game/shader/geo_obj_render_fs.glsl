@@ -138,8 +138,8 @@ void main(void) {
 #endif
 
 #ifdef ALPHA_MAPPING
-    if(diffColor.a < 0.05)
-	discard;
+/*    if(diffColor.a < 0.05)
+	discard;*/
 #endif
 
 
@@ -315,6 +315,7 @@ void main(void) {
 	, id);
 
     geoData[2] = vec4(vec3(specColor.xyz), specShiny / 100.0 );
+
 #else
 
 

@@ -1,3 +1,11 @@
+in order to do grass, move the grass up and down when it is far away,
+in order to prevent lots of overdraw.
+or just shrink the grass.
+
+also, we can also do a depth pass.
+
+
+
 * optimize shaders, so we can draw more particles.
 
 http://realtimecollisiondetection.net/blog/?p=91

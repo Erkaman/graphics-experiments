@@ -82,4 +82,15 @@ void main(void) {
 
     geoData[1] = vec4(n, id);
     geoData[2] = vec4(reflection, 1);
-}
+
+/*
+  for water shader.
+    vec4(refrac.y, refrac.cbcy, reflec.y, reflec.cbcy)
+    vec4( nx, ny, id, ao  )
+*/
+
+/*
+    vec4(diff.y, diff.cbcy,   specColor, specShiny )
+	vec4(nx, ny,  id, ao )
+*/
+	}
