@@ -305,7 +305,7 @@ void main(void) {
 
     ao = 0.0;
 
-    geoData[0] = vec4(diffColor.xyz, ao);
+    geoData[0] = packColorTexture(diffColor.xyz, ao);
 
 
 //    viewSpaceNormalOut.xyz = ; // lol3
@@ -322,7 +322,6 @@ void main(void) {
 
 
     geoData[1] = packNormalTexture(n, id);
-
 
     geoData[2] = packSpecularTexture(specColor.xyz, specShiny);
 

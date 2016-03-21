@@ -119,11 +119,9 @@ void main() {
 	    visibility,
 	    envMapSample );
 
-//    fragmentColor.xyz = n;
+//    fragmentColor.xyz = vec3(ao);
 //    fragmentColor.xyz = vec3(diff);
 //    fragmentColor.xyz = envMapSample.xyz;
-
-
 
 
 

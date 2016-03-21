@@ -62,7 +62,7 @@ void main()
 
 #ifdef DEFERRED
 
-    geoData[0] = vec4(vec4(diffColor, ao));
+    geoData[0] = packColorTexture(diffColor, ao);
     geoData[1] =  packNormalTexture(viewSpaceNormal, 0);
     geoData[2] = packSpecularTexture(vec3(0), 1.0);
 
