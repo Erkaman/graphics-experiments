@@ -225,17 +225,48 @@ vec3 YCoCg2RGB(vec3 c){
 }
 
 
-vec4 packColorTexture(vec3 diffColor, float ao) {
-     return vec4(
+vec4 packColorTexture(vec3 diffColor, float ao ) {
+/*
+    vec3 fragColor = RGB2YCoCg(diffColor);
 
-		     RGB2YCoCg(diffColor),
+    vec2 crd = gl_FragCoord.xy;
+
+    bool pattern = (mod(crd.x,2.0)==mod(crd.y,2.0));
+    fragColor.g = (pattern)?fragColor.b: fragColor.g;
+    fragColor.b = 0;
+    */
+    vec3 fragColor = diffColor;
+
+     return vec4(
+	 fragColor,
 		     ao);
 }
 
-void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor, out float ao) {
+void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor, out float ao, float fboWidth, float fboHeight) {
+
+//    float chroma = 0;
+
+/*    vec2 crd = gl_FragCoord.xy;
+    bool pattern = (mod(crd.x,2.0)==mod(crd.y,2.0));
+
+    float chroma = texture(colorTexture, texCoord + vec2(1.0/fboWidth,0.0)).g;
 
     vec4 sample = texture(colorTexture, texCoord);
-    diffColor = YCoCg2RGB(sample.xyz);
+    vec3 col = sample.xyz;
+    col.b=chroma;
+
+    col.rgb = (pattern)?col.rbg:col.rgb;
+
+    col.rgb = YCoCg2RGB(col.rgb);
+
+//    diffColor = YCoCg2RGB(sample.xyz);
+    diffColor = col.rgb;
+*/
+
+    vec4 sample = texture(colorTexture, texCoord);
+
+    diffColor = sample.rgb;
+
     ao = sample.w;
 }
 

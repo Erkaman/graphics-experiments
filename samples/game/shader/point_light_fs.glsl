@@ -55,7 +55,7 @@ void main() {
     vec3 diffColor;
     float ao;
 
-    readColorTexture(colorTexture, texCoord, diffColor, ao);
+    readColorTexture(colorTexture, texCoord, diffColor, ao, screenSize.x, screenSize.y);
 
     float ztest = step(0, radius - lightDistLength );
 
