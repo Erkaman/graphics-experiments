@@ -160,20 +160,56 @@ vec3 getViewSpacePosition(
     return p.xyz / p.w;
 }
 
+
+vec4 packNormalTexture(vec3 n, float id) {
+    return vec4(n.x, n.y, 0.0, id);
+}
+
+vec4 packSpecularTexture(vec3 specColor, float specShiny) {
+    return vec4(specColor.x, 0,0,specShiny / 100.0 );
+}
+
 void readNormalTexture(
     sampler2D normalTexture, vec2 texCoord, out vec3 n, out float id) {
 
     vec4 sample = texture(normalTexture, texCoord);
-    vec3 viewSpaceNormal = sample.xyz;
 
-    n = viewSpaceNormal;
+    n.x = sample.x;
+    n.y = sample.y;
+
+    n.z = sqrt(1.0 - dot(sample.xy, sample.xy));
+
+//    n = sample.xyz;
+
+
+//    n = sample.xyz * 0.5 + 0.5;
+
+//    n = sample.xyz * 2.0 - 1.0;
+
+
+/*
+    float X = sample.x * 2 - 1;
+    float Y = sample.y * 2 - 1;
+
+    n = vec3(
+	2*X / (1 + X*X + Y*Y),
+	2*Y / (1 + X*X + Y*Y),
+        (-1 + X*X + Y*Y) / (1 + X*X + Y*Y)
+
+	);
+*/
+
+//    n.z *= sample.z;
+
+
+
     id = sample.w;
 }
 
 void readSpecularTexture(sampler2D specularTexture, vec2 texCoord, out vec3 specColor, out float specShiny) {
 
     vec4 sample = texture(specularTexture, texCoord);
-    specColor = sample.xyz;
+    specColor = vec3(sample.x);
     specShiny = sample.w * 100;
 }
 

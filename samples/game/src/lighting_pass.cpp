@@ -244,7 +244,7 @@ void LightingPass::Render(
     std::vector<PointLight> lights = GetTorches(camera, torches);
 
 
-    DrawLights(camera, lights, cameraFrustum);
+//    DrawLights(camera, lights, cameraFrustum);
 
     if(!isTiled) {
 	GL_C(glDisable(GL_BLEND));

@@ -249,18 +249,14 @@ void TuhuApplication::Init() {
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
-
     const Vector3f pos =
-
-	Vector3f(17.358755, 11.450978, -16.576893);
-
+	Vector3f(-1.715403, 10.193103, -0.030805);
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-
-Vector3f(-0.532690, -0.234754, 0.813100)
+	Vector3f(-0.010718, -0.442785, -0.896564)
 	);
 
 

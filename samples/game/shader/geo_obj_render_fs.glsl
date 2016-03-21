@@ -310,11 +310,26 @@ void main(void) {
 
 //    viewSpaceNormalOut.xyz = ; // lol3
 
-    geoData[1] = vec4(
-	normalize(normalize(vec4(n,0.0)).xyz)
-	, id);
 
-    geoData[2] = vec4(vec3(specColor.xyz), specShiny / 100.0 );
+/*
+    float X = n.x / (1.0 - n.z);
+    float Y = n.y / (1.0 - n.z);
+
+    geoData[1] = vec4(
+	vec3(0.5 + 0.5 * X,   0.5 + 0.5*Y    ,  sign(n.z) )
+	, id);
+*/
+
+
+    geoData[1] = packNormalTexture(n, id);
+
+
+    geoData[2] = packSpecularTexture(specColor.xyz, specShiny);
+
+    /*
+    vec4(diff.y, diff.cbcy,   specColor, specShiny )
+	vec4(nx, ny,  id, ao )
+*/
 
 #else
 

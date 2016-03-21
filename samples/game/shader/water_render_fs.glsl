@@ -90,7 +90,5 @@ void main(void) {
 */
 
 /*
-    vec4(diff.y, diff.cbcy,   specColor, specShiny )
-	vec4(nx, ny,  id, ao )
 */
-	}
+}

@@ -119,6 +119,11 @@ void main() {
 	    visibility,
 	    envMapSample );
 
+//    fragmentColor.xyz = n;
+//    fragmentColor.xyz = vec3(diff);
+//    fragmentColor.xyz = envMapSample.xyz;
+
+
 
 
 
@@ -208,6 +213,7 @@ void main() {
 
     float atten = clamp(1.0 - length(lightDist) / pointLightRadius, 0,1);
     fragmentColor.xyz += light.xyz * vec3(pointLightColor) * atten;
+
 
 //    fragmentColor.xyz += vec3(1,0,0);
 

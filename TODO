@@ -1,3 +1,13 @@
+grass:
+http://forums.torque3d.org/viewtopic.php?t=18
+http://www.john-chapman.net/content.php?id=17
+http://www.pmavridis.com/research/fbcompression/
+http://pub.nobin.org/2012-lemme-mathesis_grass-web.pdf
+https://users.cg.tuwien.ac.at/kchustl/vegetation/kusternig.diploma.thesis.pdf
+http://www.gamedev.net/topic/668085-performance-of-drawing-vegetation-overdraw-alpha-testing-alpha-cutout-model-generation/
+
+
+
 in order to do grass, move the grass up and down when it is far away,
 in order to prevent lots of overdraw.
 or just shrink the grass.
