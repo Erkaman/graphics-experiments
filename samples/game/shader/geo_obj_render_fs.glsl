@@ -119,7 +119,7 @@ uniform vec3 ambientLight;
 uniform vec3 sceneLight;
 uniform float id;
 
-out vec4 geoData[3];
+out vec4 geoData[2];
 
 uniform vec3 specColor;
 uniform float specShiny;
@@ -307,23 +307,7 @@ void main(void) {
 
     geoData[0] = packColorTexture(diffColor.xyz, specColor.xyz,ao);
 
-
-//    viewSpaceNormalOut.xyz = ; // lol3
-
-
-/*
-    float X = n.x / (1.0 - n.z);
-    float Y = n.y / (1.0 - n.z);
-
-    geoData[1] = vec4(
-	vec3(0.5 + 0.5 * X,   0.5 + 0.5*Y    ,  sign(n.z) )
-	, id);
-*/
-
-
     geoData[1] = packNormalTexture(n, specShiny, id);
-
-    geoData[2] = vec4(0);
 
     /*
     vec4(diff.y, diff.cbcy,   specColor, specShiny )

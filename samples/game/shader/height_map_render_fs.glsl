@@ -2,7 +2,7 @@
 
 in vec3 position;
 
-out vec4 geoData[3];
+out vec4 geoData[2];
 
 uniform vec3 viewSpaceLightDirection;
 uniform float aoOnly;

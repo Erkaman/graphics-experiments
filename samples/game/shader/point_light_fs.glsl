@@ -12,8 +12,6 @@ uniform mat4 toViewSpacePositionMat;
 uniform vec3 color;
 uniform mat4 proj;
 
-uniform sampler2D refractionMap;
-uniform sampler2D reflectionMap;
 uniform mat4 invViewMatrix;
 uniform vec3 eyePos;
 
@@ -77,7 +75,7 @@ void main() {
 
     if(id == 2.0) {
 
-	waterShader(viewSpacePosition, proj, specColor, refractionMap, reflectionMap, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
+	waterShader(viewSpacePosition, proj, specColor, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
     }
 
 

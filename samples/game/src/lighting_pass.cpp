@@ -228,8 +228,6 @@ void LightingPass::Render(
 
     SetupShader(m_pointShader, gbuffer, camera, cubeMapTexture, refractionMap, reflectionMap);
 
-
-
     if(!isTiled) {
 	GL_C(glFrontFace(GL_CW));
 	GL_C(glDisable(GL_DEPTH_TEST));

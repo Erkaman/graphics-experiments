@@ -32,8 +32,6 @@ uniform mat4 invViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
-uniform sampler2D refractionMap;
-uniform sampler2D reflectionMap;
 
 uniform vec3 pointLightPosition[256];
 uniform float pointLightRadius[256];
@@ -100,7 +98,9 @@ void main() {
 
     if(id == 2.0) {
 
-	waterShader(viewSpacePosition, proj, specColor, refractionMap, reflectionMap, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
+	waterShader(viewSpacePosition, proj, specColor, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
+
+
     }
 
     /*
@@ -127,6 +127,7 @@ void main() {
 	    spec,
 	    visibility,
 	    envMapSample );
+
 
 #ifdef IS_TILED
 
