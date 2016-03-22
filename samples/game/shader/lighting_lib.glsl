@@ -39,6 +39,17 @@ vec4 calcLighting(
     vec3 finalcolor=ambientLight*diffColor; // ambient
 
     finalcolor+= (diffColor*sceneLight)* (diff * visibility);
+
+//    if(spec < 0)
+/*    if(spec < 0.01)
+	spec = 1.0;
+*/
+
+
+    spec += step(specColor.x, 0.01);
+
+
+
     finalcolor += specColor*pow(spec,specShiny) * visibility;
     finalcolor += (specColor * envMapSample) * (spec  * 0.4);
 
@@ -177,7 +188,7 @@ vec3 decode (vec4 enc)
 }
 
 vec4 packNormalTexture(vec3 n, float specShiny, float id) {
-    return vec4(encode(n), specShiny / 100.0, id);
+    return vec4(encode(n), specShiny, id);
 }
 
 void readNormalTexture(
@@ -186,7 +197,7 @@ void readNormalTexture(
     vec4 sample = texture(normalTexture, texCoord);
 
 
-    specShiny = sample.z * 100;
+    specShiny = sample.z;
 
 
 /*

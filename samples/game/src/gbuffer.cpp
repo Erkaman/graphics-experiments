@@ -51,37 +51,6 @@ void Gbuffer::RecreateBuffers(const GLsizei width, const GLsizei height)  {
 
 	// Position:
 
-	m_specularTexture = new Texture(
-	    GL_TEXTURE_2D,
-	    width,
-	    height,
-/*
-	    GL_RGBA8, // internal format
-	    GL_RGBA,  // format
-	    GL_UNSIGNED_BYTE); // type
-*/
-
-	    GL_RGBA8, // internal format
-	    GL_RGBA,  // format
-	    GL_UNSIGNED_BYTE); // type
-
-	    // if position texture
-/*
-	    GL_RGBA32F, // internal format
-	    GL_RGBA,  // format
-	    GL_FLOAT); // type
-*/
-	Texture::SetActiveTextureUnit(SPECULAR_TEXTURE_UNIT);
-	m_specularTexture->Bind();
-	{
-	    m_specularTexture->SetMagMinFilters(GL_NEAREST);
-	    m_specularTexture->SetTextureClamping();
-
-	    // attach the target texture to the FBO.
-	    Attach(GL_COLOR_ATTACHMENT2, *m_specularTexture);
-	}
-	m_specularTexture->Unbind();
-
 
 	// first we create a render target, and attach it the FBO.
 	m_depthTexture = new Texture(
@@ -130,8 +99,4 @@ Texture* Gbuffer::GetDepthTexture() {
 
 Texture* Gbuffer::GetNormalTexture() {
     return m_normalTexture;
-}
-
-Texture* Gbuffer::GetSpecularTexture() {
-    return m_specularTexture;
 }

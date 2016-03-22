@@ -532,9 +532,6 @@ void LightingPass::SetupShader(
     Texture::SetActiveTextureUnit(NORMAL_TEXTURE_UNIT);
     gbuffer->GetNormalTexture()->Bind();
 
-    shader->SetUniform("specularTexture", SPECULAR_TEXTURE_UNIT);
-    Texture::SetActiveTextureUnit(SPECULAR_TEXTURE_UNIT);
-    gbuffer->GetSpecularTexture()->Bind();
 
     shader->SetUniform("envMap",ENV_TEXTURE_UNIT );
     Texture::SetActiveTextureUnit(ENV_TEXTURE_UNIT);
@@ -585,13 +582,10 @@ void LightingPass::UnsetupShader(
 
     gbuffer->GetColorTexture()->Unbind();
     gbuffer->GetDepthTexture()->Unbind();
-    gbuffer->GetSpecularTexture()->Unbind();
     cubeMapTexture->Unbind();
 
     refractionMap.GetColorTexture()->Unbind();
     reflectionMap.GetRenderTargetTexture().Unbind();
-
-
 
 
 }

@@ -112,6 +112,10 @@ void main() {
     float spec= calcSpec(l,n,v);
     float visibility = calcVisibility(shadowMap, diff, shadowCoord);
 
+//    specShiny = 0.0;
+//    specColor = vec3(0);
+//    spec = 0.0;
+
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
 	    ambientLight,
@@ -123,31 +127,6 @@ void main() {
 	    spec,
 	    visibility,
 	    envMapSample );
-
-//    fragmentColor.xyz = vec3(ao);
-//    fragmentColor.xyz = vec3(diff);
-//    fragmentColor.xyz = envMapSample.xyz;
-//    fragmentColor.xyz = n;
-
-    /*
-      Compute point lighting.
-     */
-
-
-
-
-//	fragmentColor = vec4(vec3(1,0,0), 1.0);
-
-/*
-    if(id == 1.0) {
-
-
-	fragmentColor = vec4(envMapSample, 1.0);
-    }
-    */
-
-
-
 
 #ifdef IS_TILED
 
