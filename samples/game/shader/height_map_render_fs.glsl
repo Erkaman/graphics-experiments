@@ -91,8 +91,7 @@ void main()
 //    vec3 n3 = n;
 
     geoData[0] = packColorTexture(diffColor, vec3(0,0,0), ao);
-    geoData[1] =  packNormalTexture(viewSpaceNormal, 0);
-    geoData[2] = packSpecularTexture(1.0);
+    geoData[1] =  packNormalTexture(viewSpaceNormal, 0, 0);
 
 #else
 

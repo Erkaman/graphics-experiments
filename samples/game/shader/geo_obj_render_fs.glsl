@@ -321,9 +321,9 @@ void main(void) {
 */
 
 
-    geoData[1] = packNormalTexture(n, id);
+    geoData[1] = packNormalTexture(n, specShiny, id);
 
-    geoData[2] = packSpecularTexture( specShiny);
+    geoData[2] = vec4(0);
 
     /*
     vec4(diff.y, diff.cbcy,   specColor, specShiny )

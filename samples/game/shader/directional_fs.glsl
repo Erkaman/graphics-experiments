@@ -62,7 +62,10 @@ void main() {
     readColorTexture(colorTexture, texCoord, diffColor, ao, specColor, screenSize.x, screenSize.y);
 
 
-    readSpecularTexture(specularTexture, texCoord, specShiny);
+    vec3 n;
+    float id;
+    readNormalTexture(normalTexture, texCoord, n, id, specShiny);
+
     vec3 specMat = specColor;
 
     vec3 envMapSample = vec3(0);
@@ -71,9 +74,6 @@ void main() {
 
     vec3 v = -(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
-    vec3 n;
-    float id;
-    readNormalTexture(normalTexture, texCoord, n, id);
 
     if(id == 1.0) { // if car
 
@@ -128,8 +128,6 @@ void main() {
 //    fragmentColor.xyz = vec3(diff);
 //    fragmentColor.xyz = envMapSample.xyz;
 //    fragmentColor.xyz = n;
-
-
 
     /*
       Compute point lighting.

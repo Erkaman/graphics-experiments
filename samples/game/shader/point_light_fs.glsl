@@ -40,7 +40,9 @@ void main() {
 
     vec3 n;
     float id;
-    readNormalTexture(normalTexture, texCoord, n, id);
+    float specShiny;
+
+    readNormalTexture(normalTexture, texCoord, n, id, specShiny);
 
     vec3 lightDist = viewSpacePosition - lightCenter;
     float lightDistLength = length(lightDist);
@@ -60,9 +62,7 @@ void main() {
 
     float ztest = step(0, radius - lightDistLength );
 
-    float specShiny;
 
-    readSpecularTexture(specularTexture, texCoord, specShiny);
 
     vec3 specMat = specColor;
 

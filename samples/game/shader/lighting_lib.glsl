@@ -176,18 +176,19 @@ vec3 decode (vec4 enc)
     return nn.xyz * 2 + vec3(0,0,-1);
 }
 
-vec4 packSpecularTexture(float specShiny) {
-    return vec4(0, 0,0,specShiny / 100.0 );
-}
-
-vec4 packNormalTexture(vec3 n, float id) {
-    return vec4(encode(n), 0.0, id);
+vec4 packNormalTexture(vec3 n, float specShiny, float id) {
+    return vec4(encode(n), specShiny / 100.0, id);
 }
 
 void readNormalTexture(
-    sampler2D normalTexture, vec2 texCoord, out vec3 n, out float id) {
+    sampler2D normalTexture, vec2 texCoord, out vec3 n, out float id, out float specShiny) {
 
     vec4 sample = texture(normalTexture, texCoord);
+
+
+    specShiny = sample.z * 100;
+
+
 /*
     n.x = sample.x;
     n.y = sample.y;
@@ -222,13 +223,6 @@ void readNormalTexture(
 
 
     id = sample.w;
-}
-
-void readSpecularTexture(sampler2D specularTexture, vec2 texCoord, out float specShiny) {
-
-    vec4 sample = texture(specularTexture, texCoord);
-//    specColor = vec3(sample.x);
-    specShiny = sample.w * 100;
 }
 
 vec3 RGB2YCoCg(vec3 c){
