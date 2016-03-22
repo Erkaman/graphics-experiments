@@ -122,7 +122,7 @@ void main() {
 //    fragmentColor.xyz = vec3(ao);
 //    fragmentColor.xyz = vec3(diff);
 //    fragmentColor.xyz = envMapSample.xyz;
-
+//    fragmentColor.xyz = n;
 
 
     /*

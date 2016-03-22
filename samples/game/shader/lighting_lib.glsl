@@ -161,24 +161,41 @@ vec3 getViewSpacePosition(
 }
 
 
-vec4 packNormalTexture(vec3 n, float id) {
-    return vec4(n.x, n.y, 0.0, id);
+vec2 encode (vec3 n)
+{
+    vec2 enc = normalize(n.xy) * (sqrt(-n.z*0.5+0.5));
+    enc = enc*0.5+0.5;
+    return enc;
+}
+vec3 decode (vec4 enc)
+{
+    vec4 nn = enc*vec4(2,2,0,0) + vec4(-1,-1,1,-1);
+    float l = dot(nn.xyz,-nn.xyw);
+    nn.z = l;
+    nn.xy *= sqrt(l);
+    return nn.xyz * 2 + vec3(0,0,-1);
 }
 
 vec4 packSpecularTexture(vec3 specColor, float specShiny) {
     return vec4(specColor.x, 0,0,specShiny / 100.0 );
 }
 
+vec4 packNormalTexture(vec3 n, float id) {
+    return vec4(encode(n), 0.0, id);
+}
 
 void readNormalTexture(
     sampler2D normalTexture, vec2 texCoord, out vec3 n, out float id) {
 
     vec4 sample = texture(normalTexture, texCoord);
-
+/*
     n.x = sample.x;
     n.y = sample.y;
+    n.z = sample.z;
+*/
+    n.xyz = decode(vec4(sample.xy, 0,0 ) );
 
-    n.z = sqrt(1.0 - dot(sample.xy, sample.xy));
+//    n.z = sqrt(1.0 - dot(sample.xy, sample.xy));
 
 //    n = sample.xyz;
 
@@ -226,7 +243,7 @@ vec3 YCoCg2RGB(vec3 c){
 
 
 vec4 packColorTexture(vec3 diffColor, float ao ) {
-/*
+
     vec3 fragColor = RGB2YCoCg(diffColor);
 
     vec2 crd = gl_FragCoord.xy;
@@ -234,19 +251,21 @@ vec4 packColorTexture(vec3 diffColor, float ao ) {
     bool pattern = (mod(crd.x,2.0)==mod(crd.y,2.0));
     fragColor.g = (pattern)?fragColor.b: fragColor.g;
     fragColor.b = 0;
-    */
-    vec3 fragColor = diffColor;
+
+
+//    vec3 fragColor = diffColor;
 
      return vec4(
 	 fragColor,
 		     ao);
+
 }
 
 void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor, out float ao, float fboWidth, float fboHeight) {
 
 //    float chroma = 0;
 
-/*    vec2 crd = gl_FragCoord.xy;
+    vec2 crd = gl_FragCoord.xy;
     bool pattern = (mod(crd.x,2.0)==mod(crd.y,2.0));
 
     float chroma = texture(colorTexture, texCoord + vec2(1.0/fboWidth,0.0)).g;
@@ -261,13 +280,15 @@ void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor,
 
 //    diffColor = YCoCg2RGB(sample.xyz);
     diffColor = col.rgb;
-*/
 
+
+    /*
     vec4 sample = texture(colorTexture, texCoord);
 
     diffColor = sample.rgb;
 
     ao = sample.w;
+    */
 }
 
 void waterShader(vec3 viewSpacePosition, mat4 proj, vec3 specColor, sampler2D refractionMap, sampler2D reflectionMap,

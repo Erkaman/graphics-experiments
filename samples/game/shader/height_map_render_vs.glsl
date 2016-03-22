@@ -48,9 +48,13 @@ void main()
     // TODO: can we optimize this?
     vec3 norm = getNormal(heightMap,globalPos.xy);
 
+    /*
     viewSpaceNormal = normalize((normalMatrix * vec4(normalize(
 							 norm
 							 ),0.0)).xyz);
+*/
+    viewSpaceNormal = normalize(  (normalMatrix * vec4(norm, 0.0)).xyz );
+
 
     viewSpacePosition = (modelViewMatrix * vec4(scaledPos, 1.0)).xyz;
 

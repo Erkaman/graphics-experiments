@@ -61,6 +61,34 @@ void main()
 
 
 #ifdef DEFERRED
+/*
+    vec3 n = normalize(vec4(viewSpaceNormal,0.0)).xyz; // lol3
+    n = normalize(n);
+    */
+    //  viewSpaceNormal.xyz =  n;
+
+
+/*
+    vec2 n2 = viewSpaceNormal.xy;
+
+    float nx = n2.x;
+    float ny = n2.y;
+    float nz = sqrt(1.0 - dot(n2.xy, n2.xy));
+
+    vec3 n3 = vec3(nx,ny,  nz *  sign(viewSpaceNormal.z) );
+
+*/
+
+//    vec3 n3 = viewSpaceNormal;
+
+
+/*
+    vec2 enc = encode(viewSpaceNormal);
+    vec3 n3 = decode(vec4(enc, 0,0 ) );
+*/
+
+
+//    vec3 n3 = n;
 
     geoData[0] = packColorTexture(diffColor, ao);
     geoData[1] =  packNormalTexture(viewSpaceNormal, 0);

@@ -411,9 +411,6 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
 
 	// DO non-tiled DEFERRED RENDERING:
 	for(const PointLight& pointLight : lights) {
-
-
-
 	    DrawPointLight(
 		camera, pointLight.m_position,  pointLight.m_color, pointLight.m_radius);
 	}
