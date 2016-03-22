@@ -54,15 +54,15 @@ void main() {
 
     vec3 diffColor;
     float ao;
+    vec3 specColor;
 
-    readColorTexture(colorTexture, texCoord, diffColor, ao, screenSize.x, screenSize.y);
+    readColorTexture(colorTexture, texCoord, diffColor, ao, specColor, screenSize.x, screenSize.y);
 
     float ztest = step(0, radius - lightDistLength );
 
-    vec3 specColor;
     float specShiny;
 
-    readSpecularTexture(specularTexture, texCoord, specColor, specShiny);
+    readSpecularTexture(specularTexture, texCoord, specShiny);
 
     vec3 specMat = specColor;
 

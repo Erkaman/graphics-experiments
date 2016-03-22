@@ -176,8 +176,8 @@ vec3 decode (vec4 enc)
     return nn.xyz * 2 + vec3(0,0,-1);
 }
 
-vec4 packSpecularTexture(vec3 specColor, float specShiny) {
-    return vec4(specColor.x, 0,0,specShiny / 100.0 );
+vec4 packSpecularTexture(float specShiny) {
+    return vec4(0, 0,0,specShiny / 100.0 );
 }
 
 vec4 packNormalTexture(vec3 n, float id) {
@@ -224,10 +224,10 @@ void readNormalTexture(
     id = sample.w;
 }
 
-void readSpecularTexture(sampler2D specularTexture, vec2 texCoord, out vec3 specColor, out float specShiny) {
+void readSpecularTexture(sampler2D specularTexture, vec2 texCoord, out float specShiny) {
 
     vec4 sample = texture(specularTexture, texCoord);
-    specColor = vec3(sample.x);
+//    specColor = vec3(sample.x);
     specShiny = sample.w * 100;
 }
 
@@ -242,7 +242,7 @@ vec3 YCoCg2RGB(vec3 c){
 }
 
 
-vec4 packColorTexture(vec3 diffColor, float ao ) {
+vec4 packColorTexture(vec3 diffColor, vec3 specColor, float ao ) {
 
     vec3 fragColor = RGB2YCoCg(diffColor);
 
@@ -256,12 +256,12 @@ vec4 packColorTexture(vec3 diffColor, float ao ) {
 //    vec3 fragColor = diffColor;
 
      return vec4(
-	 fragColor,
+	 fragColor.xy, specColor.x,
 		     ao);
 
 }
 
-void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor, out float ao, float fboWidth, float fboHeight) {
+void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor, out float ao, out vec3 specColor, float fboWidth, float fboHeight) {
 
 //    float chroma = 0;
 
@@ -271,6 +271,7 @@ void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor,
     float chroma = texture(colorTexture, texCoord + vec2(1.0/fboWidth,0.0)).g;
 
     vec4 sample = texture(colorTexture, texCoord);
+    specColor = vec3(sample.z);
     vec3 col = sample.xyz;
     col.b=chroma;
 

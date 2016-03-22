@@ -50,10 +50,19 @@ bool isInt(float f, float eps) {
 
 void main() {
 
+
+
     vec3 specColor;
     float specShiny;
 
-    readSpecularTexture(specularTexture, texCoord, specColor, specShiny);
+
+    vec3 diffColor;
+    float ao;
+
+    readColorTexture(colorTexture, texCoord, diffColor, ao, specColor, screenSize.x, screenSize.y);
+
+
+    readSpecularTexture(specularTexture, texCoord, specShiny);
     vec3 specMat = specColor;
 
     vec3 envMapSample = vec3(0);
@@ -82,10 +91,6 @@ void main() {
     vec3 sceneLight = inSceneLight;
 
 
-    vec3 diffColor;
-    float ao;
-
-    readColorTexture(colorTexture, texCoord, diffColor, ao, screenSize.x, screenSize.y);
 
 
     float aoOnly =0.0;
@@ -123,6 +128,7 @@ void main() {
 //    fragmentColor.xyz = vec3(diff);
 //    fragmentColor.xyz = envMapSample.xyz;
 //    fragmentColor.xyz = n;
+
 
 
     /*
