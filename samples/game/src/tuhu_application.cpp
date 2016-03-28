@@ -250,17 +250,15 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     const Vector3f pos =
-	Vector3f(-1.715403, 10.193103, -0.030805);
+	Vector3f(-47.645618, 30.776445, -18.413551);
+
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(-0.010718, -0.442785, -0.896564)
+	Vector3f(-0.725958, -0.456682, -0.514225)
 	);
-
-
-
 
 
     m_skydome = new Skydome(1, 10, 10);
@@ -353,6 +351,8 @@ void TuhuApplication::Init() {
     */
 
     m_curCamera = m_freeCamera;
+
+    m_grass = new Grass(Vector2f(0,0), m_heightMap );
 
     LOG_I("LOG5");
 
@@ -620,9 +620,6 @@ void TuhuApplication::RenderScene() {
 
 
 
-
-
-
     m_gpuProfiler->Begin(GTS_Objects);
     {
 	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo);
@@ -633,8 +630,6 @@ void TuhuApplication::RenderScene() {
 //    m_line->Render(m_curCamera->GetVp());
 
     m_gpuProfiler->End(GTS_Objects);
-
-
 
 
     m_gpuProfiler->Begin(GTS_Terrain);
@@ -649,9 +644,7 @@ void TuhuApplication::RenderScene() {
 
 
 
-
-
-//    m_grass->Draw(m_curCamera, m_lightDirection);
+    m_grass->Draw(m_curCamera, m_lightDirection);
 
     //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
 

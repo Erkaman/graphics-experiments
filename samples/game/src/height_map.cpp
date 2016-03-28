@@ -1254,12 +1254,6 @@ HeightMap::Chunk* HeightMap::CreateChunk(float scaling) {
     return mahchunk;
 }
 
-float HeightMap::GetHeightAt(float, float)const {
-
-
-    return 0;
-}
-
 void HeightMap::UpdateCursor(ICamera* camera,
 			     const float framebufferWidth,
 			     const float framebufferHeight) {

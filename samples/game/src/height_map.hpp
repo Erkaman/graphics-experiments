@@ -321,7 +321,6 @@ public:
 
     void SetWireframe(const bool wireframe);
 
-    float GetHeightAt(float x, float z)const;
 
     // need to be updated every frame if there is a gui.
     void UpdateGui(const float delta, ICamera* camera,

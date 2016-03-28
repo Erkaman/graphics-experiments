@@ -23,7 +23,6 @@
 using std::string;
 using std::vector;
 
-
 Vector2f AngleToVector(const float angle) {
     const float radians = ToRadians(angle);
     return Vector2f(
@@ -36,13 +35,10 @@ Grass::~Grass() {
     MY_DELETE(m_grassVertexBuffer);
     MY_DELETE(m_grassIndexBuffer);
 
-    MY_DELETE(m_billboardVertexBuffer);
-    MY_DELETE(m_billboardIndexBuffer);
 
 
     MY_DELETE(m_grassShader);
     MY_DELETE(m_grassTexture);
-
 }
 
 
@@ -54,13 +50,10 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 
     m_time = 0;
 
-
     m_grassNumTriangles = 0;
-    m_billboardNumTriangles = 0;
 
     m_grassShader = ShaderProgram::Load("shader/grass");
 
-    m_billboardShader = ShaderProgram::Load("shader/grass_billboard");
 
     m_grassTexture = Texture2D::Load("img/grass_billboard.png");
 
@@ -79,10 +72,6 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 	);
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
-    m_billboardVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{3,2} // pos, tex
-	);
-    m_billboardIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
     FloatVector grassVertices;
     UshortVector grassIndices;
@@ -90,7 +79,8 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
     FloatVector billboardVertices;
     UshortVector billboardIndices;
 
-    constexpr float SIZE = 0.4f;
+    constexpr float SIZE = 2.5f;
+    constexpr float SPREAD = 10.0f;;
 
     constexpr int COUNT = 20;
 
@@ -98,7 +88,7 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 
     vector<Vector2f> grassPositions;
 
-    Vector2f base(position);
+    Vector2f base(Vector2f(-70,-70));
 
     for(int c = 0; c < COUNT; ++c) {
 
@@ -106,7 +96,7 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 
 	while(true) {
 
-	    grassPosition = base + Vector2f(rng.RandomFloat(-1,+1),rng.RandomFloat(-1,1));
+	    grassPosition = base + Vector2f(rng.RandomFloat(-SPREAD,+SPREAD),rng.RandomFloat(-SPREAD,SPREAD));
 
 	    bool tooClose = false;
 
@@ -141,99 +131,30 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
     m_grassIndexBuffer->SetBufferData(grassIndices);
     m_grassIndexBuffer->Unbind();
 
-
-    m_billboardVertexBuffer->Bind();
-    m_billboardVertexBuffer->SetBufferData(billboardVertices);
-    m_billboardVertexBuffer->Unbind();
-
-    m_billboardIndexBuffer->Bind();
-    m_billboardIndexBuffer->SetBufferData(billboardIndices);
-    m_billboardIndexBuffer->Unbind();
-
-
 }
-
-
 
 void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition) {
 
-    float cameraDist = ( Vector2f(camera->GetPosition().x, camera->GetPosition().z)  - m_position).Length();
+    SetCullFace(false);
 
-    if(cameraDist < 40) {
+    m_grassShader->Bind();
+    m_grassShader->SetUniform("time", m_time);
 
-	SetCullFace(false);
+    const Matrix4f model =  Matrix4f::CreateIdentity();
 
-	m_grassShader->Bind();
-	m_grassShader->SetUniform("time", m_time);
+    m_grassShader->SetPhongUniforms(model, camera, lightPosition, Matrix4f::CreateIdentity() );
 
-//	GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
-//	GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    m_grassShader->SetUniform("tex", 0);
+    Texture::SetActiveTextureUnit(0);
+    m_grassTexture->Bind();
 
-	// draw grass.
+    VBO::DrawIndices(*m_grassVertexBuffer, *m_grassIndexBuffer, GL_TRIANGLES, (m_grassNumTriangles)*3);
 
-	const Matrix4f model =  Matrix4f::CreateIdentity();
+    m_grassTexture->Unbind();
 
-	m_grassShader->SetPhongUniforms(model, camera, lightPosition, Matrix4f::CreateIdentity() );
+    m_grassShader->Unbind();
 
-	m_grassShader->SetUniform("tex", 0);
-	Texture::SetActiveTextureUnit(0);
-	m_grassTexture->Bind();
-
-
-	VBO::DrawIndices(*m_grassVertexBuffer, *m_grassIndexBuffer, GL_TRIANGLES, (m_grassNumTriangles)*3);
-
-	m_grassTexture->Unbind();
-
-	// done drawing billboards.
-//	GL_C(glDisable(GL_BLEND));
-	m_grassShader->Unbind();
-
-	SetCullFace(true);
-    } else {
-
-	SetCullFace(false);
-
-
-	m_billboardShader->Bind();
-
-//	GL_C(glEnable(GL_BLEND)); // all the billboards use alpha blending.
-//	GL_C(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-	// draw grass.
-
-	const Matrix4f model =  Matrix4f::CreateIdentity();
-
-
-	const Matrix4f view = camera->GetViewMatrix();
-
-
-//	const Matrix4f mvp = camera.GetMvp(modelViewMatrix);
-	m_billboardShader->SetUniform("model", model);
-	m_billboardShader->SetUniform("view", view);
-
-	m_billboardShader->SetUniform("projection", camera->GetProjectionMatrix());
-	m_billboardShader->SetUniform("offset", m_position);
-
-
-	m_billboardShader->SetUniform("tex", 0);
-	Texture::SetActiveTextureUnit(0);
-	m_grassTexture->Bind();
-
-
-
-	VBO::DrawIndices(*m_billboardVertexBuffer, *m_billboardIndexBuffer, GL_TRIANGLES, (m_billboardNumTriangles)*3);
-
-	m_grassTexture->Unbind();
-
-
-	SetCullFace(true);
-
-
-
-	// done drawing billboards.
-//	GL_C(glDisable(GL_BLEND));
-	m_billboardShader->Unbind();
-    }
+    SetCullFace(true);
 }
 
 void Grass::Update(const float delta) {
@@ -247,7 +168,12 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, Fl
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);
-    Vector3f centerPosition(position.x, m_heightMap->GetHeightAt(position.x, position.y)/* - 0.09f*/ ,position.y);
+//    Vector3f centerPosition(position.x, m_heightMap->GetHeightAt(position.x, position.y)/* - 0.09f*/ ,position.y);
+
+    Vector3f centerPosition(position.x, 15.0f ,position.y);
+
+
+
     dir.Normalize();
 
     const float X = dir.x * width / 2.0f;
@@ -289,40 +215,5 @@ void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& g
     GenerateGrassVertices(position, 60+angle,grassVertices, grassIndices, width,height);
     GenerateGrassVertices(position, 120+angle,grassVertices, grassIndices, width,height);
 
-    GenerateBillboardVertices(position - m_position,billboardVertices, billboardIndices, width,height);
-}
-
-void Grass::GenerateBillboardVertices(const Vector2f position, FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height) {
-
-    GLushort baseIndex = (GLushort)billboardVertices.size() / (3+2);
-
-
-    Vector2f dir = AngleToVector(0);
-    Vector3f centerPosition(position.x, m_heightMap->GetHeightAt(position.x+m_position.x, position.y+m_position.y) ,position.y);
-    dir.Normalize();
-
-    const float X = dir.x * width / 2.0f;
-    const float Z = dir.y * width / 2.0f;
-
-    (centerPosition+Vector3f(-X, height, -Z)).Add(billboardVertices);
-    Vector2f(0.0f,0.0f).Add(billboardVertices);
-
-    (centerPosition+Vector3f(+X, height, +Z)).Add(billboardVertices);
-    Vector2f(1.0f,0.0f).Add(billboardVertices);
-
-    (centerPosition+Vector3f(-X, 0, -Z)).Add(billboardVertices);
-    Vector2f(0.0f,1.0f).Add(billboardVertices);
-
-    (centerPosition+Vector3f(+X, 0, +Z)).Add(billboardVertices);
-    Vector2f(1.0f,1.0f).Add(billboardVertices);
-
-    billboardIndices.push_back(baseIndex+0);
-    billboardIndices.push_back(baseIndex+1);
-    billboardIndices.push_back(baseIndex+2);
-
-    billboardIndices.push_back(baseIndex+1);
-    billboardIndices.push_back(baseIndex+3);
-    billboardIndices.push_back(baseIndex+2);
-
-    m_billboardNumTriangles += 2;
+//    GenerateBillboardVertices(position - m_position,billboardVertices, billboardIndices, width,height);
 }
