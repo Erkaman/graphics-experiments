@@ -19,6 +19,7 @@
 #include "ewa/random.hpp"
 #include "ewa/mult_array.hpp"
 #include "ewa/common.hpp"
+#include "resource_manager.hpp"
 
 using std::string;
 using std::vector;
@@ -52,8 +53,18 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 
     m_grassNumTriangles = 0;
 
-    m_grassShader = ShaderProgram::Load("shader/grass");
+    vector<string> defaultDefines = m_heightMap->GetDefaultDefines();
+    {
+	vector<string> defines(defaultDefines);
+/*	defines.push_back("SHADOW_MAPPING");
+	defines.push_back("DEFERRED");
+*/
 
+	string shaderName = "shader/grass";
+
+	m_grassShader =
+	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    }
 
     m_grassTexture = Texture2D::Load("img/grass_billboard.png");
 
@@ -80,15 +91,15 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
     UshortVector billboardIndices;
 
     constexpr float SIZE = 2.5f;
-    constexpr float SPREAD = 10.0f;;
+    constexpr float SPREAD = 10.0f;
 
-    constexpr int COUNT = 20;
+    constexpr int COUNT = 50;
 
     Random rng(12);
 
     vector<Vector2f> grassPositions;
 
-    Vector2f base(Vector2f(-70,-70));
+    Vector2f base(Vector2f(175,175));
 
     for(int c = 0; c < COUNT; ++c) {
 
@@ -97,7 +108,8 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 	while(true) {
 
 	    grassPosition = base + Vector2f(rng.RandomFloat(-SPREAD,+SPREAD),rng.RandomFloat(-SPREAD,SPREAD));
-
+	    break;
+/*
 	    bool tooClose = false;
 
 	    for(const Vector2f& p : grassPositions ) {
@@ -114,6 +126,7 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 
 	    if(!tooClose)
 		break;
+*/
 	}
 
 
@@ -147,6 +160,13 @@ void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition) {
     m_grassShader->SetUniform("tex", 0);
     Texture::SetActiveTextureUnit(0);
     m_grassTexture->Bind();
+
+
+    m_grassShader->SetUniform("heightMap", 1);
+    Texture::SetActiveTextureUnit(1);
+    m_heightMap->GetHeightMap()->Bind();
+
+
 
     VBO::DrawIndices(*m_grassVertexBuffer, *m_grassIndexBuffer, GL_TRIANGLES, (m_grassNumTriangles)*3);
 

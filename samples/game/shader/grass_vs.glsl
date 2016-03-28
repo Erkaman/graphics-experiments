@@ -1,7 +1,10 @@
 layout (location = 0) in  vec3 positionIn;
 layout (location = 1) in vec2 texCoordIn;
 layout (location = 2) in  vec3 normalIn;
-layout (location = 3) in vec2 slot0In;
+layout (location = 3) in vec2 centerPosition;
+
+#include "shader/height_map_lib.glsl"
+
 
 uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
@@ -11,6 +14,9 @@ uniform float time;
 out vec3 viewSpaceNormal;
 out vec3 viewSpacePosition;
 //out vec3 vertexColor;
+
+uniform sampler2D heightMap;
+
 out vec2 texCoord;
 
 out vec3 position;
@@ -54,13 +60,18 @@ float rand(vec3 seed, float low, float high) {
 
 void main()
 {
-    vec3 seed = slot0In.xyy;
+    vec3 seed = centerPosition.xyy;
 
     //if texcoord.y is 0, then move.
 
-    vec3 pos = positionIn + vec3(slot0In.x, 15, slot0In.y);
+//    vec3 pos = positionIn + vec3(centerPosition.x, 15, centerPosition.y);
+
+    vec3 pos = positionIn + computePos(
+	 vec2(centerPosition.x / resolution, centerPosition.y / resolution),
+	heightMap);
 
 
+/*
     if(texCoordIn.y < 0.1) {
 
 	float xDir =rand(rand(vec2(seed.x, seed.y)), 2*0.05, 2*0.27);
@@ -71,6 +82,7 @@ void main()
 
 	pos += vec3(xDir,0, zDir ) * sin(time * period);
     }
+*/
 
     gl_Position = mvp * vec4(pos,1);
 

@@ -367,4 +367,14 @@ public:
     void BuildRoad();
     void DeleteCP();
 
+    std::vector<std::string> GetDefaultDefines()const;
+
+    int GetResolution()const {
+	return m_resolution;
+    }
+
+    Texture2D* GetHeightMap() {
+	    return m_heightMap;
+    }
+
 };

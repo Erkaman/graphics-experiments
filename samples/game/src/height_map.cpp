@@ -131,15 +131,7 @@ void HeightMap::Init(
     string shaderName = "shader/height_map_render";
 
 
-    vector<string> defaultDefines;
-    defaultDefines.push_back("yScale " + std::to_string(m_yScale) );
-    defaultDefines.push_back("xzScale " + std::to_string(m_xzScale) );
-    defaultDefines.push_back("numChunks " + std::to_string(m_chunks) );
-    defaultDefines.push_back("textureScale " + std::to_string((float)m_textureScale) );
-    defaultDefines.push_back("resolution " + std::to_string( (float)m_resolution )   );
-    defaultDefines.push_back(
-	string("offset vec3(") + std::to_string(m_offset.x) +
-	"," + std::to_string(m_offset.y) + "," + std::to_string(m_offset.z) + ")"	);
+    vector<string> defaultDefines = GetDefaultDefines();
 
     {
 	vector<string> defines(defaultDefines);
@@ -2620,4 +2612,19 @@ void HeightMap::DeleteCP() {
 
     m_controlPoints.clear();
 
+}
+
+
+vector<string> HeightMap::GetDefaultDefines()const {
+        vector<string> defaultDefines;
+    defaultDefines.push_back("yScale " + std::to_string(m_yScale) );
+    defaultDefines.push_back("xzScale " + std::to_string(m_xzScale) );
+    defaultDefines.push_back("numChunks " + std::to_string(m_chunks) );
+    defaultDefines.push_back("textureScale " + std::to_string((float)m_textureScale) );
+    defaultDefines.push_back("resolution " + std::to_string( (float)m_resolution )   );
+    defaultDefines.push_back(
+	string("offset vec3(") + std::to_string(m_offset.x) +
+	"," + std::to_string(m_offset.y) + "," + std::to_string(m_offset.z) + ")"	);
+
+    return defaultDefines;
 }
