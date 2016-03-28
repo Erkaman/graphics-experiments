@@ -677,6 +677,10 @@ void TuhuApplication::RenderEnvMap() {
 
 	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
+
+	    m_grass->DrawReflection(m_car->GetEnvCameras()[i], m_lightDirection);
+
+
 	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	    m_heightMap->RenderEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i, aoOnly);
 	}
