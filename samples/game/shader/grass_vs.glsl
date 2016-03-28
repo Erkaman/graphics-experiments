@@ -62,10 +62,10 @@ void main()
 
     if(texCoordIn.y < 0.1) {
 
-	float xDir =rand(rand(vec2(seed.x, seed.y)), 0.05, 0.27);
-	float zDir =rand(rand(vec2(seed.y, seed.z)), 0.05, 0.27);
+	float xDir =rand(rand(vec2(seed.x, seed.y)), 2*0.05, 2*0.27);
+	float zDir =rand(rand(vec2(seed.y, seed.z)), 2*0.05, 2*0.27);
 
-	float period = rand(seed.xyz, 0.60, 0.70);
+	float period = rand(seed.xyz, 2.0 * 0.60, 2.0 * 0.70);
 
 
 	pos += vec3(xDir,0, zDir ) * sin(time * period);

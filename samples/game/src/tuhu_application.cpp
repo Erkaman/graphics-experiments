@@ -250,14 +250,14 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     const Vector3f pos =
-	Vector3f(-47.645618, 30.776445, -18.413551);
+	Vector3f(-64.040611, 23.174213, -49.318993);
 
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(-0.725958, -0.456682, -0.514225)
+	Vector3f(-0.285624, -0.378097, -0.880603)
 	);
 
 
@@ -849,6 +849,8 @@ void TuhuApplication::Update(const float delta) {
     m_reflectionFrustum->Update( m_reflectionCamera->GetVp(),  m_curCamera->GetPosition()  );
 
     UpdateMatrices();
+
+    m_grass->Update(delta);
 
     m_lightFrustum->Update( m_lightVp, Vector3f(0) );
 
