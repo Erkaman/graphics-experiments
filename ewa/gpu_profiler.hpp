@@ -13,6 +13,7 @@ enum GpuTimeStamp
     GTS_Refraction,
     GTS_Reflection,
     GTS_Particles,
+    GTS_Grass,
     GTS_Max
 };
 

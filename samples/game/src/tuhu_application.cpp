@@ -643,8 +643,9 @@ void TuhuApplication::RenderScene() {
     m_gpuProfiler->End(GTS_Terrain);
 
 
-
+    m_gpuProfiler->Begin(GTS_Grass);
     m_grass->Draw(m_curCamera, m_lightDirection);
+    m_gpuProfiler->End(GTS_Grass);
 
     //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
 
@@ -1057,7 +1058,8 @@ void TuhuApplication::RenderText()  {
     m_font->DrawString(*m_fontShader, 750,690,
 		       Format("Particles: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Particles)) );
 
-
+    m_font->DrawString(*m_fontShader, 750,750,
+		       Format("Grass: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Grass)) );
 
 }
 

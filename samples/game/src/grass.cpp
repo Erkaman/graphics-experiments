@@ -109,32 +109,30 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 
 	    grassPosition = base + Vector2f(rng.RandomFloat(-SPREAD,+SPREAD),rng.RandomFloat(-SPREAD,SPREAD));
 	    break;
-/*
-	    bool tooClose = false;
-
-	    for(const Vector2f& p : grassPositions ) {
-
-		float dist = (grassPosition - p).Length();
-
-		//	LOG_I("dist: %f", dist);
-
-		if(dist < SIZE) {
-		    tooClose = true;
-		    break;
-		}
-	    }
-
-	    if(!tooClose)
-		break;
-*/
 	}
-
 
 	MakeGrass(grassPosition, rng.RandomFloat(-90,+90), grassVertices, grassIndices, billboardVertices, billboardIndices, SIZE,SIZE);
 
 	grassPositions.push_back(grassPosition);
-
     }
+
+    base = (Vector2f(250,385));
+
+    for(int c = 0; c < COUNT; ++c) {
+
+	Vector2f grassPosition;
+
+	while(true) {
+
+	    grassPosition = base + Vector2f(rng.RandomFloat(-SPREAD,+SPREAD),rng.RandomFloat(-SPREAD,SPREAD));
+	    break;
+	}
+
+	MakeGrass(grassPosition, rng.RandomFloat(-90,+90), grassVertices, grassIndices, billboardVertices, billboardIndices, SIZE,SIZE);
+
+	grassPositions.push_back(grassPosition);
+    }
+
 
     m_grassVertexBuffer->Bind();
     m_grassVertexBuffer->SetBufferData(grassVertices);
