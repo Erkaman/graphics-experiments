@@ -1,7 +1,7 @@
 layout (location = 0) in  vec3 positionIn;
 layout (location = 1) in vec2 texCoordIn;
 layout (location = 2) in  vec3 normalIn;
-layout (location = 3) in vec3 slot0In;
+layout (location = 3) in vec2 slot0In;
 
 uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
@@ -54,11 +54,12 @@ float rand(vec3 seed, float low, float high) {
 
 void main()
 {
-    vec3 seed = slot0In;
+    vec3 seed = slot0In.xyy;
 
     //if texcoord.y is 0, then move.
 
-    vec3 pos = positionIn;
+    vec3 pos = positionIn + vec3(slot0In.x, 15, slot0In.y);
+
 
     if(texCoordIn.y < 0.1) {
 

@@ -68,7 +68,7 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
     m_grassTexture->Unbind();
 
     m_grassVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{3,2,3, 3} // pos, texcoord, normal, slot0
+	vector<GLuint>{3,2,3, 2} // pos, texcoord, normal, slot0
 	);
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
@@ -164,13 +164,18 @@ void Grass::Update(const float delta) {
 }
 
 void Grass::GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height) {
-    GLushort baseIndex = (GLushort)grassVertices.size() / (3+2+3+3);
+    GLushort baseIndex = (GLushort)grassVertices.size() / (3+2+3+2);
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);
 //    Vector3f centerPosition(position.x, m_heightMap->GetHeightAt(position.x, position.y)/* - 0.09f*/ ,position.y);
 
-    Vector3f centerPosition(position.x, 15.0f ,position.y);
+    Vector2f centerPosition(position.x ,position.y);
+
+//    Vector3f centerPosition(-63.863667, 15.000000, -78.305321);
+
+//    LOG_I("center: %s", string(centerPosition).c_str() );
+//    Vector3f centerPosition(0,15,0);
 
 
 
@@ -179,22 +184,22 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, Fl
     const float X = dir.x * width / 2.0f;
     const float Z = dir.y * width / 2.0f;
 
-    (centerPosition+Vector3f(-X, height, -Z)).Add(grassVertices);
+    (Vector3f(-X, height, -Z)).Add(grassVertices);
     Vector2f(0.0f,0.0f).Add(grassVertices);
     normal.Add(grassVertices);
     centerPosition.Add(grassVertices);
 
-    (centerPosition+Vector3f(+X, height, +Z)).Add(grassVertices);
+    (Vector3f(+X, height, +Z)).Add(grassVertices);
     Vector2f(1.0f,0.0f).Add(grassVertices);
     normal.Add(grassVertices);
     centerPosition.Add(grassVertices);
 
-    (centerPosition+Vector3f(-X, 0, -Z)).Add(grassVertices);
+    (Vector3f(-X, 0, -Z)).Add(grassVertices);
     Vector2f(0.0f,1.0f).Add(grassVertices);
     normal.Add(grassVertices);
     centerPosition.Add(grassVertices);
 
-    (centerPosition+Vector3f(+X, 0, +Z)).Add(grassVertices);
+    (Vector3f(+X, 0, +Z)).Add(grassVertices);
     Vector2f(1.0f,1.0f).Add(grassVertices);
     normal.Add(grassVertices);
     centerPosition.Add(grassVertices);
