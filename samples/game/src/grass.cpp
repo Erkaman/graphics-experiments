@@ -38,7 +38,6 @@ Grass::~Grass() {
 
 
 
-    MY_DELETE(m_grassShader);
     MY_DELETE(m_grassTexture);
 }
 
@@ -54,17 +53,28 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
     m_grassNumTriangles = 0;
 
     vector<string> defaultDefines = m_heightMap->GetDefaultDefines();
+    string shaderName = "shader/grass";
+
     {
 	vector<string> defines(defaultDefines);
-/*	defines.push_back("SHADOW_MAPPING");
+//	defines.push_back("SHADOW_MAPPING");
+
+
 	defines.push_back("DEFERRED");
-*/
 
-	string shaderName = "shader/grass";
-
-	m_grassShader =
+	m_deferredShader =
 	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
     }
+
+
+
+    {
+	vector<string> defines(defaultDefines);
+
+	m_reflectionShader =
+	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    }
+
 
     m_grassTexture = Texture2D::Load("img/grass_billboard.png");
 
@@ -144,41 +154,46 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 
 }
 
-void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition) {
+void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader) {
 
     SetCullFace(false);
 
-    m_grassShader->Bind();
-    m_grassShader->SetUniform("time", m_time);
+    shader->Bind();
+    shader->SetUniform("time", m_time);
 
     const Matrix4f model =  Matrix4f::CreateIdentity();
 
-    m_grassShader->SetPhongUniforms(model, camera, lightPosition, Matrix4f::CreateIdentity() );
+    shader->SetPhongUniforms(model, camera, lightPosition, Matrix4f::CreateIdentity() );
 
-    m_grassShader->SetUniform("tex", 0);
+    shader->SetUniform("tex", 0);
     Texture::SetActiveTextureUnit(0);
     m_grassTexture->Bind();
 
 
-    m_grassShader->SetUniform("heightMap", 1);
+    shader->SetUniform("heightMap", 1);
     Texture::SetActiveTextureUnit(1);
     m_heightMap->GetHeightMap()->Bind();
-
-
 
     VBO::DrawIndices(*m_grassVertexBuffer, *m_grassIndexBuffer, GL_TRIANGLES, (m_grassNumTriangles)*3);
 
     m_grassTexture->Unbind();
 
-    m_grassShader->Unbind();
+    shader->Unbind();
 
     SetCullFace(true);
+
+}
+
+void Grass::DrawDeferred(const ICamera* camera, const Vector4f& lightPosition) {
+    Draw(camera, lightPosition, m_deferredShader);
+}
+
+void Grass::DrawReflection(const ICamera* camera, const Vector4f& lightPosition) {
+    Draw(camera, lightPosition, m_reflectionShader);
 }
 
 void Grass::Update(const float delta) {
     m_time += delta;
-
-//    LOG_I("time: %f",m_time);
 }
 
 void Grass::GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height) {
@@ -186,16 +201,8 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, Fl
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);
-//    Vector3f centerPosition(position.x, m_heightMap->GetHeightAt(position.x, position.y)/* - 0.09f*/ ,position.y);
 
     Vector2f centerPosition(position.x ,position.y);
-
-//    Vector3f centerPosition(-63.863667, 15.000000, -78.305321);
-
-//    LOG_I("center: %s", string(centerPosition).c_str() );
-//    Vector3f centerPosition(0,15,0);
-
-
 
     dir.Normalize();
 

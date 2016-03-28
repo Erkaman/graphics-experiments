@@ -25,7 +25,8 @@ private:
 
 
 
-    ShaderProgram* m_grassShader;
+    ShaderProgram* m_deferredShader;
+    ShaderProgram* m_reflectionShader;
 
 
     Texture* m_grassTexture;
@@ -41,12 +42,17 @@ private:
 
     void MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices,    FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height);
 
+    void Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader);
 
 public:
 
     Grass(Vector2f position, HeightMap* heightMap);
     ~Grass();
 
-    void Draw(const ICamera* camera, const Vector4f& lightPosition);
+    void DrawDeferred(const ICamera* camera, const Vector4f& lightPosition);
+    void DrawReflection(const ICamera* camera, const Vector4f& lightPosition);
+
     void Update(const float delta);
+
+
 };

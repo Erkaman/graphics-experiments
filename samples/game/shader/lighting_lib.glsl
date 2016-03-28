@@ -253,6 +253,7 @@ void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor,
 void waterShader(vec3 viewSpacePosition, mat4 proj, vec3 specColor,
 		 mat4 invViewMatrix, vec3 eyePos, inout vec3 diffColor, inout vec3 specMat, inout vec3 sceneLight, inout float specShiny, inout vec3 envMapSample, inout vec3 ambientLight) {
 
+
     vec3 refraction = diffColor.xyz;
     vec3 reflection = specColor.xyz;
 
@@ -271,4 +272,5 @@ void waterShader(vec3 viewSpacePosition, mat4 proj, vec3 specColor,
     envMapSample = vec3(0,0,0);
 
     ambientLight = vec3(1,1,1);
+
 }

@@ -27,8 +27,16 @@ void main(){
 //    vec3 shading = phongVertex(sample.rgb, viewSpaceNormal, viewSpaceLightPosition, viewSpacePosition);
 
 
+
+#ifdef DEFERRED
+
     geoData[0] = packColorTexture(sample.xyz, vec3(0,0,0), 0);
     geoData[1] = packNormalTexture(vec3(0,1,0), 0, 0);
+
+#else
+    geoData[0] = vec4(sample.xyz,1);
+
+#endif
 
 //    fragmentColor = vec4(shading, 1.0);
 //    fragmentColor = vec4(texCoord,0,1);

@@ -250,14 +250,14 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     const Vector3f pos =
-	Vector3f(-64.040611, 23.174213, -49.318993);
+	Vector3f(-3.506223, 15.336146, 169.553986);
 
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(-0.285624, -0.378097, -0.880603)
+	Vector3f(-0.090419, -0.309215, -0.946684)
 	);
 
 
@@ -644,7 +644,7 @@ void TuhuApplication::RenderScene() {
 
 
     m_gpuProfiler->Begin(GTS_Grass);
-    m_grass->Draw(m_curCamera, m_lightDirection);
+    m_grass->DrawDeferred(m_curCamera, m_lightDirection);
     m_gpuProfiler->End(GTS_Grass);
 
     //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
@@ -708,9 +708,10 @@ void TuhuApplication::RenderReflection() {
 
 	GeometryObject::RenderReflection(m_reflectionCamera, m_lightDirection);
 
+	m_grass->DrawReflection(m_reflectionCamera, m_lightDirection);
+
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderReflection(m_reflectionCamera, m_lightDirection, aoOnly);
-
 
     }
     m_reflectionFbo->Unbind();

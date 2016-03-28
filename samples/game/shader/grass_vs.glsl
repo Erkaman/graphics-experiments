@@ -71,7 +71,6 @@ void main()
 	heightMap);
 
 
-/*
     if(texCoordIn.y < 0.1) {
 
 	float xDir =rand(rand(vec2(seed.x, seed.y)), 2*0.05, 2*0.27);
@@ -82,7 +81,7 @@ void main()
 
 	pos += vec3(xDir,0, zDir ) * sin(time * period);
     }
-*/
+
 
     gl_Position = mvp * vec4(pos,1);
 
