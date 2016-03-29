@@ -66,9 +66,20 @@ void main()
 
 //    vec3 pos = positionIn + vec3(centerPosition.x, 15, centerPosition.y);
 
-    vec3 pos = positionIn + computePos(
+
+    vec3 up = getNormal(heightMap, vec2(centerPosition.x / resolution, centerPosition.y / resolution) );
+
+    vec3 right = normalize(cross( up, vec3(1,0,0)   ));
+    vec3 forward = normalize( cross(right, up) );
+
+    // in order to do this, we have to make sure that the center of the billboard vertices are the center of the billboard.. Right now, it is not!
+    mat3 basis = mat3(up, right, forward);
+
+    vec3 pos = (positionIn) + computePos(
 	 vec2(centerPosition.x / resolution, centerPosition.y / resolution),
 	heightMap);
+
+//    pos = basis * pos;
 
 
     if(texCoordIn.y < 0.1) {

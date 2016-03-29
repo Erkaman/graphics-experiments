@@ -24,9 +24,11 @@ void main(){
     if(sample.a < 0.75)
 	discard;
 
+
 //    vec3 shading = phongVertex(sample.rgb, viewSpaceNormal, viewSpaceLightPosition, viewSpacePosition);
 
 
+//    sample.xyz = vec3(1);
 
 #ifdef DEFERRED
 
