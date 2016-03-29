@@ -44,6 +44,8 @@ Grass::~Grass() {
 
 Grass::Grass(Vector2f position, HeightMap* heightMap): m_rng(12), m_heightMap(heightMap), m_position(position) {
 
+    m_currentId = 0;
+
     /*
       Create the skydome.
     */
@@ -76,6 +78,15 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_rng(12), m_heightMap(he
     }
 
 
+    {
+	vector<string> defines(defaultDefines);
+	defines.push_back("OUTPUT_ID");
+
+	m_outputIdShader =
+	    ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    }
+
+
     m_grassTexture = Texture2D::Load("img/grass_billboard.png");
 
     if(!m_grassTexture) {
@@ -89,7 +100,7 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_rng(12), m_heightMap(he
     m_grassTexture->Unbind();
 
     m_grassVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{3,2,3, 2} // pos, texcoord, normal, slot0
+	vector<GLuint>{3,2,3, 3} // pos, texcoord, normal, slot0
 	);
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
@@ -139,13 +150,13 @@ void Grass::Update(const float delta) {
     m_time += delta;
 }
 
-void Grass::GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height) {
-    GLushort baseIndex = (GLushort)grassVertices.size() / (3+2+3+2);
+void Grass::GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height, int id) {
+    GLushort baseIndex = (GLushort)grassVertices.size() / (3+2+3+3);
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);
 
-    Vector2f centerPosition(position.x ,position.y);
+    Vector3f centerPosition(position.x ,position.y, id);
 
     dir.Normalize();
 
@@ -183,10 +194,10 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, Fl
     m_grassNumTriangles += 2;
 }
 
-void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height) {
-    GenerateGrassVertices(position, 0+angle,grassVertices, grassIndices, width,height);
-    GenerateGrassVertices(position, 60+angle,grassVertices, grassIndices, width,height);
-    GenerateGrassVertices(position, 120+angle,grassVertices, grassIndices, width,height);
+void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height, int id) {
+    GenerateGrassVertices(position, 0+angle,grassVertices, grassIndices, width,height, id);
+    GenerateGrassVertices(position, 60+angle,grassVertices, grassIndices, width,height, id);
+    GenerateGrassVertices(position, 120+angle,grassVertices, grassIndices, width,height, id);
 
 //    GenerateBillboardVertices(position - m_position,billboardVertices, billboardIndices, width,height);
 }
@@ -196,6 +207,7 @@ void Grass::Rebuild() {
 
     FloatVector grassVertices;
     UshortVector grassIndices;
+    m_grassNumTriangles = 0;
 
       FloatVector billboardVertices;
       UshortVector billboardIndices;
@@ -247,13 +259,15 @@ void Grass::Rebuild() {
     */
 
 
-    for(GrassInfo grass : m_grass) {
+    for(auto& pair : m_grass) {
+
+	GrassInfo grass = pair.second;
+	int id = pair.first;
 
       MakeGrass(grass.pos, grass.angle , grassVertices, grassIndices, billboardVertices,
-		billboardIndices, SIZE,SIZE);
-
-
+		billboardIndices, SIZE,SIZE,id);
     }
+
 
     m_grassVertexBuffer->Bind();
     m_grassVertexBuffer->SetBufferData(grassVertices);
@@ -262,10 +276,7 @@ void Grass::Rebuild() {
     m_grassIndexBuffer->Bind();
     m_grassIndexBuffer->SetBufferData(grassIndices);
     m_grassIndexBuffer->Unbind();
-
-
 }
-
 
 void Grass::AddGrass(const Vector2i& position) {
 
@@ -276,7 +287,18 @@ void Grass::AddGrass(const Vector2i& position) {
 	(float)position.y + m_rng.RandomFloat(-1,+1));
     grass.angle = m_rng.RandomFloat(-90,+90);
 
-    m_grass.push_back(grass);
+    m_grass[m_currentId++] = grass;
 
     Rebuild();
+}
+
+
+void Grass::RemoveGrass(int id) {
+    m_grass.erase(id);
+    Rebuild();
+}
+
+
+void Grass::RenderIdAll(const ICamera* camera) {
+    Draw(camera, Vector4f(0), m_outputIdShader );
 }

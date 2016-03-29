@@ -1,7 +1,7 @@
 layout (location = 0) in  vec3 positionIn;
 layout (location = 1) in vec2 texCoordIn;
 layout (location = 2) in  vec3 normalIn;
-layout (location = 3) in vec2 centerPosition;
+layout (location = 3) in vec3 centerPosition;
 
 #include "shader/height_map_lib.glsl"
 
@@ -20,6 +20,7 @@ uniform sampler2D heightMap;
 out vec2 texCoord;
 
 out vec3 position;
+out float id;
 
 // returns random float in range [-1,1]
 float rand(vec2 seed){
@@ -60,7 +61,9 @@ float rand(vec3 seed, float low, float high) {
 
 void main()
 {
-    vec3 seed = centerPosition.xyy;
+    vec3 seed = centerPosition.xyz;
+
+    id = centerPosition.z;
 
     //if texcoord.y is 0, then move.
 

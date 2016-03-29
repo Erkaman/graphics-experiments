@@ -573,6 +573,9 @@ void TuhuApplication::RenderId() {
 
     GeometryObject::RenderIdAll(m_curCamera);
 
+    m_grass->RenderIdAll(m_curCamera);
+
+
     m_pickingFbo->Unbind();
 
 
@@ -979,40 +982,34 @@ void TuhuApplication::Update(const float delta) {
 
 	if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 ) ) {
 
-	    LOG_I("add grass");
-
-	    LOG_I("add grass at :%s", string(m_heightMap->GetCursorPosition() ).c_str() );
-
+//	    LOG_I("add grass at :%s", string(m_heightMap->GetCursorPosition() ).c_str() );
 
 	    m_grass->AddGrass(m_heightMap->GetCursorPosition());
 
+	}
 
-	    /*
+	if(ms.IsPressed(GLFW_MOUSE_BUTTON_2 ) ) {
+
 	    float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
 	    float x = GuiMouseState::GetX();
 
 	    PixelInfo pi = m_pickingFbo->ReadPixel((unsigned int)x,(unsigned int)y);
 
-	    unsigned int id = (unsigned int)pi.id;
+	    unsigned int id = (unsigned int)pi.unused2;
 
 	    if(id != 0) {
 
-		// id of 0 is no object picked at all
-		// however, the ids in the map are 0-based.
-		// thus decrease by one.
-		id -= 1;
+		// because ids are zero-based(but the ids in the FBO are one-based)
+		--id;
 
-		if(m_selected){
-		    // deselected formerly selected object.
-		    m_selected->SetSelected(false);
-		}
+//		LOG_I("REMOVE: %d", id);
 
-		LOG_I("selected obj: %d", id);
+		m_grass->RemoveGrass(id);
 
-		m_selected = m_geoObjs[id];
-		m_selected->SetSelected(true);
-		}*/
+	    }
+
 	}
+
     }
 
 

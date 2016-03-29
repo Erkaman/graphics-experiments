@@ -7,7 +7,7 @@ in vec3 position;
 uniform vec3 viewSpaceLightPosition;
 in vec3 viewSpaceNormal;
 in vec3 viewSpacePosition;
-
+in float id;
 
 out vec4 fragmentColor;
 
@@ -36,9 +36,23 @@ void main(){
     geoData[1] = packNormalTexture(vec3(0,1,0), 0, 0);
 
 #else
+
+
+#ifdef OUTPUT_ID
+
+    fragmentColor = vec4( float(0),
+			  float(0),
+			  float(id+1.0), 1 );
+
+#else
+
     geoData[0] = vec4(sample.xyz,1);
+#endif
+
 
 #endif
+
+
 
 //    fragmentColor = vec4(shading, 1.0);
 //    fragmentColor = vec4(texCoord,0,1);

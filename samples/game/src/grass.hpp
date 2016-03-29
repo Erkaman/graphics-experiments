@@ -4,7 +4,10 @@
 
 #include "ewa/math/vector2f.hpp"
 
+
 #include "ewa/random.hpp"
+
+#include <map>
 
 class VBO;
 class ShaderProgram;
@@ -27,10 +30,12 @@ class Grass{
 
 private:
 
+    int m_currentId;
+
     Random m_rng;
 
 
-    std::vector<GrassInfo> m_grass;
+    std::map<int,GrassInfo> m_grass;
 
 
 
@@ -44,6 +49,7 @@ private:
 
     ShaderProgram* m_deferredShader;
     ShaderProgram* m_reflectionShader;
+    ShaderProgram* m_outputIdShader;
 
 
     Texture* m_grassTexture;
@@ -54,10 +60,10 @@ private:
 
     Vector2f m_position;
 
-    void GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height);
+    void GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height, int id);
 
 
-    void MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices,    FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height);
+    void MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices,    FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height, int id);
 
     void Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader);
 
@@ -71,8 +77,12 @@ public:
     void DrawDeferred(const ICamera* camera, const Vector4f& lightPosition);
     void DrawReflection(const ICamera* camera, const Vector4f& lightPosition);
 
+    void RenderIdAll(const ICamera* camera);
+
+
     void Update(const float delta);
 
     void AddGrass(const Vector2i& position);
+    void RemoveGrass(int id);
 
 };
