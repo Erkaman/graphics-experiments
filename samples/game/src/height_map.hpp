@@ -269,7 +269,8 @@ private:
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
 	const bool aoOnly);
     void RenderCursor(const ICamera* camera);
-    void RenderCubeCursor(const ICamera* camera);
+
+    void RenderCubeCursor(const ICamera* camera, float cubeScale);
 
     void Render(ShaderProgram* shader, HeightMapRenderMode renderMode);
 
@@ -375,6 +376,10 @@ public:
 
     Texture2D* GetHeightMap() {
 	    return m_heightMap;
+    }
+
+    Vector2i GetCursorPosition()const {
+	    return m_cursorPosition;
     }
 
 };

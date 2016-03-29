@@ -42,7 +42,7 @@ Grass::~Grass() {
 }
 
 
-Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m_position(position) {
+Grass::Grass(Vector2f position, HeightMap* heightMap): m_rng(12), m_heightMap(heightMap), m_position(position) {
 
     /*
       Create the skydome.
@@ -63,7 +63,7 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 	defines.push_back("DEFERRED");
 
 	m_deferredShader =
-	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+	    ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
     }
 
 
@@ -72,7 +72,7 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
 	vector<string> defines(defaultDefines);
 
 	m_reflectionShader =
-	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+	    ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
     }
 
 
@@ -94,63 +94,6 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_heightMap(heightMap), m
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
 
-    FloatVector grassVertices;
-    UshortVector grassIndices;
-
-    FloatVector billboardVertices;
-    UshortVector billboardIndices;
-
-    constexpr float SIZE = 2.5f;
-    constexpr float SPREAD = 10.0f;
-
-    constexpr int COUNT = 50;
-
-    Random rng(12);
-
-    vector<Vector2f> grassPositions;
-
-    Vector2f base(Vector2f(175,175));
-
-    for(int c = 0; c < COUNT; ++c) {
-
-	Vector2f grassPosition;
-
-	while(true) {
-
-	    grassPosition = base + Vector2f(rng.RandomFloat(-SPREAD,+SPREAD),rng.RandomFloat(-SPREAD,SPREAD));
-	    break;
-	}
-
-	MakeGrass(grassPosition, rng.RandomFloat(-90,+90), grassVertices, grassIndices, billboardVertices, billboardIndices, SIZE,SIZE);
-
-	grassPositions.push_back(grassPosition);
-    }
-
-    base = (Vector2f(250,385));
-
-    for(int c = 0; c < COUNT; ++c) {
-
-	Vector2f grassPosition;
-
-	while(true) {
-
-	    grassPosition = base + Vector2f(rng.RandomFloat(-SPREAD,+SPREAD),rng.RandomFloat(-SPREAD,SPREAD));
-	    break;
-	}
-
-	MakeGrass(grassPosition, rng.RandomFloat(-90,+90), grassVertices, grassIndices, billboardVertices, billboardIndices, SIZE,SIZE);
-
-	grassPositions.push_back(grassPosition);
-    }
-
-
-    m_grassVertexBuffer->Bind();
-    m_grassVertexBuffer->SetBufferData(grassVertices);
-    m_grassVertexBuffer->Unbind();
-
-    m_grassIndexBuffer->Bind();
-    m_grassIndexBuffer->SetBufferData(grassIndices);
-    m_grassIndexBuffer->Unbind();
 
 }
 
@@ -246,4 +189,94 @@ void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& g
     GenerateGrassVertices(position, 120+angle,grassVertices, grassIndices, width,height);
 
 //    GenerateBillboardVertices(position - m_position,billboardVertices, billboardIndices, width,height);
+}
+
+
+void Grass::Rebuild() {
+
+    FloatVector grassVertices;
+    UshortVector grassIndices;
+
+      FloatVector billboardVertices;
+      UshortVector billboardIndices;
+
+      constexpr float SIZE = 2.5f;
+      constexpr float SPREAD = 10.0f;
+
+
+    /*
+
+
+      constexpr int COUNT = 50;
+
+
+
+      Vector2f base(Vector2f(175,175));
+
+      for(int c = 0; c < COUNT; ++c) {
+
+      Vector2f grassPosition;
+
+      while(true) {
+
+      grassPosition = base + Vector2f(rng.RandomFloat(-SPREAD,+SPREAD),rng.RandomFloat(-SPREAD,SPREAD));
+      break;
+      }
+
+      MakeGrass(grassPosition, rng.RandomFloat(-90,+90), grassVertices, grassIndices, billboardVertices, billboardIndices, SIZE,SIZE);
+
+      grassPositions.push_back(grassPosition);
+      }
+
+      base = (Vector2f(250,385));
+
+      for(int c = 0; c < COUNT; ++c) {
+
+      Vector2f grassPosition;
+
+      while(true) {
+
+      grassPosition = base + Vector2f(rng.RandomFloat(-SPREAD,+SPREAD),rng.RandomFloat(-SPREAD,SPREAD));
+      break;
+      }
+
+      MakeGrass(grassPosition, rng.RandomFloat(-90,+90), grassVertices, grassIndices, billboardVertices, billboardIndices, SIZE,SIZE);
+
+      grassPositions.push_back(grassPosition);
+      }
+    */
+
+
+    for(GrassInfo grass : m_grass) {
+
+      MakeGrass(grass.pos, grass.angle , grassVertices, grassIndices, billboardVertices,
+		billboardIndices, SIZE,SIZE);
+
+
+    }
+
+    m_grassVertexBuffer->Bind();
+    m_grassVertexBuffer->SetBufferData(grassVertices);
+    m_grassVertexBuffer->Unbind();
+
+    m_grassIndexBuffer->Bind();
+    m_grassIndexBuffer->SetBufferData(grassIndices);
+    m_grassIndexBuffer->Unbind();
+
+
+}
+
+
+void Grass::AddGrass(const Vector2i& position) {
+
+    GrassInfo grass;
+
+    grass.pos =  Vector2f(
+	(float)position.x + m_rng.RandomFloat(-1,+1),
+	(float)position.y + m_rng.RandomFloat(-1,+1));
+    grass.angle = m_rng.RandomFloat(-90,+90);
+
+    m_grass.push_back(grass);
+
+    Rebuild();
 }

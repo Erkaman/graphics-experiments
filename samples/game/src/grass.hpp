@@ -4,6 +4,8 @@
 
 #include "ewa/math/vector2f.hpp"
 
+#include "ewa/random.hpp"
+
 class VBO;
 class ShaderProgram;
 class ICamera;
@@ -12,10 +14,25 @@ class Vector2f;
 class Vector3f;
 class Vector4f;
 class HeightMap;
+class Vector2i;
+
+
+struct GrassInfo {
+public:
+    Vector2f pos;
+    float angle;
+};
 
 class Grass{
 
 private:
+
+    Random m_rng;
+
+
+    std::vector<GrassInfo> m_grass;
+
+
 
     unsigned int m_grassNumTriangles;
 
@@ -44,6 +61,8 @@ private:
 
     void Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader);
 
+    void Rebuild();
+
 public:
 
     Grass(Vector2f position, HeightMap* heightMap);
@@ -54,5 +73,6 @@ public:
 
     void Update(const float delta);
 
+    void AddGrass(const Vector2i& position);
 
 };

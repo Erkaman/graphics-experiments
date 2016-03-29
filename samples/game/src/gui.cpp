@@ -53,7 +53,7 @@ using std::string;
 Gui::Gui(GLFWwindow* window) {
 
     m_guiMode = ModifyTerrainMode;
-    m_guiMode = RoadMode;
+    m_guiMode = GrassMode;
 
     m_drawTextureType = GrassTexture;
     m_inputMode = InputNoneMode;
@@ -130,6 +130,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
     ImGui::RadioButton("DT", &m_guiMode, DrawTextureMode);  ImGui::SameLine();
     ImGui::RadioButton("M", &m_guiMode, ModelMode); ImGui::SameLine();
     ImGui::RadioButton("RM", &m_guiMode, RoadMode);
+    ImGui::RadioButton("GM", &m_guiMode, GrassMode);
 
     if(m_guiMode == ModifyTerrainMode) {
 
@@ -280,8 +281,14 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	    }
 	}
 
-    }
+    } else if(m_guiMode == GrassMode){
 
+	if (ImGui::Button("Build Grass")) {
+/*	    for(GuiListener* listener : m_listeners) {
+		listener->BuildRoad();
+		}*/
+	}
+    }
 
 
     ImGui::End();

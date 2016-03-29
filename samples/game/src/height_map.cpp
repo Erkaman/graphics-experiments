@@ -764,11 +764,14 @@ void HeightMap::RenderCursor(const ICamera* camera) {
     m_cursorShader->Unbind();
 }
 
-void HeightMap::RenderCubeCursor(const ICamera* camera) {
+void HeightMap::RenderCubeCursor(const ICamera* camera, float cubeScale) {
 
     m_cubeShader->Bind();
 
-    m_cubeShader->SetShaderUniforms(Matrix4f::CreateTranslation(0,0,0), camera);
+    m_cubeShader->SetShaderUniforms(
+
+
+	Matrix4f::CreateTranslation(0,0,0), camera);
 
 
     RenderSetup(m_cubeShader);
@@ -780,6 +783,7 @@ void HeightMap::RenderCubeCursor(const ICamera* camera) {
 			       Vector2f((float)m_cursorPosition.x, (float)m_cursorPosition.y) );
 
     m_cubeShader->SetUniform("color", Vector3f(1,0,0) );
+    m_cubeShader->SetUniform("cubeScale", cubeScale );
 
 
     m_cubeIndexBuffer->Bind();
@@ -833,9 +837,9 @@ void HeightMap::Render(
 
 
 	} else if(m_guiMode == RoadMode) {
-	    RenderCubeCursor(camera);
-
-
+	    RenderCubeCursor(camera, 2.0f);
+	} else if(m_guiMode == GrassMode) {
+	    RenderCubeCursor(camera, 0.7f);
 	}
 
     }
