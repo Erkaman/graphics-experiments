@@ -984,7 +984,7 @@ void TuhuApplication::Update(const float delta) {
 
 //	    LOG_I("add grass at :%s", string(m_heightMap->GetCursorPosition() ).c_str() );
 
-	    m_grass->AddGrass(m_heightMap->GetCursorPosition());
+	    m_grass->AddGrass(m_heightMap->GetCursorPosition(), m_gui->GetGrassClusterSize());
 
 	}
 

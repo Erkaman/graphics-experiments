@@ -277,17 +277,31 @@ void Grass::Rebuild() {
     m_grassIndexBuffer->Unbind();
 }
 
-void Grass::AddGrass(const Vector2i& position) {
+void Grass::AddGrass(const Vector2i& position, int grassClusterSize) {
 
-    GrassInfo grass;
+    int numGrass = (grassClusterSize-1) * m_rng.RandomFloat(+4,+6);
+    int dist = (grassClusterSize-1) * 3.5;
 
-    grass.pos =  Vector2f(
-	(float)position.x + m_rng.RandomFloat(-1,+1),
-	(float)position.y + m_rng.RandomFloat(-1,+1));
-    grass.angle = m_rng.RandomFloat(-90,+90);
-    grass.size =m_rng.RandomFloat(2.0f,2.7f);
+    if(numGrass <= 0)
+	numGrass = 1;
+    if(dist <= 0.01) {
+	dist = 0;
+    }
 
-    m_grass[m_currentId++] = grass;
+
+    for(int i = 0; i < numGrass; ++i ) {
+
+	GrassInfo grass;
+
+	grass.pos =  Vector2f(
+	    (float)position.x + m_rng.RandomFloat(-dist,+dist) + m_rng.RandomFloat(-1,+1),
+	    (float)position.y + m_rng.RandomFloat(-dist,+dist) + m_rng.RandomFloat(-1,+1));
+	grass.angle = m_rng.RandomFloat(-90,+90);
+	grass.size =m_rng.RandomFloat(2.0f,2.7f);
+
+	m_grass[m_currentId++] = grass;
+
+    }
 
     Rebuild();
 }

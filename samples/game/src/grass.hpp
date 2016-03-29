@@ -83,7 +83,7 @@ public:
 
     void Update(const float delta);
 
-    void AddGrass(const Vector2i& position);
+    void AddGrass(const Vector2i& position, int grassClusterSize);
     void RemoveGrass(int id);
 
 };

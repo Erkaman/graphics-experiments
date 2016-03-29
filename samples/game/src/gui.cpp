@@ -44,6 +44,11 @@ constexpr int MAX_AO_WAVE_LENGTH = 600;
 constexpr int DEFAULT_AO_WAVE_LENGTH = 300;
 
 
+constexpr int MIN_GRASS_CLUSTER_SIZE = 1;
+constexpr int MAX_GRASS_CLUSTER_SIZE = 5;
+constexpr int DEFAULT_GRASS_CLUSTER_SIZE = 1;
+
+
 
 
 
@@ -62,6 +67,7 @@ Gui::Gui(GLFWwindow* window) {
     m_rotation = Vector3f(0);
     m_scale = 1.0f;
 
+    m_grassClusterSize = DEFAULT_GRASS_CLUSTER_SIZE;
     m_cursorSize = DEFAULT_RADIUS;
     m_strength = 10;
     m_noiseScale = DEFAULT_NOISE_SCALE;
@@ -283,11 +289,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
     } else if(m_guiMode == GrassMode){
 
-	if (ImGui::Button("Build Grass")) {
-/*	    for(GuiListener* listener : m_listeners) {
-		listener->BuildRoad();
-		}*/
-	}
+	ImGui::SliderInt("Cluster size", &m_grassClusterSize, MIN_GRASS_CLUSTER_SIZE, MAX_GRASS_CLUSTER_SIZE);
     }
 
 
@@ -501,4 +503,8 @@ int Gui::GetSmoothRadius()const {
 
 bool Gui::isAoOnly()const {
     return m_aoOnly;
+}
+
+int Gui::GetGrassClusterSize()const {
+    return m_grassClusterSize;
 }
