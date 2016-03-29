@@ -212,7 +212,6 @@ void Grass::Rebuild() {
       FloatVector billboardVertices;
       UshortVector billboardIndices;
 
-      constexpr float SIZE = 2.5f;
       constexpr float SPREAD = 10.0f;
 
 
@@ -265,7 +264,7 @@ void Grass::Rebuild() {
 	int id = pair.first;
 
       MakeGrass(grass.pos, grass.angle , grassVertices, grassIndices, billboardVertices,
-		billboardIndices, SIZE,SIZE,id);
+		billboardIndices, grass.size, grass.size,id);
     }
 
 
@@ -286,6 +285,7 @@ void Grass::AddGrass(const Vector2i& position) {
 	(float)position.x + m_rng.RandomFloat(-1,+1),
 	(float)position.y + m_rng.RandomFloat(-1,+1));
     grass.angle = m_rng.RandomFloat(-90,+90);
+    grass.size =m_rng.RandomFloat(2.0f,2.7f);
 
     m_grass[m_currentId++] = grass;
 

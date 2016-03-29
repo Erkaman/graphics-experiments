@@ -24,6 +24,7 @@ struct GrassInfo {
 public:
     Vector2f pos;
     float angle;
+    float size;
 };
 
 class Grass{
