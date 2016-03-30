@@ -61,10 +61,10 @@ private:
 
     HeightMap* m_heightMap;
 
-    void GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height, int id);
+    void GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, std::vector<GLuint>& grassIndices, const float width, const float height, int id);
 
 
-    void MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices,    FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height, int id);
+    void MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, std::vector<GLuint>& grassIndices,    FloatVector& billboardVertices,std::vector<GLuint> & billboardIndices, const float width, const float height, int id);
 
     void Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader);
 
@@ -93,6 +93,6 @@ public:
 
     void SaveGrass(const std::string& filename);
 
-    GLushort GetBaseIndex(FloatVector& grassVertices);
+    GLuint GetBaseIndex(FloatVector& grassVertices);
 
 };

@@ -112,7 +112,7 @@ void Grass::Init() {
     m_grassVertexBuffer = VBO::CreateInterleaved(
 	vector<GLuint>{3,2,3, 3} // pos, texcoord, normal, slot0
 	);
-    m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
+    m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_INT);
     m_grassIndexBuffer->SetUsage(GL_DYNAMIC_DRAW);
 
 }
@@ -225,7 +225,7 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition) {
     });
 
 
-    UshortVector grassIndices;
+    vector<GLuint> grassIndices;
 
 /*
     LOG_I("BEG");
@@ -249,7 +249,10 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition) {
 
 	    baseIndex += 4;
 
+
     	}
+
+
     }
     // LOG_I("DONE");
 
@@ -259,8 +262,9 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition) {
 
 }
 
-void Grass::GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height, int id) {
-    GLushort baseIndex = GetBaseIndex(grassVertices);
+void Grass::GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices,
+				  vector<GLuint>& grassIndices, const float width, const float height, int id) {
+    GLuint baseIndex = GetBaseIndex(grassVertices);
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);
@@ -304,7 +308,7 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, Fl
     m_grassNumTriangles += 2;
 }
 
-void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, FloatVector& billboardVertices, UshortVector& billboardIndices, const float width, const float height, int id) {
+void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, vector<GLuint>& grassIndices, FloatVector& billboardVertices, vector<GLuint>& billboardIndices, const float width, const float height, int id) {
     GenerateGrassVertices(position, 0+angle,grassVertices, grassIndices, width,height, id);
     GenerateGrassVertices(position, 60+angle,grassVertices, grassIndices, width,height, id);
     GenerateGrassVertices(position, 120+angle,grassVertices, grassIndices, width,height, id);
@@ -316,11 +320,11 @@ void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& g
 void Grass::Rebuild() {
 
     FloatVector grassVertices;
-    UshortVector grassIndices;
+    vector<GLuint> grassIndices;
     m_grassNumTriangles = 0;
 
       FloatVector billboardVertices;
-      UshortVector billboardIndices;
+      vector<GLuint> billboardIndices;
 
       constexpr float SPREAD = 10.0f;
 
@@ -373,6 +377,10 @@ void Grass::AddGrass(const Vector2i& position, int grassClusterSize) {
 
     }
 
+
+    //  LOG_I("grass count: %d", m_grass.size() );
+
+
     Rebuild();
 }
 
@@ -417,6 +425,6 @@ void Grass::SaveGrass(const std::string& filename) {
     }
 }
 
-GLushort Grass::GetBaseIndex(FloatVector& grassVertices) {
-     return  (GLushort)grassVertices.size() / (3+2+3+3);
+GLuint Grass::GetBaseIndex(FloatVector& grassVertices) {
+     return  (GLuint)grassVertices.size() / (3+2+3+3);
 }
