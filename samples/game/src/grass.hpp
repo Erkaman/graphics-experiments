@@ -25,6 +25,8 @@ public:
     Vector2f pos;
     float angle;
     float size;
+
+    int baseIndex;
 };
 
 class Grass{
@@ -84,11 +86,13 @@ public:
     void RenderIdAll(const ICamera* camera);
 
 
-    void Update(const float delta);
+    void Update(const float delta, const Vector2f& cameraPosition);
 
     void AddGrass(const Vector2i& position, int grassClusterSize);
     void RemoveGrass(int id);
 
     void SaveGrass(const std::string& filename);
+
+    GLushort GetBaseIndex(FloatVector& grassVertices);
 
 };

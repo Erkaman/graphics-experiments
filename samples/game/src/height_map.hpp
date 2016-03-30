@@ -382,4 +382,6 @@ public:
 	    return m_cursorPosition;
     }
 
+    Vector2f ToLocalPos(Vector3f pos)const;
+
 };

@@ -113,6 +113,7 @@ void Grass::Init() {
 	vector<GLuint>{3,2,3, 3} // pos, texcoord, normal, slot0
 	);
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
+    m_grassIndexBuffer->SetUsage(GL_DYNAMIC_DRAW);
 
 }
 
@@ -197,12 +198,69 @@ void Grass::DrawReflection(const ICamera* camera, const Vector4f& lightPosition)
     Draw(camera, lightPosition, m_reflectionShader);
 }
 
-void Grass::Update(const float delta) {
+void Grass::Update(const float delta, const Vector2f& cameraPosition) {
     m_time += delta;
+
+//    LOG_I("cam pos: %s", string(cameraPosition).c_str() );
+
+
+    vector<GrassInfo> grassVector;
+
+    for(auto& pair : m_grass) {
+
+	GrassInfo grass = pair.second;
+	grassVector.push_back(grass);
+    }
+
+
+
+    const Vector2f cp = cameraPosition;
+    std::sort(grassVector.begin(), grassVector.end(), [cp](const GrassInfo& a, const GrassInfo& b) {
+
+
+	    float bDist = (b.pos.x - cp.x)*(b.pos.x - cp.x) + (b.pos.y - cp.y)*(b.pos.y - cp.y);
+	    float aDist = (a.pos.x - cp.x)*(a.pos.x - cp.x) + (a.pos.y - cp.y)*(a.pos.y - cp.y);
+
+	    return bDist > aDist;
+    });
+
+
+    UshortVector grassIndices;
+
+/*
+    LOG_I("BEG");
+    LOG_I("cp: %s", string(cp).c_str() );
+*/
+
+    for(int i = 0; i < grassVector.size(); ++i) {
+	GrassInfo& grass = grassVector[i];
+
+	int baseIndex = grass.baseIndex;
+
+	for(int i = 0; i < 3; ++i) {
+
+	    grassIndices.push_back(baseIndex+0);
+	    grassIndices.push_back(baseIndex+1);
+	    grassIndices.push_back(baseIndex+2);
+
+	    grassIndices.push_back(baseIndex+1);
+	    grassIndices.push_back(baseIndex+3);
+	    grassIndices.push_back(baseIndex+2);
+
+	    baseIndex += 4;
+
+    	}
+    }
+    // LOG_I("DONE");
+
+    m_grassIndexBuffer->Bind();
+    m_grassIndexBuffer->SetBufferData(grassIndices);
+    m_grassIndexBuffer->Unbind();
+
 }
 
 void Grass::GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height, int id) {
-    GLushort baseIndex = (GLushort)grassVertices.size() / (3+2+3+3);
+    GLushort baseIndex = GetBaseIndex(grassVertices);
 
     Vector2f dir = AngleToVector(angle);
     Vector3f normal(0,1,0);
@@ -234,6 +292,7 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, Fl
     normal.Add(grassVertices);
     centerPosition.Add(grassVertices);
 
+    /*
     grassIndices.push_back(baseIndex+0);
     grassIndices.push_back(baseIndex+1);
     grassIndices.push_back(baseIndex+2);
@@ -241,7 +300,7 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, Fl
     grassIndices.push_back(baseIndex+1);
     grassIndices.push_back(baseIndex+3);
     grassIndices.push_back(baseIndex+2);
-
+    */
     m_grassNumTriangles += 2;
 }
 
@@ -267,8 +326,12 @@ void Grass::Rebuild() {
 
     for(auto& pair : m_grass) {
 
-	GrassInfo grass = pair.second;
+	GrassInfo& grass = pair.second;
 	int id = pair.first;
+
+	//grass
+	// generates indices will be in range [baseIndex, baseIndex + 6 * 3]
+    grass.baseIndex = GetBaseIndex(grassVertices);
 
       MakeGrass(grass.pos, grass.angle , grassVertices, grassIndices, billboardVertices,
 		billboardIndices, grass.size, grass.size,id);
@@ -279,9 +342,9 @@ void Grass::Rebuild() {
     m_grassVertexBuffer->SetBufferData(grassVertices);
     m_grassVertexBuffer->Unbind();
 
-    m_grassIndexBuffer->Bind();
-    m_grassIndexBuffer->SetBufferData(grassIndices);
-    m_grassIndexBuffer->Unbind();
+
+
+
 }
 
 void Grass::AddGrass(const Vector2i& position, int grassClusterSize) {
@@ -352,4 +415,8 @@ void Grass::SaveGrass(const std::string& filename) {
 
 	outFile->WriteLine(line);
     }
+}
+
+GLushort Grass::GetBaseIndex(FloatVector& grassVertices) {
+     return  (GLushort)grassVertices.size() / (3+2+3+3);
 }

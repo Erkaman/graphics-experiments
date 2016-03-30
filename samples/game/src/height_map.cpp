@@ -2632,3 +2632,9 @@ vector<string> HeightMap::GetDefaultDefines()const {
 
     return defaultDefines;
 }
+
+
+
+Vector2f HeightMap::ToLocalPos(Vector3f pos)const {
+    return Vector2f( pos.x - m_offset.x, pos.z - m_offset.z  );
+}
