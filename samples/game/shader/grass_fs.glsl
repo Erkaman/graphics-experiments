@@ -30,10 +30,11 @@ void main(){
 
 //    sample.xyz = vec3(1);
 
+
 #ifdef DEFERRED
 
     geoData[0] = packColorTexture(sample.xyz, vec3(0,0,0), 0);
-    geoData[1] = packNormalTexture(vec3(0,1,0), 0, 0);
+    geoData[1] = packNormalTexture(vec3(viewSpaceNormal), 0, 0);
 
 #else
 

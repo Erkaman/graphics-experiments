@@ -22,6 +22,7 @@ out vec2 texCoord;
 out vec3 position;
 out float id;
 
+
 // returns random float in range [-1,1]
 float rand(vec2 seed){
     return fract(sin(dot(seed.xy ,vec2(12.9898,78.233))) * 43758.5453);
@@ -84,6 +85,7 @@ void main()
 
 //    pos = basis * pos;
 
+    vec3 normal = normalIn;
 
     if(texCoordIn.y < 0.1) {
 
@@ -92,14 +94,16 @@ void main()
 
 	float period = rand(seed.xyz, 2.0 * 0.60, 2.0 * 0.70);
 
+	vec3 translation =  vec3(xDir,0, zDir ) * sin(time * period);
 
-	pos += vec3(xDir,0, zDir ) * sin(time * period);
+	pos += translation;
+	normal = normalize(normal * (2.5) + translation);
+
     }
-
 
     gl_Position = mvp * vec4(pos,1);
 
-    viewSpaceNormal = normalize((normalMatrix * vec4(normalize(normalIn),0.0)).xyz);
+    viewSpaceNormal = normalize((normalMatrix * vec4(normalize(normal),0.0)).xyz);
 
     viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 

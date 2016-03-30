@@ -128,6 +128,8 @@ void main() {
 	    visibility,
 	    envMapSample );
 
+//    fragmentColor = vec4(vec3(diff),1);
+
 
 #ifdef IS_TILED
 
