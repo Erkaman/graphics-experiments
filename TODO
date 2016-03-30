@@ -1,10 +1,12 @@
 TODO:
-grass gui
 grass orientation basis based on height map.
 grass sorting.
 grass wind simultation
 grass reacting to player pos.
 better grass lighting?
+
+* sorting.
+
 
 http://www.ojs.academypublisher.com/index.php/jsw/article/viewFile/jsw0702431439/4402
 http://milantimko.info/index.php?page=articles&category=tutorials&article=01

@@ -102,6 +102,7 @@ const string SPLAT_MAP_FILENAME = "splatmap.bin";
 const string AO_MAP_FILENAME = "aomap.bin";
 
 const string OBJS_FILENAME = "objs";
+const string GRASS_FILENAME = "grass";
 
 
 bool save_screenshot(string filename, int w, int h)
@@ -291,6 +292,10 @@ void TuhuApplication::Init() {
 
 	ParseObjs(File::AppendPaths(dir, OBJS_FILENAME ));
 
+	m_grass = new Grass(
+	    File::AppendPaths(dir, GRASS_FILENAME ),
+	    m_heightMap );
+
     } else {
 
 	m_heightMap = new HeightMap(guiMode);
@@ -301,10 +306,8 @@ void TuhuApplication::Init() {
 
 	m_selected = NULL;
 
-/*
-	LoadObj("obj/wall.eob",
-				 Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
-	    );*/
+	m_grass = new Grass(m_heightMap );
+
     }
 
     if(m_gui) {
@@ -352,7 +355,7 @@ void TuhuApplication::Init() {
 
     m_curCamera = m_freeCamera;
 
-    m_grass = new Grass(Vector2f(0,0), m_heightMap );
+
 
     LOG_I("LOG5");
 
@@ -978,7 +981,7 @@ void TuhuApplication::Update(const float delta) {
 
 
 
-    if(m_gui->GetGuiMode() == GrassMode && GuiMouseState::isWithinWindow()) {
+    if(m_gui && m_gui->GetGuiMode() == GrassMode && GuiMouseState::isWithinWindow()) {
 
 	if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 ) ) {
 
@@ -1011,7 +1014,6 @@ void TuhuApplication::Update(const float delta) {
 	}
 
     }
-
 
     if(m_gui && m_gui->GetGuiMode() == ModelMode && m_selected ) {
 
@@ -1148,6 +1150,8 @@ void TuhuApplication::Cleanup() {
 
     if(m_gui) {
 	// if we were in the world editor, we need to serialize the world.
+
+	m_grass->SaveGrass(File::AppendPaths(dir, GRASS_FILENAME ) );
 
 
 	// we save the entire world in a directory. Make sure the directory exists:

@@ -21,8 +21,13 @@
 #include "ewa/common.hpp"
 #include "resource_manager.hpp"
 
+#include "ewa/buffered_file_reader.hpp"
+#include "ewa/string_util.hpp"
+
+
 using std::string;
 using std::vector;
+using std::to_string;
 
 Vector2f AngleToVector(const float angle) {
     const float radians = ToRadians(angle);
@@ -42,7 +47,7 @@ Grass::~Grass() {
 }
 
 
-Grass::Grass(Vector2f position, HeightMap* heightMap): m_rng(12), m_heightMap(heightMap), m_position(position) {
+void Grass::Init() {
 
     m_currentId = 0;
 
@@ -95,8 +100,13 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_rng(12), m_heightMap(he
 
     m_grassTexture->Bind();
     m_grassTexture->SetTextureClamping();
-    m_grassTexture->SetMinFilter(GL_LINEAR);
-    m_grassTexture->SetMagFilter(GL_NEAREST);
+    m_grassTexture->GenerateMipmap();
+
+
+   m_grassTexture->SetMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+    m_grassTexture->SetMagFilter(GL_LINEAR);
+
+
     m_grassTexture->Unbind();
 
     m_grassVertexBuffer = VBO::CreateInterleaved(
@@ -104,9 +114,50 @@ Grass::Grass(Vector2f position, HeightMap* heightMap): m_rng(12), m_heightMap(he
 	);
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_SHORT);
 
+}
 
+Grass::Grass(HeightMap* heightMap): m_rng(12), m_heightMap(heightMap) {
+    Init();
+}
+
+
+Grass::Grass(const std::string& filename, HeightMap* heightMap): m_rng(12), m_heightMap(heightMap) {
+
+    Init();
+
+
+    BufferedFileReader* reader = BufferedFileReader::Load(  filename);
+    if(!reader) {
+	PrintErrorExit();
+    }
+
+    string firstLine = reader->ReadLine();
+
+    size_t numGrass = stoi(StringUtil::SplitString(firstLine, " ")[1]);
+
+    LOG_I("numGrass: %d", numGrass);
+
+    for(size_t i = 0; i < numGrass; ++i) {
+
+	// read shit.
+
+	vector<string> tokens = StringUtil::SplitString(reader->ReadLine(), " ");
+
+	GrassInfo grass;
+
+	grass.pos =  Vector2f( stof(tokens[1] ), stof(tokens[2])  );
+
+	grass.angle = stof(tokens[3]);
+	grass.size = stof(tokens[4]);
+
+	m_grass[m_currentId++] = grass;
+
+    }
+
+    Rebuild();
 
 }
+
 
 void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader) {
 
@@ -214,50 +265,6 @@ void Grass::Rebuild() {
 
       constexpr float SPREAD = 10.0f;
 
-
-    /*
-
-
-      constexpr int COUNT = 50;
-
-
-
-      Vector2f base(Vector2f(175,175));
-
-      for(int c = 0; c < COUNT; ++c) {
-
-      Vector2f grassPosition;
-
-      while(true) {
-
-      grassPosition = base + Vector2f(rng.RandomFloat(-SPREAD,+SPREAD),rng.RandomFloat(-SPREAD,SPREAD));
-      break;
-      }
-
-      MakeGrass(grassPosition, rng.RandomFloat(-90,+90), grassVertices, grassIndices, billboardVertices, billboardIndices, SIZE,SIZE);
-
-      grassPositions.push_back(grassPosition);
-      }
-
-      base = (Vector2f(250,385));
-
-      for(int c = 0; c < COUNT; ++c) {
-
-      Vector2f grassPosition;
-
-      while(true) {
-
-      grassPosition = base + Vector2f(rng.RandomFloat(-SPREAD,+SPREAD),rng.RandomFloat(-SPREAD,SPREAD));
-      break;
-      }
-
-      MakeGrass(grassPosition, rng.RandomFloat(-90,+90), grassVertices, grassIndices, billboardVertices, billboardIndices, SIZE,SIZE);
-
-      grassPositions.push_back(grassPosition);
-      }
-    */
-
-
     for(auto& pair : m_grass) {
 
 	GrassInfo grass = pair.second;
@@ -315,4 +322,34 @@ void Grass::RemoveGrass(int id) {
 
 void Grass::RenderIdAll(const ICamera* camera) {
     Draw(camera, Vector4f(0), m_outputIdShader );
+}
+
+void Grass::SaveGrass(const std::string& filename) {
+
+
+    File* outFile = File::Load(
+	filename,
+	    FileModeWriting);
+
+
+
+    outFile->WriteLine("numGrass " + to_string(m_grass.size()) );
+
+
+    for(auto& pair : m_grass) {
+
+	GrassInfo grass = pair.second;
+
+
+	string line = "grass ";
+
+	line +=
+	    to_string(grass.pos.x) + " " +
+	    to_string(grass.pos.y) + " " +
+	    to_string(grass.angle) + " " +
+	    to_string(grass.size);
+
+
+	outFile->WriteLine(line);
+    }
 }

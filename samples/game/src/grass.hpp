@@ -59,8 +59,6 @@ private:
 
     HeightMap* m_heightMap;
 
-    Vector2f m_position;
-
     void GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, UshortVector& grassIndices, const float width, const float height, int id);
 
 
@@ -70,9 +68,14 @@ private:
 
     void Rebuild();
 
+    void Init();
+
+
 public:
 
-    Grass(Vector2f position, HeightMap* heightMap);
+    Grass(const std::string& filename, HeightMap* heightMap);
+    Grass(HeightMap* heightMap);
+
     ~Grass();
 
     void DrawDeferred(const ICamera* camera, const Vector4f& lightPosition);
@@ -85,5 +88,7 @@ public:
 
     void AddGrass(const Vector2i& position, int grassClusterSize);
     void RemoveGrass(int id);
+
+    void SaveGrass(const std::string& filename);
 
 };
