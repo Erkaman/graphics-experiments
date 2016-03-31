@@ -12,6 +12,7 @@ in float id;
 out vec4 fragmentColor;
 
 in vec2 texCoord;
+in vec3 color;
 
 uniform sampler2D tex;
 
@@ -48,6 +49,7 @@ void main(){
 #else
 
     geoData[0] = vec4(sample.xyz,1);
+
 #endif
 
 

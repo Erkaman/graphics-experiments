@@ -1,4 +1,3 @@
-
 #include "tuhu_application.hpp"
 
 #include "particles_renderer.hpp"
@@ -862,7 +861,17 @@ void TuhuApplication::Update(const float delta) {
 
     UpdateMatrices();
 
-    m_grass->Update(delta,  m_heightMap->ToLocalPos(m_curCamera->GetPosition()) );
+
+    Vector3f curCameraPos = m_curCamera->GetPosition();
+
+    Vector3f cameraDirection = ((curCameraPos - m_prevCameraPos) * (1.0 / delta) ).Normalize();
+
+//    LOG_I("dir: %s", string(cameraDirection).c_str() );
+
+    m_grass->Update(delta,  m_heightMap->ToLocalPos(m_curCamera->GetPosition()), cameraDirection );
+
+
+    m_prevCameraPos = curCameraPos;
 
     m_lightFrustum->Update( m_lightVp, Vector3f(0) );
 

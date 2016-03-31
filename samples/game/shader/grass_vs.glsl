@@ -22,6 +22,11 @@ out vec2 texCoord;
 out vec3 position;
 out float id;
 
+uniform vec2 cameraPos;
+uniform vec3 cameraDir;
+
+out vec3 color;
+
 
 // returns random float in range [-1,1]
 float rand(vec2 seed){
@@ -64,6 +69,8 @@ void main()
 {
     vec3 seed = centerPosition.xyz;
 
+
+
     id = centerPosition.z;
 
     //if texcoord.y is 0, then move.
@@ -87,6 +94,8 @@ void main()
 
     vec3 normal = normalIn;
 
+    float playerWindStrength = clamp(1.0 - distance(cameraPos.xy, centerPosition.xy)/5, 0, 1);
+
     if(texCoordIn.y < 0.1) {
 
 	float xDir =rand(rand(vec2(seed.x, seed.y)), 2*0.05, 2*0.27);
@@ -95,11 +104,32 @@ void main()
 	float period = rand(seed.xyz, 2.0 * 0.60, 2.0 * 0.70);
 
 	vec3 translation =  vec3(xDir,0, zDir ) * sin(time * period);
+	translation = vec3(0);
+
+
+
+	vec2 d = -normalize(cameraPos.xy - centerPosition.xy);
+
+
+	translation.xz += d * playerWindStrength * 7;
 
 	pos += translation;
 	normal = normalize(normal * (2.5) + translation);
 
     }
+
+      color = vec3(playerWindStrength);
+
+
+      color = normalize(cross(vec3(0,1,0), cameraDir )  );
+
+    /*
+    if(distance(cameraPos.xy, centerPosition.xy) < 5) {
+
+	color = vec3(1,0,0);
+
+    }
+    */
 
     gl_Position = mvp * vec4(pos,1);
 

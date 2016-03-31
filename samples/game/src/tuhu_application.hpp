@@ -111,6 +111,8 @@ private:
     Skybox* m_skybox;
     CubeMapTexture* m_cubeMapTexture;
 
+    Vector3f m_prevCameraPos; // camera pos for previous frame.
+
 
     std::map<unsigned int,IGeometryObject*> m_geoObjs;
 

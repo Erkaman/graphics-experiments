@@ -180,6 +180,12 @@ void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderPro
     Texture::SetActiveTextureUnit(1);
     m_heightMap->GetHeightMap()->Bind();
 
+    shader->SetUniform("cameraPos", m_cameraPosition );
+    shader->SetUniform("cameraDir", m_cameraDir );
+
+//    LOG_I("camera pos: %s", string(m_cameraPosition).c_str()  );
+
+
     VBO::DrawIndices(*m_grassVertexBuffer, *m_grassIndexBuffer, GL_TRIANGLES, (m_grassNumTriangles)*3);
 
     m_grassTexture->Unbind();
@@ -198,11 +204,13 @@ void Grass::DrawReflection(const ICamera* camera, const Vector4f& lightPosition)
     Draw(camera, lightPosition, m_reflectionShader);
 }
 
-void Grass::Update(const float delta, const Vector2f& cameraPosition) {
+void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vector3f& cameraDir) {
     m_time += delta;
 
 //    LOG_I("cam pos: %s", string(cameraPosition).c_str() );
 
+    m_cameraPosition = cameraPosition;
+    m_cameraDir = cameraDir;
 
     vector<GrassInfo> grassVector;
 
@@ -214,7 +222,7 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition) {
 
 
 
-    const Vector2f cp = cameraPosition;
+    const Vector2f cp = m_cameraPosition;
     std::sort(grassVector.begin(), grassVector.end(), [cp](const GrassInfo& a, const GrassInfo& b) {
 
 
@@ -270,6 +278,8 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, Fl
     Vector3f normal(0,1,0);
 
     Vector3f centerPosition(position.x ,position.y, id);
+
+//    LOG_I("ADD CENTER: %s", string(centerPosition).c_str()  );
 
     dir.Normalize();
 
@@ -339,6 +349,8 @@ void Grass::Rebuild() {
 
       MakeGrass(grass.pos, grass.angle , grassVertices, grassIndices, billboardVertices,
 		billboardIndices, grass.size, grass.size,id);
+
+
     }
 
 

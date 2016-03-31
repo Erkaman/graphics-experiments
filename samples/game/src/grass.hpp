@@ -3,6 +3,7 @@
 #include "ewa/gl/gl_common.hpp"
 
 #include "ewa/math/vector2f.hpp"
+#include "ewa/math/vector3f.hpp"
 
 
 #include "ewa/random.hpp"
@@ -61,6 +62,9 @@ private:
 
     HeightMap* m_heightMap;
 
+    Vector2f m_cameraPosition;
+    Vector3f m_cameraDir;
+
     void GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, std::vector<GLuint>& grassIndices, const float width, const float height, int id);
 
 
@@ -86,7 +90,7 @@ public:
     void RenderIdAll(const ICamera* camera);
 
 
-    void Update(const float delta, const Vector2f& cameraPosition);
+    void Update(const float delta, const Vector2f& cameraPosition, const Vector3f& cameraDir);
 
     void AddGrass(const Vector2i& position, int grassClusterSize);
     void RemoveGrass(int id);
