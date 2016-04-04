@@ -61,20 +61,24 @@ private:
 
     std::map<int,GrassInfo> m_grass;
 
+    struct GrassChunk {
+    public:
+	unsigned int m_grassNumTriangles;
 
+	VBO* m_grassVertexBuffer;
+	VBO* m_grassIndexBuffer;
 
-    unsigned int m_grassNumTriangles;
-
-    VBO* m_grassVertexBuffer;
-    VBO* m_grassIndexBuffer;
-
-
+	FloatVector m_grassVertices;
+	std::vector<GLuint> m_grassIndices;
+    };
 
 
     ShaderProgram* m_deferredShader;
     ShaderProgram* m_reflectionShader;
     ShaderProgram* m_outputIdShader;
 
+    float m_heightMapResolution;
+    float m_chunkSize;
 
     Texture* m_grassTexture;
 
@@ -98,18 +102,20 @@ private:
 
     MultArray<GrassTile*>* m_turbWindField;
 
+    MultArray<GrassChunk*>* m_chunks;
 
 
-    void GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, std::vector<GLuint>& grassIndices, const float width, const float height, int id);
+
+    void GenerateGrassVertices(const Vector2f position, const float angle, const float width, const float height, int id);
 
 
-    void MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, std::vector<GLuint>& grassIndices,    FloatVector& billboardVertices,std::vector<GLuint> & billboardIndices, const float width, const float height, int id);
+    void MakeGrass(const Vector2f position, const float angle, const float width, const float height, int id);
 
     void Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader);
 
     void Rebuild();
 
-    void Init();
+    void Init(int heightMapResolution);
 
 
 

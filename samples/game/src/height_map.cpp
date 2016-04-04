@@ -2161,7 +2161,6 @@ float HeightMap::ComputeHeightMapHeight(int x, int z) {
     return (float)(heightData(x,z)-MID_HEIGHT) / MID_HEIGHT;
 }
 
-
 Vector3f HeightMap::ComputeHeightMapNormal(int x, int z) {
     int eps = 1;
 

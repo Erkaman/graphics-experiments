@@ -32,8 +32,8 @@ using std::string;
 using std::vector;
 using std::to_string;
 
-constexpr int GRID_COUNT = 64;
-
+constexpr int TILE_GRID_COUNT = 64;
+constexpr int CHUNK_COUNT = 18;
 
 Vector2f AngleToVector(const float angle) {
     const float radians = ToRadians(angle);
@@ -44,16 +44,11 @@ Vector2f AngleToVector(const float angle) {
 }
 
 Grass::~Grass() {
-    MY_DELETE(m_grassVertexBuffer);
-    MY_DELETE(m_grassIndexBuffer);
-
-
-
-    MY_DELETE(m_grassTexture);
 }
 
 
-void Grass::Init() {
+void Grass::Init(int heightMapResolution) {
+    m_heightMapResolution = heightMapResolution;
 
     m_currentId = 0;
 
@@ -63,7 +58,34 @@ void Grass::Init() {
 
     m_time = 0;
 
-    m_grassNumTriangles = 0;
+    m_chunks = new MultArray<GrassChunk*>(CHUNK_COUNT, CHUNK_COUNT);
+    m_chunkSize = m_heightMapResolution / (float)CHUNK_COUNT;
+    MultArray<GrassChunk*>& chunks = *m_chunks;
+
+
+    for(int x = 0; x < CHUNK_COUNT; ++x) {
+	for(int z = 0; z < CHUNK_COUNT; ++z) {
+	    GrassChunk* chunk = new GrassChunk();
+
+	    chunk->m_grassNumTriangles = 0;
+	    chunk->m_grassVertexBuffer = VBO::CreateInterleaved(
+	vector<GLuint>{3,2,3, 3} // pos, texcoord, normal, slot0
+		);
+
+	    chunk->m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_INT);
+	    chunk->m_grassIndexBuffer->SetUsage(GL_DYNAMIC_DRAW);
+
+	    chunks(x,z) = chunk;
+
+	}
+    }
+
+
+
+
+
+
+
 
     vector<string> defaultDefines = m_heightMap->GetDefaultDefines();
     string shaderName = "shader/grass";
@@ -115,15 +137,10 @@ void Grass::Init() {
 
     m_grassTexture->Unbind();
 
-    m_grassVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{3,2,3, 3} // pos, texcoord, normal, slot0
-	);
-    m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_INT);
-    m_grassIndexBuffer->SetUsage(GL_DYNAMIC_DRAW);
 
 
 
-    m_meanWindTexture = new Texture2D(nullptr, GRID_COUNT, GRID_COUNT,
+    m_meanWindTexture = new Texture2D(nullptr, TILE_GRID_COUNT, TILE_GRID_COUNT,
 				       GL_RGB16F,
 				       GL_RGB,
 				       GL_FLOAT);
@@ -135,12 +152,12 @@ void Grass::Init() {
     m_meanWindTexture->SetMagFilter(GL_NEAREST);
     m_meanWindTexture->Unbind();
 
-    m_meanWindTextureBuffer = new MultArray<Vector3f>(GRID_COUNT,GRID_COUNT);
+    m_meanWindTextureBuffer = new MultArray<Vector3f>(TILE_GRID_COUNT,TILE_GRID_COUNT);
     MultArray<Vector3f>& meanWindTextureBuffer = *m_meanWindTextureBuffer;
 
 
-    for(int x = 0; x < GRID_COUNT; ++x) {
-	for(int z = 0; z < GRID_COUNT; ++z) {
+    for(int x = 0; x < TILE_GRID_COUNT; ++x) {
+	for(int z = 0; z < TILE_GRID_COUNT; ++z) {
 
 	    Vector3f w;
 /*
@@ -167,7 +184,7 @@ void Grass::Init() {
 
 
 
-    m_turbWindTexture = new Texture2D(nullptr, GRID_COUNT, GRID_COUNT,
+    m_turbWindTexture = new Texture2D(nullptr, TILE_GRID_COUNT, TILE_GRID_COUNT,
 				       GL_RGB16F,
 				       GL_RGB,
 				       GL_FLOAT);
@@ -179,14 +196,14 @@ void Grass::Init() {
     m_turbWindTexture->SetMagFilter(GL_NEAREST);
     m_turbWindTexture->Unbind();
 
-    m_turbWindTextureBuffer = new MultArray<Vector3f>(GRID_COUNT,GRID_COUNT);
+    m_turbWindTextureBuffer = new MultArray<Vector3f>(TILE_GRID_COUNT,TILE_GRID_COUNT);
 
-    m_turbWindField = new MultArray<GrassTile*>(GRID_COUNT,GRID_COUNT);
+    m_turbWindField = new MultArray<GrassTile*>(TILE_GRID_COUNT,TILE_GRID_COUNT);
     MultArray<GrassTile*>& turbWindField = *m_turbWindField;
 
 
-    for(int x = 0; x < GRID_COUNT; ++x) {
-	for(int z = 0; z < GRID_COUNT; ++z) {
+    for(int x = 0; x < TILE_GRID_COUNT; ++x) {
+	for(int z = 0; z < TILE_GRID_COUNT; ++z) {
 
 	    turbWindField(x,z) = new GrassTile(m_rng);
 	}
@@ -196,14 +213,13 @@ void Grass::Init() {
 }
 
 Grass::Grass(HeightMap* heightMap): m_rng(12), m_heightMap(heightMap) {
-    Init();
+    Init(heightMap->GetResolution() );
 }
 
 
 Grass::Grass(const std::string& filename, HeightMap* heightMap): m_rng(12), m_heightMap(heightMap) {
 
-    Init();
-
+    Init(heightMap->GetResolution());
 
     BufferedFileReader* reader = BufferedFileReader::Load(  filename);
     if(!reader) {
@@ -272,10 +288,21 @@ void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderPro
     shader->SetUniform("cameraPos", m_cameraPosition );
     shader->SetUniform("cameraDir", m_cameraDir );
 
-//    LOG_I("camera pos: %s", string(m_cameraPosition).c_str()  );
+
+    MultArray<GrassChunk*>& chunks = *m_chunks;
+
+    for(int x = 0; x < CHUNK_COUNT; ++x) {
+	for(int z = 0; z < CHUNK_COUNT; ++z) {
+	    GrassChunk* chunk = chunks(x,z);
+
+	    // if( (x+z) % 2 == 1 )
+
+	    VBO::DrawIndices(*chunk->m_grassVertexBuffer, *chunk->m_grassIndexBuffer, GL_TRIANGLES, (chunk->m_grassNumTriangles)*3);
+
+	}
+    }
 
 
-    VBO::DrawIndices(*m_grassVertexBuffer, *m_grassIndexBuffer, GL_TRIANGLES, (m_grassNumTriangles)*3);
 
     m_grassTexture->Unbind();
     m_meanWindTexture->Unbind();
@@ -334,6 +361,8 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
     LOG_I("cp: %s", string(cp).c_str() );
 */
 
+
+    /*
     for(int i = 0; i < grassVector.size(); ++i) {
 	GrassInfo& grass = grassVector[i];
 
@@ -357,15 +386,26 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
     }
     // LOG_I("DONE");
+    */
 
-    m_grassIndexBuffer->Bind();
-    m_grassIndexBuffer->SetBufferData(grassIndices);
-    m_grassIndexBuffer->Unbind();
 
 }
 
-void Grass::GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices,
-				  vector<GLuint>& grassIndices, const float width, const float height, int id) {
+void Grass::GenerateGrassVertices(const Vector2f position, const float angle, const float width, const float height, int id) {
+
+    int ix = int(position.x / m_chunkSize);
+    int iz = int(position.y / m_chunkSize);
+    MultArray<GrassChunk*>& chunks = *m_chunks;
+
+
+
+    GrassChunk* chunk = chunks(ix,iz);
+
+    FloatVector& grassVertices = chunk->m_grassVertices;
+    std::vector<GLuint>& grassIndices = chunk->m_grassIndices;
+
+
+
     GLuint baseIndex = GetBaseIndex(grassVertices);
 
     Vector2f dir = AngleToVector(angle);
@@ -400,7 +440,7 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, Fl
     normal.Add(grassVertices);
     centerPosition.Add(grassVertices);
 
-    /*
+
     grassIndices.push_back(baseIndex+0);
     grassIndices.push_back(baseIndex+1);
     grassIndices.push_back(baseIndex+2);
@@ -408,27 +448,39 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, Fl
     grassIndices.push_back(baseIndex+1);
     grassIndices.push_back(baseIndex+3);
     grassIndices.push_back(baseIndex+2);
-    */
-    m_grassNumTriangles += 2;
+
+
+    chunk->m_grassNumTriangles += 2;
 }
 
-void Grass::MakeGrass(const Vector2f position, const float angle, FloatVector& grassVertices, vector<GLuint>& grassIndices, FloatVector& billboardVertices, vector<GLuint>& billboardIndices, const float width, const float height, int id) {
-    GenerateGrassVertices(position, 0+angle,grassVertices, grassIndices, width,height, id);
-    GenerateGrassVertices(position, 60+angle,grassVertices, grassIndices, width,height, id);
-    GenerateGrassVertices(position, 120+angle,grassVertices, grassIndices, width,height, id);
+void Grass::MakeGrass(const Vector2f position, const float angle, const float width, const float height, int id) {
+    GenerateGrassVertices(position, 0+angle, width,height, id);
+    GenerateGrassVertices(position, 60+angle, width,height, id);
+    GenerateGrassVertices(position, 120+angle, width,height, id);
 
-//    GenerateBillboardVertices(position - m_position,billboardVertices, billboardIndices, width,height);
 }
 
 
 void Grass::Rebuild() {
-
+/*
     FloatVector grassVertices;
     vector<GLuint> grassIndices;
     m_grassNumTriangles = 0;
+*/
+    MultArray<GrassChunk*>& chunks = *m_chunks;
 
-      FloatVector billboardVertices;
-      vector<GLuint> billboardIndices;
+    for(int x = 0; x < CHUNK_COUNT; ++x) {
+	for(int z = 0; z < CHUNK_COUNT; ++z) {
+	    GrassChunk* chunk = chunks(x,z);
+
+	    chunk->m_grassVertices.clear();
+	    chunk->m_grassIndices.clear();
+	    chunk->m_grassNumTriangles = 0;
+	}
+    }
+
+
+
 
       constexpr float SPREAD = 10.0f;
 
@@ -439,20 +491,27 @@ void Grass::Rebuild() {
 
 	//grass
 	// generates indices will be in range [baseIndex, baseIndex + 6 * 3]
-    grass.baseIndex = GetBaseIndex(grassVertices);
+//    grass.baseIndex = GetBaseIndex(grassVertices);
 
-      MakeGrass(grass.pos, grass.angle , grassVertices, grassIndices, billboardVertices,
-		billboardIndices, grass.size, grass.size,id);
+      MakeGrass(grass.pos, grass.angle, grass.size, grass.size,id);
 
 
     }
 
 
-    m_grassVertexBuffer->Bind();
-    m_grassVertexBuffer->SetBufferData(grassVertices);
-    m_grassVertexBuffer->Unbind();
+    for(int x = 0; x < CHUNK_COUNT; ++x) {
+	for(int z = 0; z < CHUNK_COUNT; ++z) {
+	    GrassChunk* chunk = chunks(x,z);
 
+	    chunk->m_grassVertexBuffer->Bind();
+	    chunk->m_grassVertexBuffer->SetBufferData(chunk->m_grassVertices);
+	    chunk->m_grassVertexBuffer->Unbind();
 
+	    chunk->m_grassIndexBuffer->Bind();
+	    chunk->m_grassIndexBuffer->SetBufferData(chunk->m_grassIndices);
+	    chunk->m_grassIndexBuffer->Unbind();
+	}
+    }
 
 
 }
@@ -549,8 +608,8 @@ void Grass::UpdateWind(const float delta) {
     MultArray<Vector3f>& turbWindTextureBuffer = *m_turbWindTextureBuffer;
     MultArray<GrassTile*>& turbWindField = *m_turbWindField;
 
-    for(int x = 0; x < GRID_COUNT; ++x) {
-	for(int z = 0; z < GRID_COUNT; ++z) {
+    for(int x = 0; x < TILE_GRID_COUNT; ++x) {
+	for(int z = 0; z < TILE_GRID_COUNT; ++z) {
 	    turbWindField(x,z)->Update(delta);
 	}
     }
@@ -578,8 +637,8 @@ void Grass::UpdateWind(const float delta) {
 
 //    LOG_I("den om: %f", denominator  );
 
-    for(int x = 0; x < GRID_COUNT; ++x) {
-	for(int z = 0; z < GRID_COUNT; ++z) {
+    for(int x = 0; x < TILE_GRID_COUNT; ++x) {
+	for(int z = 0; z < TILE_GRID_COUNT; ++z) {
 
 	    Vector3f numerator = 0.0f;
 
@@ -589,8 +648,8 @@ void Grass::UpdateWind(const float delta) {
 		    int ax = x+ix;
 		    int az = z+iz;
 
-		    ax = Clamp(ax, 0, GRID_COUNT-1);
-		    az = Clamp(az, 0, GRID_COUNT-1);
+		    ax = Clamp(ax, 0, TILE_GRID_COUNT-1);
+		    az = Clamp(az, 0, TILE_GRID_COUNT-1);
 
 		    numerator += turbWindField(ax,az)->m_v * ws[ix+offset][iz+offset];
 
