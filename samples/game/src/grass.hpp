@@ -38,9 +38,10 @@ private:
 
     // turbulent grass tile
     struct GrassTile {
-
+    public:
 
 	Vector3f m_dir;
+	Vector3f m_v;
 
 	float m_xDelta;
 	float m_zDelta;
