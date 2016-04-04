@@ -35,6 +35,27 @@ class Grass{
 
 private:
 
+    // turbulent grass tile
+    struct GrassTile {
+
+
+	const float m_minAngle;
+	const float m_maxAngle;
+	float m_rotationVel;
+
+	float m_angle;
+
+	Vector3f m_origVector;
+
+	const float m_vectorLength;
+
+	GrassTile(Random& rng);
+
+	Vector3f Update(const float delta);
+
+    };
+
+
     int m_currentId;
 
     Random m_rng;
@@ -70,9 +91,15 @@ private:
     Texture2D* m_meanWindTexture;
     Vector3f* m_meanWindTextureBuffer;
 
+
+
+
     // turbulent wind.
     Texture2D* m_turbWindTexture;
     Vector3f* m_turbWindTextureBuffer;
+
+    GrassTile** m_turbWindField;
+
 
 
     void GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, std::vector<GLuint>& grassIndices, const float width, const float height, int id);
@@ -88,7 +115,9 @@ private:
 
 
 
-    void UpdateWind();
+    void UpdateWind(const float delta);
+
+
 
 public:
 

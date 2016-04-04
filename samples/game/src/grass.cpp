@@ -174,7 +174,13 @@ void Grass::Init() {
 
     m_turbWindTextureBuffer = new Vector3f[GRID_COUNT*GRID_COUNT];
 
+    m_turbWindField = new Grass::GrassTile*[GRID_COUNT*GRID_COUNT];
 
+
+    for(int i = 0; i < GRID_COUNT*GRID_COUNT; ++i) {
+
+	m_turbWindField[i] = new GrassTile(m_rng);
+    }
 
 
 }
@@ -281,7 +287,7 @@ void Grass::DrawReflection(const ICamera* camera, const Vector4f& lightPosition)
 
 void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vector3f& cameraDir) {
 
-    UpdateWind();
+    UpdateWind(delta);
 
     m_time += delta;
 
@@ -528,21 +534,54 @@ GLuint Grass::GetBaseIndex(FloatVector& grassVertices) {
 }
 
 
-void Grass::UpdateWind() {
+void Grass::UpdateWind(const float delta) {
     for(int i = 0; i < GRID_COUNT*GRID_COUNT; ++i) {
 
-	Vector3f w;
 
-	w =Vector3f(
-	    m_rng.RandomFloat(-2,+2), 0, m_rng.RandomFloat(-2,+2)
-
-	    ).Normalize();
-
-	m_turbWindTextureBuffer[i] = w;
+	m_turbWindTextureBuffer[i] = m_turbWindField[i]->Update(delta);
     }
 
     m_turbWindTexture->Bind();
     m_turbWindTexture->UpdateTexture(&m_turbWindTextureBuffer[0] );
     m_turbWindTexture->Unbind();
 
+}
+
+
+Grass::GrassTile::GrassTile(Random& rng):
+    m_minAngle(rng.RandomFloat(-2,-0.5)  ),
+    m_maxAngle(rng.RandomFloat(0.5,+2.0)  ),
+    m_angle(0),
+    m_origVector( Vector3f(rng.RandomFloat(-2,+2), 0, rng.RandomFloat(-2,+2)).Normalize()  ),
+    m_vectorLength(rng.RandomFloat(0.5,+2.5)),
+    m_rotationVel(rng.RandomFloat(-0.5, +0.5)){
+
+}
+
+Vector3f Grass::GrassTile::Update(const float delta) {
+
+    m_angle += m_rotationVel * delta;
+
+    if(m_angle < m_minAngle) {
+	m_angle = m_minAngle;
+	m_rotationVel *= -1.0f;
+    } else if(m_angle > m_maxAngle) {
+	m_angle = m_maxAngle;
+	m_rotationVel *= -1.0f;
+    }
+
+
+    float a = m_angle;
+    float x = m_origVector.x;
+    float y = m_origVector.z;
+
+    return m_vectorLength * Vector3f(
+	cos(a) * x - sin(a) * y,
+	0,
+	sin(a) * x + cos(a) * y
+	);
+
+
+
+//    return Vector3f(0,0,0);
 }

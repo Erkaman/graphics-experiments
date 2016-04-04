@@ -113,7 +113,7 @@ void main()
 
 //	vec3 turbWind = vec3(xDir,0, zDir ) * sin(time * period);
 
-	vec3 translation =turbWind * 0.0 + meanWind * 1.00;
+	vec3 translation =turbWind * 1.0 + meanWind * 0.00;
 
 //	translation = vec3(0);
 
