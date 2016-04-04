@@ -1,4 +1,4 @@
-TODO:
+ODO:
 grass orientation basis based on height map.
 grass wind simultation
 grass reacting to player pos.
@@ -16,7 +16,7 @@ http://forums.torque3d.org/viewtopic.php?t=18
 http://www.john-chapman.net/content.php?id=17
 http://www.pmavridis.com/research/fbcompression/
 http://pub.nobin.org/2012-lemme-mathesis_grass-web.pdf
-https://users.cg.tuwien.ac.at/kchustl/vegetation/kusternig.diploma.thesis.pdf
+https://usersg.tuwien.ac.at/kchustl/vegetation/kusternig.diploma.thesis.pdf
 http://www.gamedev.net/topic/668085-performance-of-drawing-vegetation-overdraw-alpha-testing-alpha-cutout-model-generation/
 
 

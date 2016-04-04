@@ -29,6 +29,9 @@ using std::string;
 using std::vector;
 using std::to_string;
 
+constexpr int GRID_COUNT = 64;
+
+
 Vector2f AngleToVector(const float angle) {
     const float radians = ToRadians(angle);
     return Vector2f(
@@ -115,6 +118,65 @@ void Grass::Init() {
     m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_INT);
     m_grassIndexBuffer->SetUsage(GL_DYNAMIC_DRAW);
 
+
+
+    m_meanWindTexture = new Texture2D(nullptr, GRID_COUNT, GRID_COUNT,
+				       GL_RGB16F,
+				       GL_RGB,
+				       GL_FLOAT);
+
+
+    m_meanWindTexture->Bind();
+    m_meanWindTexture->SetTextureClamping();
+    m_meanWindTexture->SetMinFilter(GL_NEAREST);
+    m_meanWindTexture->SetMagFilter(GL_NEAREST);
+    m_meanWindTexture->Unbind();
+
+    m_meanWindTextureBuffer = new Vector3f[GRID_COUNT*GRID_COUNT];
+
+    for(int i = 0; i < GRID_COUNT*GRID_COUNT; ++i) {
+
+	Vector3f w;
+/*
+	int rem = (i   ) % 2 + (i%2 == 0 ? 0 : 1);
+
+	if(rem == 0) {
+	    w = Vector3f(1,1,1);
+	} else if(rem == 1) {
+	    w = Vector3f(0,0,0);
+	}*/
+	w =Vector3f(
+	    Vector3f(m_rng.RandomFloat(-2,+2), 0, m_rng.RandomFloat(-2,+2)).Normalize()
+
+	    );
+
+	m_meanWindTextureBuffer[i] = w;
+    }
+
+    m_meanWindTexture->Bind();
+    m_meanWindTexture->UpdateTexture(&m_meanWindTextureBuffer[0] );
+    m_meanWindTexture->Unbind();
+
+
+
+
+    m_turbWindTexture = new Texture2D(nullptr, GRID_COUNT, GRID_COUNT,
+				       GL_RGB16F,
+				       GL_RGB,
+				       GL_FLOAT);
+
+
+    m_turbWindTexture->Bind();
+    m_turbWindTexture->SetTextureClamping();
+    m_turbWindTexture->SetMinFilter(GL_NEAREST);
+    m_turbWindTexture->SetMagFilter(GL_NEAREST);
+    m_turbWindTexture->Unbind();
+
+    m_turbWindTextureBuffer = new Vector3f[GRID_COUNT*GRID_COUNT];
+
+
+
+
 }
 
 Grass::Grass(HeightMap* heightMap): m_rng(12), m_heightMap(heightMap) {
@@ -180,6 +242,17 @@ void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderPro
     Texture::SetActiveTextureUnit(1);
     m_heightMap->GetHeightMap()->Bind();
 
+    shader->SetUniform("meanWindTex", 2);
+    Texture::SetActiveTextureUnit(2);
+    m_meanWindTexture->Bind();
+
+
+    shader->SetUniform("turbWindTex", 3);
+    Texture::SetActiveTextureUnit(3);
+    m_turbWindTexture->Bind();
+
+
+
     shader->SetUniform("cameraPos", m_cameraPosition );
     shader->SetUniform("cameraDir", m_cameraDir );
 
@@ -189,6 +262,8 @@ void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderPro
     VBO::DrawIndices(*m_grassVertexBuffer, *m_grassIndexBuffer, GL_TRIANGLES, (m_grassNumTriangles)*3);
 
     m_grassTexture->Unbind();
+    m_meanWindTexture->Unbind();
+    m_turbWindTexture->Unbind();
 
     shader->Unbind();
 
@@ -205,6 +280,9 @@ void Grass::DrawReflection(const ICamera* camera, const Vector4f& lightPosition)
 }
 
 void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vector3f& cameraDir) {
+
+    UpdateWind();
+
     m_time += delta;
 
 //    LOG_I("cam pos: %s", string(cameraPosition).c_str() );
@@ -365,6 +443,10 @@ void Grass::Rebuild() {
 
 void Grass::AddGrass(const Vector2i& position, int grassClusterSize) {
 
+    GL_C(glFlush() ) ;
+    GL_C(glFinish() ) ;
+
+
     int numGrass = (grassClusterSize-1) * m_rng.RandomFloat(+4,+6);
     int dist = (grassClusterSize-1) * 3.5;
 
@@ -394,6 +476,10 @@ void Grass::AddGrass(const Vector2i& position, int grassClusterSize) {
 
 
     Rebuild();
+
+    GL_C(glFlush() ) ;
+    GL_C(glFinish() ) ;
+
 }
 
 
@@ -439,4 +525,24 @@ void Grass::SaveGrass(const std::string& filename) {
 
 GLuint Grass::GetBaseIndex(FloatVector& grassVertices) {
      return  (GLuint)grassVertices.size() / (3+2+3+3);
+}
+
+
+void Grass::UpdateWind() {
+    for(int i = 0; i < GRID_COUNT*GRID_COUNT; ++i) {
+
+	Vector3f w;
+
+	w =Vector3f(
+	    m_rng.RandomFloat(-2,+2), 0, m_rng.RandomFloat(-2,+2)
+
+	    ).Normalize();
+
+	m_turbWindTextureBuffer[i] = w;
+    }
+
+    m_turbWindTexture->Bind();
+    m_turbWindTexture->UpdateTexture(&m_turbWindTextureBuffer[0] );
+    m_turbWindTexture->Unbind();
+
 }

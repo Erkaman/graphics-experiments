@@ -19,6 +19,7 @@ class Vector3f;
 class Vector4f;
 class HeightMap;
 class Vector2i;
+class Texture2D;
 
 
 struct GrassInfo {
@@ -65,6 +66,15 @@ private:
     Vector2f m_cameraPosition;
     Vector3f m_cameraDir;
 
+
+    Texture2D* m_meanWindTexture;
+    Vector3f* m_meanWindTextureBuffer;
+
+    // turbulent wind.
+    Texture2D* m_turbWindTexture;
+    Vector3f* m_turbWindTextureBuffer;
+
+
     void GenerateGrassVertices(const Vector2f position, const float angle, FloatVector& grassVertices, std::vector<GLuint>& grassIndices, const float width, const float height, int id);
 
 
@@ -76,6 +86,9 @@ private:
 
     void Init();
 
+
+
+    void UpdateWind();
 
 public:
 

@@ -31,6 +31,8 @@ void main(){
 
 //    sample.xyz = vec3(1);
 
+//    sample.xyz = color.xyz;
+
 
 #ifdef DEFERRED
 

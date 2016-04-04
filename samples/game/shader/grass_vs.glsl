@@ -16,6 +16,9 @@ out vec3 viewSpacePosition;
 //out vec3 vertexColor;
 
 uniform sampler2D heightMap;
+uniform sampler2D meanWindTex;
+uniform sampler2D turbWindTex;
+
 
 out vec2 texCoord;
 
@@ -103,25 +106,31 @@ void main()
 
 	float period = rand(seed.xyz, 2.0 * 0.60, 2.0 * 0.70);
 
-	vec3 translation =  vec3(xDir,0, zDir ) * sin(time * period);
-	translation = vec3(0);
+	vec2 windTexCoord = vec2(centerPosition.x / resolution, centerPosition.y / resolution);
+
+	vec3 meanWind = texture(meanWindTex, windTexCoord).xyz;
+	vec3 turbWind = texture(turbWindTex, windTexCoord).xyz;
+
+//	vec3 turbWind = vec3(xDir,0, zDir ) * sin(time * period);
+
+	vec3 translation =turbWind * 0.0 + meanWind * 1.00;
+
+//	translation = vec3(0);
+
 
 
 
 	vec2 d = -normalize(cameraPos.xy - centerPosition.xy);
 
 
-	translation.xz += d * playerWindStrength * 7;
+	// affect grass with player pos.
+//	translation.xz += d * playerWindStrength * 7;
 
 	pos += translation;
 	normal = normalize(normal * (2.5) + translation);
 
     }
 
-      color = vec3(playerWindStrength);
-
-
-      color = normalize(cross(vec3(0,1,0), cameraDir )  );
 
     /*
     if(distance(cameraPos.xy, centerPosition.xy) < 5) {
