@@ -549,36 +549,23 @@ void Grass::UpdateWind(const float delta) {
 
 
 Grass::GrassTile::GrassTile(Random& rng):
-    m_minAngle(rng.RandomFloat(-2,-0.5)  ),
-    m_maxAngle(rng.RandomFloat(0.5,+2.0)  ),
-    m_angle(0),
-    m_origVector( Vector3f(rng.RandomFloat(-2,+2), 0, rng.RandomFloat(-2,+2)).Normalize()  ),
-    m_vectorLength(rng.RandomFloat(0.5,+2.5)),
-    m_rotationVel(rng.RandomFloat(-0.5, +0.5)){
 
+    m_dir( Vector3f(rng.RandomFloat(-2,+2), 0, rng.RandomFloat(-2,+2))  )
+{
+    m_xDelta = rng.RandomFloat(-100,+1000);
+    m_zDelta = rng.RandomFloat(-1000,+10000);
 }
 
 Vector3f Grass::GrassTile::Update(const float delta) {
 
-    m_angle += m_rotationVel * delta;
+    m_xDelta += delta;
+    m_zDelta += delta;
 
-    if(m_angle < m_minAngle) {
-	m_angle = m_minAngle;
-	m_rotationVel *= -1.0f;
-    } else if(m_angle > m_maxAngle) {
-	m_angle = m_maxAngle;
-	m_rotationVel *= -1.0f;
-    }
-
-
-    float a = m_angle;
-    float x = m_origVector.x;
-    float y = m_origVector.z;
-
-    return m_vectorLength * Vector3f(
-	cos(a) * x - sin(a) * y,
+    return Vector3f(
+	m_dir.x * sin(m_xDelta),
 	0,
-	sin(a) * x + cos(a) * y
+	m_dir.z * cos(m_xDelta)
+
 	);
 
 

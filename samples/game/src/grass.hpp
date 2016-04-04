@@ -39,15 +39,11 @@ private:
     struct GrassTile {
 
 
-	const float m_minAngle;
-	const float m_maxAngle;
-	float m_rotationVel;
+	Vector3f m_dir;
 
-	float m_angle;
+	float m_xDelta;
+	float m_zDelta;
 
-	Vector3f m_origVector;
-
-	const float m_vectorLength;
 
 	GrassTile(Random& rng);
 
