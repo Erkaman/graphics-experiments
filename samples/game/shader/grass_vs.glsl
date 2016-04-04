@@ -70,7 +70,8 @@ float rand(vec3 seed, float low, float high) {
 
 void main()
 {
-    vec3 seed = centerPosition.xyz;
+    vec3 seed = vec3(0.02 * centerPosition.z * centerPosition.xy / resolution, centerPosition.z * 0.03232);
+
 
 
 
@@ -101,8 +102,14 @@ void main()
 
     if(texCoordIn.y < 0.1) {
 
-	float xDir =rand(rand(vec2(seed.x, seed.y)), 2*0.05, 2*0.27);
-	float zDir =rand(rand(vec2(seed.y, seed.z)), 2*0.05, 2*0.27);
+    seed = vec3(
+	rand(id / 100),
+	rand(32.2*id / 300),
+	rand(3232.2*id / 3243));
+
+
+	float xDir =rand(rand(vec2(seed.x, seed.y)), -2, +2);
+	float zDir =rand(rand(vec2(seed.y, seed.z)), -2, +2);
 
 	float period = rand(seed.xyz, 2.0 * 0.60, 2.0 * 0.70);
 
@@ -111,9 +118,9 @@ void main()
 	vec3 meanWind = texture(meanWindTex, windTexCoord).xyz;
 	vec3 turbWind = texture(turbWindTex, windTexCoord).xyz;
 
-//	vec3 turbWind = vec3(xDir,0, zDir ) * sin(time * period);
+	vec3 localTurbWind = vec3(xDir,0, zDir ) * sin(time * period);
 
-	vec3 translation =turbWind * 1.0 + meanWind * 0.00;
+	vec3 translation =turbWind * 0.5 + meanWind * 0.7 + localTurbWind * 0.1;
 
 //	translation = vec3(0);
 
@@ -139,6 +146,11 @@ void main()
 
     }
     */
+
+
+
+
+//    color = seed.xyz;
 
     gl_Position = mvp * vec4(pos,1);
 

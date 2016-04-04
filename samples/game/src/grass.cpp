@@ -24,6 +24,9 @@
 #include "ewa/buffered_file_reader.hpp"
 #include "ewa/string_util.hpp"
 
+#include "math/math_common.hpp"
+
+
 
 using std::string;
 using std::vector;
@@ -548,21 +551,57 @@ void Grass::UpdateWind(const float delta) {
 
     for(int x = 0; x < GRID_COUNT; ++x) {
 	for(int z = 0; z < GRID_COUNT; ++z) {
-//	    LOG_I("x,z: %d, %d", x, z );
+	    turbWindField(x,z)->Update(delta);
+	}
+    }
 
-//	    LOG_I("secnd");
-//	    turbWindField(x,z)->Update(delta);
-//	    LOG_I("third");
+    // weights
+    int ws[3][3] =
+	{
+	    { 1, 2, 1 },
+	    { 2, 4, 2 },
+	    { 1, 2, 1 },
+	};
 
-//	    LOG_I("first");
+    // filter radius.
+    int rad = 1;
 
-	    // init this guy.
-//	    turbWindTextureBuffer(x,z);
+    int offset = 1;
+    float denominator;
+
+    for(int ix = -rad; ix <= +rad; ++ix) {
+	for(int iz = -rad; iz <= +rad; ++iz) {
+	    denominator += ws[ix+offset][iz+offset];
+	}
+    }
+    denominator = 1.0 / denominator;
+
+//    LOG_I("den om: %f", denominator  );
+
+    for(int x = 0; x < GRID_COUNT; ++x) {
+	for(int z = 0; z < GRID_COUNT; ++z) {
+
+	    Vector3f numerator = 0.0f;
+
+	    for(int ix = -rad; ix <= +rad; ++ix) {
+		for(int iz = -rad; iz <= +rad; ++iz) {
+
+		    int ax = x+ix;
+		    int az = z+iz;
+
+		    ax = Clamp(ax, 0, GRID_COUNT-1);
+		    az = Clamp(az, 0, GRID_COUNT-1);
+
+		    numerator += turbWindField(ax,az)->m_v * ws[ix+offset][iz+offset];
+
+		}
+	    }
+
+//	    float
+
+	    turbWindTextureBuffer(x,z) = numerator * denominator;
 
 
-
-
-	    turbWindTextureBuffer(x,z) = turbWindField(x,z)->Update(delta);
 	}
     }
 
@@ -587,7 +626,7 @@ Vector3f Grass::GrassTile::Update(const float delta) {
     m_xDelta += delta;
     m_zDelta += delta;
 
-    return Vector3f(
+    m_v = Vector3f(
 	m_dir.x * sin(m_xDelta),
 	0,
 	m_dir.z * cos(m_xDelta)
