@@ -4,6 +4,7 @@
 
 #include "ewa/math/vector2f.hpp"
 #include "ewa/math/vector3f.hpp"
+#include "ewa/mult_array.hpp"
 
 
 #include "ewa/random.hpp"
@@ -85,16 +86,16 @@ private:
 
 
     Texture2D* m_meanWindTexture;
-    Vector3f* m_meanWindTextureBuffer;
+    MultArray<Vector3f>* m_meanWindTextureBuffer;
 
-
+//new MultArray<unsigned short>
 
 
     // turbulent wind.
     Texture2D* m_turbWindTexture;
-    Vector3f* m_turbWindTextureBuffer;
+    MultArray<Vector3f>* m_turbWindTextureBuffer;
 
-    GrassTile** m_turbWindField;
+    MultArray<GrassTile*>* m_turbWindField;
 
 
 

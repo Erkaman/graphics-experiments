@@ -132,29 +132,33 @@ void Grass::Init() {
     m_meanWindTexture->SetMagFilter(GL_NEAREST);
     m_meanWindTexture->Unbind();
 
-    m_meanWindTextureBuffer = new Vector3f[GRID_COUNT*GRID_COUNT];
+    m_meanWindTextureBuffer = new MultArray<Vector3f>(GRID_COUNT,GRID_COUNT);
+    MultArray<Vector3f>& meanWindTextureBuffer = *m_meanWindTextureBuffer;
 
-    for(int i = 0; i < GRID_COUNT*GRID_COUNT; ++i) {
 
-	Vector3f w;
+    for(int x = 0; x < GRID_COUNT; ++x) {
+	for(int z = 0; z < GRID_COUNT; ++z) {
+
+	    Vector3f w;
 /*
-	int rem = (i   ) % 2 + (i%2 == 0 ? 0 : 1);
+  int rem = (i   ) % 2 + (i%2 == 0 ? 0 : 1);
 
-	if(rem == 0) {
-	    w = Vector3f(1,1,1);
-	} else if(rem == 1) {
-	    w = Vector3f(0,0,0);
-	}*/
-	w =Vector3f(
-	    Vector3f(m_rng.RandomFloat(-2,+2), 0, m_rng.RandomFloat(-2,+2)).Normalize()
+  if(rem == 0) {
+  w = Vector3f(1,1,1);
+  } else if(rem == 1) {
+  w = Vector3f(0,0,0);
+  }*/
+	    w =Vector3f(
+		Vector3f(m_rng.RandomFloat(-2,+2), 0, m_rng.RandomFloat(-2,+2)).Normalize()
 
-	    );
+		);
 
-	m_meanWindTextureBuffer[i] = w;
+	    meanWindTextureBuffer(x,z) = w;
+	}
     }
 
     m_meanWindTexture->Bind();
-    m_meanWindTexture->UpdateTexture(&m_meanWindTextureBuffer[0] );
+    m_meanWindTexture->UpdateTexture(m_meanWindTextureBuffer->GetData() );
     m_meanWindTexture->Unbind();
 
 
@@ -172,14 +176,17 @@ void Grass::Init() {
     m_turbWindTexture->SetMagFilter(GL_NEAREST);
     m_turbWindTexture->Unbind();
 
-    m_turbWindTextureBuffer = new Vector3f[GRID_COUNT*GRID_COUNT];
+    m_turbWindTextureBuffer = new MultArray<Vector3f>(GRID_COUNT,GRID_COUNT);
 
-    m_turbWindField = new Grass::GrassTile*[GRID_COUNT*GRID_COUNT];
+    m_turbWindField = new MultArray<GrassTile*>(GRID_COUNT,GRID_COUNT);
+    MultArray<GrassTile*>& turbWindField = *m_turbWindField;
 
 
-    for(int i = 0; i < GRID_COUNT*GRID_COUNT; ++i) {
+    for(int x = 0; x < GRID_COUNT; ++x) {
+	for(int z = 0; z < GRID_COUNT; ++z) {
 
-	m_turbWindField[i] = new GrassTile(m_rng);
+	    turbWindField(x,z) = new GrassTile(m_rng);
+	}
     }
 
 
@@ -535,14 +542,33 @@ GLuint Grass::GetBaseIndex(FloatVector& grassVertices) {
 
 
 void Grass::UpdateWind(const float delta) {
-    for(int i = 0; i < GRID_COUNT*GRID_COUNT; ++i) {
+
+    MultArray<Vector3f>& turbWindTextureBuffer = *m_turbWindTextureBuffer;
+    MultArray<GrassTile*>& turbWindField = *m_turbWindField;
+
+    for(int x = 0; x < GRID_COUNT; ++x) {
+	for(int z = 0; z < GRID_COUNT; ++z) {
+//	    LOG_I("x,z: %d, %d", x, z );
+
+//	    LOG_I("secnd");
+//	    turbWindField(x,z)->Update(delta);
+//	    LOG_I("third");
+
+//	    LOG_I("first");
+
+	    // init this guy.
+//	    turbWindTextureBuffer(x,z);
 
 
-	m_turbWindTextureBuffer[i] = m_turbWindField[i]->Update(delta);
+
+
+	    turbWindTextureBuffer(x,z) = turbWindField(x,z)->Update(delta);
+	}
     }
 
+
     m_turbWindTexture->Bind();
-    m_turbWindTexture->UpdateTexture(&m_turbWindTextureBuffer[0] );
+    m_turbWindTexture->UpdateTexture(m_turbWindTextureBuffer->GetData() );
     m_turbWindTexture->Unbind();
 
 }
