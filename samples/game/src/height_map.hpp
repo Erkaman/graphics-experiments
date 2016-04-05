@@ -382,6 +382,19 @@ public:
 	    return m_cursorPosition;
     }
 
+    float GetYScale()const {
+	return m_yScale;
+    }
+
+    float GetXzScale()const {
+	return m_xzScale;
+    }
+
+
+    Vector3f GetOffset()const {
+	return m_offset;
+    }
+
     Vector2f ToLocalPos(Vector3f pos)const;
 
 

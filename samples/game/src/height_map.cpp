@@ -1991,13 +1991,6 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 
     MultArray<AABB>& aabbs = *m_aabbs;
 
-/*
-    MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
-    MultArray<bool>& inLightFrustum = *m_inLightFrustum;
-    MultArray<bool>& inReflectionFrustum = *m_inReflectionFrustum;
-*/
-
-
     m_inCameraFrustum->clear();
     m_inLightFrustum->clear();
     m_inReflectionFrustum->clear();
@@ -2017,7 +2010,6 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 
 
     WhirlPatternCreator pattern;
-
 
 
     /*
@@ -2051,12 +2043,6 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 	++checkedChunks;
     }
 
-
-
-
-
-
-
     /*
       Find which chunks to draw for environment map camera.
      */
@@ -2087,8 +2073,6 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 
 	Vector2i v(x,z);
 
-
-
 	for(int i = 0; i < 6; ++i) {
 
 	    if(envLightFrustums[i]->IsAABBInFrustum(aabb)) {
@@ -2116,8 +2100,6 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 	}
     }
 }
-
-
 
 AABB HeightMap::GetAABB()const {
     AABB aabb;
@@ -2636,8 +2618,5 @@ Vector2f HeightMap::ToLocalPos(Vector3f pos)const {
     return Vector2f(
 	((pos.x - m_offset.x) / m_xzScale) * m_resolution,
 
-	((pos.z - m_offset.z) / m_xzScale) * m_resolution
-
-
-);
+	((pos.z - m_offset.z) / m_xzScale) * m_resolution);
 }

@@ -683,7 +683,7 @@ void TuhuApplication::RenderEnvMap() {
 	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
 
-	    m_grass->DrawReflection(m_car->GetEnvCameras()[i], m_lightDirection);
+	    m_grass->DrawEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
 
 	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
@@ -868,7 +868,9 @@ void TuhuApplication::Update(const float delta) {
 
 //    LOG_I("dir: %s", string(cameraDirection).c_str() );
 
-    m_grass->Update(delta,  m_heightMap->ToLocalPos(m_curCamera->GetPosition()), cameraDirection );
+    m_grass->Update(delta,  m_heightMap->ToLocalPos(m_curCamera->GetPosition()), cameraDirection,
+		    *m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums(), *m_reflectionFrustum
+ );
 
 
     m_prevCameraPos = curCameraPos;

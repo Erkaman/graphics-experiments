@@ -2,9 +2,11 @@
 
 #include "ewa/gl/gl_common.hpp"
 
+#include "ewa/math/vector2i.hpp"
 #include "ewa/math/vector2f.hpp"
 #include "ewa/math/vector3f.hpp"
 #include "ewa/mult_array.hpp"
+#include "ewa/aabb.hpp"
 
 
 #include "ewa/random.hpp"
@@ -21,6 +23,7 @@ class Vector4f;
 class HeightMap;
 class Vector2i;
 class Texture2D;
+class ViewFrustum;
 
 
 struct GrassInfo {
@@ -89,6 +92,7 @@ private:
     Vector2f m_cameraPosition;
     Vector3f m_cameraDir;
 
+    MultArray<AABB>* m_aabbs;
 
     Texture2D* m_meanWindTexture;
     MultArray<Vector3f>* m_meanWindTextureBuffer;
@@ -104,23 +108,30 @@ private:
 
     MultArray<GrassChunk*>* m_chunks;
 
-
+    std::vector<Vector2i>* m_inCameraFrustum;
+    std::vector<Vector2i>* m_inReflectionFrustum;
+    std::vector<Vector2i>* m_inEnvFrustums[6];
 
     void GenerateGrassVertices(const Vector2f position, const float angle, const float width, const float height, int id);
 
 
     void MakeGrass(const Vector2f position, const float angle, const float width, const float height, int id);
 
-    void Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader);
+    void Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader,
+	const std::vector<Vector2i>& inFrustum);
 
     void Rebuild();
 
-    void Init(int heightMapResolution);
+    void Init(HeightMap* heightMap);
 
 
 
     void UpdateWind(const float delta);
 
+
+    void CreateAABBs(const float yScale, const Vector3f& offset, float xzScale);
+
+    Vector3f GetChunkCornerPos(int chunkX, int chunkZ, float y, const Vector3f& offset, float xzScale);
 
 
 public:
@@ -132,11 +143,13 @@ public:
 
     void DrawDeferred(const ICamera* camera, const Vector4f& lightPosition);
     void DrawReflection(const ICamera* camera, const Vector4f& lightPosition);
+    void DrawEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i);
 
     void RenderIdAll(const ICamera* camera);
 
-
-    void Update(const float delta, const Vector2f& cameraPosition, const Vector3f& cameraDir);
+    void Update(const float delta, const Vector2f& cameraPosition, const Vector3f& cameraDir,
+		const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
+		ViewFrustum** envLightFrustums, const ViewFrustum& reflectionFrustum);
 
     void AddGrass(const Vector2i& position, int grassClusterSize);
     void RemoveGrass(int id);

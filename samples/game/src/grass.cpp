@@ -26,6 +26,7 @@
 
 #include "math/math_common.hpp"
 
+#include "ewa/view_frustum.hpp"
 
 
 using std::string;
@@ -33,7 +34,7 @@ using std::vector;
 using std::to_string;
 
 constexpr int TILE_GRID_COUNT = 64;
-constexpr int CHUNK_COUNT = 18;
+constexpr int CHUNK_COUNT = 8;
 
 Vector2f AngleToVector(const float angle) {
     const float radians = ToRadians(angle);
@@ -47,8 +48,8 @@ Grass::~Grass() {
 }
 
 
-void Grass::Init(int heightMapResolution) {
-    m_heightMapResolution = heightMapResolution;
+void Grass::Init(HeightMap* heightMap  ) {
+    m_heightMapResolution = heightMap->GetResolution();
 
     m_currentId = 0;
 
@@ -57,6 +58,8 @@ void Grass::Init(int heightMapResolution) {
     */
 
     m_time = 0;
+
+    CreateAABBs( heightMap->GetYScale(), heightMap->GetOffset(),heightMap->GetXzScale()  );
 
     m_chunks = new MultArray<GrassChunk*>(CHUNK_COUNT, CHUNK_COUNT);
     m_chunkSize = m_heightMapResolution / (float)CHUNK_COUNT;
@@ -213,13 +216,13 @@ void Grass::Init(int heightMapResolution) {
 }
 
 Grass::Grass(HeightMap* heightMap): m_rng(12), m_heightMap(heightMap) {
-    Init(heightMap->GetResolution() );
+    Init(heightMap );
 }
 
 
 Grass::Grass(const std::string& filename, HeightMap* heightMap): m_rng(12), m_heightMap(heightMap) {
 
-    Init(heightMap->GetResolution());
+    Init(heightMap);
 
     BufferedFileReader* reader = BufferedFileReader::Load(  filename);
     if(!reader) {
@@ -254,7 +257,8 @@ Grass::Grass(const std::string& filename, HeightMap* heightMap): m_rng(12), m_he
 }
 
 
-void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader) {
+void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader,
+    const std::vector<Vector2i>& inFrustum) {
 
     SetCullFace(false);
 
@@ -291,15 +295,23 @@ void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderPro
 
     MultArray<GrassChunk*>& chunks = *m_chunks;
 
+
+    /*
     for(int x = 0; x < CHUNK_COUNT; ++x) {
 	for(int z = 0; z < CHUNK_COUNT; ++z) {
+*/
+    for(Vector2i chunkPos : inFrustum) {
+
+	int x = chunkPos.x;
+	int z = chunkPos.y;
+
 	    GrassChunk* chunk = chunks(x,z);
 
 	    // if( (x+z) % 2 == 1 )
 
 	    VBO::DrawIndices(*chunk->m_grassVertexBuffer, *chunk->m_grassIndexBuffer, GL_TRIANGLES, (chunk->m_grassNumTriangles)*3);
 
-	}
+
     }
 
 
@@ -315,14 +327,76 @@ void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderPro
 }
 
 void Grass::DrawDeferred(const ICamera* camera, const Vector4f& lightPosition) {
-    Draw(camera, lightPosition, m_deferredShader);
+    Draw(camera, lightPosition, m_deferredShader,*m_inCameraFrustum);
 }
 
 void Grass::DrawReflection(const ICamera* camera, const Vector4f& lightPosition) {
-    Draw(camera, lightPosition, m_reflectionShader);
+    Draw(camera, lightPosition, m_reflectionShader,*m_inReflectionFrustum);
 }
 
-void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vector3f& cameraDir) {
+void Grass::DrawEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i) {
+    Draw(camera, lightPosition, m_reflectionShader,* m_inEnvFrustums[i]);
+}
+
+
+
+void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vector3f& cameraDir,
+		   const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
+		   ViewFrustum** envLightFrustums, const ViewFrustum& reflectionFrustum) {
+
+
+    MultArray<AABB>& aabbs = *m_aabbs;
+
+
+    m_inCameraFrustum->clear();
+    m_inReflectionFrustum->clear();
+
+    for(int i = 0; i < 6; ++i) {
+	m_inEnvFrustums[i]->clear();
+    }
+
+
+    for(int x = 0; x < CHUNK_COUNT; ++x) {
+	for(int z = 0; z < CHUNK_COUNT; ++z) {
+
+	    AABB aabb = aabbs(x,z);
+
+	    Vector2i v(x,z);
+
+	    if(cameraFrustum.IsAABBInFrustum(aabb)) {
+		m_inCameraFrustum->push_back(v);
+	    }
+
+	    if(reflectionFrustum.IsAABBInFrustum(aabb)) {
+		m_inReflectionFrustum->push_back(v);
+	    }
+
+	    for(int i = 0; i < 6; ++i) {
+		if(envLightFrustums[i]->IsAABBInFrustum(aabb)) {
+		    m_inEnvFrustums[i]->push_back(v);
+		}
+	    }
+	}
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     UpdateWind(delta);
 
@@ -330,9 +404,17 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
 //    LOG_I("cam pos: %s", string(cameraPosition).c_str() );
 
+
+
+
+
+
     m_cameraPosition = cameraPosition;
     m_cameraDir = cameraDir;
 
+
+
+    /*
     vector<GrassInfo> grassVector;
 
     for(auto& pair : m_grass) {
@@ -356,13 +438,6 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
     vector<GLuint> grassIndices;
 
-/*
-    LOG_I("BEG");
-    LOG_I("cp: %s", string(cp).c_str() );
-*/
-
-
-    /*
     for(int i = 0; i < grassVector.size(); ++i) {
 	GrassInfo& grass = grassVector[i];
 
@@ -565,7 +640,7 @@ void Grass::RemoveGrass(int id) {
 
 
 void Grass::RenderIdAll(const ICamera* camera) {
-    Draw(camera, Vector4f(0), m_outputIdShader );
+    Draw(camera, Vector4f(0), m_outputIdShader, *m_inCameraFrustum);
 }
 
 void Grass::SaveGrass(const std::string& filename) {
@@ -695,4 +770,42 @@ Vector3f Grass::GrassTile::Update(const float delta) {
 
 
 //    return Vector3f(0,0,0);
+}
+
+Vector3f Grass::GetChunkCornerPos(int chunkX, int chunkZ, float y, const Vector3f& offset, float xzScale) {
+
+    Vector2f globalPos(chunkX / (float)CHUNK_COUNT, chunkZ / (float)CHUNK_COUNT);
+
+    return offset + Vector3f(globalPos.x * xzScale, y,globalPos.y * xzScale);
+}
+
+
+void Grass::CreateAABBs(const float yScale, const Vector3f& offset, float xzScale) {
+
+    m_inCameraFrustum = new std::vector<Vector2i>;
+    m_inCameraFrustum->reserve(CHUNK_COUNT * CHUNK_COUNT);
+
+    m_inReflectionFrustum = new std::vector<Vector2i>;
+    m_inReflectionFrustum->reserve(CHUNK_COUNT * CHUNK_COUNT);
+
+    for(int i = 0; i < 6; ++i) {
+	m_inEnvFrustums[i] =new std::vector<Vector2i>;
+	m_inEnvFrustums[i]->reserve(CHUNK_COUNT * CHUNK_COUNT);
+    }
+
+    m_aabbs = new MultArray<AABB>(CHUNK_COUNT, CHUNK_COUNT);
+    MultArray<AABB>& aabbs = *m_aabbs;
+
+    for(int x = 0; x < CHUNK_COUNT; ++x) {
+	for(int z = 0; z < CHUNK_COUNT; ++z) {
+
+	    AABB aabb(
+		GetChunkCornerPos(x,z, -yScale, offset, xzScale),
+		GetChunkCornerPos(x+1, z+1, +yScale, offset, xzScale)
+		);
+	    aabbs(x,z) = aabb;
+
+//	    LOG_I("aabb: %s, %s", string(aabb.min).c_str(), string(aabb.max).c_str() );
+	}
+    }
 }
