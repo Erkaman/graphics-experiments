@@ -91,6 +91,7 @@ private:
 
     Vector2f m_cameraPosition;
     Vector3f m_cameraDir;
+    float m_xzScale;
 
     MultArray<AABB>* m_aabbs;
 

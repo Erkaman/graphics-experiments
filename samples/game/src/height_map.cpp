@@ -424,8 +424,6 @@ void HeightMap::RenderUnsetup() {
 
 }
 
-
-
 void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i, bool aoOnly) {
     m_envShader->Bind();
 

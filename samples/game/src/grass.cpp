@@ -27,6 +27,8 @@
 #include "math/math_common.hpp"
 
 #include "ewa/view_frustum.hpp"
+#include "whirl_pattern_creator.hpp"
+
 
 
 using std::string;
@@ -34,7 +36,7 @@ using std::vector;
 using std::to_string;
 
 constexpr int TILE_GRID_COUNT = 64;
-constexpr int CHUNK_COUNT = 8;
+constexpr int CHUNK_COUNT = 20;
 
 Vector2f AngleToVector(const float angle) {
     const float radians = ToRadians(angle);
@@ -60,6 +62,7 @@ void Grass::Init(HeightMap* heightMap  ) {
     m_time = 0;
 
     CreateAABBs( heightMap->GetYScale(), heightMap->GetOffset(),heightMap->GetXzScale()  );
+    m_xzScale = heightMap->GetXzScale() ;
 
     m_chunks = new MultArray<GrassChunk*>(CHUNK_COUNT, CHUNK_COUNT);
     m_chunkSize = m_heightMapResolution / (float)CHUNK_COUNT;
@@ -356,6 +359,9 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
     }
 
 
+
+
+
     for(int x = 0; x < CHUNK_COUNT; ++x) {
 	for(int z = 0; z < CHUNK_COUNT; ++z) {
 
@@ -363,9 +369,11 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
 	    Vector2i v(x,z);
 
+
 	    if(cameraFrustum.IsAABBInFrustum(aabb)) {
 		m_inCameraFrustum->push_back(v);
 	    }
+
 
 	    if(reflectionFrustum.IsAABBInFrustum(aabb)) {
 		m_inReflectionFrustum->push_back(v);
