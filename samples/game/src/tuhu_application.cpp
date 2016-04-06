@@ -913,6 +913,11 @@ void TuhuApplication::Update(const float delta) {
     }
 
 
+    if( kbs.WasPressed(GLFW_KEY_8) ) {
+	m_grass->BlowWind();
+    }
+
+
 
     if(GuiMouseState::isWithinWindow()) {
 

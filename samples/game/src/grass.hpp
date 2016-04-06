@@ -97,6 +97,7 @@ private:
 
     Texture2D* m_meanWindTexture;
     MultArray<Vector3f>* m_meanWindTextureBuffer;
+    MultArray<Vector3f>* m_blowWindTextureBuffer;
 
 //new MultArray<unsigned short>
 
@@ -112,6 +113,10 @@ private:
     std::vector<Vector2i>* m_inCameraFrustum;
     std::vector<Vector2i>* m_inReflectionFrustum;
     std::vector<Vector2i>* m_inEnvFrustums[6];
+
+    float windLerp;
+    bool doWind;
+    float windInc;
 
     void GenerateGrassVertices(const Vector2f position, const float angle, const float width, const float height, int id);
 
@@ -133,6 +138,8 @@ private:
     void CreateAABBs(const float yScale, const Vector3f& offset, float xzScale);
 
     Vector3f GetChunkCornerPos(int chunkX, int chunkZ, float y, const Vector3f& offset, float xzScale);
+
+
 
 
 public:
@@ -158,5 +165,7 @@ public:
     void SaveGrass(const std::string& filename);
 
     GLuint GetBaseIndex(FloatVector& grassVertices);
+
+    void BlowWind();
 
 };

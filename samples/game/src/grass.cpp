@@ -161,6 +161,8 @@ void Grass::Init(HeightMap* heightMap  ) {
     m_meanWindTextureBuffer = new MultArray<Vector3f>(TILE_GRID_COUNT,TILE_GRID_COUNT);
     MultArray<Vector3f>& meanWindTextureBuffer = *m_meanWindTextureBuffer;
 
+    m_blowWindTextureBuffer = new MultArray<Vector3f>(TILE_GRID_COUNT,TILE_GRID_COUNT);
+
 
     for(int x = 0; x < TILE_GRID_COUNT; ++x) {
 	for(int z = 0; z < TILE_GRID_COUNT; ++z) {
@@ -178,6 +180,7 @@ void Grass::Init(HeightMap* heightMap  ) {
 		Vector3f(m_rng.RandomFloat(-2,+2), 0, m_rng.RandomFloat(-2,+2)).Normalize()
 
 		);
+	    w = Vector3f(0,0,0);
 
 	    meanWindTextureBuffer(x,z) = w;
 	}
@@ -399,6 +402,36 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
 
 
+
+    if(doWind) {
+
+
+	MultArray<Vector3f>& blowWindTextureBuffer = *m_blowWindTextureBuffer;
+
+	MultArray<Vector3f>& meanWindTextureBuffer = *m_meanWindTextureBuffer;
+
+
+	if(windLerp >= 1.0) {
+	    windInc *= -1.0f;
+	} else if(windLerp <= 0.0 && windInc < 0.0f) {
+	    doWind = false; // stop wind.
+	}
+
+	windLerp += windInc * delta;
+
+	for(int x = 0; x < TILE_GRID_COUNT; ++x) {
+	    for(int z = 0; z < TILE_GRID_COUNT; ++z) {
+
+		meanWindTextureBuffer(x,z) = windLerp * blowWindTextureBuffer(x,z);
+	    }
+	}
+
+	m_meanWindTexture->Bind();
+	m_meanWindTexture->UpdateTexture(m_meanWindTextureBuffer->GetData() );
+	m_meanWindTexture->Unbind();
+
+
+    }
 
 
 
@@ -814,4 +847,45 @@ void Grass::CreateAABBs(const float yScale, const Vector3f& offset, float xzScal
 //	    LOG_I("aabb: %s, %s", string(aabb.min).c_str(), string(aabb.max).c_str() );
 	}
     }
+}
+
+
+void Grass::BlowWind() {
+    LOG_I("BLOW");
+
+    Vector2f windCenter = Vector2f(235.650131, 297.401459);
+    MultArray<Vector3f>& blowWindTextureBuffer = *m_blowWindTextureBuffer;
+
+    float tileSize = m_heightMapResolution / TILE_GRID_COUNT;
+
+    for(int x = 0; x < TILE_GRID_COUNT; ++x) {
+	for(int z = 0; z < TILE_GRID_COUNT; ++z) {
+
+	    // tile center.
+	    Vector2f tileCenter(
+		x * tileSize + tileSize / 2.0f,
+		z * tileSize + tileSize / 2.0f
+		);
+
+//	    LOG_I("tile center: %s", string(tileCenter).c_str() );
+
+	    Vector2f diff = (tileCenter - windCenter);
+	    float dist = diff.Length();
+	    Vector2f w =   30.0f * diff.Normalize() * (1.0 / (1.0f + dist) ) ;
+//	    w =
+
+	    blowWindTextureBuffer(x,z) =Vector3f(w.x, 0, w.y);
+//	    meanWindTextureBuffer(x,z) =
+	}
+    }
+
+    /*
+    m_meanWindTexture->Bind();
+    m_meanWindTexture->UpdateTexture(m_meanWindTextureBuffer->GetData() );
+    m_meanWindTexture->Unbind();
+    */
+
+    windLerp = 0;
+    doWind = true;
+    windInc = 1.0f;
 }

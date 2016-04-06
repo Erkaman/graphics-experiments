@@ -125,14 +125,13 @@ void main()
 
     float playerWindStrength = clamp(1.0 - distance(cameraPos.xy, centerPosition.xy)/5, 0, 1);
 
-    /*
+
     if(texCoordIn.y < 0.1) {
 
     seed = vec3(
 	rand(id / 100),
 	rand(32.2*id / 300),
 	rand(3232.2*id / 3243));
-
 
 	float xDir =rand(rand(vec2(seed.x, seed.y)), -2, +2);
 	float zDir =rand(rand(vec2(seed.y, seed.z)), -2, +2);
@@ -163,7 +162,7 @@ void main()
 	normal = normalize(normal * (2.5) + translation);
 
     }
-    */
+
 
 
     gl_Position = mvp * vec4(pos,1);
