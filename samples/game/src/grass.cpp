@@ -75,7 +75,7 @@ void Grass::Init(HeightMap* heightMap  ) {
 
 	    chunk->m_grassNumTriangles = 0;
 	    chunk->m_grassVertexBuffer = VBO::CreateInterleaved(
-	vector<GLuint>{3,2,3, 3} // pos, texcoord, normal, slot0
+	vector<GLuint>{3,3,3, 3} // pos, texcoord, normal, slot0
 		);
 
 	    chunk->m_grassIndexBuffer = VBO::CreateIndex(GL_UNSIGNED_INT);
@@ -480,14 +480,10 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, co
     int iz = int(position.y / m_chunkSize);
     MultArray<GrassChunk*>& chunks = *m_chunks;
 
-
-
     GrassChunk* chunk = chunks(ix,iz);
 
     FloatVector& grassVertices = chunk->m_grassVertices;
     std::vector<GLuint>& grassIndices = chunk->m_grassIndices;
-
-
 
     GLuint baseIndex = GetBaseIndex(grassVertices);
 
@@ -503,23 +499,25 @@ void Grass::GenerateGrassVertices(const Vector2f position, const float angle, co
     const float X = dir.x * width / 2.0f;
     const float Z = dir.y * width / 2.0f;
 
-    (Vector3f(-X, height, -Z)).Add(grassVertices);
-    Vector2f(0.0f,0.0f).Add(grassVertices);
+    float h2 = height / 2.0f;
+
+    (Vector3f(-X, +h2, -Z)).Add(grassVertices);
+    Vector3f(0.0f,0.0f,h2).Add(grassVertices);
     normal.Add(grassVertices);
     centerPosition.Add(grassVertices);
 
-    (Vector3f(+X, height, +Z)).Add(grassVertices);
-    Vector2f(1.0f,0.0f).Add(grassVertices);
+    (Vector3f(+X, +h2, +Z)).Add(grassVertices);
+    Vector3f(1.0f,0.0f,h2).Add(grassVertices);
     normal.Add(grassVertices);
     centerPosition.Add(grassVertices);
 
-    (Vector3f(-X, 0, -Z)).Add(grassVertices);
-    Vector2f(0.0f,1.0f).Add(grassVertices);
+    (Vector3f(-X, -h2, -Z)).Add(grassVertices);
+    Vector3f(0.0f,1.0f,h2).Add(grassVertices);
     normal.Add(grassVertices);
     centerPosition.Add(grassVertices);
 
-    (Vector3f(+X, 0, +Z)).Add(grassVertices);
-    Vector2f(1.0f,1.0f).Add(grassVertices);
+    (Vector3f(+X, -h2, +Z)).Add(grassVertices);
+    Vector3f(1.0f,1.0f,h2).Add(grassVertices);
     normal.Add(grassVertices);
     centerPosition.Add(grassVertices);
 
@@ -682,7 +680,7 @@ void Grass::SaveGrass(const std::string& filename) {
 }
 
 GLuint Grass::GetBaseIndex(FloatVector& grassVertices) {
-     return  (GLuint)grassVertices.size() / (3+2+3+3);
+     return  (GLuint)grassVertices.size() / (3+3+3+3);
 }
 
 

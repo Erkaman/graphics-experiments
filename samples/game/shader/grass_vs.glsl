@@ -1,5 +1,5 @@
 layout (location = 0) in  vec3 positionIn;
-layout (location = 1) in vec2 texCoordIn;
+layout (location = 1) in vec3 texCoordIn;
 layout (location = 2) in  vec3 normalIn;
 layout (location = 3) in vec3 centerPosition;
 
@@ -73,6 +73,7 @@ void main()
     vec3 seed = vec3(0.02 * centerPosition.z * centerPosition.xy / resolution, centerPosition.z * 0.03232);
 
 
+    float h2 = texCoordIn.z;
 
 
     id = centerPosition.z;
@@ -90,7 +91,31 @@ void main()
     // in order to do this, we have to make sure that the center of the billboard vertices are the center of the billboard.. Right now, it is not!
     mat3 basis = mat3(up, right, forward);
 
-    vec3 pos = (positionIn) + computePos(
+
+    float za = 0.785398;
+    float cos_za = /*cos(za)*/ up.y;
+    float sin_za = /*sin(za)*/ -up.x;
+
+    mat3 zRot = transpose(mat3(
+				cos_za, -sin_za, 0,
+				sin_za, +cos_za, 0,
+				0     , 0      , 1
+			      ));
+    float xa = 0.785398;
+
+    float cos_xa = /*cos(xa)*/ up.y;
+    float sin_xa = /*sin(xa)*/ up.z;
+
+    mat3 xRot = transpose(mat3(
+    			        1     , 0      , 0,
+				0     ,cos_xa, -sin_xa,
+				0     ,sin_xa, +cos_xa
+			      ));
+
+
+    vec3 rotPos = /*zRot * xRot */ positionIn.xyz;
+
+    vec3 pos = (rotPos + vec3(0,h2,0) ) + computePos(
 	 vec2(centerPosition.x / resolution, centerPosition.y / resolution),
 	heightMap);
 
@@ -100,6 +125,7 @@ void main()
 
     float playerWindStrength = clamp(1.0 - distance(cameraPos.xy, centerPosition.xy)/5, 0, 1);
 
+    /*
     if(texCoordIn.y < 0.1) {
 
     seed = vec3(
@@ -137,20 +163,8 @@ void main()
 	normal = normalize(normal * (2.5) + translation);
 
     }
-
-
-    /*
-    if(distance(cameraPos.xy, centerPosition.xy) < 5) {
-
-	color = vec3(1,0,0);
-
-    }
     */
 
-
-
-
-//    color = seed.xyz;
 
     gl_Position = mvp * vec4(pos,1);
 
@@ -160,7 +174,7 @@ void main()
 
 //    vertexColor = colorIn.rgb;
 
-    texCoord = texCoordIn;
+    texCoord = texCoordIn.xy;
 
     position = positionIn;
 }
