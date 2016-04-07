@@ -412,7 +412,7 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
 
 	if(windLerp >= 1.0) {
-	    windInc *= -1.0f;
+	    windInc = -0.8f;
 	} else if(windLerp <= 0.0 && windInc < 0.0f) {
 	    doWind = false; // stop wind.
 	}
@@ -422,9 +422,20 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 	for(int x = 0; x < TILE_GRID_COUNT; ++x) {
 	    for(int z = 0; z < TILE_GRID_COUNT; ++z) {
 
-		meanWindTextureBuffer(x,z) = windLerp * blowWindTextureBuffer(x,z);
+#define scurve(x)  -2.0f * (x)*(x)*(x) + 3.0f * (x) * (x)
+
+// https://www.wolframalpha.com/input/?i=0.0358756+e%5E(3.32868+x)&lk=1&rawformassumption=
+
+		float lerp = (windLerp * windLerp);
+//		lerp = 0.22* log(121.48 * windLerp);
+		lerp = 0.0358756 * exp(3.32868 * windLerp);
+
+		meanWindTextureBuffer(x,z) = lerp * blowWindTextureBuffer(x,z);
 	    }
 	}
+
+//	LOG_I("lerp: %f",  (windLerp) );
+
 
 	m_meanWindTexture->Bind();
 	m_meanWindTexture->UpdateTexture(m_meanWindTextureBuffer->GetData() );
@@ -871,7 +882,7 @@ void Grass::BlowWind() {
 
 	    Vector2f diff = (tileCenter - windCenter);
 	    float dist = diff.Length();
-	    Vector2f w =   30.0f * diff.Normalize() * (1.0 / (1.0f + dist) ) ;
+	    Vector2f w =   20.0f * diff.Normalize() * ( 1.0f / (1.0f + 1.8f*dist ) ) ;
 //	    w =
 
 	    blowWindTextureBuffer(x,z) =Vector3f(w.x, 0, w.y);
@@ -887,5 +898,5 @@ void Grass::BlowWind() {
 
     windLerp = 0;
     doWind = true;
-    windInc = 1.0f;
+    windInc = 2.8f;
 }
