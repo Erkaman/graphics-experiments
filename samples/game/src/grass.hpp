@@ -114,9 +114,13 @@ private:
     std::vector<Vector2i>* m_inReflectionFrustum;
     std::vector<Vector2i>* m_inEnvFrustums[6];
 
-    float windLerp;
-    bool doWind;
-    float windInc;
+//    float windLerp;
+    bool m_doWind;
+//    float windInc;
+
+    Vector3f m_windCenter;
+    float m_windRadius;
+
 
     void GenerateGrassVertices(const Vector2f position, const float angle, const float width, const float height, int id);
 

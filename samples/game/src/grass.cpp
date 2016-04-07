@@ -403,9 +403,9 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
 
 
-    if(doWind) {
+    if(m_doWind) {
 
-
+/*
 	MultArray<Vector3f>& blowWindTextureBuffer = *m_blowWindTextureBuffer;
 
 	MultArray<Vector3f>& meanWindTextureBuffer = *m_meanWindTextureBuffer;
@@ -440,6 +440,68 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 	m_meanWindTexture->Bind();
 	m_meanWindTexture->UpdateTexture(m_meanWindTextureBuffer->GetData() );
 	m_meanWindTexture->Unbind();
+*/
+
+
+	float tileSize = m_heightMapResolution / TILE_GRID_COUNT;
+
+
+	MultArray<Vector3f>& meanWindTextureBuffer = *m_meanWindTextureBuffer;
+
+
+	float windForceLerp = (1.0 - m_windRadius / 30.0f);
+
+	float windForce = windForceLerp * sqrt(windForceLerp) * 0.35;
+
+	for(int x = 0; x < TILE_GRID_COUNT; ++x) {
+	    for(int z = 0; z < TILE_GRID_COUNT; ++z) {
+
+
+		Vector3f tileCenter(
+		    x * tileSize + tileSize / 2.0f,
+		    0,
+		    z * tileSize + tileSize / 2.0f
+		);
+
+		Vector3f diff = (tileCenter - m_windCenter).Normalize();
+
+		float radius = (tileCenter - m_windCenter).Length();
+
+//		LOG_I("radius: %f", radius);
+
+		if(  (fabs(radius - m_windRadius) <  10.0f) && windForce > 0.0f
+		    ) {
+
+
+
+//   		    if( meanWindTextureBuffer(x,z).Length() < 5.0f)
+			meanWindTextureBuffer(x,z) += diff * windForce;
+
+		} else {
+
+//		    float restoreForce = (m_windRadius / 30.0f) * 0.95f;
+
+		    //if(restoreForce > 0)
+		    meanWindTextureBuffer(x,z) *= 0.97f;
+
+
+
+		}
+
+
+	    }
+	}
+
+	m_windRadius += 1.0f;
+
+//	LOG_I("wind radius: %f", m_windRadius);
+
+	m_meanWindTexture->Bind();
+	m_meanWindTexture->UpdateTexture(m_meanWindTextureBuffer->GetData() );
+	m_meanWindTexture->Unbind();
+
+
+
 
 
     }
@@ -864,7 +926,15 @@ void Grass::CreateAABBs(const float yScale, const Vector3f& offset, float xzScal
 void Grass::BlowWind() {
     LOG_I("BLOW");
 
-    Vector2f windCenter = Vector2f(235.650131, 297.401459);
+    float AREA = 10.0f;
+
+    m_windCenter = Vector3f(
+	235.650131 + m_rng.RandomFloat(-AREA,+AREA),
+	0,
+	297.401459 + m_rng.RandomFloat(-AREA,+AREA));
+    m_windRadius = 0.5f;
+
+/*
     MultArray<Vector3f>& blowWindTextureBuffer = *m_blowWindTextureBuffer;
 
     float tileSize = m_heightMapResolution / TILE_GRID_COUNT;
@@ -889,6 +959,7 @@ void Grass::BlowWind() {
 //	    meanWindTextureBuffer(x,z) =
 	}
     }
+*/
 
     /*
     m_meanWindTexture->Bind();
@@ -896,7 +967,9 @@ void Grass::BlowWind() {
     m_meanWindTexture->Unbind();
     */
 
-    windLerp = 0;
+/*    windLerp = 0;
     doWind = true;
-    windInc = 2.8f;
+    windInc = 2.8f;*/
+
+    m_doWind = true;
 }
