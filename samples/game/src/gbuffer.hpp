@@ -24,7 +24,6 @@ private:
     Texture* m_colorTexture;
     Texture* m_depthTexture;
     Texture* m_normalTexture;
-    Texture* m_specularTexture;
 
 public:
 
@@ -37,5 +36,4 @@ public:
     Texture* GetColorTexture();
     Texture* GetDepthTexture();
     Texture* GetNormalTexture();
-    Texture* GetSpecularTexture();
 };

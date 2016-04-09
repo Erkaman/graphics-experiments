@@ -32,8 +32,6 @@ uniform mat4 invViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
-uniform sampler2D refractionMap;
-uniform sampler2D reflectionMap;
 
 uniform vec3 pointLightPosition[256];
 uniform float pointLightRadius[256];
@@ -50,10 +48,22 @@ bool isInt(float f, float eps) {
 
 void main() {
 
+
+
     vec3 specColor;
     float specShiny;
 
-    readSpecularTexture(specularTexture, texCoord, specColor, specShiny);
+
+    vec3 diffColor;
+    float ao;
+
+    readColorTexture(colorTexture, texCoord, diffColor, ao, specColor, screenSize.x, screenSize.y);
+
+
+    vec3 n;
+    float id;
+    readNormalTexture(normalTexture, texCoord, n, id, specShiny);
+
     vec3 specMat = specColor;
 
     vec3 envMapSample = vec3(0);
@@ -62,9 +72,6 @@ void main() {
 
     vec3 v = -(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
-    vec3 n;
-    float id;
-    readNormalTexture(normalTexture, texCoord, n, id);
 
     if(id == 1.0) { // if car
 
@@ -82,10 +89,6 @@ void main() {
     vec3 sceneLight = inSceneLight;
 
 
-    vec3 diffColor;
-    float ao;
-
-    readColorTexture(colorTexture, texCoord, diffColor, ao);
 
 
     float aoOnly =0.0;
@@ -95,7 +98,9 @@ void main() {
 
     if(id == 2.0) {
 
-	waterShader(viewSpacePosition, proj, specColor, refractionMap, reflectionMap, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
+	waterShader(viewSpacePosition, proj, specColor, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
+
+
     }
 
     /*
@@ -106,6 +111,10 @@ void main() {
     float diff=  calcDiff(l,n);
     float spec= calcSpec(l,n,v);
     float visibility = calcVisibility(shadowMap, diff, shadowCoord);
+
+//    specShiny = 0.0;
+//    specColor = vec3(0);
+//    spec = 0.0;
 
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
@@ -119,27 +128,7 @@ void main() {
 	    visibility,
 	    envMapSample );
 
-
-
-
-    /*
-      Compute point lighting.
-     */
-
-
-
-
-//	fragmentColor = vec4(vec3(1,0,0), 1.0);
-
-/*
-    if(id == 1.0) {
-
-
-	fragmentColor = vec4(envMapSample, 1.0);
-    }
-    */
-
-
+//    fragmentColor = vec4(vec3(diff),1);
 
 
 #ifdef IS_TILED
@@ -208,6 +197,7 @@ void main() {
 
     float atten = clamp(1.0 - length(lightDist) / pointLightRadius, 0,1);
     fragmentColor.xyz += light.xyz * vec3(pointLightColor) * atten;
+
 
 //    fragmentColor.xyz += vec3(1,0,0);
 

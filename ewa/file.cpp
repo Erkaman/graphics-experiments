@@ -8,14 +8,18 @@
 #include <string.h>
 
 #ifdef _WIN32
-#include <windows.h>
+
+#include "dirent.h"
+
 #else // UNIX
 
 #include <sys/stat.h>
-
 #include <dirent.h>
 
+
 #endif
+
+
 
 using namespace std;
 
@@ -286,7 +290,13 @@ void File::ReadLine(char* buffer, int bufferSize) {
 }
 
 
-std::vector<std::string> File::EnumerateDirectory(const std::string& path) {
+std::vector<std::string> File::EnumerateDirectory( std::string path) {
+
+#ifdef _WIN32
+	// hack on windows
+	path = "../../../samples/game/" + path;
+#endif
+
 
     DIR* d;
     struct dirent *dir;

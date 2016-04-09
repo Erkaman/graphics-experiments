@@ -28,6 +28,7 @@ private:
     int m_strength;
     float m_noiseScale;
     int m_smoothRadius;
+    int m_grassClusterSize;
 
     int m_aoSamples;
     int m_aoWaveLength;
@@ -72,5 +73,6 @@ public:
 
     bool isAoOnly()const;
 
+    int GetGrassClusterSize()const;
 
 };

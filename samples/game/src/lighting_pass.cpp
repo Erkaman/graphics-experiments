@@ -228,8 +228,6 @@ void LightingPass::Render(
 
     SetupShader(m_pointShader, gbuffer, camera, cubeMapTexture, refractionMap, reflectionMap);
 
-
-
     if(!isTiled) {
 	GL_C(glFrontFace(GL_CW));
 	GL_C(glDisable(GL_DEPTH_TEST));
@@ -411,9 +409,6 @@ void LightingPass::DrawLights(const ICamera* camera, const std::vector<PointLigh
 
 	// DO non-tiled DEFERRED RENDERING:
 	for(const PointLight& pointLight : lights) {
-
-
-
 	    DrawPointLight(
 		camera, pointLight.m_position,  pointLight.m_color, pointLight.m_radius);
 	}
@@ -535,9 +530,6 @@ void LightingPass::SetupShader(
     Texture::SetActiveTextureUnit(NORMAL_TEXTURE_UNIT);
     gbuffer->GetNormalTexture()->Bind();
 
-    shader->SetUniform("specularTexture", SPECULAR_TEXTURE_UNIT);
-    Texture::SetActiveTextureUnit(SPECULAR_TEXTURE_UNIT);
-    gbuffer->GetSpecularTexture()->Bind();
 
     shader->SetUniform("envMap",ENV_TEXTURE_UNIT );
     Texture::SetActiveTextureUnit(ENV_TEXTURE_UNIT);
@@ -588,13 +580,10 @@ void LightingPass::UnsetupShader(
 
     gbuffer->GetColorTexture()->Unbind();
     gbuffer->GetDepthTexture()->Unbind();
-    gbuffer->GetSpecularTexture()->Unbind();
     cubeMapTexture->Unbind();
 
     refractionMap.GetColorTexture()->Unbind();
     reflectionMap.GetRenderTargetTexture().Unbind();
-
-
 
 
 }

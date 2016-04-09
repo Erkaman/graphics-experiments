@@ -77,5 +77,5 @@ public:
     static void CreatePath(const std::string& path);
 
     // get all the files in a directory.
-    static std::vector<std::string> EnumerateDirectory(const std::string& path);
+    static std::vector<std::string> EnumerateDirectory( std::string path);
 };

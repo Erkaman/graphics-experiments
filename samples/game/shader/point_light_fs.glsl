@@ -12,8 +12,6 @@ uniform mat4 toViewSpacePositionMat;
 uniform vec3 color;
 uniform mat4 proj;
 
-uniform sampler2D refractionMap;
-uniform sampler2D reflectionMap;
 uniform mat4 invViewMatrix;
 uniform vec3 eyePos;
 
@@ -40,7 +38,9 @@ void main() {
 
     vec3 n;
     float id;
-    readNormalTexture(normalTexture, texCoord, n, id);
+    float specShiny;
+
+    readNormalTexture(normalTexture, texCoord, n, id, specShiny);
 
     vec3 lightDist = viewSpacePosition - lightCenter;
     float lightDistLength = length(lightDist);
@@ -54,15 +54,13 @@ void main() {
 
     vec3 diffColor;
     float ao;
+    vec3 specColor;
 
-    readColorTexture(colorTexture, texCoord, diffColor, ao);
+    readColorTexture(colorTexture, texCoord, diffColor, ao, specColor, screenSize.x, screenSize.y);
 
     float ztest = step(0, radius - lightDistLength );
 
-    vec3 specColor;
-    float specShiny;
 
-    readSpecularTexture(specularTexture, texCoord, specColor, specShiny);
 
     vec3 specMat = specColor;
 
@@ -77,7 +75,7 @@ void main() {
 
     if(id == 2.0) {
 
-	waterShader(viewSpacePosition, proj, specColor, refractionMap, reflectionMap, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
+	waterShader(viewSpacePosition, proj, specColor, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
     }
 
 

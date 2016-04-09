@@ -131,15 +131,7 @@ void HeightMap::Init(
     string shaderName = "shader/height_map_render";
 
 
-    vector<string> defaultDefines;
-    defaultDefines.push_back("yScale " + std::to_string(m_yScale) );
-    defaultDefines.push_back("xzScale " + std::to_string(m_xzScale) );
-    defaultDefines.push_back("numChunks " + std::to_string(m_chunks) );
-    defaultDefines.push_back("textureScale " + std::to_string((float)m_textureScale) );
-    defaultDefines.push_back("resolution " + std::to_string( (float)m_resolution )   );
-    defaultDefines.push_back(
-	string("offset vec3(") + std::to_string(m_offset.x) +
-	"," + std::to_string(m_offset.y) + "," + std::to_string(m_offset.z) + ")"	);
+    vector<string> defaultDefines = GetDefaultDefines();
 
     {
 	vector<string> defines(defaultDefines);
@@ -431,8 +423,6 @@ void HeightMap::RenderUnsetup() {
 //    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
 }
-
-
 
 void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i, bool aoOnly) {
     m_envShader->Bind();
@@ -772,11 +762,14 @@ void HeightMap::RenderCursor(const ICamera* camera) {
     m_cursorShader->Unbind();
 }
 
-void HeightMap::RenderCubeCursor(const ICamera* camera) {
+void HeightMap::RenderCubeCursor(const ICamera* camera, float cubeScale) {
 
     m_cubeShader->Bind();
 
-    m_cubeShader->SetShaderUniforms(Matrix4f::CreateTranslation(0,0,0), camera);
+    m_cubeShader->SetShaderUniforms(
+
+
+	Matrix4f::CreateTranslation(0,0,0), camera);
 
 
     RenderSetup(m_cubeShader);
@@ -788,6 +781,7 @@ void HeightMap::RenderCubeCursor(const ICamera* camera) {
 			       Vector2f((float)m_cursorPosition.x, (float)m_cursorPosition.y) );
 
     m_cubeShader->SetUniform("color", Vector3f(1,0,0) );
+    m_cubeShader->SetUniform("cubeScale", cubeScale );
 
 
     m_cubeIndexBuffer->Bind();
@@ -841,9 +835,9 @@ void HeightMap::Render(
 
 
 	} else if(m_guiMode == RoadMode) {
-	    RenderCubeCursor(camera);
-
-
+	    RenderCubeCursor(camera, 2.0f);
+	} else if(m_guiMode == GrassMode) {
+	    RenderCubeCursor(camera, 0.7f);
 	}
 
     }
@@ -1252,12 +1246,6 @@ HeightMap::Chunk* HeightMap::CreateChunk(float scaling) {
     mahchunk->m_numTriangles = m_numTriangles;
 
     return mahchunk;
-}
-
-float HeightMap::GetHeightAt(float, float)const {
-
-
-    return 0;
 }
 
 void HeightMap::UpdateCursor(ICamera* camera,
@@ -2001,13 +1989,6 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 
     MultArray<AABB>& aabbs = *m_aabbs;
 
-/*
-    MultArray<bool>& inCameraFrustum = *m_inCameraFrustum;
-    MultArray<bool>& inLightFrustum = *m_inLightFrustum;
-    MultArray<bool>& inReflectionFrustum = *m_inReflectionFrustum;
-*/
-
-
     m_inCameraFrustum->clear();
     m_inLightFrustum->clear();
     m_inReflectionFrustum->clear();
@@ -2027,7 +2008,6 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 
 
     WhirlPatternCreator pattern;
-
 
 
     /*
@@ -2061,12 +2041,6 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 	++checkedChunks;
     }
 
-
-
-
-
-
-
     /*
       Find which chunks to draw for environment map camera.
      */
@@ -2097,8 +2071,6 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 
 	Vector2i v(x,z);
 
-
-
 	for(int i = 0; i < 6; ++i) {
 
 	    if(envLightFrustums[i]->IsAABBInFrustum(aabb)) {
@@ -2126,8 +2098,6 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 	}
     }
 }
-
-
 
 AABB HeightMap::GetAABB()const {
     AABB aabb;
@@ -2170,7 +2140,6 @@ float HeightMap::ComputeHeightMapHeight(int x, int z) {
     MultArray<unsigned short>& heightData = *m_heightData;
     return (float)(heightData(x,z)-MID_HEIGHT) / MID_HEIGHT;
 }
-
 
 Vector3f HeightMap::ComputeHeightMapNormal(int x, int z) {
     int eps = 1;
@@ -2626,4 +2595,26 @@ void HeightMap::DeleteCP() {
 
     m_controlPoints.clear();
 
+}
+
+
+vector<string> HeightMap::GetDefaultDefines()const {
+        vector<string> defaultDefines;
+    defaultDefines.push_back("yScale " + std::to_string(m_yScale) );
+    defaultDefines.push_back("xzScale " + std::to_string(m_xzScale) );
+    defaultDefines.push_back("numChunks " + std::to_string(m_chunks) );
+    defaultDefines.push_back("textureScale " + std::to_string((float)m_textureScale) );
+    defaultDefines.push_back("resolution " + std::to_string( (float)m_resolution )   );
+    defaultDefines.push_back(
+	string("offset vec3(") + std::to_string(m_offset.x) +
+	"," + std::to_string(m_offset.y) + "," + std::to_string(m_offset.z) + ")"	);
+
+    return defaultDefines;
+}
+
+Vector2f HeightMap::ToLocalPos(Vector3f pos)const {
+    return Vector2f(
+	((pos.x - m_offset.x) / m_xzScale) * m_resolution,
+
+	((pos.z - m_offset.z) / m_xzScale) * m_resolution);
 }

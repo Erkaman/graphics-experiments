@@ -46,3 +46,5 @@ public:
 	}
     }
 };
+
+// let us make every cell 5 units wide.

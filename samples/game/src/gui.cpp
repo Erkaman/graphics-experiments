@@ -21,8 +21,6 @@
 
 
 
-
-
 constexpr int MIN_CURSOR_SIZE = 3;
 constexpr int MAX_CURSOR_SIZE = 90;
 constexpr int DEFAULT_RADIUS = 35;
@@ -50,6 +48,11 @@ constexpr int MAX_AO_WAVE_LENGTH = 600;
 constexpr int DEFAULT_AO_WAVE_LENGTH = 300;
 
 
+constexpr int MIN_GRASS_CLUSTER_SIZE = 1;
+constexpr int MAX_GRASS_CLUSTER_SIZE = 5;
+constexpr int DEFAULT_GRASS_CLUSTER_SIZE = 1;
+
+
 
 
 
@@ -59,7 +62,7 @@ using std::string;
 Gui::Gui(GLFWwindow* window) {
 
     m_guiMode = ModifyTerrainMode;
-    m_guiMode = RoadMode;
+    m_guiMode = GrassMode;
 
     m_drawTextureType = GrassTexture;
     m_inputMode = InputNoneMode;
@@ -68,6 +71,7 @@ Gui::Gui(GLFWwindow* window) {
     m_rotation = Vector3f(0);
     m_scale = 1.0f;
 
+    m_grassClusterSize = DEFAULT_GRASS_CLUSTER_SIZE;
     m_cursorSize = DEFAULT_RADIUS;
     m_strength = 10;
     m_noiseScale = DEFAULT_NOISE_SCALE;
@@ -140,6 +144,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
     ImGui::RadioButton("DT", &m_guiMode, DrawTextureMode);  ImGui::SameLine();
     ImGui::RadioButton("M", &m_guiMode, ModelMode); ImGui::SameLine();
     ImGui::RadioButton("RM", &m_guiMode, RoadMode);
+    ImGui::RadioButton("GM", &m_guiMode, GrassMode);
 
     if(m_guiMode == ModifyTerrainMode) {
 
@@ -290,8 +295,10 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	    }
 	}
 
-    }
+    } else if(m_guiMode == GrassMode){
 
+	ImGui::SliderInt("Cluster size", &m_grassClusterSize, MIN_GRASS_CLUSTER_SIZE, MAX_GRASS_CLUSTER_SIZE);
+    }
 
 
     ImGui::End();
@@ -504,4 +511,8 @@ int Gui::GetSmoothRadius()const {
 
 bool Gui::isAoOnly()const {
     return m_aoOnly;
+}
+
+int Gui::GetGrassClusterSize()const {
+    return m_grassClusterSize;
 }

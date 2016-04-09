@@ -78,10 +78,18 @@ void main(void) {
     float ao = 1;
     float id = 2.0f;
 
+    /*
     geoData[0] = vec4(refraction,ao);
-
     geoData[1] = vec4(n, id);
     geoData[2] = vec4(reflection, 1);
+    */
+
+    geoData[0] = vec4(packColor(refraction), packColor(reflection)  );
+    geoData[1] = packNormalTexture(n.xyz, 0, id);
+
+
+
+
 
 /*
   for water shader.
@@ -90,7 +98,5 @@ void main(void) {
 */
 
 /*
-    vec4(diff.y, diff.cbcy,   specColor, specShiny )
-	vec4(nx, ny,  id, ao )
 */
-	}
+}

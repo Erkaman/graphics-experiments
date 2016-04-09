@@ -72,7 +72,7 @@ CubeMapTexture* EnvFBO::GetEnvMap() {
 
 
 
-int EnvFBO::BindFace(int i) {
+void EnvFBO::BindFace(int i) {
 
 
 

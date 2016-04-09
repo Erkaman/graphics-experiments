@@ -2,7 +2,7 @@
 
 in vec3 position;
 
-out vec4 geoData[3];
+out vec4 geoData[2];
 
 uniform vec3 viewSpaceLightDirection;
 uniform float aoOnly;
@@ -61,10 +61,37 @@ void main()
 
 
 #ifdef DEFERRED
+/*
+    vec3 n = normalize(vec4(viewSpaceNormal,0.0)).xyz; // lol3
+    n = normalize(n);
+    */
+    //  viewSpaceNormal.xyz =  n;
 
-    geoData[0] = vec4(vec4(diffColor, ao));
-    geoData[1] = vec4(viewSpaceNormal,0);
-    geoData[2] = vec4(vec3(0,0,0), 1);
+
+/*
+    vec2 n2 = viewSpaceNormal.xy;
+
+    float nx = n2.x;
+    float ny = n2.y;
+    float nz = sqrt(1.0 - dot(n2.xy, n2.xy));
+
+    vec3 n3 = vec3(nx,ny,  nz *  sign(viewSpaceNormal.z) );
+
+*/
+
+//    vec3 n3 = viewSpaceNormal;
+
+
+/*
+    vec2 enc = encode(viewSpaceNormal);
+    vec3 n3 = decode(vec4(enc, 0,0 ) );
+*/
+
+
+//    vec3 n3 = n;
+
+    geoData[0] = packColorTexture(diffColor, vec3(0,0,0), ao);
+    geoData[1] =  packNormalTexture(viewSpaceNormal, 0, 0);
 
 #else
 

@@ -1,4 +1,4 @@
-numObjs 124
+numObjs 126
 beginObj
 filename obj/wood_floor.eob
 translation -12.000000 9.000000 38.000000
@@ -76,12 +76,6 @@ filename obj/tree3_done.eob
 translation -91.261719 16.075390 186.547668
 rotation 0.064949 -0.514792 0.202027 0.830636 
 scale 1.773594
-endObj
-beginObj
-filename obj/plane.eob
-translation -2.000000 6.500000 -2.000000
-rotation 0.000000 0.000000 0.000000 1.000000 
-scale 1.000000
 endObj
 beginObj
 filename obj/tree3_done.eob
@@ -740,6 +734,24 @@ endObj
 beginObj
 filename obj/torch.eob
 translation 195.693756 2.063671 88.968758
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -26.926172 0.845311 37.147652
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation 3.733988 0.845311 37.147652
+rotation 0.038194 0.000000 0.000000 0.999270 
+scale 1.000000
+endObj
+beginObj
+filename obj/torch.eob
+translation -53.365623 0.845311 37.147652
 rotation 0.038194 0.000000 0.000000 0.999270 
 scale 1.000000
 endObj

@@ -1,4 +1,3 @@
-
 #include "tuhu_application.hpp"
 
 #include "particles_renderer.hpp"
@@ -102,6 +101,7 @@ const string SPLAT_MAP_FILENAME = "splatmap.bin";
 const string AO_MAP_FILENAME = "aomap.bin";
 
 const string OBJS_FILENAME = "objs";
+const string GRASS_FILENAME = "grass";
 
 
 bool save_screenshot(string filename, int w, int h)
@@ -249,22 +249,15 @@ void TuhuApplication::Init() {
     ::SetDepthTest(true);
     ::SetCullFace(true);
 
-
     const Vector3f pos =
-
-	Vector3f(17.358755, 11.450978, -16.576893);
-
+	Vector3f(-52.844795, 14.650712, 35.442703);
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-
-Vector3f(-0.532690, -0.234754, 0.813100)
+	Vector3f(0.933511, -0.318891, 0.163909)
 	);
-
-
-
 
 
     m_skydome = new Skydome(1, 10, 10);
@@ -296,7 +289,11 @@ Vector3f(-0.532690, -0.234754, 0.813100)
 	    guiMode);
 
 	ParseObjs(File::AppendPaths(dir, OBJS_FILENAME ));
-
+	/*
+	m_grass = new Grass(
+	    File::AppendPaths(dir, GRASS_FILENAME ),
+	    m_heightMap );
+	*/
     } else {
 
 	m_heightMap = new HeightMap(guiMode);
@@ -307,10 +304,8 @@ Vector3f(-0.532690, -0.234754, 0.813100)
 
 	m_selected = NULL;
 
-/*
-	LoadObj("obj/wall.eob",
-				 Vector3f(29.152159f, 13.744261f, 21.152159f)+ trans  + Vector3f(60,0,60)
-	    );*/
+	//m_grass = new Grass(m_heightMap );
+
     }
 
     if(m_gui) {
@@ -357,6 +352,8 @@ Vector3f(-0.532690, -0.234754, 0.813100)
     */
 
     m_curCamera = m_freeCamera;
+
+
 
     LOG_I("LOG5");
 
@@ -577,6 +574,9 @@ void TuhuApplication::RenderId() {
 
     GeometryObject::RenderIdAll(m_curCamera);
 
+    //m_grass->RenderIdAll(m_curCamera);
+
+
     m_pickingFbo->Unbind();
 
 
@@ -624,9 +624,6 @@ void TuhuApplication::RenderScene() {
 
 
 
-
-
-
     m_gpuProfiler->Begin(GTS_Objects);
     {
 	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo);
@@ -637,8 +634,6 @@ void TuhuApplication::RenderScene() {
 //    m_line->Render(m_curCamera->GetVp());
 
     m_gpuProfiler->End(GTS_Objects);
-
-
 
 
     m_gpuProfiler->Begin(GTS_Terrain);
@@ -652,10 +647,9 @@ void TuhuApplication::RenderScene() {
     m_gpuProfiler->End(GTS_Terrain);
 
 
-
-
-
-//    m_grass->Draw(m_curCamera, m_lightDirection);
+    m_gpuProfiler->Begin(GTS_Grass);
+   // m_grass->DrawDeferred(m_curCamera, m_lightDirection);
+    m_gpuProfiler->End(GTS_Grass);
 
     //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
 
@@ -686,6 +680,10 @@ void TuhuApplication::RenderEnvMap() {
 	    m_skybox->DrawForward(m_cubeMapTexture, m_car->GetEnvCameras()[i]);
 
 	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
+
+
+	  //  m_grass->DrawEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
+
 
 	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	    m_heightMap->RenderEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i, aoOnly);
@@ -718,9 +716,10 @@ void TuhuApplication::RenderReflection() {
 
 	GeometryObject::RenderReflection(m_reflectionCamera, m_lightDirection);
 
+	//m_grass->DrawReflection(m_reflectionCamera, m_lightDirection);
+
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderReflection(m_reflectionCamera, m_lightDirection, aoOnly);
-
 
     }
     m_reflectionFbo->Unbind();
@@ -861,6 +860,22 @@ void TuhuApplication::Update(const float delta) {
 
     UpdateMatrices();
 
+
+    Vector3f curCameraPos = m_curCamera->GetPosition();
+
+    Vector3f cameraDirection = ((curCameraPos - m_prevCameraPos) * (1.0 / delta) ).Normalize();
+
+//    LOG_I("dir: %s", string(cameraDirection).c_str() );
+
+	/*
+    m_grass->Update(delta,  m_heightMap->ToLocalPos(m_curCamera->GetPosition()), cameraDirection,
+		    *m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums(), *m_reflectionFrustum
+ );
+	*/
+
+
+    m_prevCameraPos = curCameraPos;
+
     m_lightFrustum->Update( m_lightVp, Vector3f(0) );
 
     m_physicsWorld->Update(delta);
@@ -896,6 +911,11 @@ void TuhuApplication::Update(const float delta) {
 
     if( kbs.WasPressed(GLFW_KEY_6)/* && !m_gui*/ ) {
 	StartPhysics();
+    }
+
+
+    if( kbs.WasPressed(GLFW_KEY_8) ) {
+	//m_grass->BlowWind();
     }
 
 
@@ -970,15 +990,47 @@ void TuhuApplication::Update(const float delta) {
 
 		m_selected = m_geoObjs[id];
 		m_selected->SetSelected(true);
-
 	    }
+	}
+    }
 
+
+
+
+
+    if(m_gui && m_gui->GetGuiMode() == GrassMode && GuiMouseState::isWithinWindow()) {
+
+	if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 ) ) {
+
+//	    LOG_I("add grass at :%s", string(m_heightMap->GetCursorPosition() ).c_str() );
+
+	//    m_grass->AddGrass(m_heightMap->GetCursorPosition(), m_gui->GetGrassClusterSize());
 
 	}
 
+	if(ms.IsPressed(GLFW_MOUSE_BUTTON_2 ) ) {
+
+	    float y = GetFramebufferHeight() - GuiMouseState::GetY() - 1;
+	    float x = GuiMouseState::GetX();
+
+	    PixelInfo pi = m_pickingFbo->ReadPixel((unsigned int)x,(unsigned int)y);
+
+	    unsigned int id = (unsigned int)pi.unused2;
+
+	    if(id != 0) {
+
+		// because ids are zero-based(but the ids in the FBO are one-based)
+		--id;
+
+//		LOG_I("REMOVE: %d", id);
+
+	//m	m_grass->RemoveGrass(id);
+
+	    }
+
+	}
 
     }
-
 
     if(m_gui && m_gui->GetGuiMode() == ModelMode && m_selected ) {
 
@@ -1066,7 +1118,8 @@ void TuhuApplication::RenderText()  {
     m_font->DrawString(*m_fontShader, 750,690,
 		       Format("Particles: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Particles)) );
 
-
+    m_font->DrawString(*m_fontShader, 750,750,
+		       Format("Grass: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Grass)) );
 
 }
 
@@ -1114,6 +1167,8 @@ void TuhuApplication::Cleanup() {
 
     if(m_gui) {
 	// if we were in the world editor, we need to serialize the world.
+
+	//m_grass->SaveGrass(File::AppendPaths(dir, GRASS_FILENAME ) );
 
 
 	// we save the entire world in a directory. Make sure the directory exists:

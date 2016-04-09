@@ -2,6 +2,6 @@ numObjs 1
 beginObj
 filename obj/wood_floor.eob
 translation -12.000000 9.000000 38.000000
-rotation 0.000000 0.000000 0.000000 1.000000
+rotation 0.000000 0.000000 0.000000 1.000000 
 scale 1.000000
 endObj

@@ -269,7 +269,8 @@ private:
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
 	const bool aoOnly);
     void RenderCursor(const ICamera* camera);
-    void RenderCubeCursor(const ICamera* camera);
+
+    void RenderCubeCursor(const ICamera* camera, float cubeScale);
 
     void Render(ShaderProgram* shader, HeightMapRenderMode renderMode);
 
@@ -321,7 +322,6 @@ public:
 
     void SetWireframe(const bool wireframe);
 
-    float GetHeightAt(float x, float z)const;
 
     // need to be updated every frame if there is a gui.
     void UpdateGui(const float delta, ICamera* camera,
@@ -367,5 +367,35 @@ public:
 
     void BuildRoad();
     void DeleteCP();
+
+    std::vector<std::string> GetDefaultDefines()const;
+
+    int GetResolution()const {
+	return m_resolution;
+    }
+
+    Texture2D* GetHeightMap() {
+	    return m_heightMap;
+    }
+
+    Vector2i GetCursorPosition()const {
+	    return m_cursorPosition;
+    }
+
+    float GetYScale()const {
+	return m_yScale;
+    }
+
+    float GetXzScale()const {
+	return m_xzScale;
+    }
+
+
+    Vector3f GetOffset()const {
+	return m_offset;
+    }
+
+    Vector2f ToLocalPos(Vector3f pos)const;
+
 
 };

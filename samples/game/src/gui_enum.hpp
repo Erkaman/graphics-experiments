@@ -7,7 +7,7 @@ enum GuiMode {
     DrawTextureMode,
     ModelMode,
     RoadMode,
-
+    GrassMode,
 };
 
 enum TerrainMode {

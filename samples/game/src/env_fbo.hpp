@@ -22,7 +22,7 @@ public:
     size_t GetSize();
     CubeMapTexture* GetEnvMap();
 
-    int BindFace(int i); // bind one of the six faces of the cubemap.
+    void BindFace(int i); // bind one of the six faces of the cubemap.
 
 
 
