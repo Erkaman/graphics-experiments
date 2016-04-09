@@ -17,6 +17,9 @@
 
 #include <stdio.h>
 
+#include <GLFW/glfw3.h> // GLFW helper library
+
+
 
 
 
@@ -79,12 +82,16 @@ Gui::Gui(GLFWwindow* window) {
 
     m_aoOnly = false;
 
+
+	// no gui on windows.
+#if !defined(_WIN32)
     // init gui:
     if(ImGui_ImplGlfwGL3_Init(window, true)) {
 	LOG_I("IMGUI initialization succeeded");
     } else {
 	LOG_E("IMGUI initialization failed");
     }
+#endif
 }
 
 
