@@ -10,12 +10,13 @@ uniform sampler2D depthTexture;
 uniform float windowWidth;
 uniform float windowHeight;
 
+uniform float znear;
+uniform float zfar;
+
 
 float toLinearDepth(float depth) {
-    float near = 0.1;
-    float far = 500.0;
 
-    return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+    return 2.0 * znear * zfar / (zfar + znear - (2.0 * depth - 1.0) * (zfar - znear));
 }
 
 void main()

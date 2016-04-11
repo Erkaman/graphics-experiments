@@ -70,6 +70,7 @@ void main(void) {
     n = vec3(2*n.r - 1.0, n.b, 2*n.g - 1.0);
     n = normalize(n);
 
+
     float waterDistance = toLinearDepth(gl_FragCoord.z);
     float floorDistance = toLinearDepth(  texture(depthMap, ndc).r  );
     float waterDepth = floorDistance - waterDistance;

@@ -147,15 +147,6 @@ float computeAo() {
 */
 
 
-/*
-float toLinearDepth(float depth) {
-    float near = 0.1;
-    float far = 500.0;
-
-    return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
-}
-*/
-
 vec4 mulWhereWIsOne(mat4 m, vec3 v) {
     return v.x * m[0] + (v.y * m[1] + (v.z * m[2] + m[3]) );
 }

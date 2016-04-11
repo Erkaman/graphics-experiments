@@ -131,6 +131,16 @@ void main() {
 //    fragmentColor = vec4(vec3(diff),1);
 
 
+    if(id == 1.0) { // if car
+	vec3 reflectionVector = (inverseViewNormalMatrix *
+				 vec4(
+				     reflect(-v, n.xyz ), 0.0)).xyz;
+
+	envMapSample = texture(envMap, reflectionVector).rgb;
+
+	fragmentColor = vec4(envMapSample, 1.0);
+    }
+
 #ifdef IS_TILED
 
     float GRID_COUNT = 10.0;

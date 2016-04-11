@@ -12,6 +12,7 @@
 #include "ewa/gl/query.hpp"
 
 #include "ewa/random_texture.hpp"
+#include "ewa/config.hpp"
 
 using std::vector;
 
@@ -106,6 +107,12 @@ void ParticleSystem::RenderSetup(Gbuffer* gbuffer, const Matrix4f& VP, const Vec
 
     m_particleBillboardShader->SetUniform("emitRate", m_emitRate);
     m_particleBillboardShader->SetUniform("emitCount", m_emitCount );
+
+    Config& config = Config::GetInstance();
+
+    m_particleBillboardShader->SetUniform("znear", config.GetZNear() );
+    m_particleBillboardShader->SetUniform("zfar", config.GetZFar() );
+
 
     m_particleBillboardShader->SetUniform("startColor", m_startColor );
     m_particleBillboardShader->SetUniform("endColor", m_endColor );

@@ -250,8 +250,7 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     const Vector3f pos =
-	Vector3f(-52.844795, 14.650712, 35.442703);
-
+	Vector3f(-4.383975, 9.277207, -1.998834);
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
@@ -677,13 +676,12 @@ void TuhuApplication::RenderEnvMap() {
 
 	    //   m_skydome->Draw(m_car->GetEnvCameras()[i]);
 
-	    m_skybox->DrawForward(m_cubeMapTexture, m_car->GetEnvCameras()[i]);
+//	    m_skybox->DrawForward(m_cubeMapTexture, m_car->GetEnvCameras()[i]);
 
-	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
+//	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
 
 	  //  m_grass->DrawEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
-
 
 	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	    m_heightMap->RenderEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i, aoOnly);
