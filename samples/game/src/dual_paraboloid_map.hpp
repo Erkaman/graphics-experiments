@@ -6,8 +6,11 @@
 
 class ColorFBO;
 class Vector3f;
+class AABB;
 
 struct Paraboloid {
+
+private:
 
 public:
 
@@ -18,6 +21,11 @@ public:
     Vector3f m_position;
 
     int m_i;
+
+    bool InFrustum(const Vector3f& position)const;
+    bool InFrustum(const AABB& aabb)const;
+
+
 };
 
 class DualParaboloidMap {

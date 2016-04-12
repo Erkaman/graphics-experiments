@@ -661,11 +661,11 @@ void TuhuApplication::RenderEnvMap() {
 
     size_t size = m_dualParaboloidMap->GetSize();
 
-    for(int i = 1 ; i < 2; ++i) {
+    for(int i = 0 ; i < 1; ++i) {
 
 	Paraboloid par = m_dualParaboloidMap->GetParaboloid(i);
 
-	par.m_fbo->Bind();
+//	par.m_fbo->Bind();
 
 //	LOG_I("size: %d", size);
 
@@ -675,7 +675,7 @@ void TuhuApplication::RenderEnvMap() {
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderParaboloid(par, m_lightDirection, aoOnly);
 
-	par.m_fbo->Unbind();
+//	par.m_fbo->Unbind();
     }
 
     /*
@@ -772,7 +772,7 @@ void TuhuApplication::Render() {
     m_gpuProfiler->End(GTS_Reflection);
 
 
-
+/*
 
     float SCALE = m_guiVerticalScale;
 
@@ -857,6 +857,7 @@ void TuhuApplication::Render() {
 
 	m_gui->Render(windowWidth, windowHeight);
     }
+*/
 
 // end comment
 
@@ -919,7 +920,7 @@ void TuhuApplication::Update(const float delta) {
 	//update cameras of env map. here
     }
 
-    m_heightMap->Update(*m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums(), *m_reflectionFrustum );
+    m_heightMap->Update(*m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums(), *m_reflectionFrustum, *m_dualParaboloidMap);
 
 
 //    m_smoke->Update(delta);

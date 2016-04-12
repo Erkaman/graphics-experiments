@@ -1,6 +1,7 @@
 #include "dual_paraboloid_map.hpp"
 
 #include "ewa/gl/color_fbo.hpp"
+#include "ewa/aabb.hpp"
 
 
 
@@ -40,4 +41,13 @@ Paraboloid DualParaboloidMap::GetParaboloid(int i) {
 
 size_t DualParaboloidMap::GetSize() {
     return m_size;
+}
+
+bool Paraboloid::InFrustum(const Vector3f& position)const {
+    return -1.0 * m_direction.z * (position - m_position ).z > 0.0f;
+}
+
+bool Paraboloid::InFrustum(const AABB& aabb) const{
+    // if at least one point is in the frustum, it is in the frustum.
+    return InFrustum(aabb.min) || InFrustum(aabb.max);
 }

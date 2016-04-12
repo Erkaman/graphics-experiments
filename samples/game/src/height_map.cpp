@@ -2006,7 +2006,9 @@ void HeightMap::CreateAABBs() {
 }
 
 void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
-		       ViewFrustum** envLightFrustums, const ViewFrustum& reflectionFrustum) {
+		       ViewFrustum** envLightFrustums, const ViewFrustum& reflectionFrustum,
+		       DualParaboloidMap& dualParaboloidMap
+    ) {
 
     MultArray<AABB>& aabbs = *m_aabbs;
 
@@ -2096,12 +2098,14 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 
 	    // TODO: cull.
 //	    if(envLightFrustums[i]->IsAABBInFrustum(aabb)) {
+	    if(dualParaboloidMap.GetParaboloid(i).InFrustum(aabb) )
 		m_inEnvFrustums[i]->push_back(v);
 //	    }
 	}
 
 	++checkedChunks;
     }
+
 
 
 

@@ -32,6 +32,7 @@ class ViewFrustum;
 class Cube;
 class ViewFrustum;
 class Paraboloid;
+class DualParaboloidMap;
 
 template<typename T>
 class PBO {
@@ -332,7 +333,8 @@ public:
 
     void Update(const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
 		ViewFrustum** envLightFrustums,
-		const ViewFrustum& reflectionFrustum);
+		const ViewFrustum& reflectionFrustum,
+		DualParaboloidMap& dualParaboloidMap);
 
 
 
