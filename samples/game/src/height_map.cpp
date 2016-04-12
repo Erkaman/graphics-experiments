@@ -131,7 +131,6 @@ void HeightMap::Init(
       load the shader
     */
 
-
     string shaderName = "shader/height_map_render";
 
 

@@ -1,6 +1,7 @@
 layout (location = 0) in  vec2 positionIn;
 
 #include "shader/height_map_lib.glsl"
+#include "shader/env_map_lib.glsl"
 
 uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
@@ -71,28 +72,7 @@ void main()
     // this part will be different!
 #ifdef PARABOLOID
 
-// if positive z par
-    gl_ClipDistance[0] = -1.0 * paraboloidDirection * dot(vec3(0,0,1), scaledPos - carPos );
-// else if negative z par
-//    gl_ClipDistance[0] = +dot(vec3(0,0,1), scaledPos - carPos );
-
-    vec4 outP = projectionMatrix * vec4(viewSpacePosition,1);
-    outP = outP / outP.w;
-
-    float L = length( outP.xyz );
-    outP = outP / L;
-
-
-    outP.z = outP.z + 1;
-    outP.x = outP.x / outP.z;
-    outP.y = outP.y / outP.z;
-
-
-    outP.z = (L - znear)/(zfar-znear);
-    outP.w = 1;
-
-
-    gl_Position = outP;
+    gl_Position = envMapProject(paraboloidDirection, viewSpacePosition, scaledPos, carPos, zfar, znear);
 
 #else
 
