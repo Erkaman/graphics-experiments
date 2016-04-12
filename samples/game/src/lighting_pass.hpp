@@ -59,11 +59,11 @@ private:
 
     void SetupShader(
 	ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera,
-	const DualParaboloidMap& dualParaboloidMap,
+	DualParaboloidMap& dualParaboloidMap,
 	ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
     void UnsetupShader(
 	ShaderProgram* shader, Gbuffer* gbuffer,
-	const DualParaboloidMap& dualParaboloidMap,
+	DualParaboloidMap& dualParaboloidMap,
 	ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
 
     void DrawPointLight(const ICamera* camera, const Vector3f& position, const Vector3f& color, float radius);
@@ -80,7 +80,7 @@ public:
     void Render(
 	Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition,
 	const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches,
-	const DualParaboloidMap& dualParaboloidMap , ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap,
+	DualParaboloidMap& dualParaboloidMap , ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap,
 	 const ViewFrustum& cameraFrustum);
 
     void UpdateTextures(int lightCount);

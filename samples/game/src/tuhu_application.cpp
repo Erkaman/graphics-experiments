@@ -654,9 +654,6 @@ void TuhuApplication::RenderScene() {
     m_gpuProfiler->End(GTS_Grass);
 
     //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
-
-
-
 }
 
 void TuhuApplication::RenderEnvMap() {
@@ -664,12 +661,11 @@ void TuhuApplication::RenderEnvMap() {
 
     size_t size = m_dualParaboloidMap->GetSize();
 
-
-    for(int i = 0 ; i < 1; ++i) {
+    for(int i = 1 ; i < 2; ++i) {
 
 	Paraboloid par = m_dualParaboloidMap->GetParaboloid(i);
 
-//	par.m_fbo->Bind();
+	par.m_fbo->Bind();
 
 //	LOG_I("size: %d", size);
 
@@ -679,7 +675,7 @@ void TuhuApplication::RenderEnvMap() {
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderParaboloid(par, m_lightDirection, aoOnly);
 
-//	par.m_fbo->Unbind();
+	par.m_fbo->Unbind();
     }
 
     /*
@@ -775,7 +771,7 @@ void TuhuApplication::Render() {
     RenderReflection();
     m_gpuProfiler->End(GTS_Reflection);
 
-/*
+
 
 
     float SCALE = m_guiVerticalScale;
@@ -859,10 +855,8 @@ void TuhuApplication::Render() {
  	windowWidth = fb_width*SCALE * 0.5f;
 	windowHeight = fb_height * 0.5f;
 
-
 	m_gui->Render(windowWidth, windowHeight);
     }
-    */
 
 // end comment
 

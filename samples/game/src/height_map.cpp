@@ -482,6 +482,7 @@ void HeightMap::RenderParaboloid(const Paraboloid& paraboloid, const Vector4f& l
     m_envShader->SetUniform("znear", config.GetZNear() );
     m_envShader->SetUniform("zfar", config.GetZFar() );
     m_envShader->SetUniform("carPos", 	paraboloid.m_position );
+    m_envShader->SetUniform("paraboloidDirection", paraboloid.m_direction.z );
 
     RenderSetup(m_envShader);
 

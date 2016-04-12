@@ -8,6 +8,7 @@ uniform mat4 normalMatrix;
 uniform mat4 lightMvp;
 uniform mat4 projectionMatrix;
 uniform vec3 carPos;
+uniform float paraboloidDirection;
 
 uniform sampler2D heightMap;
 
@@ -71,7 +72,7 @@ void main()
 #ifdef PARABOLOID
 
 // if positive z par
-    gl_ClipDistance[0] = -dot(vec3(0,0,1), scaledPos - carPos );
+    gl_ClipDistance[0] = -1.0 * paraboloidDirection * dot(vec3(0,0,1), scaledPos - carPos );
 // else if negative z par
 //    gl_ClipDistance[0] = +dot(vec3(0,0,1), scaledPos - carPos );
 

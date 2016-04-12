@@ -82,7 +82,9 @@ void main() {
 				 vec4(
 				     reflect(-v, n.xyz ), 0.0)).xyz;
 
-	envMapSample = texture(envMap, reflectionVector).rgb;
+//	envMapSample = texture(envMap, reflectionVector).rgb;
+
+
     }
 
     vec3 ambientLight = inAmbientLight;

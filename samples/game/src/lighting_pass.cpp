@@ -5,6 +5,7 @@
 #include "ewa/gl/texture.hpp"
 #include "ewa/config.hpp"
 #include "ewa/resource_manager.hpp"
+#include "dual_paraboloid_map.hpp"
 
 
 #include "gbuffer.hpp"
@@ -171,11 +172,10 @@ LightingPass::LightingPass(int framebufferWidth, int framebufferHeight) {
 void LightingPass::Render(
     Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition,
     const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches,
-    const DualParaboloidMap& dualParaboloidMap, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap,
+    DualParaboloidMap& dualParaboloidMap, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap,
     const ViewFrustum& cameraFrustum) {
 
     SetupShader(m_directionalShader, gbuffer, camera, dualParaboloidMap, refractionMap, reflectionMap);
-
 
     m_directionalShader->SetUniform("shadowMap", SHADOW_TEXTURE_UNIT);
     Texture::SetActiveTextureUnit(SHADOW_TEXTURE_UNIT);
@@ -186,9 +186,6 @@ void LightingPass::Render(
     Texture::SetActiveTextureUnit(LIGHT_GRID_TEXTURE_UNIT);
     m_lightGridTexture->Bind();
 
-    m_directionalShader->SetUniform("lightIndexTexture", LIGHT_INDEX_TEXTURE_UNIT);
-    Texture::SetActiveTextureUnit(LIGHT_INDEX_TEXTURE_UNIT);
-    m_lightIndexTexture->Bind();
 
 
     m_directionalShader->SetLightUniforms(camera, lightPosition, lightVp);
@@ -220,7 +217,7 @@ void LightingPass::Render(
 
     shadowMap.GetRenderTargetTexture().Unbind();
     m_lightGridTexture->Unbind();
-    m_lightIndexTexture->Unbind();
+    //       m_lightIndexTexture->Unbind();
 
     UnsetupShader(m_directionalShader, gbuffer, dualParaboloidMap, refractionMap, reflectionMap);
 
@@ -514,7 +511,7 @@ std::vector<PointLight> LightingPass::GetTestLights() {
 
 void LightingPass::SetupShader(
     ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera,
-    	const DualParaboloidMap& dualParaboloidMap, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap) {
+    	DualParaboloidMap& dualParaboloidMap, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap) {
 
     shader->Bind();
 
@@ -531,9 +528,13 @@ void LightingPass::SetupShader(
     gbuffer->GetNormalTexture()->Bind();
 
 
-//    shader->SetUniform("envMap",ENV_TEXTURE_UNIT );
-    //  Texture::SetActiveTextureUnit(ENV_TEXTURE_UNIT);
-//    cubeMapTexture->Bind();
+    shader->SetUniform("envMapFront",ENV_MAP_FRONT_TEXTURE_UNIT );
+    Texture::SetActiveTextureUnit(ENV_MAP_FRONT_TEXTURE_UNIT);
+    dualParaboloidMap.GetParaboloid(0).m_fbo->GetRenderTargetTexture().Bind();
+
+    shader->SetUniform("envMapBack",ENV_MAP_BACK_TEXTURE_UNIT );
+    Texture::SetActiveTextureUnit(ENV_MAP_BACK_TEXTURE_UNIT);
+    dualParaboloidMap.GetParaboloid(1).m_fbo->GetRenderTargetTexture().Bind();
 
 
     shader->SetUniform("refractionMap",REFRACTION_TEXTURE_UNIT );
@@ -576,7 +577,7 @@ void LightingPass::SetupShader(
 
 void LightingPass::UnsetupShader(
     ShaderProgram* shader, Gbuffer* gbuffer,
-    const DualParaboloidMap& dualParaboloidMap, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap) {
+    DualParaboloidMap& dualParaboloidMap, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap) {
     shader->Unbind();
 
     gbuffer->GetColorTexture()->Unbind();
