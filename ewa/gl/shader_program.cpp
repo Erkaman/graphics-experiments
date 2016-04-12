@@ -178,17 +178,22 @@ void ShaderProgram::SetMvpUniform(const Matrix4f& mvp) {
 
 
 void ShaderProgram::SetShaderUniforms(const Matrix4f& modelMatrix, const ICamera* camera) {
+    SetShaderUniforms(modelMatrix,  camera->GetViewMatrix(), camera->GetProjectionMatrix() );
+}
+
+void ShaderProgram::SetShaderUniforms(const Matrix4f& modelMatrix, const Matrix4f& viewMatrix,
+	const Matrix4f& projectionMatrix) {
 
     const Matrix4f modelViewMatrix =
-	camera->GetViewMatrix() * modelMatrix;
+	viewMatrix * modelMatrix;
 
-    const Matrix4f mvp = camera->GetProjectionMatrix() * modelViewMatrix;
+    const Matrix4f mvp = projectionMatrix * modelViewMatrix;
 
     SetMvpUniform(mvp);
     SetUniform("modelViewMatrix", modelViewMatrix);
     SetUniform("modelMatrix", modelMatrix);
-    SetUniform("viewMatrix", camera->GetViewMatrix());
-    SetUniform("projectionMatrix", camera->GetProjectionMatrix() );
+    SetUniform("viewMatrix", viewMatrix);
+    SetUniform("projectionMatrix", projectionMatrix );
 
     SetUniform("normalMatrix", Matrix4f::GetNormalMatrix(modelViewMatrix));
 
@@ -226,12 +231,20 @@ void ShaderProgram::SetLightUniforms(const ICamera* camera, const Vector4f& ligh
 
 }
 
+
+void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const Matrix4f& viewMatrix,
+				     const Matrix4f& projectionMatrix, const Vector3f& cameraPosition, const Vector4f& lightDirection) {
+
+
+    SetShaderUniforms(modelMatrix, viewMatrix, projectionMatrix);
+
+    SetUniform("viewSpaceLightDirection", Vector3f(viewMatrix * (lightDirection)  ) );
+    SetUniform("eyePos", cameraPosition );
+}
+
 void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection) {
-
-    SetShaderUniforms(modelMatrix, camera);
-
-    SetUniform("viewSpaceLightDirection", Vector3f(camera->GetViewMatrix() * (lightDirection)  ) );
-    SetUniform("eyePos", camera->GetPosition() );
+    SetPhongUniforms(modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix(),
+		     camera->GetPosition(), lightDirection);
 }
 
 void ShaderProgram::SetUniform(const std::string& uniformName, const float val) {

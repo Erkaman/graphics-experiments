@@ -1,9 +1,13 @@
 #include "height_map.hpp"
 
+#include "dual_paraboloid_map.hpp"
+
+
 #include "log.hpp"
 #include "perlin_seed.hpp"
 #include "common.hpp"
 #include "ewa/gui_mouse_state.hpp"
+#include "ewa/config.hpp"
 
 #include "gl/vbo.hpp"
 #include "gl/shader_program.hpp"
@@ -154,6 +158,8 @@ void HeightMap::Init(
 
     {
 	vector<string> defines(defaultDefines);
+
+	defines.push_back("PARABOLOID");
 
 	m_envShader =
 	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
@@ -424,9 +430,9 @@ void HeightMap::RenderUnsetup() {
 
 }
 
-void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i, bool aoOnly) {
-    m_envShader->Bind();
 
+void HeightMap::RenderParaboloid(const Paraboloid& paraboloid, const Vector4f& lightPosition, bool aoOnly) {
+    m_envShader->Bind();
 
     m_envShader->SetUniform("aoOnly", aoOnly ? 1.0f : 0.0f);
 
@@ -438,8 +444,6 @@ void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPositio
     m_envShader->SetUniform("aoMap", 5);
     Texture::SetActiveTextureUnit(5);
     m_aoMap->Bind();
-
-
 
     m_envShader->SetUniform("grass", 0);
     Texture::SetActiveTextureUnit(0);
@@ -457,16 +461,36 @@ void HeightMap::RenderEnvMap(const ICamera* camera, const Vector4f& lightPositio
     Texture::SetActiveTextureUnit(7);
     m_asphaltTexture->Bind();
 
-    m_envShader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0), camera, lightPosition);
+    // FIX
+    m_envShader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0),
+
+				  paraboloid.m_viewMatrix,
+
+				  // projection matrix is identity.
+				  // we do projection manually in the shader instead.
+				  Matrix4f::CreateIdentity(),
+
+				  paraboloid.m_position,
+
+				  lightPosition);
 
 
 
+    // TODO: uniform zfar and znear.
+    Config& config = Config::GetInstance();
 
-
+    m_envShader->SetUniform("znear", config.GetZNear() );
+    m_envShader->SetUniform("zfar", config.GetZFar() );
+    m_envShader->SetUniform("carPos", 	paraboloid.m_position );
 
     RenderSetup(m_envShader);
 
-    Render(m_envShader, HeightMapRenderMode(HEIGHT_MAP_RENDER_MODE_ENV_MAP0 + i) );
+
+    GL_C(glEnable(GL_CLIP_DISTANCE0));
+
+    Render(m_envShader, HeightMapRenderMode(HEIGHT_MAP_RENDER_MODE_ENV_MAP0 + paraboloid.m_i) );
+
+    GL_C(glDisable(GL_CLIP_DISTANCE0));
 
     RenderUnsetup();
 
@@ -506,7 +530,7 @@ void HeightMap::Render(ShaderProgram* shader, HeightMapRenderMode renderMode) {
 
 
     std::vector<Vector2i>& inFrustum =
-	renderMode >= HEIGHT_MAP_RENDER_MODE_ENV_MAP0 && renderMode <= HEIGHT_MAP_RENDER_MODE_ENV_MAP5 ?
+	renderMode >= HEIGHT_MAP_RENDER_MODE_ENV_MAP0 && renderMode <= HEIGHT_MAP_RENDER_MODE_ENV_MAP1 ?
 	*m_inEnvFrustums[renderMode - HEIGHT_MAP_RENDER_MODE_ENV_MAP0] :
 
 	renderMode == HEIGHT_MAP_RENDER_MODE_NORMAL || renderMode == HEIGHT_MAP_RENDER_MODE_REFRACTION ? *m_inCameraFrustum :
@@ -1140,10 +1164,6 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
 
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP0] = halfChunk;
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP1] = halfChunk;
-    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP2] = halfChunk;
-    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP3] = halfChunk;
-    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP4] = halfChunk;
-    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP5] = halfChunk;
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_NORMAL] = normalChunk;
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_SHADOWS] = halfChunk;
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_REFLECTION] = waterChunk;
@@ -1964,7 +1984,7 @@ void HeightMap::CreateAABBs() {
     m_inReflectionFrustum = new std::vector<Vector2i>;
     m_inReflectionFrustum->reserve(m_chunks * m_chunks);
 
-    for(int i = 0; i < 6; ++i) {
+    for(int i = 0; i < 2; ++i) {
 	m_inEnvFrustums[i] =new std::vector<Vector2i>;
 	m_inEnvFrustums[i]->reserve(m_chunks * m_chunks);
     }
@@ -1993,7 +2013,7 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
     m_inLightFrustum->clear();
     m_inReflectionFrustum->clear();
 
-    for(int i = 0; i < 6; ++i) {
+    for(int i = 0; i < 2; ++i) {
 	m_inEnvFrustums[i]->clear();
     }
 
@@ -2071,11 +2091,12 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 
 	Vector2i v(x,z);
 
-	for(int i = 0; i < 6; ++i) {
+	for(int i = 0; i < 2; ++i) {
 
-	    if(envLightFrustums[i]->IsAABBInFrustum(aabb)) {
+	    // TODO: cull.
+//	    if(envLightFrustums[i]->IsAABBInFrustum(aabb)) {
 		m_inEnvFrustums[i]->push_back(v);
-	    }
+//	    }
 	}
 
 	++checkedChunks;

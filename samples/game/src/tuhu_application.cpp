@@ -1,6 +1,7 @@
 #include "tuhu_application.hpp"
 
 #include "particles_renderer.hpp"
+#include "dual_paraboloid_map.hpp"
 
 #include "ewa/camera.hpp"
 #include "ewa/common.hpp"
@@ -199,6 +200,8 @@ void TuhuApplication::Init() {
     m_reflectionFbo = new ColorFBO();
     m_reflectionFbo->Init(REFLECTION_FBO_TEXTURE_UNIT, REFLECTION_WIDTH, REFLECTION_HEIGHT);
 
+
+    m_dualParaboloidMap = new DualParaboloidMap();
 
     m_cubeMapTexture = CubeMapTexture::Load(
 	"img/bluecloud_ft.png",
@@ -658,6 +661,28 @@ void TuhuApplication::RenderScene() {
 
 void TuhuApplication::RenderEnvMap() {
 
+
+    size_t size = m_dualParaboloidMap->GetSize();
+
+
+    for(int i = 0 ; i < 1; ++i) {
+
+	Paraboloid par = m_dualParaboloidMap->GetParaboloid(i);
+
+//	par.m_fbo->Bind();
+
+//	LOG_I("size: %d", size);
+
+	::SetViewport(0,0,size,size);
+	Clear(1.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
+	m_heightMap->RenderParaboloid(par, m_lightDirection, aoOnly);
+
+//	par.m_fbo->Unbind();
+    }
+
+    /*
     for(int i = 0; i < 6; ++i) {
 
 	if(i == 3) // dont draw for bottom cube map side.
@@ -688,6 +713,10 @@ void TuhuApplication::RenderEnvMap() {
 	}
 	m_envFbo->Unbind();
     }
+    */
+
+
+
 }
 
 void TuhuApplication::RenderRefraction() {
@@ -746,6 +775,7 @@ void TuhuApplication::Render() {
     RenderReflection();
     m_gpuProfiler->End(GTS_Reflection);
 
+/*
 
 
     float SCALE = m_guiVerticalScale;
@@ -790,7 +820,8 @@ void TuhuApplication::Render() {
     m_lightingPass->Render(
 	m_gbuffer, m_curCamera, m_lightDirection,
 	lightVp, *m_depthFbo, GeometryObject::GetTorches(),
-	m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo,
+	*m_dualParaboloidMap,
+	*m_refractionFbo, *m_reflectionFbo,
     *m_cameraFrustum
 	);
     m_gpuProfiler->End(GTS_Light);
@@ -801,6 +832,8 @@ void TuhuApplication::Render() {
 
 
     m_gpuProfiler->Begin(GTS_Sky);
+
+
     m_skybox->DrawDeferred(
 //	m_cubeMapTexture,
 	m_envFbo->GetEnvMap(),
@@ -809,11 +842,13 @@ void TuhuApplication::Render() {
 
 
 
+
     m_gpuProfiler->Begin(GTS_Particles);
 
     m_particlesRenderer->Render(m_gbuffer, m_curCamera, GetFramebufferWidth(), GetFramebufferHeight() );
 
     m_gpuProfiler->End(GTS_Particles);
+
 
     if(m_gui) {
 
@@ -827,7 +862,9 @@ void TuhuApplication::Render() {
 
 	m_gui->Render(windowWidth, windowHeight);
     }
+    */
 
+// end comment
 
     m_gpuProfiler->WaitForDataAndUpdate();
 
@@ -1067,6 +1104,7 @@ void TuhuApplication::Update(const float delta) {
     //
     m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
 
+    m_dualParaboloidMap->Update( m_car->GetPosition() );
 
 }
 

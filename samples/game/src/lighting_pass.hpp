@@ -17,6 +17,7 @@ class ColorDepthFbo;
 class ColorFBO;
 class Texture2D;
 class ViewFrustum;
+class DualParaboloidMap;
 
 struct PointLight {
     Vector3f m_position;
@@ -58,10 +59,12 @@ private:
 
     void SetupShader(
 	ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera,
-	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
+	const DualParaboloidMap& dualParaboloidMap,
+	ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
     void UnsetupShader(
 	ShaderProgram* shader, Gbuffer* gbuffer,
-	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
+	const DualParaboloidMap& dualParaboloidMap,
+	ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
 
     void DrawPointLight(const ICamera* camera, const Vector3f& position, const Vector3f& color, float radius);
 
@@ -77,7 +80,7 @@ public:
     void Render(
 	Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition,
 	const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches,
-	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap,
+	const DualParaboloidMap& dualParaboloidMap , ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap,
 	 const ViewFrustum& cameraFrustum);
 
     void UpdateTextures(int lightCount);

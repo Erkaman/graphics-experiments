@@ -7,6 +7,7 @@ uniform mat4 modelViewMatrix;
 uniform mat4 normalMatrix;
 uniform mat4 lightMvp;
 uniform mat4 projectionMatrix;
+uniform vec3 carPos;
 
 uniform sampler2D heightMap;
 
@@ -22,6 +23,10 @@ out vec2 texCoord;
 out vec3 position;
 
 out vec2 scaledTexcoord;
+
+
+uniform float znear;
+uniform float zfar;
 
 
 out vec3 outn;
@@ -58,8 +63,49 @@ void main()
 
     viewSpacePosition = (modelViewMatrix * vec4(scaledPos, 1.0)).xyz;
 
-//    gl_Position = mvp * vec4(scaledPos,1);
+
+
+
+
+    // this part will be different!
+#ifdef PARABOLOID
+
+// if positive z par
+    gl_ClipDistance[0] = -dot(vec3(0,0,1), scaledPos - carPos );
+// else if negative z par
+//    gl_ClipDistance[0] = +dot(vec3(0,0,1), scaledPos - carPos );
+
+    vec4 outP = projectionMatrix * vec4(viewSpacePosition,1);
+    outP = outP / outP.w;
+
+    float L = length( outP.xyz );
+    outP = outP / L;
+
+
+    outP.z = outP.z + 1;
+    outP.x = outP.x / outP.z;
+    outP.y = outP.y / outP.z;
+
+
+    outP.z = (L - znear)/(zfar-znear);
+    outP.w = 1;
+
+
+    gl_Position = outP;
+
+#else
+
     gl_Position = projectionMatrix * vec4(viewSpacePosition,1);
+
+#endif
+
+
+
+
+
+
+
+
 
 
     texCoord = globalPos;

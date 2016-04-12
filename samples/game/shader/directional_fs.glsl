@@ -131,6 +131,7 @@ void main() {
 //    fragmentColor = vec4(vec3(diff),1);
 
 
+    /*
     if(id == 1.0) { // if car
 	vec3 reflectionVector = (inverseViewNormalMatrix *
 				 vec4(
@@ -140,6 +141,7 @@ void main() {
 
 	fragmentColor = vec4(envMapSample, 1.0);
     }
+    */
 
 #ifdef IS_TILED
 

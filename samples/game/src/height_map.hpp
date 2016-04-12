@@ -31,6 +31,7 @@ class Matrix4f;
 class ViewFrustum;
 class Cube;
 class ViewFrustum;
+class Paraboloid;
 
 template<typename T>
 class PBO {
@@ -132,11 +133,11 @@ enum HeightMapRenderMode {
 
     HEIGHT_MAP_RENDER_MODE_ENV_MAP0,
     HEIGHT_MAP_RENDER_MODE_ENV_MAP1,
-    HEIGHT_MAP_RENDER_MODE_ENV_MAP2,
+/*    HEIGHT_MAP_RENDER_MODE_ENV_MAP2,
     HEIGHT_MAP_RENDER_MODE_ENV_MAP3,
     HEIGHT_MAP_RENDER_MODE_ENV_MAP4,
     HEIGHT_MAP_RENDER_MODE_ENV_MAP5,
-
+*/
     HEIGHT_MAP_RENDER_MODE_NORMAL,
     HEIGHT_MAP_RENDER_MODE_SHADOWS,
     HEIGHT_MAP_RENDER_MODE_REFLECTION,
@@ -215,7 +216,7 @@ private:
     std::vector<Vector2i>* m_inLightFrustum;
     std::vector<Vector2i>* m_inReflectionFrustum;
 
-    std::vector<Vector2i>* m_inEnvFrustums[6];
+    std::vector<Vector2i>* m_inEnvFrustums[2];
 
 
     // used to store temp data in SmoothTerrain()
@@ -311,7 +312,7 @@ public:
     void RenderShadowMap(const Matrix4f& lightVp);
 
 
-    void RenderEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i, bool aoOnly);
+    void RenderParaboloid(const Paraboloid& paraboloid, const Vector4f& lightPosition, bool aoOnly);
 
 
     void RenderRefraction(

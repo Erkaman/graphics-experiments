@@ -41,6 +41,7 @@ class Grid;
 class ColorFBO;
 class ColorDepthFbo;
 class ParticlesRenderer;
+class DualParaboloidMap;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
@@ -100,6 +101,8 @@ private:
     ViewFrustum* m_cameraFrustum;
     ViewFrustum* m_lightFrustum;
     ViewFrustum* m_reflectionFrustum;
+
+    DualParaboloidMap* m_dualParaboloidMap;
 
 
     PhysicsWorld* m_physicsWorld;

@@ -60,6 +60,12 @@ public:
 
 
     void SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection);
+
+
+    void SetPhongUniforms(const Matrix4f& modelMatrix, const Matrix4f& viewMatrix,
+			  const Matrix4f& projectionMatrix, const Vector3f& cameraPosition, const Vector4f& lightDirection);
+
+
     void SetPhongUniforms(
 	const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection, const Matrix4f& lightVp);
 
@@ -67,6 +73,10 @@ public:
 	const ICamera* camera, const Vector4f& lightDirection, const Matrix4f& lightVp);
 
     void SetShaderUniforms(const Matrix4f& modelMatrix, const ICamera* camera);
+    void SetShaderUniforms(const Matrix4f& modelMatrix, const Matrix4f& viewMatrix,
+	const Matrix4f& projectionMatrix);
+
+
     void SetMvpUniform(const Matrix4f& mvp);
 
 
