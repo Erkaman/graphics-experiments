@@ -32,12 +32,15 @@ uniform mat4 invViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
+uniform mat4 paraboloidBasis;
+
 
 uniform vec3 pointLightPosition[256];
 uniform float pointLightRadius[256];
 uniform vec3 pointLightColor[256];
 
-uniform samplerCube envMap;
+uniform sampler2D envMapFront;
+uniform sampler2D envMapBack;
 
 
 bool isInt(float f, float eps) {
@@ -84,7 +87,21 @@ void main() {
 
 //	envMapSample = texture(envMap, reflectionVector).rgb;
 
+	vec3 R  = (paraboloidBasis *  vec4(reflectionVector, 0.0)).xyz;
 
+	vec2 front;
+	front.x = (R.x / (2*(1 + R.z))) + 0.5;
+	front.y = 1-((R.y / (2*(1 + R.z))) + 0.5);
+
+	vec2 back;
+	back.x = (R.x / (2*(1 - R.z))) + 0.5;
+	back.y = 1-((R.y / (2*(1 - R.z))) + 0.5);
+
+	vec4 forward = texture( envMapFront, front );
+	vec4 backward = texture( envMapBack, back );
+
+
+	envMapSample = max(forward, backward).xyz;
     }
 
     vec3 ambientLight = inAmbientLight;
@@ -129,6 +146,11 @@ void main() {
 	    spec,
 	    visibility,
 	    envMapSample );
+
+    if(id == 1.0) { // if car
+
+	fragmentColor = vec4(envMapSample, 1.0);
+    }
 
 //    fragmentColor = vec4(vec3(diff),1);
 

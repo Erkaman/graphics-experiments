@@ -239,7 +239,7 @@ void LightingPass::Render(
     std::vector<PointLight> lights = GetTorches(camera, torches);
 
 
-    DrawLights(camera, lights, cameraFrustum);
+//    DrawLights(camera, lights, cameraFrustum);
 
     if(!isTiled) {
 	GL_C(glDisable(GL_BLEND));
@@ -535,6 +535,8 @@ void LightingPass::SetupShader(
     shader->SetUniform("envMapBack",ENV_MAP_BACK_TEXTURE_UNIT );
     Texture::SetActiveTextureUnit(ENV_MAP_BACK_TEXTURE_UNIT);
     dualParaboloidMap.GetParaboloid(1).m_fbo->GetRenderTargetTexture().Bind();
+
+    shader->SetUniform("paraboloidBasis", dualParaboloidMap.GetParaboloid(0).m_viewMatrix);
 
 
     shader->SetUniform("refractionMap",REFRACTION_TEXTURE_UNIT );

@@ -670,7 +670,7 @@ void TuhuApplication::RenderEnvMap() {
 //	LOG_I("size: %d", size);
 
 	::SetViewport(0,0,size,size);
-	Clear(1.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	Clear(0.0f, 0.0f, 0.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderParaboloid(par, m_lightDirection, aoOnly);
