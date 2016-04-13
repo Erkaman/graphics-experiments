@@ -112,6 +112,10 @@ void Texture::SetTextureClamping() {
     SetTextureWrap(GL_CLAMP_TO_EDGE);
 }
 
+void Texture::SetTextureClampToBorder() {
+    SetTextureWrap(GL_CLAMP_TO_BORDER);
+}
+
 
 void Texture::EnableAnisotropicFiltering() {
     GL_C(glTexParameterf(m_target,GL_TEXTURE_MAX_ANISOTROPY_EXT, GetMaxAnisotropic()));

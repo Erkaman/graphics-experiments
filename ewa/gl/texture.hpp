@@ -61,6 +61,10 @@ public:
      */
     void SetTextureClamping();
 
+
+    void SetTextureClampToBorder();
+
+
     void SetTextureWrap(const GLenum s, const GLenum t);
     void SetTextureWrap(const GLenum sAndT);
 

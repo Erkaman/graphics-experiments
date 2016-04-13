@@ -20,7 +20,7 @@ void ColorFBO::RecreateBuffers(const GLsizei width, const GLsizei height)  {
 	m_renderTargetTexture->Bind();
 	{
 	    m_renderTargetTexture->SetMagMinFilters(GL_LINEAR);
-	    m_renderTargetTexture->SetTextureClamping();
+	    m_renderTargetTexture->SetTextureClampToBorder();
 
 	    // attach the target texture to the FBO.
 	    Attach(GL_COLOR_ATTACHMENT0, *m_renderTargetTexture);

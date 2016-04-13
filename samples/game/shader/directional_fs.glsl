@@ -100,8 +100,9 @@ void main() {
 	vec4 forward = texture( envMapFront, front );
 	vec4 backward = texture( envMapBack, back );
 
-
 	envMapSample = max(forward, backward).xyz;
+
+//	envMapSample = vec3(back, 0.0);
     }
 
     vec3 ambientLight = inAmbientLight;
