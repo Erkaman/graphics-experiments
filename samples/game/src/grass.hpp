@@ -25,6 +25,7 @@ class Vector2i;
 class Texture2D;
 class ViewFrustum;
 class DualParaboloidMap;
+class Paraboloid;
 
 struct GrassInfo {
 public:
@@ -79,6 +80,7 @@ private:
     ShaderProgram* m_deferredShader;
     ShaderProgram* m_reflectionShader;
     ShaderProgram* m_outputIdShader;
+    ShaderProgram* m_envMapShader;
 
     float m_heightMapResolution;
     float m_chunkSize;
@@ -128,7 +130,7 @@ private:
     void MakeGrass(const Vector2f position, const float angle, const float width, const float height, int id);
 
     void Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader,
-	const std::vector<Vector2i>& inFrustum);
+	      const std::vector<Vector2i>& inFrustum, Paraboloid* paraboloid);
 
     void Rebuild();
 
@@ -155,7 +157,7 @@ public:
 
     void DrawDeferred(const ICamera* camera, const Vector4f& lightPosition);
     void DrawReflection(const ICamera* camera, const Vector4f& lightPosition);
-    void DrawEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i);
+    void DrawEnvMap(Paraboloid* paraboloid, const Vector4f& lightPosition, int i);
 
     void RenderIdAll(const ICamera* camera);
 

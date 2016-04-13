@@ -660,11 +660,11 @@ void TuhuApplication::RenderEnvMap() {
 
     size_t size = m_dualParaboloidMap->GetSize();
 
-    for(int i = 1 ; i < 2; ++i) {
+    for(int i = 0 ; i < 2; ++i) {
 
 	Paraboloid par = m_dualParaboloidMap->GetParaboloid(i);
 
-//	par.m_fbo->Bind();
+	par.m_fbo->Bind();
 
 //	LOG_I("size: %d", size);
 
@@ -672,15 +672,18 @@ void TuhuApplication::RenderEnvMap() {
 	Clear(0.0f, 0.0f, 0.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-	    GeometryObject::RenderAllEnv(m_lightDirection, i, par);
+	GeometryObject::RenderAllEnv(m_lightDirection, i, par);
 //	m_skydome->DrawForward(par);
 
-//	    m_grass->DrawEnvMap(m_lightDirection, i, par);
+
 
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderParaboloid(par, m_lightDirection, aoOnly);
 
-//	par.m_fbo->Unbind();
+	    m_grass->DrawEnvMap(&par, m_lightDirection, i);
+
+
+	par.m_fbo->Unbind();
     }
 
     /*
@@ -777,7 +780,6 @@ void TuhuApplication::Render() {
     m_gpuProfiler->End(GTS_Reflection);
 
 
-/*
 
     float SCALE = m_guiVerticalScale;
 
@@ -862,8 +864,6 @@ void TuhuApplication::Render() {
 
 	m_gui->Render(windowWidth, windowHeight);
     }
-    */
-
 
 
 // end comment

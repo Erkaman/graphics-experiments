@@ -66,7 +66,6 @@ void main()
 #endif
     texcoordOut = texCoordIn;
 
-
 #ifdef PARABOLOID
     //gl_Position =mvp * vec4(positionIn.xyz,1);
 

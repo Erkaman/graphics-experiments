@@ -704,7 +704,7 @@ void GeometryObject::RenderAllEnv(const Vector4f& lightPosition, int i, Parabolo
 		lightPosition);
 
 
-//	    GL_C(glEnable(GL_CLIP_DISTANCE0));
+	    GL_C(glEnable(GL_CLIP_DISTANCE0));
 
 
 
@@ -728,7 +728,7 @@ void GeometryObject::RenderAllEnv(const Vector4f& lightPosition, int i, Parabolo
 		chunk->m_indexBuffer->Unbind();
 	    }
 
-//	    GL_C(glDisable(GL_CLIP_DISTANCE0));
+	    GL_C(glDisable(GL_CLIP_DISTANCE0));
 
 	}
 
@@ -1234,12 +1234,16 @@ void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum*
 	    m_inEnvLightFrustums[i] =
 		dualParaboloidMap.GetParaboloid(i).InFrustum(GetModelSpaceAABB());
 	}
+
+
 /*
 	if(m_filename != "obj/water.eob" && m_filename != "obj/car_blend.eob" ) {
 	    m_inEnvLightFrustums[i] = false;
 	}
 */
     }
+
+
 
 }
 

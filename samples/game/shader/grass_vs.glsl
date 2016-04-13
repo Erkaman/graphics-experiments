@@ -1,14 +1,20 @@
+
+
 layout (location = 0) in  vec3 positionIn;
 layout (location = 1) in vec3 texCoordIn;
 layout (location = 2) in  vec3 normalIn;
 layout (location = 3) in vec3 centerPosition;
 
 #include "shader/height_map_lib.glsl"
+#include "shader/env_map_lib.glsl"
 
 
 uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 modelMatrix;
 uniform mat4 normalMatrix;
+uniform mat4 projectionMatrix;
 uniform float time;
 
 out vec3 viewSpaceNormal;
@@ -27,6 +33,13 @@ out float id;
 
 uniform vec2 cameraPos;
 uniform vec3 cameraDir;
+
+uniform vec3 carPos;
+uniform float paraboloidDirection;
+
+uniform float znear;
+uniform float zfar;
+
 
 out vec3 color;
 
@@ -164,12 +177,26 @@ void main()
     }
 
 
+    vec3 modelSpacePosition = (modelMatrix * vec4(pos, 1.0)).xyz;
+    viewSpacePosition = (viewMatrix * vec4(pos, 1.0)).xyz;
 
-    gl_Position = mvp * vec4(pos,1);
+
+
+//    gl_Position = projectionMatrix * vec4(viewSpacePosition,1);
+
+#ifdef PARABOLOID
+    //gl_Position =mvp * vec4(positionIn.xyz,1);
+
+    gl_Position = envMapProject(paraboloidDirection, viewSpacePosition, modelSpacePosition, carPos, zfar, znear);
+
+#else
+    gl_Position =projectionMatrix * vec4(viewSpacePosition.xyz,1);
+#endif
+
+
 
     viewSpaceNormal = normalize((normalMatrix * vec4(normalize(normal),0.0)).xyz);
 
-    viewSpacePosition = (modelViewMatrix * vec4(positionIn, 1.0)).xyz;
 
 //    vertexColor = colorIn.rgb;
 

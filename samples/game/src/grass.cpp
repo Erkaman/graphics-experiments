@@ -108,12 +108,20 @@ void Grass::Init(HeightMap* heightMap  ) {
 	    ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
     }
 
-
-
     {
 	vector<string> defines(defaultDefines);
 
 	m_reflectionShader =
+	    ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    }
+
+    {
+	vector<string> defines(defaultDefines);
+
+	defines.push_back("PARABOLOID");
+
+
+	m_envMapShader =
 	    ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
     }
 
@@ -265,7 +273,7 @@ Grass::Grass(const std::string& filename, HeightMap* heightMap): m_rng(12), m_he
 
 
 void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderProgram* shader,
-    const std::vector<Vector2i>& inFrustum) {
+		 const std::vector<Vector2i>& inFrustum, Paraboloid* paraboloid) {
 
     SetCullFace(false);
 
@@ -274,7 +282,22 @@ void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderPro
 
     const Matrix4f model =  Matrix4f::CreateIdentity();
 
-    shader->SetPhongUniforms(model, camera, lightPosition, Matrix4f::CreateIdentity() );
+    if(camera)
+	shader->SetPhongUniforms(model, camera, lightPosition, Matrix4f::CreateIdentity() );
+
+    if(paraboloid) {
+
+	paraboloid->SetParaboloidUniforms(
+		*shader,
+		model,
+
+		paraboloid->m_viewMatrix,
+		Matrix4f::CreateIdentity(),
+		paraboloid->m_position,
+		lightPosition);
+
+
+    }
 
     shader->SetUniform("tex", 0);
     Texture::SetActiveTextureUnit(0);
@@ -303,6 +326,10 @@ void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderPro
     MultArray<GrassChunk*>& chunks = *m_chunks;
 
 
+    if(paraboloid) {
+	GL_C(glEnable(GL_CLIP_DISTANCE0));
+    }
+
     /*
     for(int x = 0; x < CHUNK_COUNT; ++x) {
 	for(int z = 0; z < CHUNK_COUNT; ++z) {
@@ -321,6 +348,9 @@ void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderPro
 
     }
 
+    if(paraboloid) {
+	GL_C(glDisable(GL_CLIP_DISTANCE0));
+    }
 
 
     m_grassTexture->Unbind();
@@ -334,18 +364,16 @@ void Grass::Draw(const ICamera* camera, const Vector4f& lightPosition, ShaderPro
 }
 
 void Grass::DrawDeferred(const ICamera* camera, const Vector4f& lightPosition) {
-    Draw(camera, lightPosition, m_deferredShader,*m_inCameraFrustum);
+    Draw(camera, lightPosition, m_deferredShader,*m_inCameraFrustum, NULL);
 }
 
 void Grass::DrawReflection(const ICamera* camera, const Vector4f& lightPosition) {
-    Draw(camera, lightPosition, m_reflectionShader,*m_inReflectionFrustum);
+    Draw(camera, lightPosition, m_reflectionShader,*m_inReflectionFrustum, NULL);
 }
 
-void Grass::DrawEnvMap(const ICamera* camera, const Vector4f& lightPosition, int i) {
-    Draw(camera, lightPosition, m_reflectionShader,* m_inEnvFrustums[i]);
+void Grass::DrawEnvMap(Paraboloid* paraboloid, const Vector4f& lightPosition, int i) {
+    Draw(NULL, lightPosition, m_envMapShader,* m_inEnvFrustums[i], paraboloid);
 }
-
-
 
 void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vector3f& cameraDir,
 		   const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
@@ -384,6 +412,7 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 	    }
 
 	    for(int i = 0; i < 2; ++i) {
+
 		if(	dualParaboloidMap.GetParaboloid(i).InFrustum(aabb)) {
 		    m_inEnvFrustums[i]->push_back(v);
 		}
@@ -753,7 +782,7 @@ void Grass::RemoveGrass(int id) {
 
 
 void Grass::RenderIdAll(const ICamera* camera) {
-    Draw(camera, Vector4f(0), m_outputIdShader, *m_inCameraFrustum);
+    Draw(camera, Vector4f(0), m_outputIdShader, *m_inCameraFrustum, NULL);
 }
 
 void Grass::SaveGrass(const std::string& filename) {
