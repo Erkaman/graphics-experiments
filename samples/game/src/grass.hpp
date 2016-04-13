@@ -24,7 +24,7 @@ class HeightMap;
 class Vector2i;
 class Texture2D;
 class ViewFrustum;
-
+class DualParaboloidMap;
 
 struct GrassInfo {
 public:
@@ -112,7 +112,7 @@ private:
 
     std::vector<Vector2i>* m_inCameraFrustum;
     std::vector<Vector2i>* m_inReflectionFrustum;
-    std::vector<Vector2i>* m_inEnvFrustums[6];
+    std::vector<Vector2i>* m_inEnvFrustums[2];
 
 //    float windLerp;
     bool m_doWind;
@@ -161,7 +161,7 @@ public:
 
     void Update(const float delta, const Vector2f& cameraPosition, const Vector3f& cameraDir,
 		const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
-		ViewFrustum** envLightFrustums, const ViewFrustum& reflectionFrustum);
+		DualParaboloidMap& dualParaboloidMap, const ViewFrustum& reflectionFrustum);
 
     void AddGrass(const Vector2i& position, int grassClusterSize);
     void RemoveGrass(int id);

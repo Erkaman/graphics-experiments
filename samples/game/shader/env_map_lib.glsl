@@ -9,10 +9,11 @@ vec4 envMapProject(float paraboloidDirection, vec3 viewSpacePosition, vec3 model
     float L = length( outP.xyz );
     outP = outP / L;
 
-
     outP.z = outP.z + 1;
     outP.x = outP.x / outP.z;
     outP.y = outP.y / outP.z;
+
+    outP.y *= -1;
 
 
     outP.z = (L - znear)/(zfar-znear);

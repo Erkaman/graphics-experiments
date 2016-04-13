@@ -679,9 +679,9 @@ void GeometryObject::RenderAllEnv(const Vector4f& lightPosition, int i, Parabolo
 
 	    ++total;
 
-//	    if(!geoObj->m_inEnvLightFrustums[i]) { // not in frustum?
-//		continue; // if culled, do nothing.
-//	    }
+	    if(!geoObj->m_inEnvLightFrustums[i]) { // not in frustum?
+		continue; // if culled, do nothing.
+	    }
 
 	    ++nonCulled;
 

@@ -1,5 +1,6 @@
 #include "grass.hpp"
 #include "biased_random.hpp"
+#include "dual_paraboloid_map.hpp"
 
 #include "ewa/gl/vbo.hpp"
 #include "ewa/gl/texture2d.hpp"
@@ -348,7 +349,7 @@ void Grass::DrawEnvMap(const ICamera* camera, const Vector4f& lightPosition, int
 
 void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vector3f& cameraDir,
 		   const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
-		   ViewFrustum** envLightFrustums, const ViewFrustum& reflectionFrustum) {
+		   DualParaboloidMap& dualParaboloidMap, const ViewFrustum& reflectionFrustum) {
 
 
     MultArray<AABB>& aabbs = *m_aabbs;
@@ -357,7 +358,7 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
     m_inCameraFrustum->clear();
     m_inReflectionFrustum->clear();
 
-    for(int i = 0; i < 6; ++i) {
+    for(int i = 0; i < 2; ++i) {
 	m_inEnvFrustums[i]->clear();
     }
 
@@ -382,8 +383,8 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 		m_inReflectionFrustum->push_back(v);
 	    }
 
-	    for(int i = 0; i < 6; ++i) {
-		if(envLightFrustums[i]->IsAABBInFrustum(aabb)) {
+	    for(int i = 0; i < 2; ++i) {
+		if(	dualParaboloidMap.GetParaboloid(i).InFrustum(aabb)) {
 		    m_inEnvFrustums[i]->push_back(v);
 		}
 	    }
@@ -900,7 +901,7 @@ void Grass::CreateAABBs(const float yScale, const Vector3f& offset, float xzScal
     m_inReflectionFrustum = new std::vector<Vector2i>;
     m_inReflectionFrustum->reserve(CHUNK_COUNT * CHUNK_COUNT);
 
-    for(int i = 0; i < 6; ++i) {
+    for(int i = 0; i < 2; ++i) {
 	m_inEnvFrustums[i] =new std::vector<Vector2i>;
 	m_inEnvFrustums[i]->reserve(CHUNK_COUNT * CHUNK_COUNT);
     }

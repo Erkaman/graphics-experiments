@@ -538,7 +538,6 @@ void LightingPass::SetupShader(
 
     shader->SetUniform("paraboloidBasis", dualParaboloidMap.GetParaboloid(0).m_viewMatrix);
 
-
     shader->SetUniform("refractionMap",REFRACTION_TEXTURE_UNIT );
     Texture::SetActiveTextureUnit(REFRACTION_TEXTURE_UNIT);
     refractionMap.GetColorTexture()->Bind();
