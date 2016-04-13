@@ -1,3 +1,6 @@
+#include "shader/env_map_lib.glsl"
+
+
 #ifdef AO
 layout (location = 0)in  vec4 positionIn;
 #else
@@ -14,6 +17,8 @@ layout (location = 3)in vec3 tangentIn;
 
 uniform mat4 mvp;
 uniform mat4 modelViewMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
 uniform mat4 normalMatrix;
 uniform vec3 eyePos;
 uniform mat4 lightMvp;
@@ -34,6 +39,13 @@ out vec3 eyePosOut;
 
 out vec4 shadowCoordOut;
 
+uniform float znear;
+uniform float zfar;
+
+uniform vec3 carPos;
+uniform float paraboloidDirection;
+
+
 #ifdef AO
 out float aoOut;
 #endif
@@ -41,7 +53,9 @@ out float aoOut;
 void main()
 {
     // vertex position
-    viewSpacePositionOut = (modelViewMatrix * vec4(positionIn.xyz, 1.0)).xyz;
+    vec3 modelSpacePosition = (modelMatrix * vec4(positionIn.xyz, 1.0)).xyz;
+
+    viewSpacePositionOut = (viewMatrix * vec4(modelSpacePosition, 1.0)).xyz;
 
     shadowCoordOut = (lightMvp * vec4(positionIn.xyz,1));
 
@@ -52,7 +66,16 @@ void main()
 #endif
     texcoordOut = texCoordIn;
 
+
+#ifdef PARABOLOID
+    //gl_Position =mvp * vec4(positionIn.xyz,1);
+
+
+
+    gl_Position = envMapProject(paraboloidDirection, viewSpacePositionOut, modelSpacePosition, carPos, zfar, znear);
+#else
     gl_Position =mvp * vec4(positionIn.xyz,1);
+#endif
 
     eyePosOut = eyePos;
 

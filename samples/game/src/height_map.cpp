@@ -460,8 +460,10 @@ void HeightMap::RenderParaboloid(const Paraboloid& paraboloid, const Vector4f& l
     Texture::SetActiveTextureUnit(7);
     m_asphaltTexture->Bind();
 
-    // FIX
-    m_envShader->SetPhongUniforms(Matrix4f::CreateTranslation(0,0,0),
+
+    paraboloid.SetParaboloidUniforms(
+	*m_envShader,
+	Matrix4f::CreateTranslation(0,0,0),
 
 				  paraboloid.m_viewMatrix,
 
@@ -471,17 +473,10 @@ void HeightMap::RenderParaboloid(const Paraboloid& paraboloid, const Vector4f& l
 
 				  paraboloid.m_position,
 
-				  lightPosition);
+				  lightPosition
 
+	);
 
-
-    // TODO: uniform zfar and znear.
-    Config& config = Config::GetInstance();
-
-    m_envShader->SetUniform("znear", config.GetZNear() );
-    m_envShader->SetUniform("zfar", config.GetZFar() );
-    m_envShader->SetUniform("carPos", 	paraboloid.m_position );
-    m_envShader->SetUniform("paraboloidDirection", paraboloid.m_direction.z );
 
     RenderSetup(m_envShader);
 

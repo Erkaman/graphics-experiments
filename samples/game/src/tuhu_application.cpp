@@ -661,7 +661,7 @@ void TuhuApplication::RenderEnvMap() {
 
     size_t size = m_dualParaboloidMap->GetSize();
 
-    for(int i = 0 ; i < 1; ++i) {
+    for(int i = 1 ; i < 2; ++i) {
 
 	Paraboloid par = m_dualParaboloidMap->GetParaboloid(i);
 
@@ -671,6 +671,11 @@ void TuhuApplication::RenderEnvMap() {
 
 	::SetViewport(0,0,size,size);
 	Clear(0.0f, 0.0f, 0.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+	    GeometryObject::RenderAllEnv(m_lightDirection, i, par);
+//	m_skydome->DrawForward(par);
+
 
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderParaboloid(par, m_lightDirection, aoOnly);
@@ -773,7 +778,6 @@ void TuhuApplication::Render() {
 
 
 /*
-
     float SCALE = m_guiVerticalScale;
 
     // set the viewport to the size of the window.
@@ -857,6 +861,7 @@ void TuhuApplication::Render() {
 
 	m_gui->Render(windowWidth, windowHeight);
     }
+
 */
 
 // end comment
@@ -914,7 +919,7 @@ void TuhuApplication::Update(const float delta) {
 //    for(IGeometryObject* geoObj: m_geoObjs) {
 	IGeometryObject* geoObj = it.second;
 
-	geoObj->Update(m_cameraFrustum, m_lightFrustum, m_car->GetLightFrustums(), m_reflectionFrustum );
+	geoObj->Update(m_cameraFrustum, m_lightFrustum, *m_dualParaboloidMap, m_reflectionFrustum );
 
 
 	//update cameras of env map. here

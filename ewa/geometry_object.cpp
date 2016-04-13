@@ -1,11 +1,11 @@
 // http://math.stackexchange.com/questions/943383/determine-circle-of-intersection-of-plane-and-sphere
 
 
-
 #include "geometry_object.hpp"
 
 #include "math/vector3f.hpp"
 #include "math/vector4f.hpp"
+#include "gl/dual_paraboloid_map.hpp"
 
 #include "ewa/gl/vbo.hpp"
 #include "ewa/gl/shader_program.hpp"
@@ -102,6 +102,7 @@ private:
 
 	    defines.push_back("DIFF_MAPPING");
 	    defines.push_back("ALPHA_MAPPING");
+	    defines.push_back("PARABOLOID");
 
 	    m_envShader = ResourceManager::LoadShader(
 		shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
@@ -475,7 +476,7 @@ bool GeometryObject::Init(
     m_inReflectionFrustum = true;
     SetSelected(false);
 
-    for(int i = 0; i < 6; ++i) {
+    for(int i = 0; i < 2; ++i) {
 	m_inEnvLightFrustums[i] = true;
     }
 
@@ -648,8 +649,7 @@ void GeometryObject::RenderIdAll(
 
 
 
-void GeometryObject::RenderAllEnv(
-    ICamera* camera, const Vector4f& lightPosition, int i){
+void GeometryObject::RenderAllEnv(const Vector4f& lightPosition, int i, Paraboloid& paraboloid){
 
     int total = 0;
     int nonCulled = 0;
@@ -679,17 +679,34 @@ void GeometryObject::RenderAllEnv(
 
 	    ++total;
 
-	    if(!geoObj->m_inEnvLightFrustums[i]) { // not in frustum?
-		continue; // if culled, do nothing.
-	    }
+//	    if(!geoObj->m_inEnvLightFrustums[i]) { // not in frustum?
+//		continue; // if culled, do nothing.
+//	    }
 
 	    ++nonCulled;
 
 	    Matrix4f modelMatrix = geoObj->GetModelMatrix();
 
+	    /*
 	    envShader->SetPhongUniforms(
 		modelMatrix
 		, camera, lightPosition);
+	    */
+
+	    paraboloid.SetParaboloidUniforms(
+		*envShader,
+//		Matrix4f::CreateTranslation(0,0,0),
+		modelMatrix,
+
+		paraboloid.m_viewMatrix,
+		Matrix4f::CreateIdentity(),
+		paraboloid.m_position,
+		lightPosition);
+
+
+//	    GL_C(glEnable(GL_CLIP_DISTANCE0));
+
+
 
 	    for(size_t i = 0; i < batch->m_chunks.size(); ++i) {
 
@@ -710,6 +727,9 @@ void GeometryObject::RenderAllEnv(
 		chunk->m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk->m_numTriangles)*3);
 		chunk->m_indexBuffer->Unbind();
 	    }
+
+//	    GL_C(glDisable(GL_CLIP_DISTANCE0));
+
 	}
 
 	batch->m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
@@ -1176,7 +1196,7 @@ void GeometryObject::SetSelected(bool selected) {
 }
 
 void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum,
-			    ViewFrustum** envLightFrustums, const ViewFrustum* reflectionFrustum) {
+			    DualParaboloidMap& dualParaboloidMap, const ViewFrustum* reflectionFrustum) {
     m_inCameraFrustum = cameraFrustum->IsAABBInFrustum(GetModelSpaceAABB());
 
 
@@ -1205,13 +1225,14 @@ void GeometryObject::Update(const ViewFrustum* cameraFrustum, const ViewFrustum*
     }
 */
 
-    for(int i = 0; i < 6; ++i) {
+    for(int i = 0; i < 2; ++i) {
 
 	if(m_filename == "obj/car_blend.eob" ) {
 	    // car is never in environment map.
 	    m_inEnvLightFrustums[i] = false;
 	} else {
-	    m_inEnvLightFrustums[i] = envLightFrustums[i]->IsAABBInFrustum(GetModelSpaceAABB());
+	    m_inEnvLightFrustums[i] =
+		dualParaboloidMap.GetParaboloid(i).InFrustum(GetModelSpaceAABB());
 	}
 /*
 	if(m_filename != "obj/water.eob" && m_filename != "obj/car_blend.eob" ) {

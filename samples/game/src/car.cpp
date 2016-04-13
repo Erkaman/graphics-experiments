@@ -58,9 +58,9 @@ Car::~Car() {
 }
 
 void Car::Update(
-    const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, ViewFrustum** envLightFrustums, const ViewFrustum* reflectionFrustum) {
+    const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, DualParaboloidMap& dualParaboloidMap, const ViewFrustum* reflectionFrustum) {
 
-    GeometryObject::Update(cameraFrustum, lightFrustum, envLightFrustums, reflectionFrustum);
+    GeometryObject::Update(cameraFrustum, lightFrustum, dualParaboloidMap, reflectionFrustum);
 
     for(int i  = 0; i < 6; ++i) {
 

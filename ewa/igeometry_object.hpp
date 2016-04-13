@@ -13,6 +13,8 @@ class btMotionState;
 class btRigidBody;
 class PhysicsWorld;
 class ViewFrustum;
+class DualParaboloidMap;
+
 
 class IGeometryObject {
 
@@ -24,7 +26,7 @@ public:
 
     virtual IGeometryObject* Duplicate(unsigned int id)=0;
 
-    virtual void Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, ViewFrustum** envLightFrustums, const ViewFrustum* reflectionFrustum)=0;
+    virtual void Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, DualParaboloidMap& dualParaboloidMap, const ViewFrustum* reflectionFrustum)=0;
 
 /*
     virtual void Render(

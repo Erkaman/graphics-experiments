@@ -20,6 +20,7 @@ class btMotionState;
 class CubeMapTexture;
 class ColorFBO;
 class ColorDepthFbo;
+class Paraboloid;
 
 class GeometryObject : public IGeometryObject {
 private:
@@ -54,7 +55,7 @@ private:
     bool m_inLightFrustum;
     bool m_inReflectionFrustum;
 
-    bool m_inEnvLightFrustums[6];
+    bool m_inEnvLightFrustums[2];
 
     short m_physicsGroup;
     short m_physicsMask;
@@ -89,8 +90,7 @@ public:
 	const ICamera* camera, const Vector4f& lightPosition, const Matrix4f& lightVp, const DepthFBO& shadowMap,
 	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
 
-    static void RenderAllEnv(
-	ICamera* camera, const Vector4f& lightPosition, int i);
+    static void RenderAllEnv(const Vector4f& lightPosition, int i, Paraboloid& paraboloid);
 
     static std::vector<Vector3f> GetTorches();
 
@@ -108,7 +108,7 @@ public:
 
     static void SetTotalDelta(float totalDelta);
 
-    virtual void Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, ViewFrustum** envLightFrustums, const ViewFrustum* reflectionFrustum);
+    virtual void Update(const ViewFrustum* cameraFrustum, const ViewFrustum* lightFrustum, DualParaboloidMap& dualParaboloidMap, const ViewFrustum* reflectionFrustum);
 
     /*
     virtual void RenderId(

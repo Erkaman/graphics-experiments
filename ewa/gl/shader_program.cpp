@@ -16,6 +16,8 @@
 #include "math/vector3f.hpp"
 #include "math/vector2f.hpp"
 
+
+
 #include "file.hpp"
 
 
@@ -241,6 +243,7 @@ void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const Matrix4f
     SetUniform("viewSpaceLightDirection", Vector3f(viewMatrix * (lightDirection)  ) );
     SetUniform("eyePos", cameraPosition );
 }
+
 
 void ShaderProgram::SetPhongUniforms(const Matrix4f& modelMatrix, const ICamera* camera, const Vector4f& lightDirection) {
     SetPhongUniforms(modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix(),

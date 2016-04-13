@@ -11,6 +11,7 @@ class Vector3f;
 class Vector2f;
 class ICamera;
 class UniformLocationStore;
+class Paraboloid;
 
 class ShaderProgram {
 
@@ -53,6 +54,14 @@ public:
     void SetUniform(const std::string& uniformName, const Vector4f& v);
     void SetUniform(const std::string& uniformName, const Vector3f& v);
     void SetUniform(const std::string& uniformName, const Vector2f& v);
+
+
+    void SetParaboloidUniforms(
+    const Matrix4f& modelMatrix, const Matrix4f& viewMatrix,
+    const Matrix4f& projectionMatrix, const Vector3f&
+    cameraPosition, const Vector4f& lightDirection,
+    const Paraboloid& paraboloid
+	);
 
 
     void SetUniform(const std::string& uniformName, Vector3f* v, int size);

@@ -7,9 +7,11 @@
 #include "ewa/aabb.hpp"
 #include "ewa/config.hpp"
 
+
+
 DualParaboloidMap::DualParaboloidMap() {
 
-    m_size = 512*2*1.2;
+    m_size = 512*2;
 
     for(int i = 0; i < 2; ++i) {
 	m_paraboloids[i].m_fbo = new ColorFBO();
@@ -73,4 +75,5 @@ void Paraboloid::SetParaboloidUniforms(
     shader.SetUniform("zfar", config.GetZFar() );
     shader.SetUniform("carPos", 	this->m_position );
     shader.SetUniform("paraboloidDirection", this->m_direction.z );
+
 }
