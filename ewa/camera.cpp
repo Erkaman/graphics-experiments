@@ -24,7 +24,7 @@ constexpr float NEAR = 0.1f;
 constexpr float FAR = 100000.0f;
 */
 
-Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir): m_position(position), m_viewDir(viewDir){
+Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir, bool useCp): m_position(position), m_viewDir(viewDir), m_useCp(useCp), m_t(0){
 
     m_viewDir.Normalize();
     m_right = Vector3f::Cross(m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();
@@ -45,7 +45,28 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
     */
 
     ComputeViewMatrix();
+
+    /*
+    m_cps.push_back(CameraCP(
+			Vector3f(-52.844795, 14.650712, 35.442703),
+			Vector3f(0.933511, -0.318891, 0.163909)));
+
+    m_cps.push_back(CameraCP(
+			Vector3f(-28.865242, 6.459203, 39.653118),
+			Vector3f(0.933511, -0.318891, 0.163909)) );
+
+    */
+    m_cps.push_back(CameraCP(Vector3f(-38.324429, 11.885699, 37.992260),Vector3f(0.933511, -0.318891, 0.163909)));
+
+    m_cps.push_back( CameraCP(Vector3f(-19.206289, 6.142766, 41.482296),Vector3f(0.965010, 0.064600, 0.254132)) )    ;
+
+
+    m_cps.push_back( CameraCP(Vector3f(0.156958, 7.438980, 46.581543),Vector3f(0.962155, -0.024363, 0.271412)) );
+
+    m_cps.push_back(  CameraCP(Vector3f(19.496862, 6.949271, 52.037083),Vector3f(0.879356, -0.057421, 0.472689)) );
+
 }
+
 
 void Camera::ComputeViewMatrix() {
 	m_viewMatrix =
@@ -72,6 +93,12 @@ void Camera::Fly(const float amount) {
 }
 
 void Camera::Update(const float delta) {
+
+    if(m_useCp) {
+
+	Interpolate(delta);
+	return;
+    }
 
     const MouseState& mouse = MouseState::GetInstance();
     const KeyboardState& kbs = KeyboardState::GetInstance();
@@ -166,4 +193,49 @@ ICamera* Camera::CreateReflectionCamera()const {
 
 
     return reflectionCamera;
+}
+
+void Camera::PrintState() {
+    LOG_I("CameraCP(%s,%s)",
+	  (string("Vector3f") + string(m_position)).c_str(),
+	  (string("Vector3f") + string(m_viewDir)).c_str() );
+}
+/*PrintState:CameraCP((-52.844795, 14.650712, 35.442703),(0.933511, -0.318891, 0.163909))
+INFO: /Users/eric/tuhu/ewa/camera.cpp:173:PrintState:CameraCP((-28.865242, 6.459203, 39.653118),(0.933511, -0.318891, 0.163909))
+ */
+
+float Lerp(float cp1, float cp2, float t) {
+    return cp1 * (1.0 - t) + cp2 * (t);
+}
+
+Vector3f Lerp(const Vector3f& cp1, const Vector3f& cp2, float t ) {
+    return Vector3f(
+	Lerp(cp1.x, cp2.x, t),
+	Lerp(cp1.y, cp2.y, t),
+	Lerp(cp1.z, cp2.z, t)
+	);
+}
+
+void Camera::Interpolate(const float delta) {
+    m_t += delta*0.4;
+
+    static int i_cp = 0;
+
+    if(m_t <= 1.0) {
+//	LOG_I("LERP: %f", m_t);
+
+	CameraCP cp1 = m_cps[i_cp+0];
+	CameraCP cp2 = m_cps[i_cp+1];
+
+	m_position = Lerp(cp1.m_position, cp2.m_position, m_t);
+	m_viewDir = Lerp(cp1.m_viewDir, cp2.m_viewDir, m_t);
+
+//	LOG_I("lerp: %s", string(m_position).c_str() );
+
+	ComputeViewMatrix();
+
+    } else {
+	i_cp++;
+	m_t -= 1.0f;
+    }
 }

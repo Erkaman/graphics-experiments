@@ -256,7 +256,8 @@ void TuhuApplication::Init() {
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(0.933511, -0.318891, 0.163909)
+	Vector3f(0.933511, -0.318891, 0.163909),
+	true
 	);
 
 
@@ -1051,14 +1052,7 @@ void TuhuApplication::Update(const float delta) {
     }
 
     if( kbs.WasPressed(GLFW_KEY_N) ) {
-
-	if(m_curCamera == m_freeCamera) {
-	    m_curCamera = m_carCamera;
-
-	} else {
-	    m_curCamera = m_freeCamera;
-	}
-	m_curCamera->Update(0);
+	m_curCamera->PrintState();
     }
 /*
     if( kbs.IsPressed(GLFW_KEY_L) ) {
