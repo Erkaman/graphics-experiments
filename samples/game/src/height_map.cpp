@@ -232,24 +232,6 @@ void HeightMap::Init(
 					string("shader/cube_cursor") + "_fs.glsl", defines);
 
     }
-
-    /*
-    m_controlPoints.push_back(Vector2i(471,461));
-m_controlPoints.push_back(Vector2i(470,428));
-m_controlPoints.push_back(Vector2i(477,404));
-m_controlPoints.push_back(Vector2i(470,376));
-m_controlPoints.push_back(Vector2i(460,352));
-m_controlPoints.push_back(Vector2i(435,336));
-m_controlPoints.push_back(Vector2i(406,337));
-m_controlPoints.push_back(Vector2i(400,365));
-m_controlPoints.push_back(Vector2i(404,398));
-m_controlPoints.push_back(Vector2i(406,429));
-m_controlPoints.push_back(Vector2i(406,447));
-m_controlPoints.push_back(Vector2i(417,474));
-m_controlPoints.push_back(Vector2i(428,478));
-m_controlPoints.push_back(Vector2i(442,476));
-m_controlPoints.push_back(Vector2i(456,470));
-*/
 }
 
 void HeightMap::CreateAoMap(const std::string& aoMapFilename, bool guiMode){

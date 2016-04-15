@@ -664,23 +664,23 @@ void TuhuApplication::RenderEnvMap() {
 
 	Paraboloid par = m_dualParaboloidMap->GetParaboloid(i);
 
-	par.m_fbo->Bind();
+        	par.m_fbo->Bind();
 
 //	LOG_I("size: %d", size);
 
 	::SetViewport(0,0,size,size);
 	Clear(0.0f, 0.0f, 0.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+//       	m_skybox->DrawEnvMap(m_cubeMapTexture, par);
 
 	GeometryObject::RenderAllEnv(m_lightDirection, i, par);
 //	m_skydome->DrawForward(par);
 
 
+	m_grass->DrawEnvMap(&par, m_lightDirection, i);
 
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderParaboloid(par, m_lightDirection, aoOnly);
-
-	    m_grass->DrawEnvMap(&par, m_lightDirection, i);
 
 
 	par.m_fbo->Unbind();
@@ -780,7 +780,6 @@ void TuhuApplication::Render() {
     m_gpuProfiler->End(GTS_Reflection);
 
 
-
     float SCALE = m_guiVerticalScale;
 
     // set the viewport to the size of the window.
@@ -838,8 +837,8 @@ void TuhuApplication::Render() {
 
 
     m_skybox->DrawDeferred(
-//	m_cubeMapTexture,
-	m_envFbo->GetEnvMap(),
+	m_cubeMapTexture,
+//	m_envFbo->GetEnvMap(),
 	m_curCamera, m_gbuffer->GetDepthTexture(), GetFramebufferWidth(), GetFramebufferHeight() );
     m_gpuProfiler->End(GTS_Sky);
 
@@ -1496,4 +1495,11 @@ void TuhuApplication::DeleteCP() {
 the reason that tree rendering is slow is because the shaders are simply to complex.
 since there is lots of overdraw, we simply cannot have a complex shader for alpha tested objects.
     also, we may possible solve problems by making a thin gbuffer .
+*/
+
+
+/*
+do this next: implement drawing skybox into paraboloid.
+
+       the reason the shader does work is that it somehow samples outside the texture, and becomes black at certain areas.
 */

@@ -537,6 +537,9 @@ void LightingPass::SetupShader(
     dualParaboloidMap.GetParaboloid(1).m_fbo->GetRenderTargetTexture().Bind();
 
     shader->SetUniform("paraboloidBasis", dualParaboloidMap.GetParaboloid(0).m_viewMatrix);
+    Paraboloid p = dualParaboloidMap.GetParaboloid(0);
+
+//    shader->SetUniform("basis", p.m_fuck);
 
     shader->SetUniform("refractionMap",REFRACTION_TEXTURE_UNIT );
     Texture::SetActiveTextureUnit(REFRACTION_TEXTURE_UNIT);

@@ -33,6 +33,14 @@ void DualParaboloidMap::Update(const Vector3f& carPosition) {
 			carPosition,
 			(carPosition + forward),
 			Vector3f(0.0,1.0, 0.0) );
+
+
+	m_paraboloids[i].m_fuck = Matrix4f::CreateLookAt(
+	    Vector3f(0,0,0),
+	    (Vector3f(0,0,0) + forward),
+			Vector3f(0.0,1.0, 0.0) );
+
+
 	m_paraboloids[i].m_position = carPosition;
 
     }
@@ -75,5 +83,4 @@ void Paraboloid::SetParaboloidUniforms(
     shader.SetUniform("zfar", config.GetZFar() );
     shader.SetUniform("carPos", 	this->m_position );
     shader.SetUniform("paraboloidDirection", this->m_direction.z );
-
 }

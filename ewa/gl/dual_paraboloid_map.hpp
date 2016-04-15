@@ -15,8 +15,13 @@ private:
 
 public:
 
+
+
     ColorFBO* m_fbo;
     Matrix4f m_viewMatrix;
+
+    Matrix4f m_fuck;
+
 
     Vector3f m_direction;
     Vector3f m_position;

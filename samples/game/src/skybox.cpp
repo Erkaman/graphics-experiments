@@ -1,4 +1,5 @@
 #include "skybox.hpp"
+#include "dual_paraboloid_map.hpp"
 
 #include "ewa/camera.hpp"
 
@@ -6,8 +7,13 @@
 #include "ewa/gl/vbo.hpp"
 
 #include "ewa/math/matrix4f.hpp"
+#include "ewa/math/vector4f.hpp"
+
+#include "ewa/resource_manager.hpp"
+
 
 using std::vector;
+using std::string;
 
 static void  AddFace(
     FloatVector& positions,
@@ -45,10 +51,37 @@ static void  AddFace(
 
 Skybox::Skybox() {
 
+    vector<string> defaultDefines;
 
-    // load shader.
-    m_deferredShader = ShaderProgram::Load("shader/skybox_deferred");
-    m_forwardShader = ShaderProgram::Load("shader/skybox_forward");
+
+    {
+	vector<string> defines(defaultDefines);
+
+	string shaderName = "shader/skybox_deferred";
+
+	m_deferredShader =
+	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    }
+
+
+    {
+	vector<string> defines(defaultDefines);
+
+	string shaderName = "shader/skybox_forward";
+
+	m_forwardShader =
+	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    }
+
+    {
+	vector<string> defines(defaultDefines);
+	defines.push_back("PARABOLOID");
+
+	string shaderName = "shader/skybox_forward";
+
+	m_envMapShader =
+	     ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+    }
 
 
     // create the vertex data.
@@ -141,7 +174,7 @@ void Skybox::DrawDeferred(CubeMapTexture* m_cubeMap, const ICamera* camera, Text
 
     SetDepthTest(false);
 
-    Matrix4f modelView = camera->GetViewMatrix();//  * Matrix4f::CreateTranslation(camera->GetPosition());
+    Matrix4f modelView = camera->GetViewMatrix();
 
     // make sure that camera position is always zero.
     // this ensures that the skybox follows the player.
@@ -149,10 +182,12 @@ void Skybox::DrawDeferred(CubeMapTexture* m_cubeMap, const ICamera* camera, Text
     modelView.m13 = 0;
     modelView.m23 = 0;
 
+    m_deferredShader->SetShaderUniforms(
+	Matrix4f::CreateIdentity(),
+	modelView,
+	camera->GetProjectionMatrix());
 
-    Matrix4f mvp = camera->GetProjectionMatrix() * modelView;
 
-    m_deferredShader->SetUniform("mvp", mvp);
     m_deferredShader->SetUniform("windowWidth", (float)windowWidth);
     m_deferredShader->SetUniform("windowHeight", (float)windowHeight);
 
@@ -193,10 +228,11 @@ void Skybox::DrawForward(CubeMapTexture* m_cubeMap, const ICamera* camera) {
     modelView.m13 = 0;
     modelView.m23 = 0;
 
+    m_forwardShader->SetShaderUniforms(
+	Matrix4f::CreateIdentity(),
+	modelView,
+	camera->GetProjectionMatrix());
 
-    Matrix4f mvp = camera->GetProjectionMatrix() * modelView;
-
-    m_forwardShader->SetUniform("mvp", mvp);
 
     m_indexBuffer->Bind();
 
@@ -213,6 +249,64 @@ void Skybox::DrawForward(CubeMapTexture* m_cubeMap, const ICamera* camera) {
 
     m_cubeMap->Unbind();
     m_forwardShader->Unbind();
+}
+
+void Skybox::DrawEnvMap(CubeMapTexture* m_cubeMap, Paraboloid& paraboloid) {
+
+    m_envMapShader->Bind();
+
+    Texture::SetActiveTextureUnit(0);
+    m_cubeMap->Bind();
+    m_envMapShader->SetUniform("sampler", 0);
+
+
+
+    SetDepthTest(false);
+
+    Matrix4f view = paraboloid.m_viewMatrix;
+
+    // make sure that camera position is always zero.
+    // this ensures that the skybox follows the player.
+    view.m03 = 0;
+    view.m13 = 0;
+    view.m23 = 0;
+
+    paraboloid.SetParaboloidUniforms(
+		*m_envMapShader,
+		Matrix4f::CreateIdentity(),
+		view,
+		Matrix4f::CreateIdentity(),
+
+		paraboloid.m_position,
+		Vector4f(0,0,0,0) );
+
+    /*
+    m_envMapShader->SetShaderUniforms(
+	Matrix4f::CreateIdentity(),
+	modelView,
+	camera->GetProjectionMatrix());
+    */
+
+    m_indexBuffer->Bind();
+
+    m_positionBuffer->EnableVertexAttribInterleavedWithBind();
+
+    GL_C(glEnable(GL_CLIP_DISTANCE0));
+
+    m_indexBuffer->DrawIndices(GL_TRIANGLES, m_numIndices);
+
+    GL_C(glDisable(GL_CLIP_DISTANCE0));
+
+
+    m_indexBuffer->Unbind();
+
+    m_positionBuffer->DisableVertexAttribInterleavedWithBind();
+
+    SetDepthTest(true);
+
+    m_cubeMap->Unbind();
+    m_envMapShader->Unbind();
+
 }
 
 

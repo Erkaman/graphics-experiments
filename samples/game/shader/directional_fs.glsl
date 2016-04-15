@@ -33,6 +33,7 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
 uniform mat4 paraboloidBasis;
+uniform mat4 basis;
 
 
 uniform vec3 pointLightPosition[256];
@@ -67,6 +68,7 @@ void main() {
     float id;
     readNormalTexture(normalTexture, texCoord, n, id, specShiny);
 
+
     vec3 specMat = specColor;
 
     vec3 envMapSample = vec3(0);
@@ -87,22 +89,32 @@ void main() {
 
 //	envMapSample = texture(envMap, reflectionVector).rgb;
 
-	vec3 R  = (paraboloidBasis *  vec4(reflectionVector, 0.0)).xyz;
+	vec3 R  = normalize((paraboloidBasis *  vec4(reflectionVector, 0.0))).xyz;
+
+//	vec3 R  = (reflectionVector).xyz;
+
 
 	vec2 front;
-	front.x = (R.x / (2*(1 + R.z))) + 0.5;
+	front.x = ((R.x / (2*(1 + R.z))) + 0.5);
 	front.y = 1-((R.y / (2*(1 + R.z))) + 0.5);
 
 	vec2 back;
-	back.x = (R.x / (2*(1 - R.z))) + 0.5;
+	back.x = 1.0-((R.x / (2*(1 - R.z))) + 0.5);
 	back.y = 1-((R.y / (2*(1 - R.z))) + 0.5);
 
 	vec4 forward = texture( envMapFront, front );
 	vec4 backward = texture( envMapBack, back );
 
+	// flip front guy.
 	envMapSample = max(forward, backward).xyz;
+//	envMapSample = forward.xyz;
+//	envMapSample = backward.xyz;
 
-//	envMapSample = vec3(back, 0.0);
+//	envMapSample = reflectionVector.z > 0 ? forward.xyz : backward.xyz;
+
+
+
+
     }
 
     vec3 ambientLight = inAmbientLight;
