@@ -215,6 +215,16 @@ Vector3f Lerp(const Vector3f& cp1, const Vector3f& cp2, float t ) {
 	Lerp(cp1.z, cp2.z, t)
 	);
 }
+/*
+Vector2f CatmullRomSpline(const Vector2f &P1,const Vector2f &P2,const Vector2f &P3,const Vector2f &P4,float t)
+{
+    float t2 = t * t;
+    float t3 = t * t2;
+
+    return ((P2 * 2.0f) + (-P1 + P3) * t + (P1 * 2.0f - P2 * 5.0f + P3 * 4.0f - P4) * t2 + (-P1 + P2 * 3.0f - P3 * 3.0f + P4) * t3) * 0.5f;
+}
+*/
+
 
 void Camera::Interpolate(const float delta) {
     m_t += delta*0.4;
