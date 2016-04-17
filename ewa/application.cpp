@@ -164,8 +164,25 @@ void Application::SetupOpenGL() {
     glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+   // glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
+
+	/*
+	// Setup window
+	glfwSetErrorCallback(error_callback);
+	if (!glfwInit())
+	return 1;
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	#if __APPLE__
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	#endif
+	GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
+	glfwMakeContextCurrent(window);
+	gl3wInit();
+
+	*/
 
     glfwWindowHint(GLFW_DEPTH_BITS, 8);
 
@@ -275,7 +292,7 @@ void Application::RenderText_internal(const std::string& fpsString) {
 
     m_font->DrawString(*m_fontShader,
 
-		       GetFramebufferWidth()-900,
+		       GetFramebufferWidth()-1100,
 		       GetFramebufferHeight()-300,
 
 		       fpsString.substr(0,9) );

@@ -75,7 +75,7 @@ constexpr int SHADOW_MAP_SIZE =
 
 
 
-constexpr int WINDOW_WIDTH = HighQuality ? 1500 : 1200;
+constexpr int WINDOW_WIDTH = HighQuality ? 1600 : 1200;
 constexpr int WINDOW_HEIGHT = HighQuality ?  960 : 720;
 
 //constexpr int WINDOW_WIDTH = HighQuality ? 1500 : 720.0;
@@ -174,6 +174,8 @@ TuhuApplication::~TuhuApplication() {
 }
 
 void TuhuApplication::Init() {
+	
+	
 
     m_aabbWireframe = Cube::Load();
 
@@ -192,7 +194,7 @@ void TuhuApplication::Init() {
     m_envFbo->Init(ENV_FBO_TEXTURE_UNIT, 512, 512);
 
     LOG_I("LOG1");
-
+	
     m_refractionFbo = new ColorDepthFbo();
     m_refractionFbo->Init(REFRACTION_FBO_TEXTURE_UNIT, REFRACTION_WIDTH, REFRACTION_HEIGHT);
 
@@ -231,7 +233,7 @@ void TuhuApplication::Init() {
     }
 
     LOG_I("LOG3");
-
+	
     m_cameraFrustum = new ViewFrustum();
     m_lightFrustum = new ViewFrustum();
     m_reflectionFrustum = new ViewFrustum();
@@ -240,10 +242,8 @@ void TuhuApplication::Init() {
 
     // NOTE: we can fix the shadows by setting trans to (0,0,0).
     Vector3f trans = Vector3f(-2,9.0,-2);
-/*
-    m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
-    m_smoke->Init();
-*/
+
+
     m_particlesRenderer = new ParticlesRenderer(GetFramebufferWidth(), GetFramebufferHeight());
 
     ::SetDepthTest(true);
@@ -262,7 +262,7 @@ void TuhuApplication::Init() {
 
     m_skydome = new Skydome(1, 10, 10);
 
-
+	
     string dir = Config::GetInstance().GetWorldFilename();
 
     m_car = new Car();
@@ -279,7 +279,9 @@ void TuhuApplication::Init() {
 
     m_line = Line::Load(Vector3f(0), -1000.0f * Vector3f(m_lightDirection), Vector3f(1,0,0) );
 
-    if(ResourceManager::GetInstance().PathExists(dir) /*&& false*/) {
+    if(ResourceManager::GetInstance().PathExists(dir)
+		//&& false
+		) {
 
 	m_heightMap = new HeightMap(
 	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,
@@ -289,11 +291,10 @@ void TuhuApplication::Init() {
 	    guiMode);
 
 	ParseObjs(File::AppendPaths(dir, OBJS_FILENAME ));
-	/*
-	m_grass = new Grass(
-	    File::AppendPaths(dir, GRASS_FILENAME ),
-	    m_heightMap );
-	*/
+
+	
+	m_grass = new Grass(File::AppendPaths(dir, GRASS_FILENAME ), m_heightMap );
+	
     } else {
 
 	m_heightMap = new HeightMap(guiMode);
@@ -304,9 +305,10 @@ void TuhuApplication::Init() {
 
 	m_selected = NULL;
 
-	//m_grass = new Grass(m_heightMap );
+	m_grass = new Grass(m_heightMap );
 
     }
+
 
     if(m_gui) {
 	m_heightMap->SetCursorSize(m_gui->GetCursorSize());
@@ -317,6 +319,7 @@ void TuhuApplication::Init() {
 
     }
 
+	
     m_physicsWorld = new PhysicsWorld(m_heightMap->GetAABB() );
 
 
@@ -343,24 +346,17 @@ void TuhuApplication::Init() {
     // TODO: should not this be the size of the framebuffer?
     m_gbuffer->Init(0, GetFramebufferWidth(),GetFramebufferHeight() );
 
-    /*
-      OpenAL::Initp();
-
-      m_windSound = new Sound("audio/wind2.wav");
-      m_windSound->SetGain(1.0f);
-      m_windSound->SetLooping(true);
-    */
 
     m_curCamera = m_freeCamera;
 
 
-
     LOG_I("LOG5");
-
 
 //    StartPhysics();
 
     LightUpdate();
+
+	
 }
 
 
@@ -574,7 +570,7 @@ void TuhuApplication::RenderId() {
 
     GeometryObject::RenderIdAll(m_curCamera);
 
-    //m_grass->RenderIdAll(m_curCamera);
+    m_grass->RenderIdAll(m_curCamera);
 
 
     m_pickingFbo->Unbind();
@@ -648,7 +644,7 @@ void TuhuApplication::RenderScene() {
 
 
     m_gpuProfiler->Begin(GTS_Grass);
-   // m_grass->DrawDeferred(m_curCamera, m_lightDirection);
+    m_grass->DrawDeferred(m_curCamera, m_lightDirection);
     m_gpuProfiler->End(GTS_Grass);
 
     //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
@@ -669,7 +665,6 @@ void TuhuApplication::RenderEnvMap() {
 	{
 
 	    m_envFbo->BindFace(i);
-
 	    size_t size = m_envFbo->GetSize();
 	    ::SetViewport(0,0,size,size);
 
@@ -682,7 +677,7 @@ void TuhuApplication::RenderEnvMap() {
 	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
 
-	  //  m_grass->DrawEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
+	   m_grass->DrawEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
 
 	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
@@ -716,7 +711,7 @@ void TuhuApplication::RenderReflection() {
 
 	GeometryObject::RenderReflection(m_reflectionCamera, m_lightDirection);
 
-	//m_grass->DrawReflection(m_reflectionCamera, m_lightDirection);
+	m_grass->DrawReflection(m_reflectionCamera, m_lightDirection);
 
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderReflection(m_reflectionCamera, m_lightDirection, aoOnly);
@@ -726,7 +721,7 @@ void TuhuApplication::RenderReflection() {
 }
 
 void TuhuApplication::Render() {
-
+	
 
     if(m_gui) {
 	m_gui->NewFrame(m_guiVerticalScale);
@@ -749,7 +744,7 @@ void TuhuApplication::Render() {
     m_gpuProfiler->End(GTS_Reflection);
 
 
-
+	
     float SCALE = m_guiVerticalScale;
 
     // set the viewport to the size of the window.
@@ -835,6 +830,8 @@ void TuhuApplication::Render() {
 
     m_gpuProfiler->EndFrame();
 
+	
+
 }
 
 void TuhuApplication::Update(const float delta) {
@@ -867,11 +864,11 @@ void TuhuApplication::Update(const float delta) {
 
 //    LOG_I("dir: %s", string(cameraDirection).c_str() );
 
-	/*
+	
+	
     m_grass->Update(delta,  m_heightMap->ToLocalPos(m_curCamera->GetPosition()), cameraDirection,
-		    *m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums(), *m_reflectionFrustum
- );
-	*/
+		*m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums(), *m_reflectionFrustum);
+	
 
 
     m_prevCameraPos = curCameraPos;
@@ -909,13 +906,15 @@ void TuhuApplication::Update(const float delta) {
 	ToClipboard(out);
     }
 
-    if( kbs.WasPressed(GLFW_KEY_6)/* && !m_gui*/ ) {
+    if( kbs.WasPressed(GLFW_KEY_6) 
+		//&& !m_gui 
+		) {
 	StartPhysics();
     }
 
 
     if( kbs.WasPressed(GLFW_KEY_8) ) {
-	//m_grass->BlowWind();
+	m_grass->BlowWind();
     }
 
 
@@ -1004,8 +1003,7 @@ void TuhuApplication::Update(const float delta) {
 
 //	    LOG_I("add grass at :%s", string(m_heightMap->GetCursorPosition() ).c_str() );
 
-	//    m_grass->AddGrass(m_heightMap->GetCursorPosition(), m_gui->GetGrassClusterSize());
-
+		m_grass->AddGrass(m_heightMap->GetCursorPosition(), m_gui->GetGrassClusterSize());
 	}
 
 	if(ms.IsPressed(GLFW_MOUSE_BUTTON_2 ) ) {
@@ -1024,7 +1022,7 @@ void TuhuApplication::Update(const float delta) {
 
 //		LOG_I("REMOVE: %d", id);
 
-	//m	m_grass->RemoveGrass(id);
+		m_grass->RemoveGrass(id);
 
 	    }
 
@@ -1060,15 +1058,13 @@ void TuhuApplication::Update(const float delta) {
 	}
 	m_curCamera->Update(0);
     }
-/*
-    if( kbs.IsPressed(GLFW_KEY_L) ) {
-	save_screenshot("screen.tga", WINDOW_WIDTH, WINDOW_HEIGHT);
-    }
-*/
+
+ //   if( kbs.IsPressed(GLFW_KEY_L) ) {save_screenshot("screen.tga", WINDOW_WIDTH, WINDOW_HEIGHT); }
+
 
     //
     m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
-
+	
 
 }
 
@@ -1088,7 +1084,7 @@ void TuhuApplication::RenderText()  {
     string cull = std::to_string(nonCulledObjects) + "\\" + std::to_string(totalObjects);
 
     m_font->DrawString(*m_fontShader, 750,170, cull);
-
+	
     m_font->DrawString(*m_fontShader, 750,120, tos(m_curCamera->GetPosition())  );
 
     m_font->DrawString(*m_fontShader, 750,220,
@@ -1120,6 +1116,7 @@ void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 750,750,
 		       Format("Grass: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Grass)) );
+			   
 
 }
 
@@ -1167,8 +1164,7 @@ void TuhuApplication::Cleanup() {
 
     if(m_gui) {
 	// if we were in the world editor, we need to serialize the world.
-
-	//m_grass->SaveGrass(File::AppendPaths(dir, GRASS_FILENAME ) );
+	m_grass->SaveGrass(File::AppendPaths(dir, GRASS_FILENAME ) );
 
 
 	// we save the entire world in a directory. Make sure the directory exists:
@@ -1459,3 +1455,7 @@ the reason that tree rendering is slow is because the shaders are simply to comp
 since there is lots of overdraw, we simply cannot have a complex shader for alpha tested objects.
     also, we may possible solve problems by making a thin gbuffer .
 */
+
+/*
+it fails at glBufferData. probably glew has failed to load this extension,
+or opengl is configured wrongly, so that the extension doe not work!*/

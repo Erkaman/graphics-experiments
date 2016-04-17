@@ -73,6 +73,7 @@ void main() {
     vec3 v = -(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
 
+	
     if(id == 1.0) { // if car
 
 	// add fresnel.
@@ -84,6 +85,7 @@ void main() {
 
 	envMapSample = texture(envMap, reflectionVector).rgb;
     }
+	
 
     vec3 ambientLight = inAmbientLight;
     vec3 sceneLight = inSceneLight;
@@ -95,13 +97,14 @@ void main() {
 
     vec4 shadowCoord = mulWhereWIsOne(lightVpTimesInverseViewMatrix, viewSpacePosition.xyz);
 
-
+	
     if(id == 2.0) {
 
 	waterShader(viewSpacePosition, proj, specColor, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
 
 
     }
+	
 
     /*
       Compute directional lighting.

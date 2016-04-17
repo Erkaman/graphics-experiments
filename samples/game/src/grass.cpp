@@ -350,7 +350,7 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 		   const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
 		   ViewFrustum** envLightFrustums, const ViewFrustum& reflectionFrustum) {
 
-
+	
     MultArray<AABB>& aabbs = *m_aabbs;
 
 
@@ -390,58 +390,8 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 	}
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+	/*
     if(m_doWind) {
-
-/*
-	MultArray<Vector3f>& blowWindTextureBuffer = *m_blowWindTextureBuffer;
-
-	MultArray<Vector3f>& meanWindTextureBuffer = *m_meanWindTextureBuffer;
-
-
-	if(windLerp >= 1.0) {
-	    windInc = -0.8f;
-	} else if(windLerp <= 0.0 && windInc < 0.0f) {
-	    doWind = false; // stop wind.
-	}
-
-	windLerp += windInc * delta;
-
-	for(int x = 0; x < TILE_GRID_COUNT; ++x) {
-	    for(int z = 0; z < TILE_GRID_COUNT; ++z) {
-
-#define scurve(x)  -2.0f * (x)*(x)*(x) + 3.0f * (x) * (x)
-
-// https://www.wolframalpha.com/input/?i=0.0358756+e%5E(3.32868+x)&lk=1&rawformassumption=
-
-		float lerp = (windLerp * windLerp);
-//		lerp = 0.22* log(121.48 * windLerp);
-		lerp = 0.0358756 * exp(3.32868 * windLerp);
-
-		meanWindTextureBuffer(x,z) = lerp * blowWindTextureBuffer(x,z);
-	    }
-	}
-
-//	LOG_I("lerp: %f",  (windLerp) );
-
-
-	m_meanWindTexture->Bind();
-	m_meanWindTexture->UpdateTexture(m_meanWindTextureBuffer->GetData() );
-	m_meanWindTexture->Unbind();
-*/
-
 
 	float tileSize = m_heightMapResolution / TILE_GRID_COUNT;
 
@@ -467,21 +417,13 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
 		float radius = (tileCenter - m_windCenter).Length();
 
-//		LOG_I("radius: %f", radius);
-
 		if(  (fabs(radius - m_windRadius) <  10.0f) && windForce > 0.0f
 		    ) {
 
-
-
-//   		    if( meanWindTextureBuffer(x,z).Length() < 5.0f)
 			meanWindTextureBuffer(x,z) += diff * windForce;
 
 		} else {
 
-//		    float restoreForce = (m_windRadius / 30.0f) * 0.95f;
-
-		    //if(restoreForce > 0)
 		    meanWindTextureBuffer(x,z) *= 0.97f;
 
 
@@ -492,15 +434,14 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 	    }
 	}
 
+
 	m_windRadius += 1.0f;
 
-//	LOG_I("wind radius: %f", m_windRadius);
-
+	
 	m_meanWindTexture->Bind();
 	m_meanWindTexture->UpdateTexture(m_meanWindTextureBuffer->GetData() );
 	m_meanWindTexture->Unbind();
-
-
+	
 
 
 
@@ -512,12 +453,9 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
 
 
-    UpdateWind(delta);
+   UpdateWind(delta);
 
     m_time += delta;
-
-//    LOG_I("cam pos: %s", string(cameraPosition).c_str() );
-
 
 
 
@@ -525,58 +463,7 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
     m_cameraPosition = cameraPosition;
     m_cameraDir = cameraDir;
-
-
-
-    /*
-    vector<GrassInfo> grassVector;
-
-    for(auto& pair : m_grass) {
-
-	GrassInfo grass = pair.second;
-	grassVector.push_back(grass);
-    }
-
-
-
-    const Vector2f cp = m_cameraPosition;
-    std::sort(grassVector.begin(), grassVector.end(), [cp](const GrassInfo& a, const GrassInfo& b) {
-
-
-	    float bDist = (b.pos.x - cp.x)*(b.pos.x - cp.x) + (b.pos.y - cp.y)*(b.pos.y - cp.y);
-	    float aDist = (a.pos.x - cp.x)*(a.pos.x - cp.x) + (a.pos.y - cp.y)*(a.pos.y - cp.y);
-
-	    return bDist > aDist;
-    });
-
-
-    vector<GLuint> grassIndices;
-
-    for(int i = 0; i < grassVector.size(); ++i) {
-	GrassInfo& grass = grassVector[i];
-
-	int baseIndex = grass.baseIndex;
-
-	for(int i = 0; i < 3; ++i) {
-
-	    grassIndices.push_back(baseIndex+0);
-	    grassIndices.push_back(baseIndex+1);
-	    grassIndices.push_back(baseIndex+2);
-
-	    grassIndices.push_back(baseIndex+1);
-	    grassIndices.push_back(baseIndex+3);
-	    grassIndices.push_back(baseIndex+2);
-
-	    baseIndex += 4;
-
-
-    	}
-
-
-    }
-    // LOG_I("DONE");
-    */
-
+	*/
 
 }
 
@@ -813,7 +700,7 @@ void Grass::UpdateWind(const float delta) {
     int rad = 1;
 
     int offset = 1;
-    float denominator;
+    float denominator = 0;
 
     for(int ix = -rad; ix <= +rad; ++ix) {
 	for(int iz = -rad; iz <= +rad; ++iz) {
@@ -852,9 +739,11 @@ void Grass::UpdateWind(const float delta) {
     }
 
 
+	
     m_turbWindTexture->Bind();
     m_turbWindTexture->UpdateTexture(m_turbWindTextureBuffer->GetData() );
     m_turbWindTexture->Unbind();
+	
 
 }
 
