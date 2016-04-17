@@ -5,6 +5,7 @@
 #include "log.hpp"
 #include <string>
 
+
 using namespace std;
 
 void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSeverity, GLsizei /*aLength*/, const GLchar* aMessage, void* )
@@ -78,6 +79,7 @@ void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSe
 
 void setupGLDebugMessages()
 {
+#if 0
     /* Make sure that we support this extension before attempting to do any-
      * thing with it...
      */
@@ -112,17 +114,18 @@ void setupGLDebugMessages()
     glDebugMessageControlARB( GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW_ARB, 0, 0, false );
 
     ClearOpenGLError();
+#endif
 }
 
 
 void CheckOpenGLError(const char* stmt, const char* fname, int line)
 {
     GLenum err = glGetError();
-    const GLubyte* sError = gluErrorString(err);
+    //  const GLubyte* sError = gluErrorString(err);
 
     if (err != GL_NO_ERROR)
     {
-        printf("OpenGL error %08x, at %s:%i - for %s. Error Message:%s\n", err, fname, line, stmt, sError);
+        printf("OpenGL error %08x, at %s:%i - for %s. Error Message\n", err, fname, line, stmt);
 	exit(1);
     }
 }

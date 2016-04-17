@@ -45,7 +45,7 @@ endif()
 ######################################
 
 #SET(SRC main.cpp)
-file(GLOB ENGINE_SRC ewa/*.cpp ewa/gl/shader/*.cpp ewa/gl/*.cpp ewa/math/*.cpp ewa/audio/*.cpp deps/src/glew/*.c deps/src/lodepng/*.cpp deps/src/imgui/*.cpp )
+file(GLOB ENGINE_SRC ewa/*.cpp ewa/*.c ewa/gl/shader/*.cpp ewa/gl/*.cpp ewa/math/*.cpp ewa/audio/*.cpp  deps/src/lodepng/*.cpp deps/src/imgui/*.cpp )
 
 ######################################
 ############ ADD  LIBRARIES
@@ -64,11 +64,13 @@ IF(APPLE)
 
   LINK_DIRECTORIES("deps/libs/mac")
   find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
+  find_library(OPENGL_FRAMEWORK OpenGl)
+
   find_library(COCOA_FRAMEWORK Cocoa)
   find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
     find_library(IOKIT_FRAMEWORK IOKit)
 
-  LIST(APPEND game_libs "${CORE_FOUNDATION_FRAMEWORK}"
+  LIST(APPEND game_libs "${OPENGL_FRAMEWORK}" "${CORE_FOUNDATION_FRAMEWORK}"
     "${COCOA_FRAMEWORK}"
     "${CORE_VIDEO_FRAMEWORK}"
     "${IOKIT_FRAMEWORK}")

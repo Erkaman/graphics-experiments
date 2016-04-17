@@ -14,13 +14,12 @@ Texture::operator std::string() const {
 	+ std::to_string(m_height) + ", ";
 }
 
-
-
 float Texture::GetMaxAnisotropic() {
-    if(FloatEquals(cachedMaxAnisotropic, 0)) {
+/*    if(FloatEquals(cachedMaxAnisotropic, 0)) {
 	GL_C(glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &cachedMaxAnisotropic));
     }
     return cachedMaxAnisotropic;
+*/
 }
 
 
@@ -114,7 +113,7 @@ void Texture::SetTextureClamping() {
 
 
 void Texture::EnableAnisotropicFiltering() {
-    GL_C(glTexParameterf(m_target,GL_TEXTURE_MAX_ANISOTROPY_EXT, GetMaxAnisotropic()));
+//    GL_C(glTexParameterf(m_target,GL_TEXTURE_MAX_ANISOTROPY_EXT, GetMaxAnisotropic()));
 }
 
 void Texture::SetBestMagMinFilters() {
@@ -278,6 +277,8 @@ void Texture::WriteToFile(unsigned char* pixels, const size_t width, const size_
 }
 
 void Texture::ConfigureForPCF() {
+/*
     GL_C(glTexParameteri(m_target, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL));
     GL_C(glTexParameteri(m_target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE));
+*/
 }

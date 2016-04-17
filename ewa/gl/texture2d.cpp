@@ -45,6 +45,9 @@
 
 Texture2D::Texture2D(DdsInfo* di): Texture(GL_TEXTURE_2D) {
 
+    LOG_E("WE SHOULD NOT GET HERE!");
+
+/*
     unsigned int blockSize = (di->format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
 
 
@@ -52,7 +55,6 @@ Texture2D::Texture2D(DdsInfo* di): Texture(GL_TEXTURE_2D) {
 
  Bind();
 
-     /* load the mipmaps */
  for (unsigned int level = 0; level < di->mipMapCount && (di->width || di->height); ++level)
      {
          unsigned int size = ((di->width+3)/4)*((di->height+3)/4)*blockSize;
@@ -66,6 +68,7 @@ Texture2D::Texture2D(DdsInfo* di): Texture(GL_TEXTURE_2D) {
 
  Unbind();
  MY_DELETE(di->buffer);
+*/
 
 
 }

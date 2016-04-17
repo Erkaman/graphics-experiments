@@ -111,11 +111,12 @@ void HeightMap::Init(
 
     string qual = "";
 
+
     if(!HighQuality) {
 	qual = "_lq"; // use low quality textures.
     }
 
-    string format = "dds";
+    string format = "png";
 
     m_grassTexture = LoadTexture("img/grass" + qual +"." + format);
     m_dirtTexture = LoadTexture("img/dirt" + qual +"." + format);

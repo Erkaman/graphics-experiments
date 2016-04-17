@@ -151,53 +151,34 @@ void Application::Cleanup_internal() {
 }
 
 
+//    m_window = glfwCreateWindow (m_width, m_height, "Tuhu", NULL, NULL);
+
+static void error_callback(int error, const char* description)
+{
+    fprintf(stderr, "Error %d: %s\n", error, description);
+}
+
 void Application::SetupOpenGL() {
 
-    // start GL context and O/S window using the GLFW helper library
-    if (!glfwInit ()) {
-	fprintf (stderr, "ERROR: could not start GLFW3\n");
-	exit(1);
-    }
+    // Setup window
+    glfwSetErrorCallback(error_callback);
+    if (!glfwInit())
+        LOG_E("Could not initialize GLFW");
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#if __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+    m_window = glfwCreateWindow(m_width, m_height, "Tuhu", NULL, NULL);
+    glfwMakeContextCurrent(m_window);
+    gl3wInit();
 
-    // uncomment these lines if on Apple OS X
-    glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-   // glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
-
-
-    glfwWindowHint(GLFW_DEPTH_BITS, 8);
-
-
-    m_window = glfwCreateWindow (m_width, m_height, "Tuhu", NULL, NULL);
-    if (!m_window) {
-	fprintf (stderr, "ERROR: could not open window with GLFW3\n");
-	glfwTerminate();
-	exit(1);
-    }
-    glfwMakeContextCurrent (m_window);
 
     glfwSetWindowFocusCallback(m_window, WindowFocusCallback);
 
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    // start GLEW extension handler
-    glewExperimental = GL_TRUE;
-//    glewInit ();
-
-
-    GLenum err = glewInit();
-    if (GLEW_OK != err)
-    {
-	/* Problem: glewInit failed, something is seriously wrong. */
-
-	//	const string s = std::string(reinterpret_cast<const char*> (glewGetErrorString(err)));
-
-	LOG_E("glewInit failed:%s", glewGetErrorString(err));
-
-    }
-    ClearOpenGLError();
 
     setupGLDebugMessages();
 

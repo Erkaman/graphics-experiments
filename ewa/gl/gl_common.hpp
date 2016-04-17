@@ -3,17 +3,12 @@
 #pragma warning( disable : 4127 )
 
 
-// in case you want to use the library with wxWidgets or something.
-#ifndef OPENGL_ALREADY_INCLUDED
 
-#ifndef GLEW_STATIC
-#define GLEW_STATIC
-#endif
+#include <gl3w.h>
 
-#include <GL/glew.h> // include GLEW and new version of GL on Windows
 #include <GLFW/glfw3.h> // GLFW helper library
 
-#endif
+
 
 
 #include <vector>
