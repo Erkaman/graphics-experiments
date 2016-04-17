@@ -45,7 +45,7 @@ endif()
 ######################################
 
 #SET(SRC main.cpp)
-file(GLOB ENGINE_SRC ewa/*.cpp ewa/*.c ewa/gl/shader/*.cpp ewa/gl/*.cpp ewa/math/*.cpp ewa/audio/*.cpp  deps/src/lodepng/*.cpp deps/src/imgui/*.cpp )
+file(GLOB ENGINE_SRC ewa/*.cpp ewa/*.c ewa/gl/shader/*.cpp ewa/gl/*.cpp ewa/math/*.cpp ewa/audio/*.cpp  deps/src/lodepng/*.cpp deps/src/imgui/*.cpp deps/glad/src/*.c )
 
 ######################################
 ############ ADD  LIBRARIES
@@ -114,7 +114,7 @@ ELSEIF(WIN32)
 ENDIF()
 
 include_directories("deps/include" "ewa" "ewa/gl" "ewa/gl/shader" "deps/include/lodepng" "."  "deps/include/imgui"
-  "deps/include/nfd")
+  "deps/include/nfd" "deps/glad/include")
 
 set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 

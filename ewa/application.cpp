@@ -172,7 +172,10 @@ void Application::SetupOpenGL() {
 #endif
     m_window = glfwCreateWindow(m_width, m_height, "Tuhu", NULL, NULL);
     glfwMakeContextCurrent(m_window);
-    gl3wInit();
+
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        LOG_E("Failed to initialize OpenGL context");
+    }
 
 
     glfwSetWindowFocusCallback(m_window, WindowFocusCallback);

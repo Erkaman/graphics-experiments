@@ -8,6 +8,7 @@
 
 using namespace std;
 
+#if 0
 void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSeverity, GLsizei /*aLength*/, const GLchar* aMessage, void* )
 {
 
@@ -75,6 +76,7 @@ void handle_debug_message_( GLenum aSource, GLenum aType, GLuint aId, GLenum aSe
     }
 
 }
+#endif
 
 
 void setupGLDebugMessages()
