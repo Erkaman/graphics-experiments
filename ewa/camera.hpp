@@ -2,6 +2,16 @@
 
 #include "icamera.hpp"
 
+// camera control point
+struct CameraCP {
+    Vector3f m_position;
+    Vector3f m_viewDir;
+
+    CameraCP(const Vector3f& position, const Vector3f& viewDir):m_position(position), m_viewDir(viewDir) {
+
+    }
+};
+
 class Camera : public ICamera{
 
 private:
@@ -16,9 +26,18 @@ private:
     void ComputeViewMatrix();
     void ComputeProjection(float near, float far);
 
+    std::vector<CameraCP> m_cps;
+
+    bool m_useCp;
+
+    // interpolation parameter.
+    float m_t;
+
+
+    void Interpolate(const float delta);
 public:
 
-    Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir);
+    Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir, bool useCp);
 
 
     virtual void Update(const float delta);
@@ -34,4 +53,8 @@ public:
     void Fly(const float amount);
 
     ICamera* CreateReflectionCamera()const;
+
+    void PrintState();
+
+
 };

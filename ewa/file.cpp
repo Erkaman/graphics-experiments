@@ -9,11 +9,12 @@
 
 #ifdef _WIN32
 
-#include "dirent.h"
+#include "my_dirent.h"
 
 #else // UNIX
 
 #include <sys/stat.h>
+
 #include <dirent.h>
 
 

@@ -256,7 +256,8 @@ void TuhuApplication::Init() {
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(0.933511, -0.318891, 0.163909)
+	Vector3f(0.933511, -0.318891, 0.163909),
+	false
 	);
 
 
@@ -292,7 +293,6 @@ void TuhuApplication::Init() {
 
 	ParseObjs(File::AppendPaths(dir, OBJS_FILENAME ));
 
-	
 	m_grass = new Grass(File::AppendPaths(dir, GRASS_FILENAME ), m_heightMap );
 	
     } else {
@@ -644,7 +644,9 @@ void TuhuApplication::RenderScene() {
 
 
     m_gpuProfiler->Begin(GTS_Grass);
-    m_grass->DrawDeferred(m_curCamera, m_lightDirection);
+
+   m_grass->DrawDeferred(m_curCamera, m_lightDirection);
+
     m_gpuProfiler->End(GTS_Grass);
 
     //  m_snow->Render(m_curCamera->GetMvpFromM(), m_curCamera->GetPosition());
@@ -678,6 +680,7 @@ void TuhuApplication::RenderEnvMap() {
 
 
 	   m_grass->DrawEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
+
 
 
 	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
@@ -864,12 +867,10 @@ void TuhuApplication::Update(const float delta) {
 
 //    LOG_I("dir: %s", string(cameraDirection).c_str() );
 
-	
-	
-    m_grass->Update(delta,  m_heightMap->ToLocalPos(m_curCamera->GetPosition()), cameraDirection,
-		*m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums(), *m_reflectionFrustum);
-	
 
+    m_grass->Update(delta,  m_heightMap->ToLocalPos(m_curCamera->GetPosition()), cameraDirection,
+		    *m_cameraFrustum, *m_lightFrustum, m_car->GetLightFrustums(), *m_reflectionFrustum
+ );
 
     m_prevCameraPos = curCameraPos;
 
@@ -1003,7 +1004,8 @@ void TuhuApplication::Update(const float delta) {
 
 //	    LOG_I("add grass at :%s", string(m_heightMap->GetCursorPosition() ).c_str() );
 
-		m_grass->AddGrass(m_heightMap->GetCursorPosition(), m_gui->GetGrassClusterSize());
+	    m_grass->AddGrass(m_heightMap->GetCursorPosition(), m_gui->GetGrassClusterSize());
+
 	}
 
 	if(ms.IsPressed(GLFW_MOUSE_BUTTON_2 ) ) {
@@ -1022,7 +1024,7 @@ void TuhuApplication::Update(const float delta) {
 
 //		LOG_I("REMOVE: %d", id);
 
-		m_grass->RemoveGrass(id);
+       	m_grass->RemoveGrass(id);
 
 	    }
 
@@ -1049,14 +1051,7 @@ void TuhuApplication::Update(const float delta) {
     }
 
     if( kbs.WasPressed(GLFW_KEY_N) ) {
-
-	if(m_curCamera == m_freeCamera) {
-	    m_curCamera = m_carCamera;
-
-	} else {
-	    m_curCamera = m_freeCamera;
-	}
-	m_curCamera->Update(0);
+	m_curCamera->PrintState();
     }
 
  //   if( kbs.IsPressed(GLFW_KEY_L) ) {save_screenshot("screen.tga", WINDOW_WIDTH, WINDOW_HEIGHT); }
@@ -1164,6 +1159,7 @@ void TuhuApplication::Cleanup() {
 
     if(m_gui) {
 	// if we were in the world editor, we need to serialize the world.
+
 	m_grass->SaveGrass(File::AppendPaths(dir, GRASS_FILENAME ) );
 
 

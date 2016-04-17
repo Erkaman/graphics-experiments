@@ -167,23 +167,6 @@ void Application::SetupOpenGL() {
    // glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
 
-	/*
-	// Setup window
-	glfwSetErrorCallback(error_callback);
-	if (!glfwInit())
-	return 1;
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	#if __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	#endif
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
-	glfwMakeContextCurrent(window);
-	gl3wInit();
-
-	*/
-
     glfwWindowHint(GLFW_DEPTH_BITS, 8);
 
 
