@@ -56,14 +56,15 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
 			Vector3f(0.933511, -0.318891, 0.163909)) );
 
     */
-    m_cps.push_back(CameraCP(Vector3f(-38.324429, 11.885699, 37.992260),Vector3f(0.933511, -0.318891, 0.163909)));
 
-    m_cps.push_back( CameraCP(Vector3f(-19.206289, 6.142766, 41.482296),Vector3f(0.965010, 0.064600, 0.254132)) )    ;
+    m_cps.push_back(CameraCP(Vector3f(-38.324429, 11.885699, 37.992260),Vector3f(0.933511, -0.318891, 0.163909), 0.4f) );
+
+    m_cps.push_back( CameraCP(Vector3f(-19.206289, 6.142766, 41.482296),Vector3f(0.965010, 0.064600, 0.254132) , 1.4f))     ;
 
 
-    m_cps.push_back( CameraCP(Vector3f(0.156958, 7.438980, 46.581543),Vector3f(0.962155, -0.024363, 0.271412)) );
+    m_cps.push_back( CameraCP(Vector3f(0.156958, 7.438980, 46.581543),Vector3f(0.962155, -0.024363, 0.271412) , 0.4f) );
 
-    m_cps.push_back(  CameraCP(Vector3f(19.496862, 6.949271, 52.037083),Vector3f(0.879356, -0.057421, 0.472689)) );
+    m_cps.push_back(  CameraCP(Vector3f(19.496862, 6.949271, 52.037083),Vector3f(0.879356, -0.057421, 0.472689), 0.4f ) );
 
 }
 
@@ -196,7 +197,7 @@ ICamera* Camera::CreateReflectionCamera()const {
 }
 
 void Camera::PrintState() {
-    LOG_I("CameraCP(%s,%s)",
+    LOG_I("m_cps.push_back(CameraCP(%s,%s))",
 	  (string("Vector3f") + string(m_position)).c_str(),
 	  (string("Vector3f") + string(m_viewDir)).c_str() );
 }
@@ -204,41 +205,59 @@ void Camera::PrintState() {
 INFO: /Users/eric/tuhu/ewa/camera.cpp:173:PrintState:CameraCP((-28.865242, 6.459203, 39.653118),(0.933511, -0.318891, 0.163909))
  */
 
-float Lerp(float cp1, float cp2, float t) {
-    return cp1 * (1.0 - t) + cp2 * (t);
-}
-
-Vector3f Lerp(const Vector3f& cp1, const Vector3f& cp2, float t ) {
+template <class T>
+T Lerp(const T& cp1, const T& cp2, float t ) {
+    /*
     return Vector3f(
 	Lerp(cp1.x, cp2.x, t),
 	Lerp(cp1.y, cp2.y, t),
 	Lerp(cp1.z, cp2.z, t)
 	);
+    */
+
+    return cp1 * (1.0 -t) + cp2 * (t);
 }
-/*
-Vector2f CatmullRomSpline(const Vector2f &P1,const Vector2f &P2,const Vector2f &P3,const Vector2f &P4,float t)
+
+template <class T>
+T CatmullRomSpline(const T &P1,const T &P2,const T &P3,const T &P4,float t)
 {
     float t2 = t * t;
     float t3 = t * t2;
 
     return ((P2 * 2.0f) + (-P1 + P3) * t + (P1 * 2.0f - P2 * 5.0f + P3 * 4.0f - P4) * t2 + (-P1 + P2 * 3.0f - P3 * 3.0f + P4) * t3) * 0.5f;
 }
-*/
 
 
 void Camera::Interpolate(const float delta) {
-    m_t += delta*0.4;
 
     static int i_cp = 0;
 
+
+    int size = m_cps.size();
+
+#define WRAP(I) ((I) >= size ? (I) % size : (  (I) < 0 ? (size + (I) )  : (I) ) )
+	int ip1 = WRAP(i_cp-1);
+	int ip2 = WRAP(i_cp+0);
+	int ip3 = WRAP(i_cp+1);
+	int ip4 = WRAP(i_cp+2);
+#undef WRAP
+
+    CameraCP cp1 = m_cps[ip1];
+    CameraCP cp2 = m_cps[ip2];
+    CameraCP cp3 = m_cps[ip3];
+    CameraCP cp4 = m_cps[ip4];
+
+    float velocity = Lerp(cp2.m_velocity, cp3.m_velocity, m_t);
+
+    m_t += delta*velocity;
+
+
     if(m_t <= 1.0) {
-//	LOG_I("LERP: %f", m_t);
 
-	CameraCP cp1 = m_cps[i_cp+0];
-	CameraCP cp2 = m_cps[i_cp+1];
 
-	m_position = Lerp(cp1.m_position, cp2.m_position, m_t);
-	m_viewDir = Lerp(cp1.m_viewDir, cp2.m_viewDir, m_t);
+
+	m_position = Lerp(cp2.m_position, cp3.m_position, m_t);
+	m_viewDir = Lerp(cp2.m_viewDir, cp3.m_viewDir, m_t);
 
 //	LOG_I("lerp: %s", string(m_position).c_str() );
 

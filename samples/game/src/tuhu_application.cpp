@@ -176,8 +176,8 @@ TuhuApplication::~TuhuApplication() {
 }
 
 void TuhuApplication::Init() {
-	
-	
+
+
 
     m_aabbWireframe = Cube::Load();
 
@@ -196,7 +196,7 @@ void TuhuApplication::Init() {
     m_envFbo->Init(ENV_FBO_TEXTURE_UNIT, 512, 512);
 
     LOG_I("LOG1");
-	
+
     m_refractionFbo = new ColorDepthFbo();
     m_refractionFbo->Init(REFRACTION_FBO_TEXTURE_UNIT, REFRACTION_WIDTH, REFRACTION_HEIGHT);
 
@@ -235,7 +235,7 @@ void TuhuApplication::Init() {
     }
 
     LOG_I("LOG3");
-	
+
     m_cameraFrustum = new ViewFrustum();
     m_lightFrustum = new ViewFrustum();
     m_reflectionFrustum = new ViewFrustum();
@@ -259,13 +259,13 @@ void TuhuApplication::Init() {
 	GetFramebufferHeight(),
 	pos,
 	Vector3f(0.933511, -0.318891, 0.163909),
-	false
+	true
 	);
 
 
     m_skydome = new Skydome(1, 10, 10);
 
-	
+
     string dir = Config::GetInstance().GetWorldFilename();
 
     m_car = new Car();
@@ -296,7 +296,7 @@ void TuhuApplication::Init() {
 	ParseObjs(File::AppendPaths(dir, OBJS_FILENAME ));
 
 	m_grass = new Grass(File::AppendPaths(dir, GRASS_FILENAME ), m_heightMap );
-	
+
     } else {
 
 	m_heightMap = new HeightMap(guiMode);
@@ -321,7 +321,7 @@ void TuhuApplication::Init() {
 
     }
 
-	
+
     m_physicsWorld = new PhysicsWorld(m_heightMap->GetAABB() );
 
 
@@ -358,7 +358,7 @@ void TuhuApplication::Init() {
 
     LightUpdate();
 
-	
+
 }
 
 
@@ -647,7 +647,7 @@ void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Grass);
 
-   m_grass->DrawDeferred(m_curCamera, m_lightDirection);
+//   m_grass->DrawDeferred(m_curCamera, m_lightDirection);
 
     m_gpuProfiler->End(GTS_Grass);
 
@@ -726,7 +726,7 @@ void TuhuApplication::RenderReflection() {
 }
 
 void TuhuApplication::Render() {
-	
+
 
     if(m_gui) {
 	m_gui->NewFrame(m_guiVerticalScale);
@@ -749,7 +749,7 @@ void TuhuApplication::Render() {
     m_gpuProfiler->End(GTS_Reflection);
 
 
-	
+
     float SCALE = m_guiVerticalScale;
 
     // set the viewport to the size of the window.
@@ -835,7 +835,7 @@ void TuhuApplication::Render() {
 
     m_gpuProfiler->EndFrame();
 
-	
+
 
 }
 
@@ -909,8 +909,8 @@ void TuhuApplication::Update(const float delta) {
 	ToClipboard(out);
     }
 
-    if( kbs.WasPressed(GLFW_KEY_6) 
-		//&& !m_gui 
+    if( kbs.WasPressed(GLFW_KEY_6)
+		//&& !m_gui
 		) {
 	StartPhysics();
     }
@@ -1061,7 +1061,7 @@ void TuhuApplication::Update(const float delta) {
 
     //
     m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
-	
+
 
 }
 
@@ -1081,7 +1081,7 @@ void TuhuApplication::RenderText()  {
     string cull = std::to_string(nonCulledObjects) + "\\" + std::to_string(totalObjects);
 
     m_font->DrawString(*m_fontShader, 750,170, cull);
-	
+
     m_font->DrawString(*m_fontShader, 750,120, tos(m_curCamera->GetPosition())  );
 
     m_font->DrawString(*m_fontShader, 750,220,
@@ -1113,7 +1113,7 @@ void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 750,750,
 		       Format("Grass: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Grass)) );
-			   
+
 
 }
 

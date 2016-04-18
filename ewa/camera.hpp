@@ -6,8 +6,9 @@
 struct CameraCP {
     Vector3f m_position;
     Vector3f m_viewDir;
+    float m_velocity;
 
-    CameraCP(const Vector3f& position, const Vector3f& viewDir):m_position(position), m_viewDir(viewDir) {
+    CameraCP(const Vector3f& position, const Vector3f& viewDir, float velocity):m_position(position), m_viewDir(viewDir), m_velocity(velocity) {
 
     }
 };
