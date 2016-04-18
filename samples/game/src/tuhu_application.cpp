@@ -63,6 +63,7 @@
 
 
 
+
 using namespace std;
 
 int nonCulledObjects = 0;
@@ -108,6 +109,7 @@ bool save_screenshot(string filename, int w, int h)
 {
     w *= 2;
     h *= 2;
+
 
 
   //This prevents the images getting padded

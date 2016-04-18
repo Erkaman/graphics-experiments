@@ -390,7 +390,7 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 	}
     }
 
-	/*
+	
     if(m_doWind) {
 
 	float tileSize = m_heightMapResolution / TILE_GRID_COUNT;
@@ -463,7 +463,7 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
     m_cameraPosition = cameraPosition;
     m_cameraDir = cameraDir;
-	*/
+
 
 }
 
