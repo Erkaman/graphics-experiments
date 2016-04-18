@@ -275,7 +275,7 @@ AABB* ReadAABB(const std::string& infile) {
 	SetError("%s is not a AABB file: invalid max line", aabbFile.c_str());
 	return NULL;
     }
-    aabb->max = Vector3f(stof(tokens[1]),stof(tokens[2]),stof(tokens[3]) );
+    aabb->m_max = Vector3f(stof(tokens[1]),stof(tokens[2]),stof(tokens[3]) );
 
 
     string secondLine = reader->ReadLine();
@@ -285,7 +285,7 @@ AABB* ReadAABB(const std::string& infile) {
 	SetError("%s is not a AABB file: invalid min line", aabbFile.c_str());
 	return NULL;
     }
-    aabb->min = Vector3f(stof(tokens[1]),stof(tokens[2]),stof(tokens[3]) );
+    aabb->m_min = Vector3f(stof(tokens[1]),stof(tokens[2]),stof(tokens[3]) );
 
     // close reader
     delete reader;

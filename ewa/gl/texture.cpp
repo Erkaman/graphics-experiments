@@ -20,6 +20,7 @@ float Texture::GetMaxAnisotropic() {
     }
     return cachedMaxAnisotropic;
 */
+	return 0;
 }
 
 

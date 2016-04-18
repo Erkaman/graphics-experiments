@@ -13,9 +13,9 @@
 using std::string;
 
 
-void Camera::ComputeProjection(float near, float far) {
+void Camera::ComputeProjection(float zNear, float zFar) {
     m_projectionMatrix =
-	Matrix4f::CreatePerspective (45.0f, m_ratio, near, far);
+	Matrix4f::CreatePerspective (45.0f, m_ratio, zNear, zFar);
 }
 
 

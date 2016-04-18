@@ -1034,8 +1034,8 @@ AABB GeometryObject::GetModelSpaceAABB()const {
 
     Matrix4f modelMatrix = GetModelMatrix();
 
-    temp.min = Vector3f((modelMatrix * Vector4f(m_aabb.min, 1.0f)));
-    temp.max = Vector3f((modelMatrix * Vector4f(m_aabb.max, 1.0f)));
+    temp.m_min = Vector3f((modelMatrix * Vector4f(m_aabb.m_min, 1.0f)));
+    temp.m_max = Vector3f((modelMatrix * Vector4f(m_aabb.m_max, 1.0f)));
 
     return temp;
 }

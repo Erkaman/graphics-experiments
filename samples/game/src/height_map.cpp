@@ -2103,12 +2103,12 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 AABB HeightMap::GetAABB()const {
     AABB aabb;
 
-    aabb.max = m_offset + Vector3f(
+    aabb.m_max = m_offset + Vector3f(
 	1.0f * m_xzScale,
 	1.0f*m_yScale,
 	1.0f * m_xzScale);
 
-    aabb.min = aabb.max * -1.0f;
+    aabb.m_min = aabb.m_max * -1.0f;
 
     return aabb;
 }

@@ -6,10 +6,10 @@ class AABB {
 
 public:
 
-    Vector3f min;
-    Vector3f max;
+    Vector3f m_min;
+    Vector3f m_max;
 
-    AABB(Vector3f min_, Vector3f max_):min(min_), max(max_) {}
+    AABB(Vector3f min_, Vector3f max_):m_min(min_), m_max(max_) {}
 
     AABB() {}
 

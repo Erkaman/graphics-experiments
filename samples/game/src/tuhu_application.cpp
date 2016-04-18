@@ -1384,24 +1384,24 @@ void TuhuApplication::UpdateMatrices() {
 	float right = 345;
 	float bottom = -249;
 	float top = 150;
-	float near = -300;
-	float far = 500;
+	float zNear = -300;
+	float zFar = 500;
 
 	Matrix4f lightProjectionMatrix =  //MakeLightProj();
 
 	    Matrix4f::CreateOrthographic(
 		left,right, // left, right
 		bottom, top, // bottom, top
-		near, // near(front of car)
-		far); // far(behind car)
+		zNear, // near(front of car)
+		zFar); // far(behind car)
 //	    Matrix4f::CreateOrthographic(-350,350, -200, 200, -200, 500);
 
 	m_lightVp = lightProjectionMatrix * lightViewMatrix;
 //	LOG_I("version1 %s", string(m_lightVp).c_str() );
 
 
-	Vector3f min = Vector3f(left, bottom, near) + cameraPos;
-	Vector3f max = Vector3f(right, top, far) + cameraPos;
+	Vector3f min = Vector3f(left, bottom, zNear) + cameraPos;
+	Vector3f max = Vector3f(right, top, zFar) + cameraPos;
 
 	Vector3f center = (min + max) * 0.5f;
 
