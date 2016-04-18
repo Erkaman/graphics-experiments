@@ -36,9 +36,13 @@ private:
 
 
     void Interpolate(const float delta);
+
+    // inti with camera CP
+    void InitCamera(const CameraCP& cp);
+
 public:
 
-    Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir, bool useCp);
+    Camera(const int windowWidth, const int windowHeight, const Vector3f& position, const Vector3f& viewDir);
 
 
     virtual void Update(const float delta);
@@ -56,6 +60,8 @@ public:
     ICamera* CreateReflectionCamera()const;
 
     void PrintState();
+
+
 
 
 };

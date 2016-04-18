@@ -258,8 +258,7 @@ void TuhuApplication::Init() {
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(0.933511, -0.318891, 0.163909),
-	true
+	Vector3f(0.933511, -0.318891, 0.163909)
 	);
 
 
@@ -647,7 +646,7 @@ void TuhuApplication::RenderScene() {
 
     m_gpuProfiler->Begin(GTS_Grass);
 
-//   m_grass->DrawDeferred(m_curCamera, m_lightDirection);
+   m_grass->DrawDeferred(m_curCamera, m_lightDirection);
 
     m_gpuProfiler->End(GTS_Grass);
 
