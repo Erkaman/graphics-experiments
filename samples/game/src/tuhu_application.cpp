@@ -87,11 +87,11 @@ constexpr int WINDOW_WIDTH = 256;
 constexpr int WINDOW_HEIGHT = 256;
 */
 
-constexpr int REFRACTION_WIDTH = WINDOW_WIDTH / 2;
-constexpr int REFRACTION_HEIGHT = WINDOW_HEIGHT / 2;
+constexpr int REFRACTION_WIDTH = WINDOW_WIDTH / 1;
+constexpr int REFRACTION_HEIGHT = WINDOW_HEIGHT / 1;
 
-constexpr int REFLECTION_WIDTH = WINDOW_WIDTH / 2;
-constexpr int REFLECTION_HEIGHT = WINDOW_HEIGHT / 2;
+constexpr int REFLECTION_WIDTH = WINDOW_WIDTH / 1;
+constexpr int REFLECTION_HEIGHT = WINDOW_HEIGHT / 1;
 
 
 
@@ -252,13 +252,14 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     const Vector3f pos =
-	Vector3f(38.002167, 50.456371, 236.789261);
+
+	Vector3f(-30.381567, 46.619061, 204.586304);
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(-0.302341, -0.447103, -0.841837)
+	Vector3f(0.777302, -0.389952, -0.493700)
 	);
 
 

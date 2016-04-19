@@ -135,13 +135,17 @@ void main() {
     if(id == 2.0) {
 
 
-	fragmentColor = vec4(diffColor, 1.0);
+//	fragmentColor = vec4(diffColor, 1.0);
+
+
+
 
 //	fragmentColor = vec4(n.xyz, 1.0);
 
 //	fragmentColor = vec4(0,0,0, 1.0);
 
     }
+
 
 
 #ifdef IS_TILED

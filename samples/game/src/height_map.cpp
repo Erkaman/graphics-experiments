@@ -1147,7 +1147,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP5] = halfChunk;
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_NORMAL] = normalChunk;
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_SHADOWS] = halfChunk;
-    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_REFLECTION] = waterChunk;
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_REFLECTION] = halfChunk;
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_REFRACTION] = waterChunk;
 
 
