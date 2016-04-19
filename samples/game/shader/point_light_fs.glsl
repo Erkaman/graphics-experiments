@@ -56,7 +56,7 @@ void main() {
     float ao;
     vec3 specColor;
 
-    readColorTexture(colorTexture, texCoord, diffColor, ao, specColor, screenSize.x, screenSize.y);
+    readColorTexture(colorTexture, texCoord, diffColor, ao, specColor, screenSize.x);
 
     float ztest = step(0, radius - lightDistLength );
 
@@ -74,8 +74,10 @@ void main() {
     vec3 envMapSample = vec3(0);
 
     if(id == 2.0) {
-
+/*
 	waterShader(viewSpacePosition, proj, specColor, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
+*/
+
     }
 
 

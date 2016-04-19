@@ -252,13 +252,13 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     const Vector3f pos =
-	Vector3f(-52.844795, 14.650712, 35.442703);
+	Vector3f(38.002167, 50.456371, 236.789261);
 
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(0.933511, -0.318891, 0.163909)
+	Vector3f(-0.302341, -0.447103, -0.841837)
 	);
 
 
@@ -617,7 +617,6 @@ void TuhuApplication::RenderScene() {
 	);
 
     Matrix4f lightVp =  biasMatrix*   m_lightVp;
-
 
 
 

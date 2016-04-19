@@ -36,10 +36,10 @@ Camera::Camera(const int windowWidth, const int windowHeight, const Vector3f& po
 float FAST_SPEED = 0.8;
 float NORMAL_SPEED = 0.4;
 
-
-    InitCamera(
+/*
+   InitCamera(
 	CameraCP(Vector3f(56.048920, 54.988255, 18.435148),Vector3f(-0.824103, -0.542272, 0.163692), FAST_SPEED));
-
+*/
 
     m_viewDir.Normalize();
     m_right = Vector3f::Cross(m_viewDir, Vector3f(0.0f, 1.0f, 0.0f)).Normalize();

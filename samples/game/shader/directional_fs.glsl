@@ -57,7 +57,7 @@ void main() {
     vec3 diffColor;
     float ao;
 
-    readColorTexture(colorTexture, texCoord, diffColor, ao, specColor, screenSize.x, screenSize.y);
+    readColorTexture(colorTexture, texCoord, diffColor, ao, specColor, screenSize.x);
 
 
     vec3 n;
@@ -73,7 +73,16 @@ void main() {
     vec3 v = -(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
 
-	
+
+    /*
+      Compute directional lighting.
+     */
+
+
+    float diff=  calcDiff(l,n);
+    float spec= calcSpec(l,n,v);
+
+
     if(id == 1.0) { // if car
 
 	// add fresnel.
@@ -85,7 +94,7 @@ void main() {
 
 	envMapSample = texture(envMap, reflectionVector).rgb;
     }
-	
+
 
     vec3 ambientLight = inAmbientLight;
     vec3 sceneLight = inSceneLight;
@@ -96,28 +105,17 @@ void main() {
     float aoOnly =0.0;
 
     vec4 shadowCoord = mulWhereWIsOne(lightVpTimesInverseViewMatrix, viewSpacePosition.xyz);
+    float visibility = calcVisibility(shadowMap, diff, shadowCoord);
 
-	
+
     if(id == 2.0) {
 
-	waterShader(viewSpacePosition, proj, specColor, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
+       	waterShader(viewSpacePosition, proj, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight,        colorTexture, texCoord, screenSize.x);
 
 
     }
-	
-
-    /*
-      Compute directional lighting.
-     */
 
 
-    float diff=  calcDiff(l,n);
-    float spec= calcSpec(l,n,v);
-    float visibility = calcVisibility(shadowMap, diff, shadowCoord);
-
-//    specShiny = 0.0;
-//    specColor = vec3(0);
-//    spec = 0.0;
 
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
@@ -132,6 +130,17 @@ void main() {
 	    envMapSample );
 
 //    fragmentColor = vec4(vec3(diff),1);
+
+    if(id == 2.0) {
+
+
+//	fragmentColor = vec4(diffColor, 1.0);
+
+	fragmentColor = vec4(n.xyz, 1.0);
+
+//	fragmentColor = vec4(0,0,0, 1.0);
+
+    }
 
 
 #ifdef IS_TILED

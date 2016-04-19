@@ -43,7 +43,7 @@ void main(void) {
 	texcoordOut.x,
 	texcoordOut.y);
 
-    tc *= 0.9;
+    tc *= 2.0;
 
     vec2 distortedTexCoords = texture(textureArray, vec3(tc.x + totalDelta*0.04, tc.y, dudvMap)).rg*0.1;
     distortedTexCoords = tc + vec2(distortedTexCoords.x, distortedTexCoords.y+ totalDelta * 0.03);
@@ -53,20 +53,19 @@ void main(void) {
     refractionTexcoord += distort;
     reflectionTexcoord += distort;
 
+
     refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
 
     vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
     vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
 
 
-    //vec2 distort = texture(textureArray, vec3(tc, dudvMap) ).rg * 2.0 - 1.0;
-
-
     // SHOULD BE ENOUGH IF just send in distortet text coords.
 
 //    refraction = clamp(refraction, 0.001, 1.0 - 0.001);
 
-    vec3 n = texture(textureArray, vec3(distortedTexCoords, normalMap) ).xyz;
+
+    vec3 n = texture(textureArray, vec3(/*distortedTexCoords*/ tc, normalMap) ).xyz;
     n = vec3(2*n.r - 1.0, n.b, 2*n.g - 1.0);
     n = normalize(n);
 
@@ -78,17 +77,8 @@ void main(void) {
     float ao = 1;
     float id = 2.0f;
 
-    /*
-    geoData[0] = vec4(refraction,ao);
-    geoData[1] = vec4(n, id);
-    geoData[2] = vec4(reflection, 1);
-    */
-
-    geoData[0] = vec4(packColor(refraction), packColor(reflection)  );
+    geoData[0] = vec4(packColor(reflection ), packColor(refraction)   );
     geoData[1] = packNormalTexture(n.xyz, 0, id);
-
-
-
 
 
 /*
