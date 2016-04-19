@@ -43,16 +43,16 @@ void main(void) {
 	texcoordOut.x,
 	texcoordOut.y);
 
-    tc *= 2.0;
+    tc *= 1.3;
 
     vec2 distortedTexCoords = texture(textureArray, vec3(tc.x + totalDelta*0.04, tc.y, dudvMap)).rg*0.1;
     distortedTexCoords = tc + vec2(distortedTexCoords.x, distortedTexCoords.y+ totalDelta * 0.03);
     vec2 distort = (texture(textureArray, vec3(distortedTexCoords,dudvMap) ).rg * 2.0 - 1.0) * 0.02;
 
-
+/*
     refractionTexcoord += distort;
     reflectionTexcoord += distort;
-
+*/
 
     refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
 
@@ -64,8 +64,7 @@ void main(void) {
 
 //    refraction = clamp(refraction, 0.001, 1.0 - 0.001);
 
-
-    vec3 n = texture(textureArray, vec3(/*distortedTexCoords*/ tc, normalMap) ).xyz;
+    vec3 n = texture(textureArray, vec3(distortedTexCoords, normalMap) ).xyz;
     n = vec3(2*n.r - 1.0, n.b, 2*n.g - 1.0);
     n = normalize(n);
 
@@ -79,14 +78,4 @@ void main(void) {
 
     geoData[0] = vec4(packColor(reflection ), packColor(refraction)   );
     geoData[1] = packNormalTexture(n.xyz, 0, id);
-
-
-/*
-  for water shader.
-    vec4(refrac.y, refrac.cbcy, reflec.y, reflec.cbcy)
-    vec4( nx, ny, id, ao  )
-*/
-
-/*
-*/
 }

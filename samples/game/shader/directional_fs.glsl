@@ -70,7 +70,7 @@ void main() {
 
     vec3 viewSpacePosition = getViewSpacePosition(toViewSpacePositionMat, depthTexture, texCoord);
 
-    vec3 v = -(viewSpacePosition);
+    vec3 v = -normalize(viewSpacePosition);
     vec3 l= -viewSpaceLightDirection;
 
 
@@ -81,6 +81,17 @@ void main() {
 
     float diff=  calcDiff(l,n);
     float spec= calcSpec(l,n,v);
+
+
+    vec3 ambientLight = inAmbientLight;
+    vec3 sceneLight = inSceneLight;
+
+
+
+    float aoOnly =0.0;
+
+    vec4 shadowCoord = mulWhereWIsOne(lightVpTimesInverseViewMatrix, viewSpacePosition.xyz);
+    float visibility = calcVisibility(shadowMap, diff, shadowCoord);
 
 
     if(id == 1.0) { // if car
@@ -96,16 +107,6 @@ void main() {
     }
 
 
-    vec3 ambientLight = inAmbientLight;
-    vec3 sceneLight = inSceneLight;
-
-
-
-
-    float aoOnly =0.0;
-
-    vec4 shadowCoord = mulWhereWIsOne(lightVpTimesInverseViewMatrix, viewSpacePosition.xyz);
-    float visibility = calcVisibility(shadowMap, diff, shadowCoord);
 
 
     if(id == 2.0) {
@@ -134,9 +135,9 @@ void main() {
     if(id == 2.0) {
 
 
-//	fragmentColor = vec4(diffColor, 1.0);
+	fragmentColor = vec4(diffColor, 1.0);
 
-	fragmentColor = vec4(n.xyz, 1.0);
+//	fragmentColor = vec4(n.xyz, 1.0);
 
 //	fragmentColor = vec4(0,0,0, 1.0);
 

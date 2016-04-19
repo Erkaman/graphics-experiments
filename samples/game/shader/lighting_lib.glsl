@@ -36,21 +36,21 @@ vec4 calcLighting(
     float visibility, // shadowing
     vec3 envMapSample
     ) {
-//    vec3 finalcolor=ambientLight*diffColor; // ambient
+    vec3 finalcolor=ambientLight*diffColor; // ambient
 
-    vec3 finalcolor = vec3(0,0,0.5);
+    //   vec3 finalcolor = vec3(0,0,0.5);
 
     //  finalcolor+= (diffColor*sceneLight)* (diff * visibility);
 
 
-//    spec += step(specColor.x, 0.01);
+    spec += step(specColor.x, 0.01);
 
-//    finalcolor += specColor*pow(spec,specShiny) * visibility;
-    //  finalcolor += (specColor * envMapSample) * (spec  * 0.4);
+    finalcolor += specColor*pow(spec,specShiny) * visibility;
+    finalcolor += (specColor * envMapSample) * (spec  * 0.4);
 
-    // finalcolor += specColor*pow(spec,specShiny) * visibility;
+    finalcolor += specColor*pow(spec,specShiny) * visibility;
 //    finalcolor += specColor * pow(spec,specShiny) * visibility;
-    finalcolor += vec3(diff);
+//    finalcolor += vec3(diff);
 
 
     return vec4(finalcolor,1.0);
@@ -289,54 +289,20 @@ void waterShader(vec3 viewSpacePosition, mat4 proj,
     float fresnel = dot(
 	toCameraVector, vec3(0,1,0));
 
-    diffColor = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
 
-
-    specMat = 0.7 * sceneLight;
-
-    specShiny = 3.0;
-    envMapSample = vec3(0,0,0);
-
-//       ambientLight = vec3(1,1,1);
-
-    /*
-    specMat = vec3(0,0,0);
-
-    specShiny = 0.0;
-    envMapSample = vec3(0,0,0);
-
-    ambientLight = vec3(1,1,1);
-    */
-
+//    diffColor = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
+    diffColor = refraction;
 
 
 /*
-
-
-
-
-
-    vec3 refraction = diffColor.xyz;
-
-
-    vec3 reflection = vec3(0,0,0); //specColor.xyz; // read from buffer instead.
-
-    vec3 worldPosition = (invViewMatrix * vec4(viewSpacePosition, 1)).xyz;
-
-    vec3 toCameraVector = normalize(eyePos - worldPosition.xyz);
-
-    float fresnel = dot(
-	toCameraVector, vec3(0,1,0));
-
-    diffColor = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
-
-    specMat = 0.6 * sceneLight;
+    specMat = 0.3 * sceneLight;
 
     specShiny = 20.0;
     envMapSample = vec3(0,0,0);
-
-    ambientLight = vec3(1,1,1);
 */
 
+    specMat = vec3(0);
 
+    specShiny = 00.0;
+    envMapSample = vec3(0,0,0);
 }
