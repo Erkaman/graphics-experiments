@@ -12,6 +12,9 @@ uniform sampler2DShadow shadowMap;
 uniform sampler2D lightGrid;
 uniform sampler2D lightIndexTexture;
 
+uniform float aoOnly;
+uniform float enableAo;
+
 uniform vec2 screenSize;
 uniform float gridCountRcp;
 uniform float lightIndexTextureSize;
@@ -88,7 +91,6 @@ void main() {
 
 
 
-    float aoOnly =0.0;
 
     vec4 shadowCoord = mulWhereWIsOne(lightVpTimesInverseViewMatrix, viewSpacePosition.xyz);
     float visibility = calcVisibility(shadowMap, diff, shadowCoord);
@@ -120,7 +122,7 @@ void main() {
 
     fragmentColor =vec4(vec3(1.0-ao), 1.0) * aoOnly +
 	(1.0 - aoOnly)*calcLighting(
-	    ambientLight,
+	    ambientLight *   (enableAo == 1.0 ? (1.0-ao) : 1.0  ) ,
 	    sceneLight,
 	    specShiny,
 	    diffColor,

@@ -787,15 +787,19 @@ void TuhuApplication::Render() {
     Matrix4f lightVp =  biasMatrix*   m_lightVp;
 
 
+    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
+    bool enableAo = m_gui ? m_gui->IsEnableAo() : true;
+
     m_gpuProfiler->Begin(GTS_Light);
     m_lightingPass->Render(
 	m_gbuffer, m_curCamera, m_lightDirection,
 	lightVp, *m_depthFbo, GeometryObject::GetTorches(),
 	m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo,
-    *m_cameraFrustum
+	*m_cameraFrustum,
+	aoOnly,
+	enableAo
 	);
     m_gpuProfiler->End(GTS_Light);
-
 
 
 //    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());

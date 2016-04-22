@@ -58,7 +58,7 @@ private:
 
     void SetupShader(
 	ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera,
-	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
+	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap, bool aoOnly);
     void UnsetupShader(
 	ShaderProgram* shader, Gbuffer* gbuffer,
 	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap);
@@ -78,7 +78,7 @@ public:
 	Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition,
 	const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches,
 	CubeMapTexture* cubeMapTexture, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap,
-	 const ViewFrustum& cameraFrustum);
+	const ViewFrustum& cameraFrustum , bool aoOnly, bool enableAo);
 
     void UpdateTextures(int lightCount);
 
