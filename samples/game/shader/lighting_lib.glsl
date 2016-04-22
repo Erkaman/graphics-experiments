@@ -285,13 +285,15 @@ void waterShader(vec3 viewSpacePosition, mat4 proj,
     float fresnel = dot(
 	toCameraVector, vec3(0,1,0));
 
-    diffColor = mix(refraction, reflection, 1.0 - fresnel);
-//    diffColor = reflection;
+    float a = specShiny;
+   diffColor = mix( refraction, reflection, (1.0 - fresnel) );
+//       diffColor = reflection;
 
     specMat = 0.3 * sceneLight;
 
     specShiny = 20.0;
     envMapSample = vec3(0,0,0);
+
 
 /*
     specMat = vec3(0);

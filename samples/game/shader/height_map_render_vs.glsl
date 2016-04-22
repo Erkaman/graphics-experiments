@@ -42,7 +42,7 @@ void main()
 #endif
 
 #ifdef REFLECTION
-       gl_ClipDistance[0] = dot(scaledPos, vec3(0,1.0,0));
+       gl_ClipDistance[0] = dot(scaledPos, vec3(0,height-1.0,0));
 #endif
 
     // TODO: can we optimize this?

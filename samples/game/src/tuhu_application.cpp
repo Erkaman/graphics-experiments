@@ -87,11 +87,11 @@ constexpr int WINDOW_WIDTH = 256;
 constexpr int WINDOW_HEIGHT = 256;
 */
 
-constexpr int REFRACTION_WIDTH = WINDOW_WIDTH / 1;
-constexpr int REFRACTION_HEIGHT = WINDOW_HEIGHT / 1;
+constexpr int REFRACTION_WIDTH = WINDOW_WIDTH / 2;
+constexpr int REFRACTION_HEIGHT = WINDOW_HEIGHT / 2;
 
-constexpr int REFLECTION_WIDTH = WINDOW_WIDTH / 1;
-constexpr int REFLECTION_HEIGHT = WINDOW_HEIGHT / 1;
+constexpr int REFLECTION_WIDTH = WINDOW_WIDTH / 2;
+constexpr int REFLECTION_HEIGHT = WINDOW_HEIGHT / 2;
 
 
 

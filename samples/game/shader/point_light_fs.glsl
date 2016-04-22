@@ -74,6 +74,9 @@ void main() {
     vec3 envMapSample = vec3(0);
 
     if(id == 2.0) {
+
+	       	waterShader(viewSpacePosition, proj, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight,        colorTexture, texCoord, screenSize.x);
+
 /*
 	waterShader(viewSpacePosition, proj, specColor, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
 */
