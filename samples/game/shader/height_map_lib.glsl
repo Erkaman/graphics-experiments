@@ -22,7 +22,6 @@ vec3 getNormal(sampler2D hm, vec2 texCoord)
     vec3 n = normalize(cross(normalize(vb), normalize(va) ));
 
     return n;
-
 }
 
 vec3 computePos(

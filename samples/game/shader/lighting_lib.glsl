@@ -44,11 +44,6 @@ vec4 calcLighting(
     finalcolor += specColor*pow(spec,specShiny) * visibility;
     finalcolor += (specColor * envMapSample) * (spec  * 0.4);
 
-    finalcolor += specColor*pow(spec,specShiny) * visibility;
-//    finalcolor += specColor * pow(spec,specShiny) * visibility;
-//    finalcolor += vec3(diff);
-
-
     return vec4(finalcolor,1.0);
 }
 
@@ -287,13 +282,11 @@ void waterShader(vec3 viewSpacePosition, mat4 proj,
 
     float a = specShiny;
    diffColor = mix( refraction, reflection, (1.0 - fresnel) );
-//       diffColor = reflection;
 
-    specMat = 0.3 * sceneLight;
+    specMat = 0.7 * sceneLight;
 
-    specShiny = 20.0;
+    specShiny = 15.0;
     envMapSample = vec3(0,0,0);
-
 
 /*
     specMat = vec3(0);

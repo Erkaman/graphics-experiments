@@ -93,15 +93,12 @@ void main(void) {
     reflectionTexcoord += distort;
 
 
+
+
     refractionTexcoord = clamp(refractionTexcoord, 0.001, 1.0 - 0.001);
 
     vec3 refraction = texture(refractionMap, refractionTexcoord).xyz;
     vec3 reflection = texture(reflectionMap, reflectionTexcoord).xyz;
-
-
-    // SHOULD BE ENOUGH IF just send in distortet text coords.
-
-//    refraction = clamp(refraction, 0.001, 1.0 - 0.001);
 
     vec3 n = texture(textureArray, vec3(distortedTexCoords, normalMap) ).xyz;
     n = vec3(2*n.r - 1.0, n.b, 2*n.g - 1.0);
