@@ -24,6 +24,6 @@ void main() {
 
     gl_Position = p;
 
-    outPos = vec3(vec4(positionIn.xyz, 1));
+    outPos = vec3(viewMatrix * modelMatrix * vec4(positionIn.xyz, 1));
 
 }
