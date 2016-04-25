@@ -8,6 +8,7 @@ void CheckOpenGLError(const char* stmt, const char* fname, int line);
 
 void ClearOpenGLError();
 
+
 // GL Check.
 #ifdef _DEBUG
     #define GL_C(stmt) do { \

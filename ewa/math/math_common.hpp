@@ -14,7 +14,16 @@ inline float ToRadians(const float degrees) {
     return (degrees * PI) / 180.0f;
 }
 
+
+template <class T> const T& my_max(const T& a, const T& b) {
+	return (a<b) ? b : a;     // or: return comp(a,b)?b:a; for version (2)
+}
+
+template <class T> const T& my_min(const T& a, const T& b) {
+	return !(b<a) ? a : b;     // or: return !comp(b,a)?a:b; for version (2)
+}
+
 template <typename T>
 T Clamp(const T& n, const T& lower, const T& upper) {
-  return std::max(lower, std::min(n, upper));
+  return my_max(lower, my_min(n, upper));
 }

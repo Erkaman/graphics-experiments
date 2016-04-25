@@ -42,6 +42,7 @@ class ColorFBO;
 class ColorDepthFbo;
 class ParticlesRenderer;
 class DualParaboloidMap;
+class Camera;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
@@ -53,9 +54,9 @@ class TuhuApplication : public Application, public GuiListener, public GeometryO
 
 private:
 
-    ICamera* m_freeCamera;
+    Camera* m_freeCamera;
     ICamera* m_carCamera;
-    ICamera* m_curCamera; // current camera.
+    Camera* m_curCamera; // current camera.
     ICamera* m_reflectionCamera;
 
 

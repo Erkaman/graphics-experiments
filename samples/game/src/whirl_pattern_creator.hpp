@@ -45,12 +45,12 @@ private:
 	return i < 0 ? -i : +i;
     }
 
-    int max(int a, int b) {
+    int my_max(int a, int b) {
 	return a > b ? a : b;
     }
 
     bool reachedEndOfPattern() {
-	int d = max(abs(x), abs(z));
+	int d = my_max(abs(x), abs(z));
 	return d > radius;
     }
 

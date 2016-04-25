@@ -25,7 +25,7 @@ PhysicsWorld::PhysicsWorld(const AABB& worldBox) {
 
 
     // TODO: replace with sweep and prune broad phase instead?
-    m_broadphase = new btAxisSweep3(toBtVec(worldBox.min), toBtVec(worldBox.max));
+    m_broadphase = new btAxisSweep3(toBtVec(worldBox.m_min), toBtVec(worldBox.m_max));
 
     m_collisionConfiguration = new btDefaultCollisionConfiguration();
     m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);

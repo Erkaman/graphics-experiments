@@ -16,7 +16,7 @@ out vec4 clipSpace;
 
 out vec3 toCameraVector;
 
-out vec3 worldPositionOut;
+out vec3 objectSpacePosition;
 
 void main()
 {
@@ -30,5 +30,5 @@ void main()
 
     toCameraVector = normalize(eyePos - worldPosition.xyz);
 
-    worldPositionOut = worldPosition.xyz;
+    objectSpacePosition = positionIn;
 }

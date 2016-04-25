@@ -62,7 +62,6 @@ using std::string;
 Gui::Gui(GLFWwindow* window) {
 
     m_guiMode = ModifyTerrainMode;
-    m_guiMode = GrassMode;
 
     m_drawTextureType = GrassTexture;
     m_inputMode = InputNoneMode;
@@ -85,6 +84,7 @@ Gui::Gui(GLFWwindow* window) {
     m_terrainMode = ModifyElevationMode;
 
     m_aoOnly = false;
+    m_enableAo = true;
 
 
 	// no gui on windows.
@@ -163,6 +163,7 @@ void Gui::Render(int windowWidth, int windowHeight) {
 	ImGui::SliderFloat("Noise Scale", &m_noiseScale, MIN_NOISE_SCALE, MAX_NOISE_SCALE);
 	ImGui::SliderInt("Smooth Radius", &m_smoothRadius, MIN_SMOOTH_RADIUS, MAX_SMOOTH_RADIUS);
 	ImGui::Checkbox("AO Only", &m_aoOnly);
+	ImGui::Checkbox("Enable AO", &m_enableAo);
 
 
 
@@ -511,6 +512,10 @@ int Gui::GetSmoothRadius()const {
 
 bool Gui::isAoOnly()const {
     return m_aoOnly;
+}
+
+bool Gui::IsEnableAo()const {
+    return m_enableAo;
 }
 
 int Gui::GetGrassClusterSize()const {

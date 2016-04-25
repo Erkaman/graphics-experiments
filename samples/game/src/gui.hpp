@@ -36,6 +36,7 @@ private:
     float m_aoDistAttenuation;
 
     bool m_aoOnly;
+    bool m_enableAo;
 
     void RadiusSlider();
 
@@ -72,6 +73,7 @@ public:
 
 
     bool isAoOnly()const;
+    bool IsEnableAo()const;
 
     int GetGrassClusterSize()const;
 

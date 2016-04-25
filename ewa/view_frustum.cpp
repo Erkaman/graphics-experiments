@@ -200,9 +200,9 @@ bool ViewFrustum::IsCuboidInFrustum( const float x, const float y, const float z
 }
 
 bool ViewFrustum::IsAABBInFrustum(const AABB& aabb )const {
-    Vector3f center = (aabb.min + aabb.max) * 0.5f;
+    Vector3f center = (aabb.m_min + aabb.m_max) * 0.5f;
 
-    Vector3f radius = (aabb.max - center);
+    Vector3f radius = (aabb.m_max - center);
 
     return IsCuboidInFrustum(
 	center.x, center.y, center.z,

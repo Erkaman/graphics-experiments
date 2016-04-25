@@ -64,6 +64,7 @@
 
 
 
+
 using namespace std;
 
 int nonCulledObjects = 0;
@@ -76,7 +77,7 @@ constexpr int SHADOW_MAP_SIZE =
 
 
 
-constexpr int WINDOW_WIDTH = HighQuality ? 1500 : 1200;
+constexpr int WINDOW_WIDTH = HighQuality ? 1600 : 1200;
 constexpr int WINDOW_HEIGHT = HighQuality ?  960 : 720;
 
 //constexpr int WINDOW_WIDTH = HighQuality ? 1500 : 720.0;
@@ -109,6 +110,7 @@ bool save_screenshot(string filename, int w, int h)
 {
     w *= 2;
     h *= 2;
+
 
 
   //This prevents the images getting padded
@@ -175,6 +177,8 @@ TuhuApplication::~TuhuApplication() {
 }
 
 void TuhuApplication::Init() {
+
+
 
     m_aabbWireframe = Cube::Load();
 
@@ -243,10 +247,8 @@ void TuhuApplication::Init() {
 
     // NOTE: we can fix the shadows by setting trans to (0,0,0).
     Vector3f trans = Vector3f(-2,9.0,-2);
-/*
-    m_smoke = new SmokeEffect(Vector3f(10,3,10) + trans);
-    m_smoke->Init();
-*/
+
+
     m_particlesRenderer = new ParticlesRenderer(GetFramebufferWidth(), GetFramebufferHeight());
 
     ::SetDepthTest(true);
@@ -258,7 +260,7 @@ void TuhuApplication::Init() {
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(0.933511, -0.318891, 0.163909)
+	Vector3f(0.777302, -0.389952, -0.493700)
 	);
 
 
@@ -281,7 +283,9 @@ void TuhuApplication::Init() {
 
     m_line = Line::Load(Vector3f(0), -1000.0f * Vector3f(m_lightDirection), Vector3f(1,0,0) );
 
-    if(ResourceManager::GetInstance().PathExists(dir) /*&& false*/) {
+    if(ResourceManager::GetInstance().PathExists(dir)
+		//&& false
+		) {
 
 	m_heightMap = new HeightMap(
 	    File::AppendPaths(dir, HEIGHT_MAP_FILENAME ) ,
@@ -292,9 +296,7 @@ void TuhuApplication::Init() {
 
 	ParseObjs(File::AppendPaths(dir, OBJS_FILENAME ));
 
-	m_grass = new Grass(
-	    File::AppendPaths(dir, GRASS_FILENAME ),
-	    m_heightMap );
+	m_grass = new Grass(File::AppendPaths(dir, GRASS_FILENAME ), m_heightMap );
 
     } else {
 
@@ -310,6 +312,7 @@ void TuhuApplication::Init() {
 
     }
 
+
     if(m_gui) {
 	m_heightMap->SetCursorSize(m_gui->GetCursorSize());
 
@@ -318,6 +321,7 @@ void TuhuApplication::Init() {
 	m_heightMap->UpdateGui(0, NULL, 0,0);
 
     }
+
 
     m_physicsWorld = new PhysicsWorld(m_heightMap->GetAABB() );
 
@@ -345,24 +349,17 @@ void TuhuApplication::Init() {
     // TODO: should not this be the size of the framebuffer?
     m_gbuffer->Init(0, GetFramebufferWidth(),GetFramebufferHeight() );
 
-    /*
-      OpenAL::Initp();
-
-      m_windSound = new Sound("audio/wind2.wav");
-      m_windSound->SetGain(1.0f);
-      m_windSound->SetLooping(true);
-    */
 
     m_curCamera = m_freeCamera;
 
 
-
     LOG_I("LOG5");
-
 
 //    StartPhysics();
 
     LightUpdate();
+
+
 }
 
 
@@ -625,7 +622,6 @@ void TuhuApplication::RenderScene() {
 
 
 
-
     m_gpuProfiler->Begin(GTS_Objects);
     {
 	GeometryObject::RenderAll(m_curCamera, m_lightDirection, lightVp, *m_depthFbo, m_envFbo->GetEnvMap(), *m_refractionFbo, *m_reflectionFbo);
@@ -650,6 +646,7 @@ void TuhuApplication::RenderScene() {
 
 
     m_gpuProfiler->Begin(GTS_Grass);
+
    m_grass->DrawDeferred(m_curCamera, m_lightDirection);
     m_gpuProfiler->End(GTS_Grass);
 
@@ -697,7 +694,6 @@ void TuhuApplication::RenderEnvMap() {
 	{
 
 	    m_envFbo->BindFace(i);
-
 	    size_t size = m_envFbo->GetSize();
 	    ::SetViewport(0,0,size,size);
 
@@ -710,7 +706,8 @@ void TuhuApplication::RenderEnvMap() {
 //	    GeometryObject::RenderAllEnv(m_car->GetEnvCameras()[i], m_lightDirection, i);
 
 
-	  //  m_grass->DrawEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
+	   m_grass->DrawEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i);
+
 
 	    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	    m_heightMap->RenderEnvMap(m_car->GetEnvCameras()[i], m_lightDirection, i, aoOnly);
@@ -798,7 +795,6 @@ void TuhuApplication::Render() {
     SetViewport();
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
     RenderScene();
 
    m_gbuffer->UnbindForWriting();
@@ -818,16 +814,19 @@ void TuhuApplication::Render() {
     Matrix4f lightVp =  biasMatrix*   m_lightVp;
 
 
+    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
+    bool enableAo = m_gui ? m_gui->IsEnableAo() : true;
+
     m_gpuProfiler->Begin(GTS_Light);
     m_lightingPass->Render(
 	m_gbuffer, m_curCamera, m_lightDirection,
 	lightVp, *m_depthFbo, GeometryObject::GetTorches(),
-	*m_dualParaboloidMap,
-	*m_refractionFbo, *m_reflectionFbo,
-    *m_cameraFrustum
+	*m_dualParaboloidMap, *m_refractionFbo, *m_reflectionFbo,
+	*m_cameraFrustum,
+	aoOnly,
+	enableAo
 	);
     m_gpuProfiler->End(GTS_Light);
-
 
 
 //    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
@@ -871,6 +870,8 @@ void TuhuApplication::Render() {
 
     m_gpuProfiler->EndFrame();
 
+
+
 }
 
 void TuhuApplication::Update(const float delta) {
@@ -908,8 +909,6 @@ void TuhuApplication::Update(const float delta) {
 		    *m_cameraFrustum, *m_lightFrustum, *m_dualParaboloidMap, *m_reflectionFrustum
  );
 
-
-
     m_prevCameraPos = curCameraPos;
 
     m_lightFrustum->Update( m_lightVp, Vector3f(0) );
@@ -945,7 +944,9 @@ void TuhuApplication::Update(const float delta) {
 	ToClipboard(out);
     }
 
-    if( kbs.WasPressed(GLFW_KEY_6)/* && !m_gui*/ ) {
+    if( kbs.WasPressed(GLFW_KEY_6)
+		//&& !m_gui
+		) {
 	StartPhysics();
     }
 
@@ -1039,9 +1040,7 @@ void TuhuApplication::Update(const float delta) {
 	if(ms.WasPressed(GLFW_MOUSE_BUTTON_1 ) ) {
 
 //	    LOG_I("add grass at :%s", string(m_heightMap->GetCursorPosition() ).c_str() );
-
-           m_grass->AddGrass(m_heightMap->GetCursorPosition(), m_gui->GetGrassClusterSize());
-
+	    m_grass->AddGrass(m_heightMap->GetCursorPosition(), m_gui->GetGrassClusterSize());
 	}
 
 	if(ms.IsPressed(GLFW_MOUSE_BUTTON_2 ) ) {
@@ -1060,7 +1059,7 @@ void TuhuApplication::Update(const float delta) {
 
 //		LOG_I("REMOVE: %d", id);
 
-		m_grass->RemoveGrass(id);
+       	m_grass->RemoveGrass(id);
 
 	    }
 
@@ -1087,20 +1086,11 @@ void TuhuApplication::Update(const float delta) {
     }
 
     if( kbs.WasPressed(GLFW_KEY_N) ) {
-
-	if(m_curCamera == m_freeCamera) {
-	    m_curCamera = m_carCamera;
-
-	} else {
-	    m_curCamera = m_freeCamera;
-	}
-	m_curCamera->Update(0);
+	m_curCamera->PrintState();
     }
-/*
-    if( kbs.IsPressed(GLFW_KEY_L) ) {
-	save_screenshot("screen.tga", WINDOW_WIDTH, WINDOW_HEIGHT);
-    }
-*/
+
+ //   if( kbs.IsPressed(GLFW_KEY_L) ) {save_screenshot("screen.tga", WINDOW_WIDTH, WINDOW_HEIGHT); }
+
 
     //
     m_heightMap->UpdateGui(delta, m_curCamera, (float)GetFramebufferWidth(),(float)GetFramebufferHeight());
@@ -1157,6 +1147,7 @@ void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 750,750,
 		       Format("Grass: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Grass)) );
+
 
 }
 
@@ -1429,24 +1420,24 @@ void TuhuApplication::UpdateMatrices() {
 	float right = 345;
 	float bottom = -249;
 	float top = 150;
-	float near = -300;
-	float far = 500;
+	float zNear = -300;
+	float zFar = 500;
 
 	Matrix4f lightProjectionMatrix =  //MakeLightProj();
 
 	    Matrix4f::CreateOrthographic(
 		left,right, // left, right
 		bottom, top, // bottom, top
-		near, // near(front of car)
-		far); // far(behind car)
+		zNear, // near(front of car)
+		zFar); // far(behind car)
 //	    Matrix4f::CreateOrthographic(-350,350, -200, 200, -200, 500);
 
 	m_lightVp = lightProjectionMatrix * lightViewMatrix;
 //	LOG_I("version1 %s", string(m_lightVp).c_str() );
 
 
-	Vector3f min = Vector3f(left, bottom, near) + cameraPos;
-	Vector3f max = Vector3f(right, top, far) + cameraPos;
+	Vector3f min = Vector3f(left, bottom, zNear) + cameraPos;
+	Vector3f max = Vector3f(right, top, zFar) + cameraPos;
 
 	Vector3f center = (min + max) * 0.5f;
 
@@ -1497,9 +1488,6 @@ since there is lots of overdraw, we simply cannot have a complex shader for alph
     also, we may possible solve problems by making a thin gbuffer .
 */
 
-
 /*
-do this next: implement drawing skybox into paraboloid.
-
-       the reason the shader does work is that it somehow samples outside the texture, and becomes black at certain areas.
-*/
+it fails at glBufferData. probably glew has failed to load this extension,
+or opengl is configured wrongly, so that the extension doe not work!*/

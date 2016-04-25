@@ -901,16 +901,14 @@ void GeometryObject::RenderAll(const ICamera* camera, const Vector4f& lightPosit
 		Texture::SetActiveTextureUnit(8);
 		refractionMap.GetColorTexture()->Bind();
 
-
 		batch->m_defaultShader->SetUniform("reflectionMap", 9);
 		Texture::SetActiveTextureUnit(9);
 		reflectionMap.GetRenderTargetTexture().Bind();
 
+
 		batch->m_defaultShader->SetUniform("depthMap", 10);
 		Texture::SetActiveTextureUnit(10);
 		refractionMap.GetDepthTexture()->Bind();
-
-
 
 
 		batch->m_defaultShader->SetUniform("dudvMap", (float)GeoObjManager::GetInstance().m_dudvMap);
@@ -1054,8 +1052,8 @@ AABB GeometryObject::GetModelSpaceAABB()const {
 
     Matrix4f modelMatrix = GetModelMatrix();
 
-    temp.min = Vector3f((modelMatrix * Vector4f(m_aabb.min, 1.0f)));
-    temp.max = Vector3f((modelMatrix * Vector4f(m_aabb.max, 1.0f)));
+    temp.m_min = Vector3f((modelMatrix * Vector4f(m_aabb.m_min, 1.0f)));
+    temp.m_max = Vector3f((modelMatrix * Vector4f(m_aabb.m_max, 1.0f)));
 
     return temp;
 }

@@ -115,11 +115,12 @@ void HeightMap::Init(
 
     string qual = "";
 
+
     if(!HighQuality) {
 	qual = "_lq"; // use low quality textures.
     }
 
-    string format = "dds";
+    string format = "png";
 
     m_grassTexture = LoadTexture("img/grass" + qual +"." + format);
     m_dirtTexture = LoadTexture("img/dirt" + qual +"." + format);
@@ -1143,7 +1144,7 @@ void HeightMap::CreateHeightmap(const std::string& heightMapFilename, bool guiMo
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_ENV_MAP1] = halfChunk;
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_NORMAL] = normalChunk;
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_SHADOWS] = halfChunk;
-    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_REFLECTION] = waterChunk;
+    m_chunkVersions[HEIGHT_MAP_RENDER_MODE_REFLECTION] = halfChunk;
     m_chunkVersions[HEIGHT_MAP_RENDER_MODE_REFRACTION] = waterChunk;
 
 
@@ -2104,12 +2105,12 @@ void HeightMap::Update(const ViewFrustum& cameraFrustum, const ViewFrustum& ligh
 AABB HeightMap::GetAABB()const {
     AABB aabb;
 
-    aabb.max = m_offset + Vector3f(
+    aabb.m_max = m_offset + Vector3f(
 	1.0f * m_xzScale,
 	1.0f*m_yScale,
 	1.0f * m_xzScale);
 
-    aabb.min = aabb.max * -1.0f;
+    aabb.m_min = aabb.m_max * -1.0f;
 
     return aabb;
 }

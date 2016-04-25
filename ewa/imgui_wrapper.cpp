@@ -1,7 +1,8 @@
 #include "imgui_wrapper.hpp"
 
 
-#include <GL/glew.h> // include GLEW and new version of GL on Windows
+#include <glad/glad.h>
+
 #include <GLFW/glfw3.h> // GLFW helper library
 
 static float deltaScroll;

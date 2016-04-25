@@ -59,6 +59,8 @@ TextureInfo* TextureLoader::Load(const std::string& texturePath) {
 }
 
 DdsInfo* TextureLoader::LoadDds(const std::string& texturePath) {
+	return NULL;
+#if 0
 
     File* f = File::Load(texturePath, FileModeReading);
 
@@ -135,4 +137,6 @@ DdsInfo* TextureLoader::LoadDds(const std::string& texturePath) {
     }
 
     return ddsInfo;
+
+#endif
 }

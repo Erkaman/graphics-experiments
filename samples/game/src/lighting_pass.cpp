@@ -173,13 +173,15 @@ void LightingPass::Render(
     Gbuffer* gbuffer, const ICamera* camera, const Vector4f& lightPosition,
     const Matrix4f& lightVp, const DepthFBO& shadowMap, const std::vector<Vector3f>& torches,
     DualParaboloidMap& dualParaboloidMap, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap,
-    const ViewFrustum& cameraFrustum) {
+    const ViewFrustum& cameraFrustum, bool aoOnly, bool enableAo) {
 
-    SetupShader(m_directionalShader, gbuffer, camera, dualParaboloidMap, refractionMap, reflectionMap);
+    SetupShader(m_directionalShader, gbuffer, camera, dualParaboloidMap, refractionMap, reflectionMap, aoOnly);
 
     m_directionalShader->SetUniform("shadowMap", SHADOW_TEXTURE_UNIT);
     Texture::SetActiveTextureUnit(SHADOW_TEXTURE_UNIT);
     shadowMap.GetRenderTargetTexture().Bind();
+
+    m_directionalShader->SetUniform("enableAo", enableAo ? 1.0f : 0.0f);
 
 
     m_directionalShader->SetUniform("lightGrid", LIGHT_GRID_TEXTURE_UNIT);
@@ -223,7 +225,7 @@ void LightingPass::Render(
 
     shadowMap.GetRenderTargetTexture().Unbind();
 
-    SetupShader(m_pointShader, gbuffer, camera, dualParaboloidMap, refractionMap, reflectionMap);
+    SetupShader(m_pointShader, gbuffer, camera, dualParaboloidMap, refractionMap, reflectionMap, aoOnly);
 
     if(!isTiled) {
 	GL_C(glFrontFace(GL_CW));
@@ -238,8 +240,8 @@ void LightingPass::Render(
 
     std::vector<PointLight> lights = GetTorches(camera, torches);
 
-
-//    DrawLights(camera, lights, cameraFrustum);
+    if(!aoOnly)
+	DrawLights(camera, lights, cameraFrustum);
 
     if(!isTiled) {
 	GL_C(glDisable(GL_BLEND));
@@ -511,9 +513,16 @@ std::vector<PointLight> LightingPass::GetTestLights() {
 
 void LightingPass::SetupShader(
     ShaderProgram* shader, Gbuffer* gbuffer, const ICamera* camera,
-    	DualParaboloidMap& dualParaboloidMap, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap) {
+    DualParaboloidMap& dualParaboloidMap, ColorDepthFbo& refractionMap, const ColorFBO& reflectionMap,
+    bool aoOnly) {
 
     shader->Bind();
+
+    shader->SetUniform("aoOnly", aoOnly ? 1.0f : 0.0f);
+
+
+    shader->SetUniform("colorTexture", COLOR_TEXTURE_UNIT);
+
 
     shader->SetUniform("colorTexture", COLOR_TEXTURE_UNIT);
     Texture::SetActiveTextureUnit(COLOR_TEXTURE_UNIT);

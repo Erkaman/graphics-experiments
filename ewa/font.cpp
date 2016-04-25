@@ -60,7 +60,7 @@ Font* Font::Load(
 	return NULL;
     }
 
-    
+
     while(!atlasFile->IsEof()){
 
 	string str = atlasFile->ReadLine();

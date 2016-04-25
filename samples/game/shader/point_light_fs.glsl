@@ -6,6 +6,9 @@ uniform sampler2D normalTexture;
 uniform sampler2D specularTexture;
 uniform sampler2DShadow shadowMap;
 
+uniform float aoOnly;
+
+
 uniform mat4 toViewSpacePositionMat;
 //uniform mat4 invProj;
 
@@ -56,7 +59,7 @@ void main() {
     float ao;
     vec3 specColor;
 
-    readColorTexture(colorTexture, texCoord, diffColor, ao, specColor, screenSize.x, screenSize.y);
+    readColorTexture(colorTexture, texCoord, diffColor, ao, specColor, screenSize.x);
 
     float ztest = step(0, radius - lightDistLength );
 
@@ -75,11 +78,16 @@ void main() {
 
     if(id == 2.0) {
 
+	       	waterShader(viewSpacePosition, proj, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight,        colorTexture, texCoord, screenSize.x);
+
+/*
 	waterShader(viewSpacePosition, proj, specColor, invViewMatrix, eyePos, diffColor, specMat, sceneLight, specShiny, envMapSample, ambientLight);
+*/
+
     }
 
 
-    vec4 light = calcLighting(
+    vec4 light =  calcLighting(
 
 	ambientLight,
 	sceneLight,
@@ -95,6 +103,9 @@ void main() {
 
     float atten = clamp(1.0 - lightDistLength / radius, 0,1);
 
-    fragmentColor = (light * vec4(vec3(color),1)) * (ztest * atten);
+
+    fragmentColor =(light * vec4(vec3(color),1)) * (ztest * atten);
+//	vec4(vec3(1.0-ao), 1.0) * aoOnly +
+
 
 }

@@ -34,8 +34,8 @@ typedef unsigned long long uint64;
 
 constexpr float WORLD_SCALE = 1.0f;
 
-#if defined(__APPLE__) || defined(_WIN32)
-constexpr bool HighQuality = false;
-#else
+#if defined(_WIN32)
 constexpr bool HighQuality = true;
+#else
+constexpr bool HighQuality = false;
 #endif

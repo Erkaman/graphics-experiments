@@ -40,16 +40,7 @@ vec4 calcLighting(
 
     finalcolor+= (diffColor*sceneLight)* (diff * visibility);
 
-//    if(spec < 0)
-/*    if(spec < 0.01)
-	spec = 1.0;
-*/
-
-
     spec += step(specColor.x, 0.01);
-
-
-
     finalcolor += specColor*pow(spec,specShiny) * visibility;
     finalcolor += (specColor * envMapSample) * (spec  * 0.4);
 
@@ -169,6 +160,7 @@ vec2 encodeNormal (vec3 n)
     enc = enc*0.5+0.5;
     return enc;
 }
+
 vec3 decodeNormal (vec4 enc)
 {
     vec4 nn = enc*vec4(2,2,0,0) + vec4(-1,-1,1,-1);
@@ -222,18 +214,19 @@ vec4 packColorTexture(vec3 diffColor, vec3 specColor, float ao ) {
 		     ao);
 }
 
-void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor, out float ao, out vec3 specColor, float fboWidth, float fboHeight) {
+void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor, out float ao, out vec3 specColor, float fboWidth) {
 
     vec2 crd = gl_FragCoord.xy;
     bool pattern = (mod(crd.x,2.0)==mod(crd.y,2.0));
 
-    float chroma = texture(colorTexture, texCoord + vec2(1.0/fboWidth,0.0)).g;
+    vec4 sample1 = texture(colorTexture, texCoord);
+    float sample2 = texture(colorTexture, texCoord + vec2(1.0/fboWidth,0.0)).g;
 
-    vec4 sample = texture(colorTexture, texCoord);
-    specColor = vec3(sample.z);
-    ao = sample.w;
-    vec3 col = sample.xyz;
-    col.b=chroma;
+
+    specColor = vec3(sample1.z);
+    ao = sample1.w;
+    vec3 col = vec3(sample1.xy, 0);
+    col.b=sample2;
 
     col.rgb = (pattern)?col.rbg:col.rgb;
     col.rgb = YCoCg2RGB(col.rgb);
@@ -241,12 +234,35 @@ void readColorTexture(sampler2D colorTexture, vec2 texCoord, out vec3 diffColor,
     diffColor = col.rgb;
 }
 
-void waterShader(vec3 viewSpacePosition, mat4 proj, vec3 specColor,
-		 mat4 invViewMatrix, vec3 eyePos, inout vec3 diffColor, inout vec3 specMat, inout vec3 sceneLight, inout float specShiny, inout vec3 envMapSample, inout vec3 ambientLight) {
+void waterShader(vec3 viewSpacePosition, mat4 proj,
+		 mat4 invViewMatrix, vec3 eyePos, inout vec3 diffColor, inout vec3 specMat, inout vec3 sceneLight, inout float specShiny, inout vec3 envMapSample, inout vec3 ambientLight,
+		 sampler2D colorTexture, vec2 texCoord, float fboWidth) {
+
+    vec2 crd = gl_FragCoord.xy;
+    bool pattern = (mod(crd.x,2.0)==mod(crd.y,2.0));
+    //  pattern = true;
+
+    vec4 sample1 = texture(colorTexture, texCoord);
+    vec4 sample2 = texture(colorTexture, texCoord + vec2(1.0/fboWidth,0.0));
 
 
-    vec3 refraction = diffColor.xyz;
-    vec3 reflection = specColor.xyz;
+    vec3 col = vec3(sample1.rg, 0);
+    col.b=sample2.g;
+    col.rgb = (pattern)?col.rbg:col.rgb;
+    col.rgb = YCoCg2RGB(col.rgb);
+
+    vec3 reflection = col;
+
+
+
+    col = vec3(sample1.ba, 0);
+    col.b=sample2.a;
+    col.rgb = (pattern)?col.rbg:col.rgb;
+    col.rgb = YCoCg2RGB(col.rgb);
+
+    vec3 refraction = col;
+
+
 
     vec3 worldPosition = (invViewMatrix * vec4(viewSpacePosition, 1)).xyz;
 
@@ -255,13 +271,18 @@ void waterShader(vec3 viewSpacePosition, mat4 proj, vec3 specColor,
     float fresnel = dot(
 	toCameraVector, vec3(0,1,0));
 
-    diffColor = mix(refraction, 0.4 * reflection, 1.0 - fresnel);
+    float a = specShiny;
+   diffColor = mix( refraction, reflection, (1.0 - fresnel) );
 
-    specMat = 0.6 * sceneLight;
+    specMat = 0.7 * sceneLight;
 
-    specShiny = 20.0;
+    specShiny = 15.0;
     envMapSample = vec3(0,0,0);
 
-    ambientLight = vec3(1,1,1);
+/*
+    specMat = vec3(0);
 
+    specShiny = 00.0;
+    envMapSample = vec3(0,0,0);
+*/
 }

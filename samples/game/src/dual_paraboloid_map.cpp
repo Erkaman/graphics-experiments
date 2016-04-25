@@ -51,7 +51,7 @@ bool Paraboloid::InFrustum(const Vector3f& position)const {
 
 bool Paraboloid::InFrustum(const AABB& aabb) const{
     // if at least one point is in the frustum, it is in the frustum.
-    return InFrustum(aabb.min) || InFrustum(aabb.max);
+    return InFrustum(aabb.m_min) || InFrustum(aabb.m_max);
 }
 
 void Paraboloid::SetParaboloidUniforms(
