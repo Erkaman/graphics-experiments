@@ -235,24 +235,15 @@ GeometryObjectData* RayTracer::RayTrace() {
 
     fboDest->Bind();
 
-    //  LOG_I("lol1:%d, %d ", vertexPosTextureSize, SHADOW_MAP_SIZE );
-//    vertexPosTextureSize = SHADOW_MAP_SIZE*0.1;
-//    vertexPosTextureSize *=10;
-    //  LOG_I("lol2:%d, %d ", vertexPosTextureSize, SHADOW_MAP_SIZE );
-
     GL_C(glViewport(0, 0, vertexPosTextureSize, vertexPosTextureSize));
-
-
-//	GL_C(glViewport(0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE));
-
     GL_C(glClearColor(0.0f, 1.0f, 0.0f, 1.0f));
     GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
 
-    //m_occlusionShader->SetUniform("modelMatrix", modelMatrix);
-    //  m_occlusionShader->SetUniform("viewMatrix", viewMatrix);
-//    m_occlusionShader->SetUniform("projectionMatrix", projectionMatrix);
+    m_occlusionShader->SetUniform("modelMatrix", modelMatrix);
+    m_occlusionShader->SetUniform("viewMatrix", viewMatrix);
+    m_occlusionShader->SetUniform("projectionMatrix", projectionMatrix);
 
 
     // fullscreen.
@@ -264,26 +255,15 @@ GeometryObjectData* RayTracer::RayTrace() {
 
     //   m_vertexPosTexture->Unbind();
 
-
     m_occlusionShader->Unbind();
 
-
-
-    //  GL_C(glFlush() );
-    // GL_C(glFinish() );
-
-
-//    fboDest->Bind();
-
-
-    // if(fboDest->GetRenderTargetTexture() == NULL) {LOG_I("YLL");}
 
 
     float* pixels = fboDest->GetRenderTargetTexture().GetPixels<float>(
 	vertexPosTextureSize * vertexPosTextureSize *  4, GL_RGBA, GL_FLOAT  );
 
 
-/*
+
     LOG_I("pix: %f", pixels[0] );
     LOG_I("pix: %f", pixels[1] );
      LOG_I("pix: %f", pixels[2] );
@@ -294,19 +274,6 @@ GeometryObjectData* RayTracer::RayTrace() {
      LOG_I("pix2: %f", pixels[6] );
     LOG_I("pix2: %f", pixels[7] );
     exit(1);
-*/
 
-
-//    fboDest->Unbind();
-
-    //LOG_I("%d", pixels == NULL );
-
-
-//    MY_DELETE(pixels);
-//    delete pixels;
-
-//    MY_DELETE(fboDest);
-
-    //   return m_geoObj;
 
 }
