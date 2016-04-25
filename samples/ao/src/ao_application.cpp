@@ -61,7 +61,7 @@ void AoApplication::Init() {
     m_render->SetEob(m_eobFile, "obj" );
 
     m_rayTracer = new RayTracer(m_eobFile);
-//      m_render->SetEob(m_rayTracer->RayTrace(), "obj");
+    //     m_render->SetEob(m_rayTracer->RayTrace(), "obj");
     m_rayTracer->RayTrace();
 
     LOG_I("init");
@@ -100,7 +100,7 @@ void AoApplication::Render() {
     int windowHeight;
 
 
-//    m_rayTracer->RayTrace();
+    m_rayTracer->RayTrace();
 
 /*
     SetViewport();

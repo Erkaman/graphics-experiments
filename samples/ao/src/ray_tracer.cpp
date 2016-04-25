@@ -97,26 +97,21 @@ GeometryObjectData* RayTracer::RayTrace() {
 	yAngle += 1.5f;
     }
 
-
-/*
-    LOG_I("aabbMin: %s",  string( m_geoObj->aabb.min ).c_str() );
-    LOG_I("aabbMax: %s",  string( m_geoObj->aabb.max ).c_str() );
-*/
     AABB aabb = m_geoObj->aabb;
 
 	float bound =  0.5f;
 
     Matrix4f scale = Matrix4f::CreateScale(
-	bound / (aabb.max.x - aabb.min.x),
-	bound / (aabb.max.y - aabb.min.y),
-	bound / (aabb.max.z - aabb.min.z)
+	bound / (aabb.m_max.x - aabb.m_min.x),
+	bound / (aabb.m_max.y - aabb.m_min.y),
+	bound / (aabb.m_max.z - aabb.m_min.z)
 
 	);
 
     Matrix4f translate = Matrix4f::CreateTranslation(
-	-0.5f * (aabb.min.x + aabb.max.x),
-	-0.5f * (aabb.min.y + aabb.max.y),
-	-0.5f * (aabb.min.z + aabb.max.z)
+	-0.5f * (aabb.m_min.x + aabb.m_max.x),
+	-0.5f * (aabb.m_min.y + aabb.m_max.y),
+	-0.5f * (aabb.m_min.z + aabb.m_max.z)
 	);
 
     Matrix4f modelMatrix = scale * translate;
@@ -147,13 +142,6 @@ GeometryObjectData* RayTracer::RayTrace() {
     m_occlusionFbos[1] = new PositionFbo();
     m_occlusionFbos[1]->Init(0, vertexPosTextureSize,vertexPosTextureSize);
 
-
-
-
-    /*
-     LOG_I("vertexCount: %d",vertexCount );
-     LOG_I("vertexPosTextureSize: %d",vertexPosTextureSize );
-    */
 
 
      Vector3f* posBuffer = new Vector3f[vertexCount];
@@ -195,8 +183,8 @@ GeometryObjectData* RayTracer::RayTrace() {
 	    Matrix4f::CreateRotate(xAngle, Vector3f(1,0,0) ) *
 	    Matrix4f::CreateRotate(yAngle, Vector3f(0,1,0) );
 
-/*
-    m_positionFbo->Bind();
+
+	//  m_positionFbo->Bind();
     {
 	m_outputPosShader->Bind();
 
@@ -225,8 +213,13 @@ GeometryObjectData* RayTracer::RayTrace() {
 	m_outputPosShader->Unbind();
 
     }
-    m_positionFbo->Unbind();
-    */
+    //  m_positionFbo->Unbind();
+
+
+
+/*
+	begin occ
+
 
 
     occlusionIndex = 1 - occlusionIndex;
@@ -249,11 +242,11 @@ GeometryObjectData* RayTracer::RayTrace() {
     GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
-/*
-    m_occlusionShader->SetUniform("modelMatrix", modelMatrix);
-    m_occlusionShader->SetUniform("viewMatrix", viewMatrix);
-    m_occlusionShader->SetUniform("projectionMatrix", projectionMatrix);
-*/
+
+    //m_occlusionShader->SetUniform("modelMatrix", modelMatrix);
+    //  m_occlusionShader->SetUniform("viewMatrix", viewMatrix);
+//    m_occlusionShader->SetUniform("projectionMatrix", projectionMatrix);
+
 
     // fullscreen.
     GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
@@ -275,11 +268,9 @@ GeometryObjectData* RayTracer::RayTrace() {
 
 //    fboDest->Bind();
 
-/*
-    if(fboDest->GetRenderTargetTexture() == NULL) {
-	LOG_I("YLL");
-    }
-*/
+
+    // if(fboDest->GetRenderTargetTexture() == NULL) {LOG_I("YLL");}
+
 
 
 
@@ -287,24 +278,23 @@ GeometryObjectData* RayTracer::RayTrace() {
 	vertexPosTextureSize * vertexPosTextureSize *  2, GL_RGBA, GL_FLOAT  );
 
 
-    LOG_I("pix: %f", pixels[0] );
-    LOG_I("pix: %f", pixels[1] );
-    LOG_I("pix: %f", pixels[2] );
-    LOG_I("pix: %f", pixels[3] );
+//    LOG_I("pix: %f", pixels[0] );
+    //  LOG_I("pix: %f", pixels[1] );
+    //  LOG_I("pix: %f", pixels[2] );
+//    LOG_I("pix: %f", pixels[3] );
 
 
 //    fboDest->Unbind();
-    LOG_I("RETURN");
 
-    LOG_I("%d", pixels == NULL );
+    //LOG_I("%d", pixels == NULL );
 
 
 //    MY_DELETE(pixels);
 //    delete pixels;
 
-    LOG_I("RETURN");
-
 //    MY_DELETE(fboDest);
 
-    return m_geoObj;
+    //   return m_geoObj;
+
+    */
 }
