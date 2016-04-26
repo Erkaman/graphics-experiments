@@ -61,8 +61,8 @@ void AoApplication::Init() {
     m_render->SetEob(m_eobFile, "obj" );
 
     m_rayTracer = new RayTracer(m_eobFile);
-    //     m_render->SetEob(m_rayTracer->RayTrace(), "obj");
-    m_rayTracer->RayTrace();
+    m_render->SetEob(m_rayTracer->RayTrace(), "obj");
+    //m_rayTracer->RayTrace();
 
     LOG_I("init");
     ::SetDepthTest(true);
@@ -86,11 +86,11 @@ void AoApplication::Init() {
 
 void AoApplication::Render() {
 
-/*
+
     if(m_gui) {
 	m_gui->NewFrame(m_guiVerticalScale);
     }
-*/
+
 
     float SCALE = m_guiVerticalScale;
 
@@ -100,9 +100,9 @@ void AoApplication::Render() {
     int windowHeight;
 
 
-    m_rayTracer->RayTrace();
+//    m_rayTracer->RayTrace();
 
-/*
+
     SetViewport();
     Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -121,7 +121,7 @@ void AoApplication::Render() {
 
 
 	m_gui->Render(windowWidth, windowHeight);
-*/
+
 }
 
 void AoApplication::Update(const float delta) {

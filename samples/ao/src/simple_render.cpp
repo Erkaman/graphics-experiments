@@ -98,13 +98,12 @@ void SimpleRender::SetEob(GeometryObjectData* eob, const string& basePath) {
     m_eob = eob;
 
 
-
-
     m_vertexBuffer = VBO::CreateInterleaved(
 	eob->m_vertexAttribsSizes);
     m_vertexBuffer->Bind();
     m_vertexBuffer->SetBufferData(eob->m_verticesSize, eob->m_vertices);
     m_vertexBuffer->Unbind();
+
 
     if(eob->m_vertexAttribsSizes[0] == 4 ) {
 	isAo = true;

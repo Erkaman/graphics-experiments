@@ -31,12 +31,12 @@ RayTracer::RayTracer(GeometryObjectData* geoObj) {
 
 
 
-/*
+
     LOG_I("attribs: %d", m_geoObj->m_vertexAttribsSizes.size() );
     LOG_I("attribs1: %d", m_geoObj->m_vertexAttribsSizes[0] );
     LOG_I("attribs2: %d", m_geoObj->m_vertexAttribsSizes[1] );
     LOG_I("attribs3: %d", m_geoObj->m_vertexAttribsSizes[2] );
-*/
+
     m_vertexBuffer = VBO::CreateInterleaved(
 	    m_geoObj->m_vertexAttribsSizes);
 
@@ -148,13 +148,16 @@ GeometryObjectData* RayTracer::RayTrace() {
 
      GLfloat* vs = (GLfloat *)m_geoObj->m_vertices;
 
+
      for(int i = 0; i < vertexCount; ++i) {
 	 posBuffer[i] = Vector3f(
 	     vs[8 * i + 0],
 	     vs[8 * i + 1],
 	     vs[8 * i + 2]);
-
-//	 LOG_I("vert: %s", string(posBuffer[i]).c_str()  );
+/*
+	 if(i < 20)
+	     LOG_I("vert: %s", string(posBuffer[i]).c_str()  );
+	 */
      }
 
      Texture2D* m_vertexPosTexture = new Texture2D( (GLvoid *)posBuffer, vertexPosTextureSize,vertexPosTextureSize,
@@ -177,14 +180,13 @@ GeometryObjectData* RayTracer::RayTrace() {
 
 
 
-
 	Matrix4f viewMatrix =
 	    Matrix4f::CreateRotate(xAngle, Vector3f(1,0,0) ) *
 	    Matrix4f::CreateRotate(yAngle, Vector3f(0,1,0) );
 
 
 
-	m_positionFbo->Bind();
+    m_positionFbo->Bind();
     {
 	m_outputPosShader->Bind();
 
@@ -228,9 +230,9 @@ GeometryObjectData* RayTracer::RayTrace() {
     m_occlusionShader->Bind();
 
 
-    //  m_occlusionShader->SetUniform("vertexPosMap", 0);
-//    Texture::SetActiveTextureUnit(0);
-//    m_vertexPosTexture->Bind();
+      m_occlusionShader->SetUniform("vertexPosMap", 0);
+    Texture::SetActiveTextureUnit(0);
+    m_vertexPosTexture->Bind();
 
 
     fboDest->Bind();
@@ -245,7 +247,6 @@ GeometryObjectData* RayTracer::RayTrace() {
     m_occlusionShader->SetUniform("viewMatrix", viewMatrix);
     m_occlusionShader->SetUniform("projectionMatrix", projectionMatrix);
 
-
     // fullscreen.
     GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
 
@@ -253,7 +254,7 @@ GeometryObjectData* RayTracer::RayTrace() {
     fboDest->Unbind();
 
 
-    //   m_vertexPosTexture->Unbind();
+    m_vertexPosTexture->Unbind();
 
     m_occlusionShader->Unbind();
 
@@ -262,18 +263,129 @@ GeometryObjectData* RayTracer::RayTrace() {
     float* pixels = fboDest->GetRenderTargetTexture().GetPixels<float>(
 	vertexPosTextureSize * vertexPosTextureSize *  4, GL_RGBA, GL_FLOAT  );
 
-
-
     LOG_I("pix: %f", pixels[0] );
     LOG_I("pix: %f", pixels[1] );
      LOG_I("pix: %f", pixels[2] );
     LOG_I("pix: %f", pixels[3] );
+    LOG_I("pix: %f", pixels[4] );
+    LOG_I("pix: %f", pixels[5] );
+     LOG_I("pix: %f", pixels[6] );
+    LOG_I("pix: %f", pixels[7] );
 
-    LOG_I("pix2: %f", pixels[4] );
-    LOG_I("pix2: %f", pixels[5] );
-     LOG_I("pix2: %f", pixels[6] );
-    LOG_I("pix2: %f", pixels[7] );
-    exit(1);
+
+     struct Vertex {
+	Vector3f point;
+	Vector2f texCoord;
+	Vector3f normal;
+    };
+
+
+
+   struct AoVertex {
+	Vector4f point;
+	Vector2f texCoord;
+	Vector3f normal;
+    };
+
+
+    // LOG_I("num vertices: %d", vertices.size());
+
+       Vertex* verticesBuffer = (Vertex *)m_geoObj->m_vertices;
+
+    const int vertexSize = (3+2+3) * sizeof(float);
+    const int numVertices = m_geoObj->m_verticesSize / vertexSize;
+
+
+    std::vector<Vertex> vertices(verticesBuffer, verticesBuffer + numVertices);
+
+
+
+
+    AoVertex* aoVertices = new AoVertex[vertices.size()];
+    AoVertex* aoVerticesPointer = aoVertices;
+
+
+
+
+
+
+
+//    LOG_I("aix: %f", fboPixels[0+0] );    LOG_I("pix: %f", fboPixels[0+1] ); LOG_I("pix: %f", fboPixels[0+2] );LOG_I("pix: %f", fboPixels[0+3] );
+
+
+
+
+
+//    unsigned int* intPixels = (unsigned int*)pixels;
+
+    for (int i=0;i<vertexPosTextureSize;++i){
+	for (int j=0;j<vertexPosTextureSize/2;++j){
+
+	    int a =(j * vertexPosTextureSize + i                      )*4;
+	    int b =((vertexPosTextureSize-j-1)*vertexPosTextureSize + i)*4;
+
+	    float temp;
+
+	    temp        = pixels[a+0];
+	    pixels[a+0] = pixels[b+0];
+	    pixels[a+0] = temp;
+
+	    temp        = pixels[a+1];
+	    pixels[a+1] = pixels[b+1];
+	    pixels[a+1] = temp;
+
+	    temp        = pixels[a+2];
+	    pixels[a+2] = pixels[b+2];
+	    pixels[a+2] = temp;
+
+	    temp        = pixels[a+3];
+	    pixels[a+3] = pixels[b+3];
+	    pixels[a+3] = temp;
+
+	}
+    }
+
+
+
+
+    // num texels is vertex  count.
+  for(int i = 0; i < vertices.size(); ++i) {
+
+
+
+      Vertex& v = vertices[i];
+
+	AoVertex aoVertex;
+
+	float ao = pixels[i*4 + 0];
+
+//	if(i < 20)  LOG_I("vert: %f, %f, %f",  pixels[i*4 + 0], pixels[i*4 + 1], pixels[i*4 + 2] );
+
+//	ao = 1;
+
+
+
+//	LOG_I("AO: %f", ao);
+
+	aoVertex.point = Vector4f(v.point.x, v.point.y, v.point.z, ao);
+	aoVertex.normal = v.normal;
+	aoVertex.texCoord = v.texCoord;
+
+	*(aoVerticesPointer++) = aoVertex;
+
+  }
+
+
+
+
+    m_geoObj->m_vertices = ((void *)aoVertices);
+    m_geoObj->m_verticesSize = vertices.size() * sizeof(float) * (4+2+3);
+
+    vector<GLuint> vas{4,2,3};
+    m_geoObj->m_vertexAttribsSizes = vas;
+
+
+    return m_geoObj;
 
 
 }
