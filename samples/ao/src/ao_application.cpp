@@ -11,6 +11,8 @@
 #include "ewa/geometry_object.hpp"
 #include "ewa/gui_mouse_state.hpp"
 #include "ewa/eob_file.hpp"
+#include "ewa/keyboard_state.hpp"
+
 
 
 using namespace std;
@@ -141,7 +143,11 @@ void AoApplication::Update(const float delta) {
 	m_gui->Update();
     */
 
-//    KeyboardState& kbs = KeyboardState::GetInstance();
+    KeyboardState& kbs = KeyboardState::GetInstance();
+
+    if( kbs.IsPressed(GLFW_KEY_1) )
+	m_render->SetEob(m_rayTracer->RayTrace(), "obj");
+
 
 }
 

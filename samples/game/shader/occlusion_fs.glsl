@@ -20,7 +20,7 @@ void main() {
 
     vec3 vert = texture(vertexPosTexture, texCoord).rgb;
 
-    vert = vec3(viewMatrix * modelMatrix * vec4(vert, 1));
+    vert = vec3(projectionMatrix * viewMatrix * modelMatrix * vec4(vert, 1));
 
     float z = texture(positionFbo, vert.xy + 0.5).b;
 
@@ -33,8 +33,10 @@ void main() {
     }
 
 //    o = 1.0;
-//    fragmentColor = vec4(o, 0, 0, 1);
-    fragmentColor = vec4(vert.z*100, 0, 0, 1);
+    fragmentColor = vec4(o, 0, 0, 1);
+//    fragmentColor = vec4(vert.z*100, 0, 0, 1);
+//       fragmentColor = vec4(z*100, 0, 0, 1);
+
 
 //    fragmentColor = vec4(texture(vertexPosTexture, texCoord).rgb, 1);
 

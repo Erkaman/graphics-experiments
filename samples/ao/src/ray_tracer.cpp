@@ -79,23 +79,30 @@ RayTracer::RayTracer(GeometryObjectData* geoObj) {
 
 }
 
+
+
+bool first = true;
+
 GeometryObjectData* RayTracer::RayTrace() {
 
 
 
     static float xAngle = 30;
-    static float yAngle = 80;
+    static float yAngle = 90;
 
 
     KeyboardState& kbs = KeyboardState::GetInstance();
-
-    if( kbs.IsPressed(GLFW_KEY_P) ) {
+/*
+    if( kbs.IsPressed(GLFW_KEY_1) ) {
 	xAngle += 1.5f;
     }
 
-    if( kbs.IsPressed(GLFW_KEY_L) ) {
+    if( kbs.IsPressed(GLFW_KEY_2) ) {
 	yAngle += 1.5f;
     }
+*/
+//    xAngle += 10.0f;
+//    LOG_I("angle: %f", xAngle );
 
     AABB aabb = m_geoObj->aabb;
 
@@ -124,8 +131,9 @@ GeometryObjectData* RayTracer::RayTrace() {
 	    -size, +size
 	    );
 
-    int vertexCount =  m_geoObj->m_verticesSize / (sizeof(float) * (3+2+3));
 
+
+    int vertexCount =  m_geoObj->m_verticesSize / (sizeof(float) * (3+2+3+  (first ? 0 : 1)  ));
 
 
     int vertexPosTextureSize = 2;
@@ -150,10 +158,13 @@ GeometryObjectData* RayTracer::RayTrace() {
 
 
      for(int i = 0; i < vertexCount; ++i) {
+
+	 int size = first ? 8 : 9;
+
 	 posBuffer[i] = Vector3f(
-	     vs[8 * i + 0],
-	     vs[8 * i + 1],
-	     vs[8 * i + 2]);
+	     vs[size * i + 0],
+	     vs[size * i + 1],
+	     vs[size * i + 2]);
 /*
 	 if(i < 20)
 	     LOG_I("vert: %s", string(posBuffer[i]).c_str()  );
@@ -207,6 +218,7 @@ GeometryObjectData* RayTracer::RayTrace() {
 	    chunk.m_indexBuffer->Unbind();
 	}
 
+
 	m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
 
 
@@ -230,10 +242,14 @@ GeometryObjectData* RayTracer::RayTrace() {
     m_occlusionShader->Bind();
 
 
-      m_occlusionShader->SetUniform("vertexPosMap", 0);
+    m_occlusionShader->SetUniform("vertexPosMap", 0);
     Texture::SetActiveTextureUnit(0);
     m_vertexPosTexture->Bind();
 
+
+    m_occlusionShader->SetUniform("positionFbo", 1);
+    Texture::SetActiveTextureUnit(1);
+    m_positionFbo->GetRenderTargetTexture().Bind();
 
     fboDest->Bind();
 
@@ -292,7 +308,7 @@ GeometryObjectData* RayTracer::RayTrace() {
 
        Vertex* verticesBuffer = (Vertex *)m_geoObj->m_vertices;
 
-    const int vertexSize = (3+2+3) * sizeof(float);
+       const int vertexSize = (3+2+3 + (first ? 0 : 1) ) * sizeof(float);
     const int numVertices = m_geoObj->m_verticesSize / vertexSize;
 
 
@@ -387,5 +403,6 @@ GeometryObjectData* RayTracer::RayTrace() {
 
     return m_geoObj;
 
+    first = false;
 
 }
