@@ -317,7 +317,8 @@ void main(void) {
 #else
 
 
-    vec3 ambient = ambientLight * ao;
+//    vec3 ambient = ambientLight * ao;
+    vec3 ambient = vec3(ao);
 
     geoData[0] = aoOnly * vec4(vec3(ambient),1.0) + (1.0 - aoOnly)* calcLighting(
 	ambient,

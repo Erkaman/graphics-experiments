@@ -6,6 +6,7 @@ out vec4 fragmentColor;
 
 uniform sampler2D positionFbo;
 uniform sampler2D vertexPosTexture;
+uniform sampler2D fboSource;
 
 //uniform sampler2D uSource;
 //uniform sampler2D uVertex;
@@ -15,6 +16,7 @@ uniform sampler2D vertexPosTexture;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
+uniform float numSamples;
 
 void main() {
 
@@ -33,7 +35,15 @@ void main() {
     }
 
 //    o = 1.0;
-    fragmentColor = vec4(o, 0, 0, 1);
+
+
+    float src = texture(fboSource, texCoord).r;
+
+
+//    fragmentColor = vec4( o/numSamples , 0, 0, 1);
+    fragmentColor = vec4( o/numSamples + src , 0, 0, 1);
+
+
 //    fragmentColor = vec4(vert.z*100, 0, 0, 1);
     //   fragmentColor = vec4(z*100, 0, 0, 1);
 

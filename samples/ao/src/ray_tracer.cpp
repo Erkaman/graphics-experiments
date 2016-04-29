@@ -189,44 +189,56 @@ GeometryObjectData* RayTracer::RayTrace() {
 
     Random r(1100);
 
-    static float xAngle = r.RandomFloat(0, 360);
-    static float yAngle = r.RandomFloat(0, 360);
+    const int NUM_SAMPLES = 1;
+
+    PositionFbo* fboSource;
+    PositionFbo* fboDest;
+
+    for(int i = 0; i < NUM_SAMPLES; ++i) {
+
+	float xAngle = r.RandomFloat(0, 360);
+	float yAngle = r.RandomFloat(0, 360);
+
 
 	Matrix4f viewMatrix =
 	    Matrix4f::CreateRotate(xAngle, Vector3f(1,0,0) ) *
 	    Matrix4f::CreateRotate(yAngle, Vector3f(0,1,0) );
 
+	occlusionIndex = 1 - occlusionIndex;
+	fboSource = m_occlusionFbos[1 - occlusionIndex];
+	fboDest = m_occlusionFbos[occlusionIndex];
 
 
-    m_positionFbo->Bind();
-    {
-	m_outputPosShader->Bind();
 
-	GL_C(glViewport(0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE));
-	GL_C(glClearColor(1.0f, 0.0f, 0.0f, 1.0f));
-	GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	m_positionFbo->Bind();
+	{
+	    m_outputPosShader->Bind();
+
+	    GL_C(glViewport(0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE));
+	    GL_C(glClearColor(1.0f, 0.0f, 0.0f, 1.0f));
+	    GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
-	m_outputPosShader->SetUniform("modelMatrix", modelMatrix);
-	m_outputPosShader->SetUniform("viewMatrix", viewMatrix);
-	m_outputPosShader->SetUniform("projectionMatrix", projectionMatrix);
+	    m_outputPosShader->SetUniform("modelMatrix", modelMatrix);
+	    m_outputPosShader->SetUniform("viewMatrix", viewMatrix);
+	    m_outputPosShader->SetUniform("projectionMatrix", projectionMatrix);
 
-	m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
+	    m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
 
-	for(const Chunk& chunk : m_chunks) {
-	    chunk.m_indexBuffer->Bind();
-	    chunk.m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk.m_numTriangles)*3);
-	    chunk.m_indexBuffer->Unbind();
+	    for(const Chunk& chunk : m_chunks) {
+		chunk.m_indexBuffer->Bind();
+		chunk.m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk.m_numTriangles)*3);
+		chunk.m_indexBuffer->Unbind();
+	    }
+
+
+	    m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
+
+
+	    m_outputPosShader->Unbind();
+
 	}
-
-
-	m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
-
-
-	m_outputPosShader->Unbind();
-
-    }
-    m_positionFbo->Unbind();
+	m_positionFbo->Unbind();
 
 
 
@@ -235,47 +247,53 @@ GeometryObjectData* RayTracer::RayTrace() {
 
 
 
-    occlusionIndex = 1 - occlusionIndex;
-    PositionFbo* fboSource = m_occlusionFbos[1 - occlusionIndex];
-    PositionFbo* fboDest = m_occlusionFbos[occlusionIndex];
-
-
-    m_occlusionShader->Bind();
-
-
-    m_occlusionShader->SetUniform("vertexPosMap", 0);
-    Texture::SetActiveTextureUnit(0);
-    m_vertexPosTexture->Bind();
-
-
-    m_occlusionShader->SetUniform("positionFbo", 1);
-    Texture::SetActiveTextureUnit(1);
-    m_positionFbo->GetRenderTargetTexture().Bind();
-
-    fboDest->Bind();
-
-    GL_C(glViewport(0, 0, vertexPosTextureSize, vertexPosTextureSize));
-    GL_C(glClearColor(0.0f, 1.0f, 0.0f, 1.0f));
-    GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
 
-    m_occlusionShader->SetUniform("modelMatrix", modelMatrix);
-    m_occlusionShader->SetUniform("viewMatrix", viewMatrix);
-    m_occlusionShader->SetUniform("projectionMatrix", projectionMatrix);
-
-    // fullscreen.
-    GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
+	m_occlusionShader->Bind();
 
 
-    fboDest->Unbind();
+	m_occlusionShader->SetUniform("vertexPosMap", 0);
+	Texture::SetActiveTextureUnit(0);
+	m_vertexPosTexture->Bind();
 
 
-    m_vertexPosTexture->Unbind();
+	m_occlusionShader->SetUniform("positionFbo", 1);
+	Texture::SetActiveTextureUnit(1);
+	m_positionFbo->GetRenderTargetTexture().Bind();
 
-    m_occlusionShader->Unbind();
+	m_occlusionShader->SetUniform("fboSource", 2);
+	Texture::SetActiveTextureUnit(2);
+	fboSource->GetRenderTargetTexture().Bind();
+
+	m_occlusionShader->SetUniform("numSamples", (float)NUM_SAMPLES);
 
 
+
+	fboDest->Bind();
+
+	GL_C(glViewport(0, 0, vertexPosTextureSize, vertexPosTextureSize));
+	GL_C(glClearColor(0.0f, 1.0f, 0.0f, 1.0f));
+	GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+
+
+	m_occlusionShader->SetUniform("modelMatrix", modelMatrix);
+	m_occlusionShader->SetUniform("viewMatrix", viewMatrix);
+	m_occlusionShader->SetUniform("projectionMatrix", projectionMatrix);
+
+	// fullscreen.
+	GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
+
+
+	fboDest->Unbind();
+
+
+	m_vertexPosTexture->Unbind();
+
+	m_occlusionShader->Unbind();
+
+    }
 
     float* pixels = fboDest->GetRenderTargetTexture().GetPixels<float>(
 	vertexPosTextureSize * vertexPosTextureSize *  4, GL_RGBA, GL_FLOAT  );
