@@ -87,8 +87,6 @@ GeometryObjectData* RayTracer::RayTrace() {
 
 
 
-    static float xAngle = 30;
-    static float yAngle = 90;
 
 
     KeyboardState& kbs = KeyboardState::GetInstance();
@@ -189,7 +187,10 @@ GeometryObjectData* RayTracer::RayTrace() {
 
     int occlusionIndex = 0;
 
+    Random r(1100);
 
+    static float xAngle = r.RandomFloat(0, 360);
+    static float yAngle = r.RandomFloat(0, 360);
 
 	Matrix4f viewMatrix =
 	    Matrix4f::CreateRotate(xAngle, Vector3f(1,0,0) ) *

@@ -181,6 +181,10 @@ void main() {
     }
 
 
+//    fragmentColor = vec4(n.xyz, 1.0);
+
+
+
 
     /*
     if(id == 1.0) { // if car

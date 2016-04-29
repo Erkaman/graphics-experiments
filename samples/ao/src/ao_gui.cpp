@@ -5,7 +5,6 @@
 
 #include "ewa/log.hpp"
 
-
 using std::string;
 
 AoGui::AoGui(GLFWwindow* window, AoApplication* app): m_app(app) {

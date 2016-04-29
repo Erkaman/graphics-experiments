@@ -35,7 +35,7 @@ void main() {
 //    o = 1.0;
     fragmentColor = vec4(o, 0, 0, 1);
 //    fragmentColor = vec4(vert.z*100, 0, 0, 1);
-//       fragmentColor = vec4(z*100, 0, 0, 1);
+    //   fragmentColor = vec4(z*100, 0, 0, 1);
 
 
 //    fragmentColor = vec4(texture(vertexPosTexture, texCoord).rgb, 1);
