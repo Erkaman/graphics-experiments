@@ -345,7 +345,7 @@ GeometryObjectData* RayTracer::RayTrace(int samples) {
 
 
 
-    AoVertex* aoVertices = new AoVertex[vertices.size()];
+    AoVertex* aoVertices = new AoVertex[numVertices];
     AoVertex* aoVerticesPointer = aoVertices;
 
 
@@ -393,11 +393,11 @@ GeometryObjectData* RayTracer::RayTrace(int samples) {
 
 
     // num texels is vertex  count.
-  for(int i = 0; i < vertices.size(); ++i) {
+  for(int i = 0; i < numVertices; ++i) {
 
 
 
-      Vertex& v = vertices[i];
+//      Vertex& v = vertices[i];
 
 	AoVertex aoVertex;
 
@@ -411,9 +411,22 @@ GeometryObjectData* RayTracer::RayTrace(int samples) {
 
 //	LOG_I("AO: %f", ao);
 
-	aoVertex.point = Vector4f(v.point.x, v.point.y, v.point.z, 1.0f-ao);
-	aoVertex.normal = v.normal;
-	aoVertex.texCoord = v.texCoord;
+	aoVertex.point = Vector4f(
+
+	    vs[totalVertexSize* i + 0],
+	    vs[totalVertexSize* i + 1],
+	    vs[totalVertexSize* i + 2],
+
+	    1.0f-ao);
+	aoVertex.normal = Vector3f(
+	    vs[totalVertexSize* i + 5],
+	    vs[totalVertexSize* i + 6],
+	    vs[totalVertexSize* i + 7]
+	    );
+	aoVertex.texCoord = Vector2f(
+	    vs[totalVertexSize* i + 3],
+	    vs[totalVertexSize* i + 4]
+	    );
 
 	if(i < 3)
 	    LOG_I("aoVertex: %s",  string(aoVertex.point).c_str() );
