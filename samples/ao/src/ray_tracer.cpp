@@ -82,6 +82,8 @@ RayTracer::RayTracer(GeometryObjectData* geoObj) {
 
 GeometryObjectData* RayTracer::RayTrace(int samples) {
 
+    LOG_I("BEGGGGGGGGGGGGGGGGGGGGG");
+
     KeyboardState& kbs = KeyboardState::GetInstance();
 /*
     if( kbs.IsPressed(GLFW_KEY_1) ) {
@@ -102,9 +104,7 @@ GeometryObjectData* RayTracer::RayTrace(int samples) {
     Matrix4f scale = Matrix4f::CreateScale(
 	bound / (aabb.m_max.x - aabb.m_min.x),
 	bound / (aabb.m_max.y - aabb.m_min.y),
-	bound / (aabb.m_max.z - aabb.m_min.z)
-
-	);
+	bound / (aabb.m_max.z - aabb.m_min.z));
 
     Matrix4f translate = Matrix4f::CreateTranslation(
 	-0.5f * (aabb.m_min.x + aabb.m_max.x),
@@ -127,7 +127,7 @@ GeometryObjectData* RayTracer::RayTrace(int samples) {
 	totalVertexSize += m_geoObj->m_vertexAttribsSizes[i];
     }
 
-
+    LOG_I("totalVertexSize %d", totalVertexSize );
 
     int vertexCount =  m_geoObj->m_verticesSize / (sizeof(float) * ( totalVertexSize ));
 
@@ -146,7 +146,6 @@ GeometryObjectData* RayTracer::RayTrace(int samples) {
     m_occlusionFbos[1] = new PositionFbo();
     m_occlusionFbos[1]->Init(0, vertexPosTextureSize,vertexPosTextureSize);
 
-
      Vector3f* posBuffer = new Vector3f[vertexCount];
 
 
@@ -161,6 +160,11 @@ GeometryObjectData* RayTracer::RayTrace(int samples) {
 	     vs[size * i + 0],
 	     vs[size * i + 1],
 	     vs[size * i + 2]);
+
+	 if(i < 3) {
+	     LOG_I("Pos: %s", string(posBuffer[i]).c_str()  );
+	 }
+
 /*
 	 if(i < 20)
 	     LOG_I("vert: %s", string(posBuffer[i]).c_str()  );
@@ -411,6 +415,9 @@ GeometryObjectData* RayTracer::RayTrace(int samples) {
 	aoVertex.normal = v.normal;
 	aoVertex.texCoord = v.texCoord;
 
+	if(i < 3)
+	    LOG_I("aoVertex: %s",  string(aoVertex.point).c_str() );
+
 	*(aoVerticesPointer++) = aoVertex;
 
   }
@@ -422,9 +429,12 @@ GeometryObjectData* RayTracer::RayTrace(int samples) {
     m_geoObj->m_vertexAttribsSizes = vas;
 
 
+    LOG_I("ENDDDDDDDDDDDDDDDDDDD");
+
     return m_geoObj;
 
 //    first = false;
+
 
 }
 
