@@ -1,4 +1,5 @@
 #include "ewa/log.hpp"
+#include "ewa/application.hpp"
 
 #include "ewa/gl/gl_common.hpp"
 #include "ewa/string_util.hpp"
@@ -13,6 +14,7 @@
 
 #include <map>
 #include <assert.h>
+
 
 using std::vector;
 using std::string;

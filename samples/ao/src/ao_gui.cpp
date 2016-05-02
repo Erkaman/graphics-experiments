@@ -15,6 +15,8 @@ AoGui::AoGui(GLFWwindow* window, AoApplication* app): m_app(app) {
     } else {
 	LOG_E("IMGUI initialization failed");
     }
+
+    m_samples = 256;
 }
 
 
@@ -51,11 +53,11 @@ void AoGui::Render(int windowWidth, int windowHeight) {
 
     ImGui::Text("Global mode:");
 
-
     if (ImGui::Button("Bake AO")) {
-	m_app->BakeAo();
+	m_app->BakeAo(m_samples);
     }
 
+    ImGui::SliderInt("Samples", &m_samples, 1, 1000);
 
     ImGui::End();
 

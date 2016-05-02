@@ -1,5 +1,5 @@
 
-file(GLOB OBJ_CONV_SRC src/*.cpp)
+file(GLOB OBJ_CONV_SRC src/*.cpp deps/glad/src/*.c)
 
 ADD_EXECUTABLE(obj_conv ${OBJ_CONV_SRC} )
 TARGET_LINK_LIBRARIES(obj_conv ewa)

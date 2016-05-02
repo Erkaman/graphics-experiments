@@ -50,7 +50,6 @@ void AoApplication::Init() {
 
     m_render = new SimpleRender();
 
-
     GuiMouseState::Init(m_guiVerticalScale);
 
     m_totalDelta = 0;
@@ -59,11 +58,10 @@ void AoApplication::Init() {
 
 //    m_eobFile = EobFile::Read("obj/corner.eob");
 
-    m_eobFile = EobFile::Read("obj/corner.eob");
+    m_eobFile = EobFile::Read("obj/car_blend.eob");
     m_render->SetEob(m_eobFile, "obj" );
 
     m_rayTracer = new RayTracer(m_eobFile);
-    m_render->SetEob(m_rayTracer->RayTrace(), "obj");
     //m_rayTracer->RayTrace();
 
     LOG_I("init");
@@ -145,9 +143,10 @@ void AoApplication::Update(const float delta) {
 
     KeyboardState& kbs = KeyboardState::GetInstance();
 
+    /*
     if( kbs.IsPressed(GLFW_KEY_1) )
 	m_render->SetEob(m_rayTracer->RayTrace(), "obj");
-
+*/
 
 }
 
@@ -177,7 +176,7 @@ void AoApplication::Cleanup() {
 
 }
 
+void AoApplication::BakeAo(int samples) {
+    m_render->SetEob(m_rayTracer->RayTrace(samples), "obj");
 
-void AoApplication::BakeAo() {
-    LOG_I("bake AO");
 }

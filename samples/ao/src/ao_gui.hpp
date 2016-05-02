@@ -15,6 +15,7 @@ private:
     int m_inputMode;
     int m_axisMode;
     int m_terrainMode;
+    int m_samples;
 
     Vector3f m_translation;
     Vector3f m_rotation; // describes the rotation in euler angles.

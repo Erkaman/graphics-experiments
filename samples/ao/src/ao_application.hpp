@@ -48,6 +48,6 @@ public:
     void Update(const float delta) override;
     void Cleanup() override;
 
-    void BakeAo();
+    void BakeAo(int samples);
 
 };

@@ -15,11 +15,13 @@
 
 #include <math.h>
 #include <float.h>
+#include <stdlib.h>
+
 
 using std::string;
 using std::vector;
 
-const int SHADOW_MAP_SIZE = 256*2*2;
+const int SHADOW_MAP_SIZE = 256;
 
 RayTracer::RayTracer(GeometryObjectData* geoObj) {
     m_geoObj = geoObj;
@@ -27,10 +29,6 @@ RayTracer::RayTracer(GeometryObjectData* geoObj) {
 
     m_positionFbo = new PositionFbo();
     m_positionFbo->Init(0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
-
-
-
-
 
     LOG_I("attribs: %d", m_geoObj->m_vertexAttribsSizes.size() );
     LOG_I("attribs1: %d", m_geoObj->m_vertexAttribsSizes[0] );
@@ -81,13 +79,8 @@ RayTracer::RayTracer(GeometryObjectData* geoObj) {
 
 
 
-bool first = true;
 
-GeometryObjectData* RayTracer::RayTrace() {
-
-
-
-
+GeometryObjectData* RayTracer::RayTrace(int samples) {
 
     KeyboardState& kbs = KeyboardState::GetInstance();
 /*
@@ -104,7 +97,7 @@ GeometryObjectData* RayTracer::RayTrace() {
 
     AABB aabb = m_geoObj->aabb;
 
-	float bound =  0.5f;
+    float bound = 0.9f * sqrt(3.0f) / 2.0f;
 
     Matrix4f scale = Matrix4f::CreateScale(
 	bound / (aabb.m_max.x - aabb.m_min.x),
@@ -129,9 +122,14 @@ GeometryObjectData* RayTracer::RayTrace() {
 	    -size, +size
 	    );
 
+    int totalVertexSize = 0;
+    for(int i = 0; i < m_geoObj->m_vertexAttribsSizes.size(); ++i) {
+	totalVertexSize += m_geoObj->m_vertexAttribsSizes[i];
+    }
 
 
-    int vertexCount =  m_geoObj->m_verticesSize / (sizeof(float) * (3+2+3+  (first ? 0 : 1)  ));
+
+    int vertexCount =  m_geoObj->m_verticesSize / (sizeof(float) * ( totalVertexSize ));
 
 
     int vertexPosTextureSize = 2;
@@ -157,7 +155,7 @@ GeometryObjectData* RayTracer::RayTrace() {
 
      for(int i = 0; i < vertexCount; ++i) {
 
-	 int size = first ? 8 : 9;
+	 int size = totalVertexSize;
 
 	 posBuffer[i] = Vector3f(
 	     vs[size * i + 0],
@@ -185,20 +183,29 @@ GeometryObjectData* RayTracer::RayTrace() {
 
 
 
+    GL_C(glEnable(GL_DEPTH_TEST));
+	 GL_C(glEnable(GL_CULL_FACE));
+	 GL_C(glCullFace(GL_BACK));
+
+
     int occlusionIndex = 0;
 
-    Random r(1100);
+    Random r(12109);
 
-    const int NUM_SAMPLES = 1;
+    const int NUM_SAMPLES = samples;
 
     PositionFbo* fboSource;
     PositionFbo* fboDest;
 
+    srand(2);
+
     for(int i = 0; i < NUM_SAMPLES; ++i) {
 
-	float xAngle = r.RandomFloat(0, 360);
-	float yAngle = r.RandomFloat(0, 360);
-
+	float xAngle = -180.0f + 360.0f * (float)rand()/(float)(RAND_MAX);
+	float yAngle = 100.0f * (float)rand()/(float)(RAND_MAX);
+/*
+	xAngle = 90;
+	yAngle = 0;*/
 
 	Matrix4f viewMatrix =
 	    Matrix4f::CreateRotate(xAngle, Vector3f(1,0,0) ) *
@@ -215,9 +222,8 @@ GeometryObjectData* RayTracer::RayTrace() {
 	    m_outputPosShader->Bind();
 
 	    GL_C(glViewport(0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE));
-	    GL_C(glClearColor(1.0f, 0.0f, 0.0f, 1.0f));
+	    GL_C(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
 	    GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
 
 	    m_outputPosShader->SetUniform("modelMatrix", modelMatrix);
 	    m_outputPosShader->SetUniform("viewMatrix", viewMatrix);
@@ -269,11 +275,10 @@ GeometryObjectData* RayTracer::RayTrace() {
 	m_occlusionShader->SetUniform("numSamples", (float)NUM_SAMPLES);
 
 
-
 	fboDest->Bind();
 
 	GL_C(glViewport(0, 0, vertexPosTextureSize, vertexPosTextureSize));
-	GL_C(glClearColor(0.0f, 1.0f, 0.0f, 1.0f));
+	GL_C(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 	GL_C(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
@@ -327,7 +332,7 @@ GeometryObjectData* RayTracer::RayTrace() {
 
        Vertex* verticesBuffer = (Vertex *)m_geoObj->m_vertices;
 
-       const int vertexSize = (3+2+3 + (first ? 0 : 1) ) * sizeof(float);
+       const int vertexSize = ( totalVertexSize ) * sizeof(float);
     const int numVertices = m_geoObj->m_verticesSize / vertexSize;
 
 
@@ -402,16 +407,13 @@ GeometryObjectData* RayTracer::RayTrace() {
 
 //	LOG_I("AO: %f", ao);
 
-	aoVertex.point = Vector4f(v.point.x, v.point.y, v.point.z, ao);
+	aoVertex.point = Vector4f(v.point.x, v.point.y, v.point.z, 1.0f-ao);
 	aoVertex.normal = v.normal;
 	aoVertex.texCoord = v.texCoord;
 
 	*(aoVerticesPointer++) = aoVertex;
 
   }
-
-
-
 
     m_geoObj->m_vertices = ((void *)aoVertices);
     m_geoObj->m_verticesSize = vertices.size() * sizeof(float) * (4+2+3);
@@ -422,6 +424,22 @@ GeometryObjectData* RayTracer::RayTrace() {
 
     return m_geoObj;
 
-    first = false;
+//    first = false;
 
 }
+
+/*
+  Scale the geometry to a 1x1x1 cube.
+  Shrink it a little to have a buffer
+  from edge effects.
+
+
+
+            mat4.ortho(projection, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
+
+            result[j] = Math.min(1.0, 1.0 - buffer[j * 4] + 0.5)
+
+
+    float c = pow(vOcclusion, 2.0);
+
+*/

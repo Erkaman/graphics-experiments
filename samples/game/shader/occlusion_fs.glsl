@@ -22,11 +22,11 @@ void main() {
 
     vec3 vert = texture(vertexPosTexture, texCoord).rgb;
 
-    vert = vec3(projectionMatrix * viewMatrix * modelMatrix * vec4(vert, 1));
+    vert = vec3(viewMatrix * modelMatrix * vec4(vert, 1));
 
     float z = texture(positionFbo, vert.xy + 0.5).b;
 
-    float uBias = 0.1;
+    float uBias = 0.01;
 
 
     float o = 0.0;
@@ -41,11 +41,15 @@ void main() {
 
 
 //    fragmentColor = vec4( o/numSamples , 0, 0, 1);
-    fragmentColor = vec4( o/numSamples + src , 0, 0, 1);
+
+    o = ((numSamples - 1.0)/numSamples) * src + (1.0/numSamples) * o;//(1.0 - uFrac) * o + uFrac * src;
+//    o = o/numSamples + src;
+
+    fragmentColor = vec4( o , 0, 0, 1);
 
 
 //    fragmentColor = vec4(vert.z*100, 0, 0, 1);
-    //   fragmentColor = vec4(z*100, 0, 0, 1);
+//    /   fragmentColor = vec4(z*100, 0, 0, 1);
 
 
 //    fragmentColor = vec4(texture(vertexPosTexture, texCoord).rgb, 1);

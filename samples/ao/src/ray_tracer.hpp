@@ -38,6 +38,6 @@ public:
     RayTracer(GeometryObjectData* geoObj);
 
 
-    GeometryObjectData* RayTrace();
+    GeometryObjectData* RayTrace(int samples);
 
 };
