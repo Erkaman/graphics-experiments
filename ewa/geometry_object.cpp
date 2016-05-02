@@ -241,6 +241,22 @@ public:
 	geoObjBatch->m_vertexBuffer->SetBufferData(data->m_verticesSize, data->m_vertices);
 	geoObjBatch->m_vertexBuffer->Unbind();
 
+	bool isAo = false;
+
+	if(data->m_vertexAttribsSizes[0] == 4 ) {
+	    isAo = true;
+	}
+
+
+
+	vector<string> defaultDefines;
+
+	if(isAo)
+	    defaultDefines.push_back("AO");
+
+
+
+
 	/*
 	  Next, we create VBOs from the vertex data in the chunks.
 	*/
@@ -317,7 +333,7 @@ public:
 
 		if(filename == "obj/car_blend.eob") {
 
-		    vector<string> defines;
+		    vector<string> defines(defaultDefines);
 
 		    defines.push_back("ALPHA_MAPPING");
 		    defines.push_back("ENV_MAPPING");
@@ -333,7 +349,7 @@ public:
 		}else if(filename == "obj/water.eob") {
 
 
-		    vector<string> defines;
+		    vector<string> defines(defaultDefines);
 
 		    defines.push_back("ALPHA_MAPPING");
 		    defines.push_back("ENV_MAPPING");
@@ -356,7 +372,7 @@ public:
 		      Next, we create a shader that supports all the texture types.
 		    */
 
-		    vector<string> defines;
+		    vector<string> defines(defaultDefines);
 
 		    defines.push_back("SHADOW_MAPPING");
 		    defines.push_back("DIFF_MAPPING");
