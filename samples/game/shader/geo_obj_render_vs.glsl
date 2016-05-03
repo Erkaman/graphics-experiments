@@ -66,15 +66,14 @@ void main()
 #endif
     texcoordOut = texCoordIn;
 
+
 #ifdef PARABOLOID
     //gl_Position =mvp * vec4(positionIn.xyz,1);
-
-
-
     gl_Position = envMapProject(paraboloidDirection, viewSpacePositionOut, modelSpacePosition, carPos, zfar, znear);
 #else
     gl_Position =mvp * vec4(positionIn.xyz,1);
 #endif
+
 
     eyePosOut = eyePos;
 

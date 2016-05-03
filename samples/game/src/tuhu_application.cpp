@@ -88,8 +88,8 @@ constexpr int WINDOW_WIDTH = 256;
 constexpr int WINDOW_HEIGHT = 256;
 */
 
-constexpr int REFRACTION_WIDTH = WINDOW_WIDTH / 2;
-constexpr int REFRACTION_HEIGHT = WINDOW_HEIGHT / 2;
+constexpr int REFRACTION_WIDTH = WINDOW_WIDTH / 1;
+constexpr int REFRACTION_HEIGHT = WINDOW_HEIGHT / 1;
 
 constexpr int REFLECTION_WIDTH = WINDOW_WIDTH / 2;
 constexpr int REFLECTION_HEIGHT = WINDOW_HEIGHT / 2;
@@ -263,12 +263,14 @@ void TuhuApplication::Init() {
     ::SetCullFace(true);
 
     const Vector3f pos =
-	Vector3f(-4.383975, 9.277207, -1.998834);
+	Vector3f(42.163509, 38.978088, 207.456863);
+
+
     m_freeCamera = new Camera(
 	GetFramebufferWidth(),
 	GetFramebufferHeight(),
 	pos,
-	Vector3f(0.777302, -0.389952, -0.493700)
+	Vector3f(-0.701493, -0.381018, -0.602273)
 	);
 
 
@@ -738,7 +740,7 @@ void TuhuApplication::RenderRefraction() {
 	bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
 	m_heightMap->RenderRefraction(m_curCamera, m_lightDirection, aoOnly);
     }
-    m_refractionFbo->Unbind();
+       m_refractionFbo->Unbind();
 }
 
 void TuhuApplication::RenderReflection() {
@@ -758,7 +760,7 @@ void TuhuApplication::RenderReflection() {
 	m_heightMap->RenderReflection(m_reflectionCamera, m_lightDirection, aoOnly);
 
     }
-    m_reflectionFbo->Unbind();
+      m_reflectionFbo->Unbind();
 }
 
 void TuhuApplication::Render() {
@@ -783,6 +785,7 @@ void TuhuApplication::Render() {
     m_gpuProfiler->Begin(GTS_Reflection);
     RenderReflection();
     m_gpuProfiler->End(GTS_Reflection);
+
 
 
     float SCALE = m_guiVerticalScale;
@@ -866,16 +869,11 @@ void TuhuApplication::Render() {
      m_gpuProfiler->End(GTS_FXAA);
 
 
-
-//    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
-
-
     m_gpuProfiler->Begin(GTS_Sky);
 
 
     m_skybox->DrawDeferred(
 	m_cubeMapTexture,
-//	m_envFbo->GetEnvMap(),
 	m_curCamera, m_gbuffer->GetDepthTexture(), GetFramebufferWidth(), GetFramebufferHeight() );
     m_gpuProfiler->End(GTS_Sky);
 

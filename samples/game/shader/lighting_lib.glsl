@@ -263,7 +263,6 @@ void waterShader(vec3 viewSpacePosition, mat4 proj,
     vec3 refraction = col;
 
 
-
     vec3 worldPosition = (invViewMatrix * vec4(viewSpacePosition, 1)).xyz;
 
     vec3 toCameraVector = normalize(eyePos - worldPosition.xyz);

@@ -117,6 +117,19 @@ private:
 	    defines.push_back("DIFF_MAPPING");
 	    defines.push_back("ALPHA_MAPPING");
 
+	    m_reflectionShader = ResourceManager::LoadShader(
+		shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
+	}
+
+
+	{
+	    string shaderName = "shader/geo_obj_render";
+
+	    vector<string> defines;
+
+	    defines.push_back("DIFF_MAPPING");
+	    defines.push_back("ALPHA_MAPPING");
+
 	}
 
 	m_aabbWireframe = Cube::Load();
@@ -189,6 +202,7 @@ public:
     ShaderProgram* m_outputDepthShader;
 
     ShaderProgram* m_envShader;
+    ShaderProgram* m_reflectionShader;
 
     ArrayTexture* m_arrayTexture;
 
@@ -763,7 +777,7 @@ void GeometryObject::RenderReflection(
 
     auto& batches = GeoObjManager::GetInstance().m_batches;
 
-    ShaderProgram* envShader = GeoObjManager::GetInstance().m_envShader;
+    ShaderProgram* envShader = GeoObjManager::GetInstance().m_reflectionShader;
 
 
     // render all batches, one after one.

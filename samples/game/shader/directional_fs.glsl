@@ -173,10 +173,6 @@ void main() {
     if(id == 2.0) {
 
 //	fragmentColor = vec4(vec3(spec), 1.0);
-
-
-//	fragmentColor = vec4(0,0,0, 1.0);
-
     }
 
 
