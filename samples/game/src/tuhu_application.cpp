@@ -178,7 +178,13 @@ TuhuApplication::~TuhuApplication() {
 
 void TuhuApplication::Init() {
 
+    m_doAA = 1.0;
 
+    vector<string> defines;
+
+    string shaderName = "shader/fxaa";
+    m_fxaaShader =
+	ResourceManager::LoadShader(shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
 
     m_aabbWireframe = Cube::Load();
 
@@ -204,6 +210,8 @@ void TuhuApplication::Init() {
     m_reflectionFbo = new ColorFBO();
     m_reflectionFbo->Init(REFLECTION_FBO_TEXTURE_UNIT, REFLECTION_WIDTH, REFLECTION_HEIGHT);
 
+    m_colorFbo = new ColorFBO();
+    m_colorFbo->Init(0, GetFramebufferWidth(),GetFramebufferHeight());
 
     m_dualParaboloidMap = new DualParaboloidMap();
 
@@ -817,16 +825,46 @@ void TuhuApplication::Render() {
     bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
     bool enableAo = m_gui ? m_gui->IsEnableAo() : true;
 
-    m_gpuProfiler->Begin(GTS_Light);
-    m_lightingPass->Render(
-	m_gbuffer, m_curCamera, m_lightDirection,
-	lightVp, *m_depthFbo, GeometryObject::GetTorches(),
-	*m_dualParaboloidMap, *m_refractionFbo, *m_reflectionFbo,
-	*m_cameraFrustum,
-	aoOnly,
-	enableAo
-	);
-    m_gpuProfiler->End(GTS_Light);
+
+   m_colorFbo->Bind();
+    {
+	SetViewport();
+	Clear(0.0f, 1.0f, 1.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	m_gpuProfiler->Begin(GTS_Light);
+	m_lightingPass->Render(
+	    m_gbuffer, m_curCamera, m_lightDirection,
+	    lightVp, *m_depthFbo, GeometryObject::GetTorches(),
+	    *m_dualParaboloidMap, *m_refractionFbo, *m_reflectionFbo,
+	    *m_cameraFrustum,
+	    aoOnly,
+	    enableAo
+	    );
+	m_gpuProfiler->End(GTS_Light);
+
+    }
+     m_colorFbo->Unbind();
+
+
+     m_gpuProfiler->Begin(GTS_FXAA);
+     {
+	 m_fxaaShader->Bind();
+
+	 m_fxaaShader->SetUniform("colorTexture",0 );
+	 Texture::SetActiveTextureUnit(0);
+	 m_colorFbo->GetRenderTargetTexture().Bind();
+
+	 m_fxaaShader->SetUniform("doAA",m_doAA );
+
+
+	 GL_C(glDrawArrays(GL_TRIANGLES, 0, 3));
+
+	 m_colorFbo->GetRenderTargetTexture().Unbind();
+	 m_fxaaShader->Unbind();
+
+     }
+     m_gpuProfiler->End(GTS_FXAA);
+
 
 
 //    m_smoke->Render(m_curCamera->GetVp(), m_curCamera->GetPosition());
@@ -953,6 +991,21 @@ void TuhuApplication::Update(const float delta) {
 
     if( kbs.WasPressed(GLFW_KEY_8) ) {
 	m_grass->BlowWind();
+    }
+
+
+    if( kbs.WasPressed(GLFW_KEY_7) ) {
+
+	if(m_doAA > 0.0) {
+	    m_doAA = -1.0;
+	} else {
+
+	    m_doAA = +1.0;
+	}
+
+	LOG_I("aa: %f", m_doAA );
+
+
     }
 
 
@@ -1147,6 +1200,14 @@ void TuhuApplication::RenderText()  {
 
     m_font->DrawString(*m_fontShader, 750,750,
 		       Format("Grass: %0.2f ms", m_gpuProfiler->DtAvg(GTS_Grass)) );
+
+    m_font->DrawString(*m_fontShader, 750,810,
+		       Format("FXAA: %0.2f ms", m_gpuProfiler->DtAvg(GTS_FXAA)) );
+
+
+/*    m_font->DrawString(*m_fontShader, 750,810,
+		       Format("AA: %f", (m_doAA > 0.0f) ? 1.0f : 0.0f  ));
+*/
 
 
 }

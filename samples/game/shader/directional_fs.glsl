@@ -165,8 +165,7 @@ void main() {
 	    envMapSample );
 
     if(id == 1.0) { // if car
-
-//	fragmentColor = vec4(envMapSample, 1.0);
+	fragmentColor = vec4(envMapSample, 1.0);
     }
 
 //    fragmentColor = vec4(vec3(diff),1);

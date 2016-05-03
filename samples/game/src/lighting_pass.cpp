@@ -673,3 +673,12 @@ void LightingPass::UpdateTextures(int lightCount) {
 
     m_lightIndexTextureBuffer = new float[texSize*texSize];
 }
+
+
+/*
+we use:
+#define FXAA_PC
+
+  #define FXAA_HLSL_5 1
+  #define FXAA_QUALITY__PRESET 12
+*/

@@ -43,6 +43,7 @@ class ColorDepthFbo;
 class ParticlesRenderer;
 class DualParaboloidMap;
 class Camera;
+class ShaderProgram;
 
 constexpr int DEPTH_FBO_TEXTURE_UNIT = 9;
 constexpr int PICKING_FBO_TEXTURE_UNIT = 10;
@@ -75,6 +76,7 @@ private:
     EnvFBO* m_envFbo;
     ColorDepthFbo* m_refractionFbo;
     ColorFBO* m_reflectionFbo;
+    ColorFBO* m_colorFbo;
 
     Car* m_car;
 
@@ -116,6 +118,10 @@ private:
     CubeMapTexture* m_cubeMapTexture;
 
     Vector3f m_prevCameraPos; // camera pos for previous frame.
+
+    ShaderProgram* m_fxaaShader;
+
+    float m_doAA;
 
 
     std::map<unsigned int,IGeometryObject*> m_geoObjs;
