@@ -15,8 +15,8 @@ sampler2D tex,         // Input texture.
 vec2 rcpFrame) {   // Constant {1.0/frameWidth, 1.0/frameHeight}.
 /*--------------------------------------------------------------------------*/
     #define FXAA_REDUCE_MIN   (1.0/128.0)
-    #define FXAA_REDUCE_MUL   (1.0/8.0)
-    #define FXAA_SPAN_MAX     16.0
+#define FXAA_REDUCE_MUL   0.0 //(1.0/8.0) // 0
+    #define FXAA_SPAN_MAX     8.0
 /*--------------------------------------------------------------------------*/
     vec3 rgbNW = FxaaTexLod0(tex, posPos.zw).xyz;
     vec3 rgbNE = FxaaTexOff(tex, posPos.zw, ivec2(1,0), rcpFrame.xy).xyz;
@@ -61,7 +61,7 @@ vec4 FxaaVertexShader(
 vec2 pos,                 // Both x and y range {-1.0 to 1.0 across screen}.
 vec2 rcpFrame) {          // {1.0/frameWidth, 1.0/frameHeight}
 /*--------------------------------------------------------------------------*/
-    #define FXAA_SUBPIX_SHIFT (1.0/4.0)
+#define FXAA_SUBPIX_SHIFT 0.0 //(1.0/4.0) // 0
 /*--------------------------------------------------------------------------*/
     vec4 posPos;
     posPos.xy = (pos.xy * 0.5) + 0.5;
