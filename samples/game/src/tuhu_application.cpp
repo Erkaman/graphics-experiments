@@ -2,6 +2,7 @@
 
 #include "particles_renderer.hpp"
 #include "dual_paraboloid_map.hpp"
+#include "math/vector4f.hpp"
 
 #include "ewa/camera.hpp"
 #include "ewa/common.hpp"

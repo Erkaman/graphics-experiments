@@ -12,8 +12,15 @@
 
 #include "ewa/gl/gl_common.hpp"
 #include "ewa/gl/texture2d.hpp"
+#include "ewa/gl/shader_program.hpp"
 
+#include "ewa/log.hpp"
 #include "gui_enum.hpp"
+
+#include "math/vector4f.hpp"
+
+#include "dual_paraboloid_map.hpp"
+
 
 class VBO;
 class ShaderProgram;
@@ -313,8 +320,83 @@ public:
     void RenderShadowMap(const Matrix4f& lightVp);
 
 
-    void RenderParaboloid(const Paraboloid& paraboloid, const Vector4f& lightPosition, bool aoOnly);
+	void HeightMap::RenderParaboloid(const Paraboloid& paraboloid, const Vector4f& lightPosition, bool aoOnly) {
+		m_envShader->Bind();
 
+		m_envShader->SetUniform("aoOnly", aoOnly ? 1.0f : 0.0f);
+
+
+		m_envShader->SetUniform("splatMap", 4);
+		Texture::SetActiveTextureUnit(4);
+		m_splatMap->Bind();
+
+		m_envShader->SetUniform("aoMap", 5);
+		Texture::SetActiveTextureUnit(5);
+		m_aoMap->Bind();
+
+		m_envShader->SetUniform("grass", 0);
+		Texture::SetActiveTextureUnit(0);
+		m_grassTexture->Bind();
+
+		m_envShader->SetUniform("dirt", 1);
+		Texture::SetActiveTextureUnit(1);
+		m_dirtTexture->Bind();
+
+		m_envShader->SetUniform("rock", 2);
+		Texture::SetActiveTextureUnit(2);
+		m_rockTexture->Bind();
+
+		m_envShader->SetUniform("road", 7);
+		Texture::SetActiveTextureUnit(7);
+		m_asphaltTexture->Bind();
+
+
+		paraboloid.SetParaboloidUniforms(
+			*m_envShader,
+			Matrix4f::CreateTranslation(0, 0, 0),
+
+			paraboloid.m_viewMatrix,
+
+			// projection matrix is identity.
+			// we do projection manually in the shader instead.
+			Matrix4f::CreateIdentity(),
+
+			paraboloid.m_position,
+
+			lightPosition
+
+		);
+
+
+		RenderSetup(m_envShader);
+
+
+		GL_C(glEnable(GL_CLIP_DISTANCE0));
+
+		Render(m_envShader, HeightMapRenderMode(HEIGHT_MAP_RENDER_MODE_ENV_MAP0 + paraboloid.m_i));
+
+		GL_C(glDisable(GL_CLIP_DISTANCE0));
+
+		RenderUnsetup();
+
+
+
+
+
+
+		m_grassTexture->Unbind();
+		m_dirtTexture->Unbind();
+		m_rockTexture->Unbind();
+		m_asphaltTexture->Unbind();
+
+
+		m_splatMap->Unbind();
+		m_aoMap->Unbind();
+
+		m_envShader->Unbind();
+
+
+	}
 
     void RenderRefraction(
 	const ICamera* camera, const Vector4f& lightPosition, bool aoOnly);
