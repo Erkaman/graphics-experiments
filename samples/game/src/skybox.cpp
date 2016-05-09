@@ -21,10 +21,12 @@ static void  AddFace(
     int i
     ) {
 
+    /*
     float ax=0.5f, ay=0.5f, az=0.5f;
     float bx=0.5f, by=-0.5f, bz=0.5f;
     float cx=-0.5f, cy=-0.5f, cz=0.5f;
     float dx=-0.5f, dy=0.5f, dz=0.5f;
+    */
 
 
     //  LOG_I("YARU: %d", i );
@@ -33,6 +35,36 @@ static void  AddFace(
     const GLushort base = (GLushort)(positions.size() / 3);
 
     int start = positions.size();
+
+    int N = 10; // degree of tesselation. means  quads.
+
+    float xmin = -0.5;
+    float xmax = +0.5;
+    float ymin = -0.5;
+    float ymax = +0.5;
+
+    for(int row = 0; row <= N; ++row) {
+
+	float y = (row / (float)N)*(ymax-ymin) + ymin;
+
+	for(int col = 0; col <= N; ++col) {
+
+	    float x= (col / (float)N)*(xmax-xmin) + xmin;
+
+	    positions.push_back(x);
+	    positions.push_back(y);
+	    positions.push_back(0.5f);
+
+
+
+	}
+
+    }
+
+
+
+
+    /*
 
     positions.push_back(ax);
     positions.push_back(ay);
@@ -49,6 +81,7 @@ static void  AddFace(
     positions.push_back(dx);
     positions.push_back(dy);
     positions.push_back(dz);
+    */
 
     int end = positions.size();
 
@@ -57,24 +90,6 @@ static void  AddFace(
 	float x = positions[j+0];
 	float y = positions[j+1];
 	float z = positions[j+2];
-
-	/*
-      	0.5f, 0.5f, 0.5f,
-	0.5f, -0.5f, 0.5f,
-	-0.5f, -0.5f, 0.5f,
-	-0.5f, 0.5f, 0.5f);
-	 */
-
-	// to
-
-	/*
-
-	-0.5f, 0.5f, -0.5f,
-      	0.5f, 0.5f, -0.5f,
-	0.5f, 0.5f, 0.5f,
-	-0.5f, 0.5f, 0.5f
-
-	 */
 
 	if(i == 0) { // front
 
@@ -124,15 +139,40 @@ static void  AddFace(
 	positions[j+2] = z;
     }
 
+    for(int row = 0; row <= (N-1); ++row) {
+
+	for(int col = 0; col <= (N-1); ++col) {
+
+	    int i = row * (N+1) + col;
+
+	    int i0 = i+0;
+	    int i1 = i+1;
+	    int i2 = i + (N+1) + 0;
+	    int i3 = i + (N+1) + 1;
 
 
+	    indices.push_back(base + i2);
+	    indices.push_back(base + i1);
+	    indices.push_back(base + i0);
 
+	    indices.push_back(base + i1);
+	    indices.push_back(base + i2);
+	    indices.push_back(base + i3);
+	}
+    }
+
+
+    /*
     indices.push_back(base);
-    indices.push_back(base + 1);
     indices.push_back(base + 2);
+    indices.push_back(base + 1);
+
+
     indices.push_back(base);
     indices.push_back(base + 2);
     indices.push_back(base + 3);
+    */
+
 }
 
 Skybox::Skybox() {
