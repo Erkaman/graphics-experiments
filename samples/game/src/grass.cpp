@@ -379,7 +379,7 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 		   const ViewFrustum& cameraFrustum, const ViewFrustum& lightFrustum,
 		   DualParaboloidMap& dualParaboloidMap, const ViewFrustum& reflectionFrustum) {
 
-	
+
     MultArray<AABB>& aabbs = *m_aabbs;
 
 
@@ -420,7 +420,7 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 	}
     }
 
-	
+
     if(m_doWind) {
 
 	float tileSize = m_heightMapResolution / TILE_GRID_COUNT;
@@ -467,11 +467,11 @@ void Grass::Update(const float delta, const Vector2f& cameraPosition, const Vect
 
 	m_windRadius += 1.0f;
 
-	
+
 	m_meanWindTexture->Bind();
 	m_meanWindTexture->UpdateTexture(m_meanWindTextureBuffer->GetData() );
 	m_meanWindTexture->Unbind();
-	
+
 
 
 
@@ -769,11 +769,11 @@ void Grass::UpdateWind(const float delta) {
     }
 
 
-	
+
     m_turbWindTexture->Bind();
     m_turbWindTexture->UpdateTexture(m_turbWindTextureBuffer->GetData() );
     m_turbWindTexture->Unbind();
-	
+
 
 }
 

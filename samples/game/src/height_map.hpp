@@ -352,6 +352,7 @@ public:
 
 
 		paraboloid.SetParaboloidUniforms(
+
 			*m_envShader,
 			Matrix4f::CreateTranslation(0, 0, 0),
 

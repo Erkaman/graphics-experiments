@@ -700,7 +700,7 @@ void TuhuApplication::RenderEnvMap() {
 	::SetViewport(0,0,size,size);
 	Clear(0.0f, 0.0f, 0.0f, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//       	m_skybox->DrawEnvMap(m_cubeMapTexture, par);
+       	m_skybox->DrawEnvMap(m_cubeMapTexture, par);
 
 	GeometryObject::RenderAllEnv(m_lightDirection, i, par);
 //	m_skydome->DrawForward(par);
@@ -807,7 +807,6 @@ void TuhuApplication::Render() {
     m_gpuProfiler->Begin(GTS_Reflection);
     RenderReflection();
     m_gpuProfiler->End(GTS_Reflection);
-
 
 
     float SCALE = m_guiVerticalScale;

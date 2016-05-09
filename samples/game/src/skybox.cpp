@@ -36,7 +36,7 @@ static void  AddFace(
 
     int start = positions.size();
 
-    int N = 10; // degree of tesselation. means  quads.
+    int N = 20; // degree of tesselation. means  quads.
 
     float xmin = -0.5;
     float xmax = +0.5;
@@ -375,6 +375,7 @@ void Skybox::DrawEnvMap(CubeMapTexture* m_cubeMap, Paraboloid& paraboloid) {
     view.m13 = 0;
     view.m23 = 0;
 
+    /*
     paraboloid.SetParaboloidUniforms(
 		*m_envMapShader,
 		Matrix4f::CreateIdentity(),
@@ -383,6 +384,26 @@ void Skybox::DrawEnvMap(CubeMapTexture* m_cubeMap, Paraboloid& paraboloid) {
 
 		paraboloid.m_position,
 		Vector4f(0,0,0,0) );
+    */
+
+    m_envMapShader->SetShaderUniforms(
+	Matrix4f::CreateIdentity(),
+	view,
+	Matrix4f::CreateIdentity()
+	);
+
+    m_envMapShader->SetUniform("viewSpaceLightDirection", Vector3f(view * (Vector4f(0,0,0,0))  ) );
+//    m_envMapShader->SetUniform("eyePos", Vector4f );
+
+    // TODO: uniform zfar and znear.
+    Config& config = Config::GetInstance();
+
+    m_envMapShader->SetUniform("znear", config.GetZNear() );
+    m_envMapShader->SetUniform("zfar", config.GetZFar() );
+    m_envMapShader->SetUniform("carPos", 	Vector3f(0,0,0) );
+    m_envMapShader->SetUniform("paraboloidDirection", paraboloid.m_direction.z );
+
+
 
     /*
     m_envMapShader->SetShaderUniforms(

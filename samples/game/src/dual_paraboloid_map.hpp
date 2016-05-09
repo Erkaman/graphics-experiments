@@ -29,10 +29,7 @@ public:
 
     int m_i;
 
-
-
     void SetParaboloidUniforms(
-
     ShaderProgram& shader,
     const Matrix4f& modelMatrix, const Matrix4f& viewMatrix,
     const Matrix4f& projectionMatrix, const Vector3f&
