@@ -18,12 +18,21 @@ using std::string;
 static void  AddFace(
     FloatVector& positions,
     UshortVector& indices,
-    const float ax, const float ay, const float az,
-    const float bx, const float by, const float bz,
-    const float cx, const float cy, const float cz,
-    const float dx, const float dy, const float dz
+    int i
     ) {
+
+    float ax=0.5f, ay=0.5f, az=0.5f;
+    float bx=0.5f, by=-0.5f, bz=0.5f;
+    float cx=-0.5f, cy=-0.5f, cz=0.5f;
+    float dx=-0.5f, dy=0.5f, dz=0.5f;
+
+
+    //  LOG_I("YARU: %d", i );
+
+
     const GLushort base = (GLushort)(positions.size() / 3);
+
+    int start = positions.size();
 
     positions.push_back(ax);
     positions.push_back(ay);
@@ -40,6 +49,83 @@ static void  AddFace(
     positions.push_back(dx);
     positions.push_back(dy);
     positions.push_back(dz);
+
+    int end = positions.size();
+
+    for(int j = start; j < end; j+=3) {
+
+	float x = positions[j+0];
+	float y = positions[j+1];
+	float z = positions[j+2];
+
+	/*
+      	0.5f, 0.5f, 0.5f,
+	0.5f, -0.5f, 0.5f,
+	-0.5f, -0.5f, 0.5f,
+	-0.5f, 0.5f, 0.5f);
+	 */
+
+	// to
+
+	/*
+
+	-0.5f, 0.5f, -0.5f,
+      	0.5f, 0.5f, -0.5f,
+	0.5f, 0.5f, 0.5f,
+	-0.5f, 0.5f, 0.5f
+
+	 */
+
+	if(i == 0) { // front
+
+	} else if(i==1) { // back
+	    z *= -1.0;
+	    x *= -1.0;
+	} else if(i==2) { // top
+
+	    float x2 = -y;
+	    float y2 = +z;
+	    float z2 = -x;
+
+	    x = x2;
+	    y = y2;
+	    z = z2;
+	} else if(i==3) { // bottom.
+
+	    float x2 = +y;
+	    float y2 = -z;
+	    float z2 = -x;
+
+	    x = x2;
+	    y = y2;
+	    z = z2;
+	} else if(i==4) { // right
+
+	    float x2 = +z;
+	    float y2 = +y;
+	    float z2 = -x;
+
+	    x = x2;
+	    y = y2;
+	    z = z2;
+	} else if(i==5) { // left
+
+	    float x2 = -z;
+	    float y2 = +y;
+	    float z2 = +x;
+
+	    x = x2;
+	    y = y2;
+	    z = z2;
+	}
+
+	positions[j+0] = x;
+	positions[j+1] = y;
+	positions[j+2] = z;
+    }
+
+
+
 
     indices.push_back(base);
     indices.push_back(base + 1);
@@ -94,50 +180,28 @@ Skybox::Skybox() {
 
     // create the vertices of a unit cube.
 
+    // front
     AddFace(positions, indices,
-	0.5f, 0.5f, 0.5f,
-	0.5f, -0.5f, 0.5f,
-	-0.5f, -0.5f, 0.5f,
-	-0.5f, 0.5f, 0.5f);
+	0);
 
-    //Back face
+
+    // back
     AddFace(positions, indices,
-	-0.5f, 0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
+	1);
 
-	0.5f, -0.5f, -0.5f,
-	0.5f, 0.5f, -0.5f);
-
-    //Top face
     AddFace(positions, indices,
-	-0.5f, 0.5f, -0.5f,
-	0.5f, 0.5f, -0.5f,
-	0.5f, 0.5f, 0.5f,
-	-0.5f, 0.5f, 0.5f
-	);
+	    2);     // top
 
-    //Bottom face
-    AddFace(positions, indices,
-	0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f, 0.5f,
-	0.5f, -0.5f, 0.5f
-	);
 
-    //Right face
     AddFace(positions, indices,
-	0.5f, 0.5f, -0.5f,
-	0.5f, -0.5f, -0.5f,
-	0.5f, -0.5f, 0.5f,
-	0.5f, 0.5f, 0.5f
-	);
+	    3);     // bottom
 
-    //Left face
     AddFace(positions, indices,
-	-0.5f, 0.5f, 0.5f,
-	-0.5f, -0.5f, 0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, 0.5f, -0.5f);
+	    4);     // right
+
+    AddFace(positions, indices,
+	    5);     // left
+
 
     m_numIndices =(GLushort)indices.size();
 
