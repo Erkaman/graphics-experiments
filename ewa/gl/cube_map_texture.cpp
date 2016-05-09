@@ -38,6 +38,15 @@ CubeMapTexture* CubeMapTexture::Load(int size) {
     Texture::SetActiveTextureUnit(0);
     cubeMap->Bind();
 
+    GL_C(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GL_C(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    GL_C(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
+    GL_C(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GL_C(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GL_C(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0));
+    GL_C(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0));
+
+    GL_C(glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS));
 
     struct RGBA {
 	GLubyte r;
@@ -60,6 +69,13 @@ CubeMapTexture* CubeMapTexture::Load(int size) {
 	glTexImage2D(
 	    GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_RGBA8 , size,size, 0, GL_RGBA, GL_UNSIGNED_BYTE,
 	    /*&d[0]*/ nullptr);
+/*
+
+
+	GL_C(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE ));
+	GL_C(glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE ));
+*/
+
 
 //    GL_C(glGenerateMipmap(m_target));
 
@@ -71,10 +87,13 @@ CubeMapTexture* CubeMapTexture::Load(int size) {
 
     }*/
 
+//    cubeMap->SetTextureClamping();
+    //  cubeMap->SetTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 
 
-    cubeMap->GenerateMipmap();
-    cubeMap->Unbind();
+
+//    cubeMap->GenerateMipmap();
+    //  cubeMap->Unbind();
 
     return cubeMap;
 

@@ -59,7 +59,13 @@ constexpr unsigned short MID_HEIGHT = 32768;
 constexpr unsigned short MIN_HEIGHT = 0;
 
 
+Vector2f CatmullRomSpline(const Vector2f &P1,const Vector2f &P2,const Vector2f &P3,const Vector2f &P4,float t)
+{
+    float t2 = t * t;
+    float t3 = t * t2;
 
+    return ((P2 * 2.0f) + (-P1 + P3) * t + (P1 * 2.0f - P2 * 5.0f + P3 * 4.0f - P4) * t2 + (-P1 + P2 * 3.0f - P3 * 3.0f + P4) * t3) * 0.5f;
+}
 
 static Texture* LoadTexture(const string& filename) {
     Texture* texture = Texture2D::Load(filename);
@@ -83,6 +89,11 @@ void HeightMap::Init(
     const std::string& splatMapFilename,
     const std::string& aoMapFilename,
     bool guiMode ) {
+
+    // (-0.020900, 0.718350)
+    Vector2f s = CatmullRomSpline(Vector2f(0.0, 0.0),Vector2f(-0.2, 0.6),Vector2f(0.6, 0.9),Vector2f(1.0, 1.0), 0.3);
+
+    LOG_I(" mah s: %s", std::string(s).c_str()  );
 
     m_aabbWireframe = Cube::Load();
 
@@ -2400,13 +2411,7 @@ void HeightMap::AddControlPoint() {
     m_controlPoints.push_back(m_cursorPosition);
 }
 
-Vector2f CatmullRomSpline(const Vector2f &P1,const Vector2f &P2,const Vector2f &P3,const Vector2f &P4,float t)
-{
-    float t2 = t * t;
-    float t3 = t * t2;
 
-    return ((P2 * 2.0f) + (-P1 + P3) * t + (P1 * 2.0f - P2 * 5.0f + P3 * 4.0f - P4) * t2 + (-P1 + P2 * 3.0f - P3 * 3.0f + P4) * t3) * 0.5f;
-}
 
 void HeightMap::BuildRoad() {
 

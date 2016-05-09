@@ -13,7 +13,7 @@ void main()
 {
     float depth = texture(depthMap,  vec2(gl_FragCoord.x/windowWidth, gl_FragCoord.y/(windowHeight)) ).r;
 
-    if(depth < 1.0 )
+    if(depth < 1 )
 	discard;
 
     vec3 color = texture(sampler, texCoord).rgb;

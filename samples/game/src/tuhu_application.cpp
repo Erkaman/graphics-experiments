@@ -217,12 +217,33 @@ void TuhuApplication::Init() {
     m_dualParaboloidMap = new DualParaboloidMap();
 
     m_cubeMapTexture = CubeMapTexture::Load(
+/*
 	"img/bluecloud_ft.png",
 	"img/bluecloud_bk.png",
 	"img/bluecloud_lf.png",
 	"img/bluecloud_rt.png",
 	"img/bluecloud_up.png",
 	"img/bluecloud_dn.png"
+*/
+
+
+/*
+	"img/ft.png",
+	"img/bk.png",
+	"img/lf.png",
+	"img/rt.png",
+	"img/up.png",
+	"img/dn.png"
+*/
+
+	"img/daylight_ft.png",
+	"img/daylight_bk.png",
+	"img/daylight_lf.png",
+	"img/daylight_rt.png",
+	"img/daylight_up.png",
+	"img/daylight_dn.png"
+
+
 	);
     if(m_cubeMapTexture == NULL) {
 	PrintErrorExit();

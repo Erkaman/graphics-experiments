@@ -75,7 +75,7 @@ float NORMAL_SPEED = 0.4;
     m_useCp = false;
 
 
-/*
+
 // move through torches section
 m_cps.push_back(CameraCP(Vector3f(-83.791084, 27.635519, 11.390510),Vector3f(0.174189, -0.215369, -0.960872), NORMAL_SPEED));
 m_cps.push_back(CameraCP(Vector3f(-78.415321, 21.640173, -18.104256),Vector3f(0.179770, -0.148452, -0.972443), NORMAL_SPEED));
@@ -171,7 +171,7 @@ m_cps.push_back(CameraCP(Vector3f(-14.257308, 8.668011, 30.124790),Vector3f(-0.9
 m_cps.push_back(CameraCP(Vector3f(-25.122328, 7.041368, 31.184303),Vector3f(-0.980469, -0.172820, 0.093879), NORMAL_SPEED));
 m_cps.push_back(CameraCP(Vector3f(-45.267605, 7.930465, 33.113194),Vector3f(-0.980469, -0.172820, 0.093879), NORMAL_SPEED));
 m_cps.push_back(CameraCP(Vector3f(-62.882065, 13.570691, 34.799759),Vector3f(-0.980469, -0.172820, 0.093879), NORMAL_SPEED));
-*/
+
 }
 
 

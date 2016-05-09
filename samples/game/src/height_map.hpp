@@ -320,7 +320,7 @@ public:
     void RenderShadowMap(const Matrix4f& lightVp);
 
 
-	void HeightMap::RenderParaboloid(const Paraboloid& paraboloid, const Vector4f& lightPosition, bool aoOnly) {
+	void RenderParaboloid(const Paraboloid& paraboloid, const Vector4f& lightPosition, bool aoOnly) {
 		m_envShader->Bind();
 
 		m_envShader->SetUniform("aoOnly", aoOnly ? 1.0f : 0.0f);
