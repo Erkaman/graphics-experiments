@@ -16,14 +16,6 @@ using std::vector;
 struct Chunk {
     VBO* m_indexBuffer;
     GLuint m_numTriangles;
-
-    float m_shininess;
-    Vector3f m_specularColor;
-    Vector3f m_diffuseColor;
-
-    // the material.
-    GLint m_texture;
-    GLint m_specularMap;
 };
 
 SimpleRender::SimpleRender() {
@@ -121,34 +113,6 @@ void SimpleRender::SetEob(GeometryObjectData* eob, const string& basePath) {
 
 
 
-
-	newChunk->m_texture = -1;
-	newChunk->m_specularMap = -1;
-
-
-	Material* mat = eob->m_chunks[i]->m_material;
-
-	if(mat->m_textureFilename != ""){ // empty textures should remain empty.
-
-	    newChunk->m_texture =
-		m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_textureFilename));
-
-	} else {
-	    newChunk->m_texture = -1;
-	}
-
-	if(mat->m_specularMapFilename != ""){ // empty textures should remain empty->
-
-
-
-	    newChunk->m_specularMap =
-		m_arrayTexture->GetTexture(File::AppendPaths(basePath, mat->m_specularMapFilename));
-
-
-	}
-
-
-
 	newChunk->m_indexBuffer = VBO::CreateIndex(eob->m_indexType);
 
 
@@ -160,16 +124,10 @@ void SimpleRender::SetEob(GeometryObjectData* eob, const string& basePath) {
 	newChunk->m_indexBuffer->SetBufferData(baseChunk->m_indicesSize, baseChunk->m_indices);
 	newChunk->m_indexBuffer->Unbind();
 
-	newChunk->m_shininess = baseChunk->m_material->m_specularExponent;
-	newChunk->m_specularColor = baseChunk->m_material->m_specularColor;
-	newChunk->m_diffuseColor = baseChunk->m_material->m_diffuseColor;
-
 	string shaderName = "shader/geo_obj_render";
 
 	m_chunks.push_back(newChunk);
     }
-
-
 }
 
 
@@ -188,7 +146,6 @@ void SimpleRender::Render(ICamera* camera, const Vector4f& lightPosition) {
 
     shader->SetUniform("aoOnly", 1.0f);
 
-
     Matrix4f modelMatrix = Matrix4f::CreateIdentity(); //geoObj->GetModelMatrix();
 
     shader->SetPhongUniforms(
@@ -199,22 +156,10 @@ void SimpleRender::Render(ICamera* camera, const Vector4f& lightPosition) {
 
 	Chunk* chunk = m_chunks[i];
 
-	if(chunk->m_specularMap == -1) {
-	    // if no spec map, the chunk has the same specular color all over the texture.
-	    shader->SetUniform("specColor", chunk->m_specularColor);
-	}
-
-	shader->SetUniform("specShiny", chunk->m_shininess);
-
-	if(chunk->m_texture != -1) {
-	    shader->SetUniform("diffMap", (float)chunk->m_texture  );
-	}
-
 	chunk->m_indexBuffer->Bind();
 	chunk->m_indexBuffer->DrawIndices(GL_TRIANGLES, (chunk->m_numTriangles)*3);
 	chunk->m_indexBuffer->Unbind();
     }
-
 
     m_vertexBuffer->DisableVertexAttribInterleavedWithBind();
 

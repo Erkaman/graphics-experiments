@@ -317,6 +317,9 @@ map<string, Material*>* ReadMaterialFile(
     while(!reader->IsEof()) {
 
 	string line = reader->ReadLine();
+
+//	LOG_I("mat line: %s",  line.c_str() );
+
 	vector<string> tokens =StringUtil::SplitString(line, " ");
 	string firstToken = tokens[0];
 
@@ -327,6 +330,9 @@ map<string, Material*>* ReadMaterialFile(
 
 	    matlib[tokens[1]] = new Material;
 	    currentMaterial = matlib[tokens[1]];
+
+	    currentMaterial->m_materialName = tokens[1];
+
 
 
 	} else if(firstToken == "diff_map") {

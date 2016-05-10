@@ -59,6 +59,8 @@ void AoApplication::Init() {
 //    m_eobFile = EobFile::Read("obj/corner.eob");
 
     m_eobFile = EobFile::Read("obj/car_blend.eob");
+
+
     m_render->SetEob(m_eobFile, "obj" );
 
     m_rayTracer = new RayTracer(m_eobFile);
@@ -168,15 +170,27 @@ void AoApplication::RenderText()  {
     m_font->DrawString(*m_fontShader, 750,170, "lol");
 }
 
-
 void AoApplication::Cleanup() {
-
 //    string dir = Config::GetInstance().GetWorldFilename();
-
-
 }
 
 void AoApplication::BakeAo(int samples) {
-    m_render->SetEob(m_rayTracer->RayTrace(samples), "obj");
+    m_eobFile = m_rayTracer->RayTrace(samples);
+    m_render->SetEob(m_eobFile, "obj");
+}
+
+void AoApplication::Save() {
+    LOG_I("SAVE");
+
+
+    //   LOG_I("mat: %s", m_eobFile->m_chunks[0]->m_material->m_materialName.c_str()  );
+//    LOG_I("float: %f", m_eobFile->m_chunks[0]->m_material->m_specularExponent  );
+
+
+    if(!EobFile::Write(*m_eobFile, "out_car.eob")) {
+	PrintErrorExit();
+    }
+
+
 
 }

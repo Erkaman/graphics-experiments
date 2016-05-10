@@ -48,4 +48,6 @@ public:
 
     void Render(ICamera* camera, const Vector4f& lightPosition);
 
+    void Save();
+
 };

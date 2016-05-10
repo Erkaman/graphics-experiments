@@ -57,6 +57,10 @@ void AoGui::Render(int windowWidth, int windowHeight) {
 	m_app->BakeAo(m_samples);
     }
 
+    if (ImGui::Button("Save")) {
+	m_app->Save();
+    }
+
     ImGui::SliderInt("Samples", &m_samples, 1, 1000);
 
     ImGui::End();

@@ -50,4 +50,6 @@ public:
 
     void BakeAo(int samples);
 
+    void Save();
+
 };

@@ -442,27 +442,9 @@ GeometryObjectData* RayTracer::RayTrace(int samples) {
     m_geoObj->m_vertexAttribsSizes = vas;
 
 
-    LOG_I("ENDDDDDDDDDDDDDDDDDDD");
-
     return m_geoObj;
 
 //    first = false;
 
 
 }
-
-/*
-  Scale the geometry to a 1x1x1 cube.
-  Shrink it a little to have a buffer
-  from edge effects.
-
-
-
-            mat4.ortho(projection, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
-
-            result[j] = Math.min(1.0, 1.0 - buffer[j * 4] + 0.5)
-
-
-    float c = pow(vOcclusion, 2.0);
-
-*/
