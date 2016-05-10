@@ -568,6 +568,10 @@ void GeometryObject::RenderShadowMapAll(const Matrix4f& lightVp) {
 
 	batch->m_vertexBuffer->EnableVertexAttribInterleavedWithBind();
 
+	outputDepthShader->SetUniform("textureArray", 0);
+	Texture::SetActiveTextureUnit(0);
+	GeoObjManager::GetInstance().m_arrayTexture->Bind();
+
 
 	// render the objects of the batch, one after one.
 	for(GeometryObject* geoObj : batch->m_geoObjs ) {
@@ -585,6 +589,8 @@ void GeometryObject::RenderShadowMapAll(const Matrix4f& lightVp) {
 
 		Chunk* chunk = batch->m_chunks[i];
 
+
+		outputDepthShader->SetUniform("diffMap", (float)chunk->m_texture  );
 
 
 		chunk->m_indexBuffer->Bind();
