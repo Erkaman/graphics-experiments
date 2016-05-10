@@ -138,8 +138,8 @@ void main(void) {
 #endif
 
 #ifdef ALPHA_MAPPING
-/*    if(diffColor.a < 0.05)
-	discard;*/
+    if(diffColor.a < 0.05)
+	discard;
 #endif
 
 
@@ -331,7 +331,6 @@ void main(void) {
 	visibility,
 	envMapSample);
 #endif
-
 
     //  fragmentColor = vec4( vec3(cosTheta), 1.0  );
 }
