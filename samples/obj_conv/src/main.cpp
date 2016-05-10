@@ -1,19 +1,70 @@
-#include "ewa/log.hpp"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h> // GLFW helper library
+
+
+
+
 #include "ewa/application.hpp"
+#include "ewa/common.hpp"
 
-#include "ewa/gl/gl_common.hpp"
-#include "ewa/string_util.hpp"
+#include "ewa/math/vector4f.hpp"
+#include "ewa/math/matrix4f.hpp"
 
-#include "ewa/geometry_object_data.hpp"
-#include "ewa/eob_file.hpp"
+#include <LinearMath/btQuaternion.h>
 
-#include "buffered_file_reader.hpp"
+#include "geometry_object_listener.hpp"
 
-#include "ewa/math/vector3f.hpp"
-#include "ewa/math/vector2f.hpp"
 
 #include <map>
-#include <assert.h>
+
+
+#include "dual_paraboloid_map.hpp"
+#include "math/vector4f.hpp"
+
+#include "ewa/camera.hpp"
+#include "ewa/common.hpp"
+#include "ewa/font.hpp"
+#include "ewa/keyboard_state.hpp"
+#include "ewa/mouse_state.hpp"
+#include "ewa/file.hpp"
+#include "ewa/buffered_file_reader.hpp"
+#include "ewa/string_util.hpp"
+#include "ewa/resource_manager.hpp"
+#include "ewa/timer.hpp"
+
+#include "ewa/gl/depth_fbo.hpp"
+#include "ewa/gl/texture.hpp"
+#include "ewa/gl/cube_map_texture.hpp"
+
+#include "ewa/audio/sound.hpp"
+#include "ewa/audio/wave_loader.hpp"
+
+
+#include "ewa/line.hpp"
+#include "ewa/points.hpp"
+#include "ewa/cube.hpp"
+#include "ewa/view_frustum.hpp"
+
+#include "ewa/config.hpp"
+
+#include "ewa/physics_world.hpp"
+
+#include "ewa/gl/color_depth_fbo.hpp"
+
+#include "ewa/gl/color_fbo.hpp"
+
+
+#include "bt_util.hpp"
+
+#include "gui_mouse_state.hpp"
+
+#include "gpu_profiler.hpp"
+
+#include "ewa/geometry_object_data.hpp"
+#include "ewa/math/vector2f.hpp"
+#include "ewa/eob_file.hpp"
+
+
 
 
 using std::vector;
@@ -27,8 +78,6 @@ struct Chunk {
 
     Material* m_material;
 };
-
-
 
 /*
   Global variables
@@ -79,6 +128,12 @@ int main (int argc, char * argv[]) {
 	PrintHelp();
 	exit(1);
     }
+
+
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+//        LOG_E("Failed to initialize OpenGL context");
+    }
+
 
     string objFilename;
 
@@ -179,19 +234,6 @@ int main (int argc, char * argv[]) {
 
 	    GLushort two = (GLushort)ParseFEntry(tokens[2]);
 
-/*
-	    LOG_I("one: %f, %f, %f",
-		  globalVertices[ (3+2+3) * one+0  ],
-		  globalVertices[ (3+2+3) * one+1  ],
-		  globalVertices[ (3+2+3) * one+2  ]
-		);
-
-	    LOG_I("two: %f, %f, %f",
-		  globalVertices[ (3+2+3) * two+0  ],
-		  globalVertices[ (3+2+3) * two+1  ],
-		  globalVertices[ (3+2+3) * two+2  ]
-		);
-*/
 	    GLushort three;
 	    for(size_t i = 3; i < tokens.size(); ++i) {
 		three = (GLushort)ParseFEntry(tokens[i]);
@@ -200,17 +242,6 @@ int main (int argc, char * argv[]) {
 		currentChunk->m_indices.push_back(one);
 		currentChunk->m_indices.push_back(two);
 		currentChunk->m_indices.push_back(three);
-
-/*
-	    LOG_I("three: %f, %f, %f",
-		  globalVertices[ (3+2+3) * three+0  ],
-		  globalVertices[ (3+2+3) * three+1  ],
-		  globalVertices[ (3+2+3) * three+2  ]
-		);
-
-	    LOG_I("END");
-*/
-
 
 		++currentChunk->m_numTriangles;
 
@@ -221,36 +252,19 @@ int main (int argc, char * argv[]) {
 	}
     }
 
-
-/*
-    for(int i = 0; i < globalVertices.size(); i+=8) {
-
-
-	LOG_I("v1: %f, %f, %f",
-	      globalVertices[i+0],
-	      globalVertices[i+1],
-	      globalVertices[i+2]);
-
-
-    }
-
-*/
     if(generateTangents) {
 	GenerateTangents();
     }
 
-    /*
-      With that, we have parsed the .obj file.
-      Now we transfer all the data of the .obj to a GeometryObjectData object.
+    //  With that, we have parsed the .obj file.
+    //  Now we transfer all the data of the .obj to a GeometryObjectData object.
+    //  Then we can use the engine to output the GeometryObjectData object to a file.
 
-      Then we can use the engine to output the GeometryObjectData object to a file.
-     */
 
     GeometryObjectData data;
 
-    /*
-      Vertex Attributes Sizes.
-     */
+
+    //  Vertex Attributes Sizes.
     vector<GLuint> vas{3,2,3}; // point(3 floats), texcoord(2 floats), normal(3 floats)
     if(generateTangents) // if tangents are stored, add another size.
 	vas.push_back(3); // tangent.
@@ -266,11 +280,6 @@ int main (int argc, char * argv[]) {
     LOG_I("m_verticesSize: %d", data.m_verticesSize );
     LOG_I("globalVertices.size(): %d", globalVertices.size() );
 
-
-    /*
-	newChunk->m_vertices = &baseChunk->m_vertices[0];
-	newChunk->m_verticesSize = baseChunk->m_vertices.size() * sizeof(float);
-    */
 
     map<string, Chunk*>::iterator it;
     for ( it = chunks.begin(); it != chunks.end(); it++ ) {
@@ -306,6 +315,14 @@ int main (int argc, char * argv[]) {
     LogDispose();
 
     return 0;
+
+}
+
+void PrintHelp() {
+    printf("Usage:\n");
+    printf("obj_conv [-t] input-file\n");
+
+    printf("\t-t\tGenerate tangents\n");
 }
 
 map<string, Material*> ParseMtllib(const string& filename) {
@@ -373,9 +390,7 @@ map<string, Material*> ParseMtllib(const string& filename) {
 
 
 
-	}/*else if(firstToken == "ke") { // emissiveColor
-
-}*/
+	}
     }
 
     return mtllib;
@@ -428,13 +443,6 @@ int ParseFEntry(const string& entry) {
     texCoord.Add(globalVertices);
     normal.Add(globalVertices);
 
-    /*
-    LOG_I("points: %s", string(point).c_str() );
-    LOG_I("texcoord: %s", string(texCoord).c_str() );
-    LOG_I("normal: %s", string(normal).c_str() );
-    LOG_I("");
-*/
-
 
     if(generateTangents) {
 	// add an empty tangent for now. we will compute it later.
@@ -455,12 +463,6 @@ int ParseFEntry(const string& entry) {
     return index;
 }
 
-void PrintHelp() {
-    printf("Usage:\n");
-    printf("obj_conv [-t] input-file\n");
-
-    printf("\t-t\tGenerate tangents\n");
-}
 
 void GenerateTangents() {
 
