@@ -296,14 +296,14 @@ void main(void) {
 #endif
 
 #ifdef AO
-    float ao = aoOut;
+    float ao = 1.0-aoOut;
 #else
-    float ao = 1.0;
+    float ao = 0.0;
 #endif
 
 #ifdef DEFERRED
 
-    ao = 0.0;
+    //   ao = 0.0;
 
     geoData[0] = packColorTexture(diffColor.xyz, specColor.xyz,ao);
 
