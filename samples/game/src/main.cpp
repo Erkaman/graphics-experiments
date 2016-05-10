@@ -6,8 +6,8 @@ int main (int argc, char *argv[]) {
 
     Config& config = Config::GetInstance();
 
-    config.SetGui(false);
-    config.SetWorldFilename("hello.world");
+    config.SetGui(true);
+    config.SetWorldFilename("hello9.world");
 
     TuhuApplication app(argc, argv);
     app.Start();
