@@ -3,6 +3,7 @@
 *.pdf
 .DS_Store
 /TODO
+/TODO
 /crunch
 build/
 dat/
