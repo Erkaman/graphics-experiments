@@ -693,7 +693,7 @@ void TuhuApplication::RenderEnvMap() {
 
 	Paraboloid par = m_dualParaboloidMap->GetParaboloid(i);
 
-        	par.m_fbo->Bind();
+        par.m_fbo->Bind();
 
 //	LOG_I("size: %d", size);
 
