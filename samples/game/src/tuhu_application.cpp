@@ -898,9 +898,6 @@ void TuhuApplication::Render() {
 	m_curCamera, m_gbuffer->GetDepthTexture(), GetFramebufferWidth(), GetFramebufferHeight() );
     m_gpuProfiler->End(GTS_Sky);
 
-
-
-
     m_gpuProfiler->Begin(GTS_Particles);
 
     m_particlesRenderer->Render(m_gbuffer, m_curCamera, GetFramebufferWidth(), GetFramebufferHeight() );
@@ -926,8 +923,6 @@ void TuhuApplication::Render() {
     m_gpuProfiler->WaitForDataAndUpdate();
 
     m_gpuProfiler->EndFrame();
-
-
 
 }
 

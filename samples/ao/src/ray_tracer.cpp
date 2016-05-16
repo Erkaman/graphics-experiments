@@ -127,7 +127,7 @@ GeometryObjectData* RayTracer::RayTrace(int samples) {
 	totalVertexSize += m_geoObj->m_vertexAttribsSizes[i];
     }
 
-    LOG_I("totalVertexSize %d", totalVertexSize );
+//    LOG_I("totalVertexSize %d", totalVertexSize );
 
     int vertexCount =  m_geoObj->m_verticesSize / (sizeof(float) * ( totalVertexSize ));
 
