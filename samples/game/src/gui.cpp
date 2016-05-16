@@ -1,6 +1,7 @@
 #include "gui.hpp"
 #include "gui_enum.hpp"
 #include "gui_listener.hpp"
+#include "config.hpp"
 
 #include "ewa/log.hpp"
 #include "ewa/file.hpp"
@@ -138,7 +139,20 @@ void Gui::Render(int windowWidth, int windowHeight) {
 
     ImGui::SetWindowPos(ImVec2(0,0) );
 
+    Config& config = Config::GetInstance();
+
+
+    static float ambientLight = config.m_ambientLight.x;
+    static float sceneLight = config.m_sceneLight.x;
+
+    ImGui::SliderFloat("Ambient Light", &ambientLight, 0.0, 1.0);
+
+    config.m_ambientLight = Vector3f(ambientLight);
+
+
     ImGui::Text("Global mode:");
+
+
 
     ImGui::RadioButton("MT", &m_guiMode, ModifyTerrainMode); ImGui::SameLine();
     ImGui::RadioButton("DT", &m_guiMode, DrawTextureMode);  ImGui::SameLine();

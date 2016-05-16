@@ -19,11 +19,11 @@ private:
     bool m_gui;
     std::string m_worldFilename;
 
+public:
+
     Vector3f m_ambientLight; // affects ambient
     Vector3f m_sceneLight; // affects diffuse and specular
 
-
-public:
 
     static Config& GetInstance(){
 	static Config instance;
