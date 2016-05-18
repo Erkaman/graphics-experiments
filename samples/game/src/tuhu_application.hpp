@@ -10,6 +10,7 @@
 
 #include "gui_listener.hpp"
 #include "geometry_object_listener.hpp"
+#include "notifier.hpp"
 
 
 #include <map>
@@ -51,7 +52,7 @@ constexpr int ENV_FBO_TEXTURE_UNIT = 11;
 constexpr int REFRACTION_FBO_TEXTURE_UNIT = 12;
 constexpr int REFLECTION_FBO_TEXTURE_UNIT = 13;
 
-class TuhuApplication : public Application, public GuiListener, public GeometryObjectListener{
+class TuhuApplication : public Application, public GuiListener, public GeometryObjectListener, public Notifier{
 
 private:
 
@@ -189,6 +190,5 @@ public:
     virtual void DeleteCP();
 
 
-
-
+    virtual void GrassPuff() {}
 };

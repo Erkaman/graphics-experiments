@@ -65,6 +65,9 @@
 
 
 
+bool opt_aoOnly = false;
+bool opt_enableAo = true;
+
 
 using namespace std;
 
@@ -846,8 +849,8 @@ void TuhuApplication::Render() {
     Matrix4f lightVp =  biasMatrix*   m_lightVp;
 
 
-    bool aoOnly = m_gui ? m_gui->isAoOnly() : false;
-    bool enableAo = m_gui ? m_gui->IsEnableAo() : true;
+    bool aoOnly = m_gui ? m_gui->isAoOnly() : opt_aoOnly;
+    bool enableAo = m_gui ? m_gui->IsEnableAo() : opt_enableAo;
 
 
    m_colorFbo->Bind();
@@ -999,7 +1002,12 @@ void TuhuApplication::Update(const float delta) {
     if( kbs.WasPressed(GLFW_KEY_6)
 		//&& !m_gui
 		) {
-	StartPhysics();
+	opt_aoOnly = !opt_aoOnly;
+    }
+    if( kbs.WasPressed(GLFW_KEY_5)
+		//&& !m_gui
+		) {
+	opt_enableAo = !opt_enableAo;
     }
 
 
