@@ -132,10 +132,13 @@ in float aoOut;
 void main(void) {
 
 #ifdef DIFF_MAPPING
+//    vec4 diffColor=texture(textureArray,vec3(texcoordOut,diffMap) );
     vec4 diffColor=texture(textureArray,vec3(texcoordOut,diffMap) );
 #else
     vec4 diffColor= vec4(diffColor, 1.0);
+
 #endif
+
 
 #ifdef ALPHA_MAPPING
     if(diffColor.a < 0.05)
@@ -301,6 +304,7 @@ void main(void) {
     float ao = 0.0;
 #endif
 
+
 #ifdef DEFERRED
 
     //   ao = 0.0;
@@ -314,14 +318,15 @@ void main(void) {
 	vec4(nx, ny,  id, ao )
 */
 
+#elif defined REFLECT
+    geoData[0] = vec4(diffColor.xyz, 1.0);
 #else
-
 
 //    vec3 ambient = ambientLight * ao;
     vec3 ambient = vec3(ao  );
 
     geoData[0] = aoOnly * vec4(vec3(ambient),1.0) + (1.0 - aoOnly)* calcLighting(
-	ambient,
+	ao * ambientLight,
 	sceneLight,
 	specShiny,
 	diffColor.xyz,
@@ -330,6 +335,7 @@ void main(void) {
 	spec,
 	visibility,
 	envMapSample);
+
 #endif
 
     //  fragmentColor = vec4( vec3(cosTheta), 1.0  );

@@ -116,6 +116,7 @@ private:
 
 	    defines.push_back("DIFF_MAPPING");
 	    defines.push_back("ALPHA_MAPPING");
+	    defines.push_back("REFLECT");
 
 	    m_reflectionShader = ResourceManager::LoadShader(
 		shaderName + "_vs.glsl", shaderName + "_fs.glsl", defines);
