@@ -42,7 +42,7 @@ vec4 calcLighting(
 
     spec += step(specColor.x, 0.01);
     finalcolor += specColor*pow(spec,specShiny) * visibility;
-    finalcolor += (specColor * envMapSample) * (spec  * 0.4);
+    finalcolor += (specColor * envMapSample) * (spec  * 0.8);
 
     return vec4(finalcolor,1.0);
 }

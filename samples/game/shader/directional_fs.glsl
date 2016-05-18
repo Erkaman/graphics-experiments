@@ -104,7 +104,7 @@ void main() {
     if(id == 1.0) { // if car
 
 	// add fresnel.
-	specMat += (vec3(1.0) - specColor)  * pow(clamp(1.0 + dot(-v, n), 0.0, 1.0), 5.0);
+//	specMat += (vec3(1.0) - specColor)  * pow(clamp(1.0 + dot(-v, n), 0.0, 1.0), 5.0);
 
 	vec3 reflectionVector = (inverseViewNormalMatrix *
 				 vec4(
