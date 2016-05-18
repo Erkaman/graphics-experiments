@@ -782,7 +782,7 @@ void TuhuApplication::RenderReflection() {
 	m_heightMap->RenderReflection(m_reflectionCamera, m_lightDirection, aoOnly);
 
     }
-      m_reflectionFbo->Unbind();
+     m_reflectionFbo->Unbind();
 }
 
 void TuhuApplication::Render() {

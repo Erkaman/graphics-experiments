@@ -273,6 +273,7 @@ void waterShader(vec3 viewSpacePosition, mat4 proj,
     float a = specShiny;
    diffColor = mix( refraction, reflection, (1.0 - fresnel) );
 
+
     specMat = 0.7 * sceneLight;
 
     specShiny = 15.0;

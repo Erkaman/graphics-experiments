@@ -178,7 +178,7 @@ void main() {
     }
 
 
-//    fragmentColor = vec4( vec3(visibility), 1.0);
+//    fragmentColor = vec4( diffColor, 1.0);
 
 
 

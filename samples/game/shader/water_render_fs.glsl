@@ -113,6 +113,6 @@ void main(void) {
     float ao = 1;
     float id = 2.0f;
 
-    geoData[0] = vec4(packColor( reflection ), packColor(refraction)   );
+    geoData[0] = vec4(packColor( reflection ), packColor(  pow(refraction,vec3(1/1.7) ) )   );
     geoData[1] = packNormalTexture(n.xyz, a, id);
 }
