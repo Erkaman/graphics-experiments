@@ -42,7 +42,7 @@ float NORMAL_SPEED = 0.4;
 
    InitCamera(
 
-       CameraCP(Vector3f(26.869501, 33.241173, 61.025742),Vector3f(-0.615767, -0.591554, -0.520477), SLOW));
+       CameraCP(Vector3f(-3.693598, 9.265701, -2.659110),Vector3f(0.681054, -0.480876, 0.552199), 0.24));
 
 
     m_viewDir.Normalize();
@@ -78,7 +78,7 @@ float NORMAL_SPEED = 0.4;
 
     m_useCp = false;
 
-/*
+// torch.
 m_cps.push_back(CameraCP(Vector3f(-76.706909, 18.342823, -37.618912),Vector3f(0.000293, -0.160539, -0.987029), SLOW));
 m_cps.push_back(CameraCP(Vector3f(-73.814270, 14.097636, -63.895123),Vector3f(-0.032617, -0.091302, -0.995289), SLOW));
 m_cps.push_back(CameraCP(Vector3f(-74.709152, 11.592713, -91.201576),Vector3f(-0.030332, -0.206862, -0.977900), SLOW));
@@ -90,7 +90,7 @@ m_cps.push_back(CameraCP(Vector3f(-102.237778, 30.670305, -146.870285),Vector3f(
 m_cps.push_back(CameraCP(Vector3f(-102.237778, 30.670305, -146.870285),Vector3f(-0.749026, -0.215933, -0.626365), SLOW));
 
 
-
+// deferred lighting.
 m_cps.push_back(CameraCP(Vector3f(-92.013481, 53.859867, -150.773727),Vector3f(0.881673, -0.312643, 0.353423), NORMAL));
 m_cps.push_back(CameraCP(Vector3f(-43.074444, 51.202881, -119.976768),Vector3f(0.668680, -0.250739, 0.699997), NORMAL));
 m_cps.push_back(CameraCP(Vector3f(-21.855598, 57.479309, -76.467361),Vector3f(0.319121, -0.228934, 0.919647), NORMAL));
@@ -163,21 +163,40 @@ m_cps.push_back(CameraCP(Vector3f(0.828720, 9.019445, -3.091085),Vector3f(-0.985
 m_cps.push_back(CameraCP(Vector3f(0.917897, 9.019445, -2.417017),Vector3f(-0.985651, -0.107183, 0.130399), 0.4f));
 m_cps.push_back(CameraCP(Vector3f(1.034228, 9.019445, -1.537702),Vector3f(-0.985651, -0.107183, 0.130399), 0.4f));
 m_cps.push_back(CameraCP(Vector3f(1.126383, 9.019445, -0.841125),Vector3f(-0.985651, -0.107183, 0.130399), 0.4f));
-*/
+
 
 // ao
 
-m_cps.push_back(CameraCP(Vector3f(33.731110, 38.669220, -33.211575),Vector3f(0.512008, -0.486795, -0.707728), NORMAL));
-m_cps.push_back(CameraCP(Vector3f(39.536346, 43.263008, -42.080627),Vector3f(0.391015, -0.534796, -0.749066), NORMAL));
-m_cps.push_back(CameraCP(Vector3f(39.788837, 54.742615, -94.366524),Vector3f(-0.426733, -0.497595, -0.755181), NORMAL));
-m_cps.push_back(CameraCP(Vector3f(7.259646, 74.768410, -105.484940),Vector3f(-0.942659, -0.320555, -0.092946), NORMAL));
-m_cps.push_back(CameraCP(Vector3f(-25.384199, 63.000370, -128.800995),Vector3f(-0.942659, -0.320555, -0.092946), NORMAL));
-m_cps.push_back(CameraCP(Vector3f(-73.040070, 48.349751, -119.027237),Vector3f(-0.746228, -0.221749, 0.627672), NORMAL));
-m_cps.push_back(CameraCP(Vector3f(-80.756493, 43.240578, -82.077065),Vector3f(0.523720, -0.532117, 0.665259), NORMAL));
-m_cps.push_back(CameraCP(Vector3f(-42.949142, 23.981281, -43.050602),Vector3f(0.666973, -0.288362, 0.687019), NORMAL));
-m_cps.push_back(CameraCP(Vector3f(-24.097486, 15.830881, -23.632339),Vector3f(0.666973, -0.288362, 0.687019), NORMAL));
-m_cps.push_back(CameraCP(Vector3f(-4.542187, 9.864868, -3.347146),Vector3f(0.653034, -0.217470, 0.725433), NORMAL));
-m_cps.push_back(CameraCP(Vector3f(-3.693598, 9.265701, -2.659110),Vector3f(0.681054, -0.480876, 0.552199), NORMAL));
+m_cps.push_back(CameraCP(Vector3f(33.731110, 38.669220, -33.211575),Vector3f(0.512008, -0.486795, -0.707728), 0.2f));
+m_cps.push_back(CameraCP(Vector3f(39.536346, 43.263008, -42.080627),Vector3f(0.391015, -0.534796, -0.749066), 0.2f));
+m_cps.push_back(CameraCP(Vector3f(39.788837, 54.742615, -94.366524),Vector3f(-0.426733, -0.497595, -0.755181), 0.2f));
+m_cps.push_back(CameraCP(Vector3f(7.259646, 74.768410, -105.484940),Vector3f(-0.942659, -0.320555, -0.092946), 0.2f));
+m_cps.push_back(CameraCP(Vector3f(-25.384199, 63.000370, -128.800995),Vector3f(-0.942659, -0.320555, -0.092946), 0.2f));
+m_cps.push_back(CameraCP(Vector3f(-73.040070, 48.349751, -119.027237),Vector3f(-0.746228, -0.221749, 0.627672), 0.2f));
+m_cps.push_back(CameraCP(Vector3f(-80.756493, 43.240578, -82.077065),Vector3f(0.523720, -0.532117, 0.665259), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-42.949142, 23.981281, -43.050602),Vector3f(0.666973, -0.288362, 0.687019), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-24.097486, 15.830881, -23.632339),Vector3f(0.666973, -0.288362, 0.687019), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-4.542187, 9.864868, -3.347146),Vector3f(0.653034, -0.217470, 0.725433), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-3.693598, 9.265701, -2.659110),Vector3f(0.681054, -0.480876, 0.552199), 0.24));
+
+
+m_cps.push_back(CameraCP(Vector3f(-4.328483, 10.224816, -4.548865),Vector3f(0.582884, -0.500601, 0.640035), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-2.002702, 10.224816, -4.940857),Vector3f(0.006355, -0.519534, 0.854426), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(0.394761, 10.224816, -2.907647),Vector3f(-0.743865, -0.560619, 0.363830), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(0.381110, 10.224816, 0.113322),Vector3f(-0.689337, -0.605916, -0.397089), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-1.295857, 10.224816, 1.613147),Vector3f(-0.283871, -0.604551, -0.744268), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-2.416543, 10.224816, 1.691109),Vector3f(0.036477, -0.634645, -0.771943), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-3.565540, 10.224816, 0.955411),Vector3f(0.557142, -0.617449, -0.555292), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-4.283578, 10.224816, -0.144000),Vector3f(0.704258, -0.603652, -0.373664), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-4.585760, 10.224816, -1.403400),Vector3f(0.779808, -0.610586, -0.138146), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-3.794848, 9.496401, -1.966248),Vector3f(0.742719, -0.655161, -0.138323), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-3.794848, 9.496401, -1.966248),Vector3f(0.742719, -0.655161, -0.138323), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-3.794848, 9.496401, -1.966248),Vector3f(0.742719, -0.655161, -0.138323), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-3.794848, 9.496401, -1.966248),Vector3f(0.742719, -0.655161, -0.138323), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-3.794848, 9.496401, -1.966248),Vector3f(0.742719, -0.655161, -0.138323), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-3.794848, 9.496401, -1.966248),Vector3f(0.742719, -0.655161, -0.138323), 0.4f));
+m_cps.push_back(CameraCP(Vector3f(-3.794848, 9.496401, -1.966248),Vector3f(0.742719, -0.655161, -0.138323), 0.4f));
+
 
 }
 
